@@ -1,12 +1,10 @@
-package net.wojteksz128.worktimemeasureapp.dao;
+package net.wojteksz128.worktimemeasureapp.database;
 
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
-
-import net.wojteksz128.worktimemeasureapp.entity.ComeEvent;
 
 import java.util.List;
 

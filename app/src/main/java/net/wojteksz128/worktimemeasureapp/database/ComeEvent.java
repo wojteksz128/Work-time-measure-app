@@ -1,4 +1,4 @@
-package net.wojteksz128.worktimemeasureapp.entity;
+package net.wojteksz128.worktimemeasureapp.database;
 
 
 import android.arch.persistence.room.Entity;
