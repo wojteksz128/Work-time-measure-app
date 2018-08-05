@@ -16,10 +16,6 @@ public class ComeEventAdapter extends RecyclerView.Adapter<ComeEventViewHolder> 
     private List<ComeEvent> events;
 
 
-    public ComeEventAdapter(List<ComeEvent> events) {
-        this.events = events;
-    }
-
     @NonNull
     @Override
     public ComeEventViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -38,10 +34,11 @@ public class ComeEventAdapter extends RecyclerView.Adapter<ComeEventViewHolder> 
 
     @Override
     public int getItemCount() {
-        return events != null ? events.size() : null;
+        return events != null ? events.size() : 0;
     }
 
     public void setEvents(List<ComeEvent> events) {
         this.events = events;
+        notifyDataSetChanged();
     }
 }
