@@ -1,5 +1,6 @@
 package net.wojteksz128.worktimemeasureapp.database;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
@@ -12,10 +13,10 @@ import java.util.List;
 public interface ComeEventDao {
 
     @Query("SELECT * FROM come_event ORDER BY date DESC")
-    List<ComeEvent> findAll();
+    LiveData<List<ComeEvent>> findAll();
 
     @Query("SELECT * FROM come_event WHERE id = :id")
-    ComeEvent findById(int id);
+    LiveData<ComeEvent> findById(int id);
 
     @Insert
     void insert(ComeEvent comeEvent);
