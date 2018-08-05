@@ -15,6 +15,11 @@ public class ComeEventAdapter extends RecyclerView.Adapter<ComeEventViewHolder> 
 
     private List<ComeEvent> events;
 
+
+    public ComeEventAdapter(List<ComeEvent> events) {
+        this.events = events;
+    }
+
     @NonNull
     @Override
     public ComeEventViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
