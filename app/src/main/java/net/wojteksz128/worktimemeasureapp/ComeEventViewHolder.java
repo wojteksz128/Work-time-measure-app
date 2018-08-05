@@ -8,16 +8,18 @@ import net.wojteksz128.worktimemeasureapp.database.ComeEvent;
 
 public class ComeEventViewHolder extends RecyclerView.ViewHolder {
 
-    final TextView dateTV;
-    final TextView typeTV;
+    private final TextView dateTV;
+    private final TextView typeTV;
 
 
-    public ComeEventViewHolder(View itemView, ComeEvent comeEvent) {
+    public ComeEventViewHolder(View itemView) {
         super(itemView);
 
         dateTV = itemView.findViewById(R.id.day_item_date);
         typeTV = itemView.findViewById(R.id.day_item_type);
+    }
 
+    public void bind(ComeEvent comeEvent) {
         dateTV.setText(comeEvent.getDate().toString());
         typeTV.setText(comeEvent.getType().name());
     }
