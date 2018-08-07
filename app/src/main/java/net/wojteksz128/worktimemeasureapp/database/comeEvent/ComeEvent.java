@@ -16,16 +16,18 @@ public class ComeEvent {
     private ComeEventType type;
     private int workDayId;
 
-    public ComeEvent(int id, Date date, ComeEventType type) {
+    public ComeEvent(int id, Date date, ComeEventType type, Integer workDayId) {
         this.id = id;
         this.date = date;
         this.type = type;
+        this.workDayId = workDayId;
     }
 
     @Ignore
-    public ComeEvent(Date date, ComeEventType type) {
+    public ComeEvent(Date date, ComeEventType type, Integer workDayId) {
         this.date = date;
         this.type = type;
+        this.workDayId = workDayId;
     }
 
     public int getId() {

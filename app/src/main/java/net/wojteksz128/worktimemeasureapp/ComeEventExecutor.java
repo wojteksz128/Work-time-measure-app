@@ -30,14 +30,14 @@ public class ComeEventExecutor {
             protected ComeEventType doInBackground(Void... voids) {
                 List<ComeEvent> comeEvents = eventDao.findAll();
                 ComeEvent comeEvent = comeEvents != null && !comeEvents.isEmpty() ? comeEvents.get(0) : null;
-                ComeEventType comeEventType = null;
+                ComeEventType comeEventType;
 
                 if (comeEvent != null) {
                     comeEventType = comeEvent.getType().equals(ComeEventType.COME_IN) ? ComeEventType.COME_OUT : ComeEventType.COME_IN;
                 } else {
                     comeEventType = ComeEventType.COME_IN;
                 }
-                eventDao.insert(new ComeEvent(registerDate, comeEventType));
+                eventDao.insert(new ComeEvent(registerDate, comeEventType, 0));
 
                 return comeEventType;
             }
