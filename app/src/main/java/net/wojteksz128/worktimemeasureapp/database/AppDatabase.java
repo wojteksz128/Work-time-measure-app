@@ -1,16 +1,22 @@
 package net.wojteksz128.worktimemeasureapp.database;
 
+import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.TypeConverters;
+import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEvent;
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventDao;
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDay;
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayDao;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Database(entities = {ComeEvent.class, WorkDay.class}, version = 2, exportSchema = false)
 @TypeConverters({DatabaseConverters.DateConverter.class, DatabaseConverters.ComeEventTypeConverter.class})
@@ -27,6 +33,7 @@ public abstract class AppDatabase extends RoomDatabase {
                 Log.d(LOG_TAG, "getInstance: Creating new database instance");
                 sInstance = Room.databaseBuilder(context.getApplicationContext(),
                     AppDatabase.class, AppDatabase.DATABASE_NAME)
+                        .addMigrations(getDatabaseMigrations())
                     .build();
             }
         }
@@ -37,4 +44,27 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract ComeEventDao comeEventDao();
 
     public abstract WorkDayDao workDayDao();
+
+    private static Migration[] getDatabaseMigrations() {
+        List<Migration> migrations = new ArrayList<>();
+
+        // Version 1 -> 2
+        migrations.add(new Migration(1, 2) {
+            @Override
+            public void migrate(@NonNull SupportSQLiteDatabase database) {
+                database.execSQL("CREATE TABLE work_day " +
+                        "( id INTEGER PRIMARY KEY AUTOINCREMENT" +
+                        ", date INTEGER" +
+                        ", worktime INTEGER" +
+                        ", percentDeclaredTime REAL" +
+                        ")");
+
+                database.execSQL("DELETE FROM come_event");
+
+                database.execSQL("ALTER TABLE come_event ADD COLUMN workDayId INTEGER NOT NULL");
+            }
+        });
+
+        return migrations.toArray(new Migration[0]);
+    }
 }

@@ -3,12 +3,8 @@ package net.wojteksz128.worktimemeasureapp.database.workDay;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
-import android.arch.persistence.room.Relation;
-
-import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEvent;
 
 import java.util.Date;
-import java.util.List;
 
 @Entity(tableName = "work_day")
 public class WorkDay {
@@ -18,8 +14,6 @@ public class WorkDay {
     private Date date;
     private Date worktime;
     private double percentDeclaredTime;
-    @Relation(parentColumn = "id", entityColumn = "workDayId")
-    private List<ComeEvent> events;
 
 
     public WorkDay(int id, Date date, Date worktime, double percentDeclaredTime) {
