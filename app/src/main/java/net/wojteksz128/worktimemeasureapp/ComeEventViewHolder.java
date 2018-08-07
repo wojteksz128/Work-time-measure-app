@@ -1,5 +1,7 @@
 package net.wojteksz128.worktimemeasureapp;
 
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
@@ -13,6 +15,7 @@ public class ComeEventViewHolder extends RecyclerView.ViewHolder {
     private final View view;
 
 
+    @SuppressWarnings("WeakerAccess")
     public ComeEventViewHolder(View itemView) {
         super(itemView);
 
@@ -25,8 +28,15 @@ public class ComeEventViewHolder extends RecyclerView.ViewHolder {
         dateTV.setText(comeEvent.getDate().toString());
 
         typeTV.setText(comeEvent.getType().getDisplayLabel());
-        // TODO: 2018-08-07 Solve problem with API versions
-        typeTV.setBackground(view.getContext().getDrawable(comeEvent.getType().getBackground()));
+        setTypeBackground(view.getContext().getResources().getDrawable(comeEvent.getType().getBackground()));
         typeTV.setPadding(8, 4, 8, 4);
+    }
+
+    private void setTypeBackground(Drawable drawable) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            typeTV.setBackground(drawable);
+        } else {
+            typeTV.setBackgroundDrawable(drawable);
+        }
     }
 }
