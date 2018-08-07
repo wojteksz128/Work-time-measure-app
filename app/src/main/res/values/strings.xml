@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Work Time Measure App</string>
+    <string name="main_come_in_label">Income</string>
+    <string name="main_come_out_label">Outcome</string>
 </resources>

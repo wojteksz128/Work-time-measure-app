@@ -1,7 +1,9 @@
 package net.wojteksz128.worktimemeasureapp;
 
+import android.arch.core.util.Function;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -15,6 +17,7 @@ import android.view.View;
 import net.wojteksz128.worktimemeasureapp.database.AppDatabase;
 import net.wojteksz128.worktimemeasureapp.database.ComeEvent;
 import net.wojteksz128.worktimemeasureapp.database.ComeEventDao;
+import net.wojteksz128.worktimemeasureapp.database.ComeEventType;
 
 import java.util.List;
 
@@ -41,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         mDayList.setAdapter(eventAdapter);
 
         eventDao = AppDatabase.getInstance(this).comeEventDao();
-        LiveData<List<ComeEvent>> eventsData = eventDao.findAll();
+        LiveData<List<ComeEvent>> eventsData = eventDao.findAllInLiveData();
         eventsData.observe(this, new Observer<List<ComeEvent>>() {
             @Override
             public void onChanged(@Nullable List<ComeEvent> comeEvents) {
@@ -53,8 +56,28 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
-                ComeEventExecutor.registerNewEvent(MainActivity.this);
-                Snackbar.make(mLayout, "Dodano nową pozycję.", Snackbar.LENGTH_LONG).show();
+                ComeEventExecutor.registerNewEvent(MainActivity.this, new Function<ComeEventType, Void>() {
+                    @Override
+                    public Void apply(ComeEventType input) {
+                        // TODO: 2018-08-07 Add loading indicator
+                        String message;
+
+                        switch (input) {
+                            case COME_IN:
+                                message = "Zarejestrowano wejście do pracy";
+                                break;
+                            case COME_OUT:
+                                message = "Zarejestrowano wyjście z pracy";
+                                break;
+                            default:
+                                message = "Incorrect event type";
+                        }
+
+                        Snackbar.make(mLayout, message, Snackbar.LENGTH_LONG).show();
+                        return null;
+                    }
+                });
+
             }
         });
     }
