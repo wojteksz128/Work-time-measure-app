@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import net.wojteksz128.worktimemeasureapp.database.AppDatabase;
 import net.wojteksz128.worktimemeasureapp.database.ComeEvent;
@@ -23,8 +24,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private ConstraintLayout mLayout;
-    private ComeEventDao eventDao;
-    private ComeEventAdapter eventAdapter;
+    private ComeEventAdapter mEventAdapter;
+    private ProgressBar mLoadingIndicator;
 
 
     @Override
@@ -33,21 +34,22 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mLayout = findViewById(R.id.main_layout);
-        FloatingActionButton mEnterFab = findViewById(R.id.enterFab);
+        mLoadingIndicator = findViewById(R.id.main_loading_indicator);
+        FloatingActionButton mEnterFab = findViewById(R.id.main_enter_fab);
         RecyclerView mDayList = findViewById(R.id.main_rv_days);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mDayList.setLayoutManager(layoutManager);
 
-        eventAdapter = new ComeEventAdapter();
-        mDayList.setAdapter(eventAdapter);
+        mEventAdapter = new ComeEventAdapter();
+        mDayList.setAdapter(mEventAdapter);
 
-        eventDao = AppDatabase.getInstance(this).comeEventDao();
+        ComeEventDao eventDao = AppDatabase.getInstance(this).comeEventDao();
         LiveData<List<ComeEvent>> eventsData = eventDao.findAllInLiveData();
         eventsData.observe(this, new Observer<List<ComeEvent>>() {
             @Override
             public void onChanged(@Nullable List<ComeEvent> comeEvents) {
-                eventAdapter.setEvents(comeEvents);
+                mEventAdapter.setEvents(comeEvents);
             }
         });
 
@@ -55,12 +57,20 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
-                ComeEventExecutor.registerNewEvent(MainActivity.this, new Function<ComeEventType, Void>() {
+                ComeEventExecutor.registerNewEvent(MainActivity.this,
+                new Function<Void, Void>() {
+                    @Override
+                    public Void apply(Void input) {
+                        mLoadingIndicator.setVisibility(View.VISIBLE);
+                        return null;
+                    }
+                },
+                new Function<ComeEventType, Void>() {
                     @Override
                     public Void apply(ComeEventType input) {
-                        // TODO: 2018-08-07 Add loading indicator
                         String message;
 
+                        mLoadingIndicator.setVisibility(View.INVISIBLE);
                         switch (input) {
                             case COME_IN:
                                 message = "Zarejestrowano wejście do pracy";

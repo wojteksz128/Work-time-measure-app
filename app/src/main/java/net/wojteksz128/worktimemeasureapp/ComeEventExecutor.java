@@ -15,11 +15,17 @@ import java.util.List;
 public class ComeEventExecutor {
 
 
-    public static void registerNewEvent(Context context, final Function<ComeEventType, Void> endFunction) {
+    public static void registerNewEvent(Context context, final Function<Void, Void> preFunction, final Function<ComeEventType, Void> postFunction) {
         final ComeEventDao eventDao = AppDatabase.getInstance(context).comeEventDao();
         final Date registerDate = new Date();
 
         new AsyncTask<Void, Void, ComeEventType>() {
+
+            @Override
+            protected void onPreExecute() {
+                preFunction.apply(null);
+            }
+
             @Override
             protected ComeEventType doInBackground(Void... voids) {
                 List<ComeEvent> comeEvents = eventDao.findAll();
@@ -36,7 +42,7 @@ public class ComeEventExecutor {
 
             @Override
             protected void onPostExecute(ComeEventType comeEventType) {
-                endFunction.apply(comeEventType);
+                postFunction.apply(comeEventType);
             }
         }.execute();
     }
