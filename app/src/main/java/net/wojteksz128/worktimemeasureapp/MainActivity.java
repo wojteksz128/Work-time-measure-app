@@ -2,7 +2,6 @@ package net.wojteksz128.worktimemeasureapp;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -16,9 +15,7 @@ import android.view.View;
 import net.wojteksz128.worktimemeasureapp.database.AppDatabase;
 import net.wojteksz128.worktimemeasureapp.database.ComeEvent;
 import net.wojteksz128.worktimemeasureapp.database.ComeEventDao;
-import net.wojteksz128.worktimemeasureapp.database.ComeEventType;
 
-import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -56,14 +53,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
-                new AsyncTask<Void, Void, Void>() {
-                    @Override
-                    protected Void doInBackground(Void... voids) {
-                        eventDao.insert(new ComeEvent(new Date(), ComeEventType.COME_IN));
-                        Snackbar.make(mLayout, "Dodano nową pozycję.", Snackbar.LENGTH_LONG).show();
-                        return null;
-                    }
-                }.execute();
+                ComeEventExecutor.registerNewEvent(MainActivity.this);
+                Snackbar.make(mLayout, "Dodano nową pozycję.", Snackbar.LENGTH_LONG).show();
             }
         });
     }
