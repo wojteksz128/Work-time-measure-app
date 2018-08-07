@@ -24,9 +24,9 @@ public class ComeEventViewHolder extends RecyclerView.ViewHolder {
     public void bind(ComeEvent comeEvent) {
         dateTV.setText(comeEvent.getDate().toString());
 
-        typeTV.setText(comeEvent.getType().name());
+        typeTV.setText(comeEvent.getType().getDisplayLabel());
         // TODO: 2018-08-07 Solve problem with API versions
         typeTV.setBackground(view.getContext().getDrawable(comeEvent.getType().getBackground()));
-        typeTV.setPadding(4, 4, 4, 4);
+        typeTV.setPadding(8, 4, 8, 4);
     }
 }
