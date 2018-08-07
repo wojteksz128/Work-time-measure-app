@@ -14,6 +14,7 @@ public class ComeEvent {
     private int id;
     private Date date;
     private ComeEventType type;
+    private int workDayId;
 
     public ComeEvent(int id, Date date, ComeEventType type) {
         this.id = id;
