@@ -7,6 +7,9 @@ import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 import android.util.Log;
 
+import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEvent;
+import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventDao;
+
 @Database(entities = {ComeEvent.class}, version = 1, exportSchema = false)
 @TypeConverters({DatabaseConverters.DateConverter.class, DatabaseConverters.ComeEventTypeConverter.class})
 public abstract class AppDatabase extends RoomDatabase {

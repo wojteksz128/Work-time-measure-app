@@ -15,9 +15,9 @@ import android.view.View;
 import android.widget.ProgressBar;
 
 import net.wojteksz128.worktimemeasureapp.database.AppDatabase;
-import net.wojteksz128.worktimemeasureapp.database.ComeEvent;
-import net.wojteksz128.worktimemeasureapp.database.ComeEventDao;
-import net.wojteksz128.worktimemeasureapp.database.ComeEventType;
+import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEvent;
+import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventDao;
+import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventType;
 
 import java.util.List;
 

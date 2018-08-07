@@ -7,7 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import net.wojteksz128.worktimemeasureapp.database.ComeEvent;
+import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEvent;
 
 import java.util.List;
 

@@ -6,7 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
-import net.wojteksz128.worktimemeasureapp.database.ComeEvent;
+import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEvent;
 
 public class ComeEventViewHolder extends RecyclerView.ViewHolder {
 

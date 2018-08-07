@@ -5,9 +5,9 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import net.wojteksz128.worktimemeasureapp.database.AppDatabase;
-import net.wojteksz128.worktimemeasureapp.database.ComeEvent;
-import net.wojteksz128.worktimemeasureapp.database.ComeEventDao;
-import net.wojteksz128.worktimemeasureapp.database.ComeEventType;
+import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEvent;
+import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventDao;
+import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventType;
 
 import java.util.Date;
 import java.util.List;
