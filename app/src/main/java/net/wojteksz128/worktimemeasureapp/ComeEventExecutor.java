@@ -9,6 +9,7 @@ import net.wojteksz128.worktimemeasureapp.database.ComeEventDao;
 import net.wojteksz128.worktimemeasureapp.database.ComeEventType;
 
 import java.util.Date;
+import java.util.List;
 
 public class ComeEventExecutor {
 
@@ -19,7 +20,12 @@ public class ComeEventExecutor {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
-                eventDao.insert(new ComeEvent(new Date(), ComeEventType.COME_IN));
+                List<ComeEvent> comeEvents = eventDao.findAll();
+                ComeEvent comeEvent = comeEvents != null ? comeEvents.get(0) : null;
+                if (comeEvent != null) {
+                    ComeEventType comeEventType = comeEvent.getType().equals(ComeEventType.COME_IN) ? ComeEventType.COME_OUT : ComeEventType.COME_IN;
+                    eventDao.insert(new ComeEvent(new Date(), comeEventType));
+                }
                 return null;
             }
         }.execute();

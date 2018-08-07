@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         mDayList.setAdapter(eventAdapter);
 
         eventDao = AppDatabase.getInstance(this).comeEventDao();
-        LiveData<List<ComeEvent>> eventsData = eventDao.findAll();
+        LiveData<List<ComeEvent>> eventsData = eventDao.findAllInLiveData();
         eventsData.observe(this, new Observer<List<ComeEvent>>() {
             @Override
             public void onChanged(@Nullable List<ComeEvent> comeEvents) {
