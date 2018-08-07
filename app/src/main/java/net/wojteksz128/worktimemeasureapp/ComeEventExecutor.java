@@ -17,6 +17,7 @@ public class ComeEventExecutor {
 
     public static void registerNewEvent(Context context, final Function<ComeEventType, Void> endFunction) {
         final ComeEventDao eventDao = AppDatabase.getInstance(context).comeEventDao();
+        final Date registerDate = new Date();
 
         new AsyncTask<Void, Void, ComeEventType>() {
             @Override
@@ -27,7 +28,7 @@ public class ComeEventExecutor {
 
                 if (comeEvent != null) {
                     comeEventType = comeEvent.getType().equals(ComeEventType.COME_IN) ? ComeEventType.COME_OUT : ComeEventType.COME_IN;
-                    eventDao.insert(new ComeEvent(new Date(), comeEventType));
+                    eventDao.insert(new ComeEvent(registerDate, comeEventType));
                 }
 
                 return comeEventType;
