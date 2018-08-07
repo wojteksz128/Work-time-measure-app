@@ -47,4 +47,12 @@ public class ComeEvent {
     public void setType(ComeEventType type) {
         this.type = type;
     }
+
+    public int getWorkDayId() {
+        return workDayId;
+    }
+
+    public void setWorkDayId(int workDayId) {
+        this.workDayId = workDayId;
+    }
 }
