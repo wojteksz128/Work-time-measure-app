@@ -10,21 +10,19 @@ import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEvent;
 import java.util.Date;
 import java.util.List;
 
-import javax.xml.datatype.Duration;
-
 @Entity(tableName = "work_day")
 public class WorkDay {
 
     @PrimaryKey(autoGenerate = true)
     private int id;
     private Date date;
-    private Duration worktime;
+    private Date worktime;
     private double percentDeclaredTime;
     @Relation(parentColumn = "id", entityColumn = "workDayId")
     private List<ComeEvent> events;
 
 
-    public WorkDay(int id, Date date, Duration worktime, double percentDeclaredTime) {
+    public WorkDay(int id, Date date, Date worktime, double percentDeclaredTime) {
         this.id = id;
         this.date = date;
         this.worktime = worktime;
@@ -32,7 +30,7 @@ public class WorkDay {
     }
 
     @Ignore
-    public WorkDay(Date date, Duration worktime, double percentDeclaredTime) {
+    public WorkDay(Date date, Date worktime, double percentDeclaredTime) {
         this.date = date;
         this.worktime = worktime;
         this.percentDeclaredTime = percentDeclaredTime;
@@ -50,11 +48,11 @@ public class WorkDay {
         this.date = date;
     }
 
-    public Duration getWorktime() {
+    public Date getWorktime() {
         return worktime;
     }
 
-    public void setWorktime(Duration worktime) {
+    public void setWorktime(Date worktime) {
         this.worktime = worktime;
     }
 
