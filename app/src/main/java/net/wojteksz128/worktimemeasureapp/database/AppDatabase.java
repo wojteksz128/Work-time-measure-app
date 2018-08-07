@@ -9,8 +9,10 @@ import android.util.Log;
 
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEvent;
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventDao;
+import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDay;
+import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayDao;
 
-@Database(entities = {ComeEvent.class}, version = 1, exportSchema = false)
+@Database(entities = {ComeEvent.class, WorkDay.class}, version = 2, exportSchema = false)
 @TypeConverters({DatabaseConverters.DateConverter.class, DatabaseConverters.ComeEventTypeConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -33,4 +35,6 @@ public abstract class AppDatabase extends RoomDatabase {
     }
 
     public abstract ComeEventDao comeEventDao();
+
+    public abstract WorkDayDao workDayDao();
 }
