@@ -29,13 +29,15 @@ public class ComeEventExecutor {
             @Override
             protected ComeEventType doInBackground(Void... voids) {
                 List<ComeEvent> comeEvents = eventDao.findAll();
-                ComeEvent comeEvent = comeEvents != null ? comeEvents.get(0) : null;
+                ComeEvent comeEvent = comeEvents != null && !comeEvents.isEmpty() ? comeEvents.get(0) : null;
                 ComeEventType comeEventType = null;
 
                 if (comeEvent != null) {
                     comeEventType = comeEvent.getType().equals(ComeEventType.COME_IN) ? ComeEventType.COME_OUT : ComeEventType.COME_IN;
-                    eventDao.insert(new ComeEvent(registerDate, comeEventType));
+                } else {
+                    comeEventType = ComeEventType.COME_IN;
                 }
+                eventDao.insert(new ComeEvent(registerDate, comeEventType));
 
                 return comeEventType;
             }
