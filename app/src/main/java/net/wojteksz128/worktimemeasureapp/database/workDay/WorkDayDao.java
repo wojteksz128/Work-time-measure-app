@@ -9,6 +9,7 @@ import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Transaction;
 import android.arch.persistence.room.Update;
 
+import java.util.Date;
 import java.util.List;
 
 @Dao
@@ -29,6 +30,10 @@ public interface WorkDayDao {
     @Transaction
     @Query("SELECT * FROM work_day WHERE id = :id")
     WorkDayEvents findById(int id);
+
+    @Transaction
+    @Query("SELECT * FROM work_day WHERE :date BETWEEN beginSlot AND endSlot")
+    WorkDayEvents findByIntervalContains(Date date);
 
     @Insert
     void insert(WorkDay workDay);

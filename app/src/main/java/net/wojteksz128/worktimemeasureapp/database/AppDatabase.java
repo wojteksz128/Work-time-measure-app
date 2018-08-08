@@ -66,6 +66,8 @@ public abstract class AppDatabase extends RoomDatabase {
             }
         });
 
+        // TODO: 2018-08-08 Implement switch between Version 2 -> 3
+
         return migrations.toArray(new Migration[0]);
     }
 }
