@@ -48,17 +48,21 @@ public abstract class AppDatabase extends RoomDatabase {
         migrations.add(new Migration(1, 2) {
             @Override
             public void migrate(@NonNull SupportSQLiteDatabase database) {
-                database.execSQL("CREATE TABLE work_day " +
-                        "( id INTEGER PRIMARY KEY AUTOINCREMENT" +
-                        ", date INTEGER" +
-                        ", worktime INTEGER" +
-                        ", percentDeclaredTime REAL" +
+                database.execSQL("DROP TABLE come_event");
+
+                database.execSQL("CREATE TABLE IF NOT EXISTS `work_day` " +
+                        "( `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL" +
+                        ", `date` INTEGER" +
+                        ", `worktime` INTEGER" +
+                        ", `percentDeclaredTime` REAL NOT NULL" +
                         ")");
 
-                // TODO Zabezpiecz przed zapisem zadania
-                database.execSQL("DELETE FROM come_event");
-
-                database.execSQL("ALTER TABLE come_event ADD COLUMN workDayId INTEGER NOT NULL");
+                database.execSQL("CREATE TABLE IF NOT EXISTS come_event " +
+                        "( `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL" +
+                        ", `date` INTEGER" +
+                        ", `type` TEXT" +
+                        ", `workDayId` INTEGER NOT NULL" +
+                        ")");
             }
         });
 
