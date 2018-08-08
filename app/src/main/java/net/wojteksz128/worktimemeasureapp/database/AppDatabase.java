@@ -59,6 +59,7 @@ public abstract class AppDatabase extends RoomDatabase {
                         ", percentDeclaredTime REAL" +
                         ")");
 
+                // TODO Zabezpiecz przed zapisem zadania
                 database.execSQL("DELETE FROM come_event");
 
                 database.execSQL("ALTER TABLE come_event ADD COLUMN workDayId INTEGER NOT NULL");
