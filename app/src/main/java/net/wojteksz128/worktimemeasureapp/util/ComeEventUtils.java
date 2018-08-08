@@ -39,7 +39,11 @@ public class ComeEventUtils {
                     workDay = new WorkDayEvents();
                     workDay.setWorkDay(new WorkDay(registerDate));
                     workDay.setEvents(new ArrayList<ComeEvent>());
-                    workDayDao.insert(workDay.getWorkDay());
+                    final Long insertedWorkdayId = workDayDao.insert(workDay.getWorkDay());
+                    workDay.setWorkDay(new WorkDay(insertedWorkdayId.intValue(),
+                            workDay.getWorkDay().getDate(), workDay.getWorkDay().getBeginSlot(),
+                            workDay.getWorkDay().getEndSlot(), workDay.getWorkDay().getWorktime(),
+                            workDay.getWorkDay().getPercentDeclaredTime()));
                     comeEventType = ComeEventType.COME_IN;
 
                 } else {

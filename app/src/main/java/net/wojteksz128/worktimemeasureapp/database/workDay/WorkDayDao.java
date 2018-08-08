@@ -36,7 +36,7 @@ public interface WorkDayDao {
     WorkDayEvents findByIntervalContains(Date date);
 
     @Insert
-    void insert(WorkDay workDay);
+    Long insert(WorkDay workDay);
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     void update(WorkDay workDay);
