@@ -18,21 +18,6 @@ import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayDao;
 import java.util.ArrayList;
 import java.util.List;
 
-/*
-Version 2 database schema
-
-    CREATE TABLE IF NOT EXISTS `come_event` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `date` INTEGER, `type` TEXT, `workDayId` INTEGER NOT NULL)
-    CREATE TABLE IF NOT EXISTS `work_day` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `date` INTEGER, `worktime` INTEGER, `percentDeclaredTime` REAL NOT NULL)
-    CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)
-    INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9b3cab27ee6c8c880f4794eb9af10a84')
-
-Version 3 database schema
-    CREATE TABLE IF NOT EXISTS `come_event` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `date` INTEGER, `type` TEXT, `workDayId` INTEGER NOT NULL)
-    CREATE TABLE IF NOT EXISTS `work_day` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `date` INTEGER, `beginSlot` INTEGER, `endSlot` INTEGER, `worktime` INTEGER, `percentDeclaredTime` REAL NOT NULL)
-    CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)
-    INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b9013c5fca385464713ff3a6cbdc193b')
- */
-
 @Database(entities = {ComeEvent.class, WorkDay.class}, version = 3)
 @TypeConverters({DatabaseConverters.DateConverter.class, DatabaseConverters.ComeEventTypeConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
@@ -47,18 +32,14 @@ public abstract class AppDatabase extends RoomDatabase {
             synchronized (LOCK) {
                 Log.d(LOG_TAG, "getInstance: Creating new database instance");
                 sInstance = Room.databaseBuilder(context.getApplicationContext(),
-                    AppDatabase.class, AppDatabase.DATABASE_NAME)
+                        AppDatabase.class, AppDatabase.DATABASE_NAME)
                         .addMigrations(getDatabaseMigrations())
-                    .build();
+                        .build();
             }
         }
         Log.d(LOG_TAG, "getInstance: Getting the database instance");
         return sInstance;
     }
-
-    public abstract ComeEventDao comeEventDao();
-
-    public abstract WorkDayDao workDayDao();
 
     private static Migration[] getDatabaseMigrations() {
         List<Migration> migrations = new ArrayList<>();
@@ -96,4 +77,8 @@ public abstract class AppDatabase extends RoomDatabase {
 
         return migrations.toArray(new Migration[0]);
     }
+
+    public abstract ComeEventDao comeEventDao();
+
+    public abstract WorkDayDao workDayDao();
 }
