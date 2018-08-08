@@ -4,13 +4,14 @@ package net.wojteksz128.worktimemeasureapp.database.comeEvent;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
 
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDay;
 
 import java.util.Date;
 
 @Entity(tableName = "come_event")
-public class ComeEvent {
+public class ComeEvent implements Comparable<ComeEvent> {
 
     @PrimaryKey(autoGenerate = true)
     private int id;
@@ -58,5 +59,10 @@ public class ComeEvent {
 
     public void setWorkDayId(int workDayId) {
         this.workDayId = workDayId;
+    }
+
+    @Override
+    public int compareTo(@NonNull ComeEvent comeEvent) {
+        return (int) (this.getDate().getTime() - comeEvent.getDate().getTime());
     }
 }

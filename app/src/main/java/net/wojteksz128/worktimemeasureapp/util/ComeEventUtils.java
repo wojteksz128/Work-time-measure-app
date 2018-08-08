@@ -37,21 +37,21 @@ public class ComeEventUtils {
 
                 if (workDay == null) {
                     workDay = new WorkDayEvents();
-                    workDay.workDay = new WorkDay(registerDate);
-                    workDay.events = new ArrayList<>();
-                    workDayDao.insert(workDay.workDay);
+                    workDay.setWorkDay(new WorkDay(registerDate));
+                    workDay.setEvents(new ArrayList<ComeEvent>());
+                    workDayDao.insert(workDay.getWorkDay());
                     comeEventType = ComeEventType.COME_IN;
 
                 } else {
-                    if (workDay.events == null || workDay.events.isEmpty()) {
+                    if (workDay.getEvents() == null || workDay.getEvents().isEmpty()) {
                         comeEventType = ComeEventType.COME_IN;
                     } else {
-                        final ComeEventType type = workDay.events.get(0).getType();
+                        final ComeEventType type = workDay.getEvents().get(0).getType();
                         comeEventType = type.equals(ComeEventType.COME_IN) ? ComeEventType.COME_OUT : ComeEventType.COME_IN;
                     }
                 }
 
-                final ComeEvent comeEvent = new ComeEvent(registerDate, comeEventType, workDay.workDay);
+                final ComeEvent comeEvent = new ComeEvent(registerDate, comeEventType, workDay.getWorkDay());
                 comeEventDao.insert(comeEvent);
 
                 return comeEventType;
