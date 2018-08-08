@@ -28,12 +28,12 @@ public class WorkDay {
     }
 
     @Ignore
-    public WorkDay(Date date, Date beginSlot, Date endSlot, Date worktime, double percentDeclaredTime) {
+    public WorkDay(Date date) {
         this.date = date;
-        this.beginSlot = beginSlot;
-        this.endSlot = endSlot;
-        this.worktime = worktime;
-        this.percentDeclaredTime = percentDeclaredTime;
+        this.beginSlot = WorkDayUtils.calculateBeginSlot(date);
+        this.endSlot = WorkDayUtils.calculateEndSlot(date);
+        this.worktime = new Date(0);
+        this.percentDeclaredTime = 0;
     }
 
     public int getId() {

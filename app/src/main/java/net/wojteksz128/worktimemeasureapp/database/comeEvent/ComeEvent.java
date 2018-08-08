@@ -5,6 +5,8 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
+import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDay;
+
 import java.util.Date;
 
 @Entity(tableName = "come_event")
@@ -24,10 +26,10 @@ public class ComeEvent {
     }
 
     @Ignore
-    public ComeEvent(Date date, ComeEventType type, Integer workDayId) {
+    public ComeEvent(Date date, ComeEventType type, WorkDay workDay) {
         this.date = date;
         this.type = type;
-        this.workDayId = workDayId;
+        this.workDayId = workDay.getId();
     }
 
     public int getId() {
