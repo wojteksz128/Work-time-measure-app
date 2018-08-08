@@ -3,6 +3,7 @@ package net.wojteksz128.worktimemeasureapp;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.TextView;
 
@@ -26,7 +27,8 @@ public class ComeEventViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(ComeEvent comeEvent) {
-        dateTV.setText(comeEvent.getDate().toString());
+        final String enterTime = DateFormat.format("E, HH:mm:ss", comeEvent.getDate()).toString();
+        dateTV.setText(enterTime);
 
         typeTV.setText(comeEvent.getType().getDisplayLabel());
         setTypeBackground(view.getContext().getResources().getDrawable(comeEvent.getType().getBackground()));

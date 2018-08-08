@@ -2,6 +2,7 @@ package net.wojteksz128.worktimemeasureapp;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -30,9 +31,10 @@ class WorkDayViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(WorkDayEvents workDay) {
-        dateTV.setText(workDay.getWorkDay().getDate().toString());
+        final String label = DateFormat.format("E, dd.MM.yyyy", workDay.getWorkDay().getDate()).toString();
+        dateTV.setText(label);
 
-        workDurationTV.setText(workDay.getWorkDay().getWorktime().toString());
+        workDurationTV.setText(DateFormat.format("HH:mm:ss", workDay.getWorkDay().getWorktime()));
         prepareListWithEvents(workDay.getEvents());
     }
 
