@@ -18,6 +18,7 @@ import net.wojteksz128.worktimemeasureapp.database.AppDatabase;
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEvent;
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventDao;
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventType;
+import net.wojteksz128.worktimemeasureapp.util.ComeEventUtils;
 
 import java.util.List;
 
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
-                ComeEventExecutor.registerNewEvent(MainActivity.this,
+                ComeEventUtils.registerNewEvent(MainActivity.this,
                 new Function<Void, Void>() {
                     @Override
                     public Void apply(Void input) {

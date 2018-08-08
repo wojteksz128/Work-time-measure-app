@@ -1,4 +1,4 @@
-package net.wojteksz128.worktimemeasureapp;
+package net.wojteksz128.worktimemeasureapp.util;
 
 import android.arch.core.util.Function;
 import android.content.Context;
@@ -12,7 +12,7 @@ import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventType;
 import java.util.Date;
 import java.util.List;
 
-public class ComeEventExecutor {
+public class ComeEventUtils {
 
 
     public static void registerNewEvent(Context context, final Function<Void, Void> preFunction, final Function<ComeEventType, Void> postFunction) {
