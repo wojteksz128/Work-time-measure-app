@@ -12,6 +12,7 @@ public class ComeEventViewHolder extends RecyclerView.ViewHolder {
 
     private final TextView dateTV;
     private final TextView typeTV;
+
     private final View view;
 
 
@@ -38,5 +39,9 @@ public class ComeEventViewHolder extends RecyclerView.ViewHolder {
         } else {
             typeTV.setBackgroundDrawable(drawable);
         }
+    }
+
+    public View getView() {
+        return view;
     }
 }

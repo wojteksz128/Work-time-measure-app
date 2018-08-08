@@ -15,9 +15,9 @@ import android.view.View;
 import android.widget.ProgressBar;
 
 import net.wojteksz128.worktimemeasureapp.database.AppDatabase;
-import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEvent;
-import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventDao;
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventType;
+import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayDao;
+import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents;
 import net.wojteksz128.worktimemeasureapp.util.ComeEventUtils;
 
 import java.util.List;
@@ -25,7 +25,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private ConstraintLayout mLayout;
-    private ComeEventAdapter mEventAdapter;
+    private WorkDayAdapter mWorkDayAdapter;
     private ProgressBar mLoadingIndicator;
 
 
@@ -42,15 +42,15 @@ public class MainActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mDayList.setLayoutManager(layoutManager);
 
-        mEventAdapter = new ComeEventAdapter();
-        mDayList.setAdapter(mEventAdapter);
+        mWorkDayAdapter = new WorkDayAdapter();
+        mDayList.setAdapter(mWorkDayAdapter);
 
-        ComeEventDao eventDao = AppDatabase.getInstance(this).comeEventDao();
-        LiveData<List<ComeEvent>> eventsData = eventDao.findAllInLiveData();
-        eventsData.observe(this, new Observer<List<ComeEvent>>() {
+        final WorkDayDao workDayDao = AppDatabase.getInstance(this).workDayDao();
+        final LiveData<List<WorkDayEvents>> workDayData = workDayDao.findAllInLiveData();
+        workDayData.observe(this, new Observer<List<WorkDayEvents>>() {
             @Override
-            public void onChanged(@Nullable List<ComeEvent> comeEvents) {
-                mEventAdapter.setEvents(comeEvents);
+            public void onChanged(@Nullable List<WorkDayEvents> workDayEvents) {
+                mWorkDayAdapter.setWorkDays(workDayEvents);
             }
         });
 
@@ -59,34 +59,34 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 ComeEventUtils.registerNewEvent(MainActivity.this,
-                new Function<Void, Void>() {
-                    @Override
-                    public Void apply(Void input) {
-                        mLoadingIndicator.setVisibility(View.VISIBLE);
-                        return null;
-                    }
-                },
-                new Function<ComeEventType, Void>() {
-                    @Override
-                    public Void apply(ComeEventType input) {
-                        String message;
+                        new Function<Void, Void>() {
+                            @Override
+                            public Void apply(Void input) {
+                                mLoadingIndicator.setVisibility(View.VISIBLE);
+                                return null;
+                            }
+                        },
+                        new Function<ComeEventType, Void>() {
+                            @Override
+                            public Void apply(ComeEventType input) {
+                                String message;
 
-                        mLoadingIndicator.setVisibility(View.INVISIBLE);
-                        switch (input) {
-                            case COME_IN:
-                                message = "Zarejestrowano wejście do pracy";
-                                break;
-                            case COME_OUT:
-                                message = "Zarejestrowano wyjście z pracy";
-                                break;
-                            default:
-                                message = "Incorrect event type";
-                        }
+                                mLoadingIndicator.setVisibility(View.INVISIBLE);
+                                switch (input) {
+                                    case COME_IN:
+                                        message = "Zarejestrowano wejście do pracy";
+                                        break;
+                                    case COME_OUT:
+                                        message = "Zarejestrowano wyjście z pracy";
+                                        break;
+                                    default:
+                                        message = "Incorrect event type";
+                                }
 
-                        Snackbar.make(mLayout, message, Snackbar.LENGTH_LONG).show();
-                        return null;
-                    }
-                });
+                                Snackbar.make(mLayout, message, Snackbar.LENGTH_LONG).show();
+                                return null;
+                            }
+                        });
 
             }
         });
