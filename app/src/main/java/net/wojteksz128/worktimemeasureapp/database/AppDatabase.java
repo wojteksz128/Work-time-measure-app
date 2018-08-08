@@ -85,14 +85,11 @@ public abstract class AppDatabase extends RoomDatabase {
         migrations.add(new Migration(2, 3) {
             @Override
             public void migrate(@NonNull SupportSQLiteDatabase database) {
+                database.execSQL("DELETE FROM work_day");
+                database.execSQL("DELETE FROM come_event");
+
                 database.execSQL("ALTER TABLE work_day ADD COLUMN beginSlot INTEGER");
                 database.execSQL("ALTER TABLE work_day ADD COLUMN endSlot INTEGER");
-
-                database.execSQL("UPDATE work_day " +
-                        "SET beginSlot = CAST(date / (24*60*60*1000) AS INTEGER) * (24*60*60*1000)" +
-                        ", endSlot = CAST(date / (24*60*60*1000) AS INTEGER) * (24*60*60*1000) + (24*60*60*1000) " +
-                        "WHERE beginSlot IS NULL " +
-                        "OR endSlot IS NULL");
             }
         });
 
