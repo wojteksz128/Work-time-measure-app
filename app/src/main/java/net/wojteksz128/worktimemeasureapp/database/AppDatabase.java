@@ -21,13 +21,19 @@ import java.util.List;
 /*
 Version 2 database schema
 
- CREATE TABLE IF NOT EXISTS `come_event` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `date` INTEGER, `type` TEXT, `workDayId` INTEGER NOT NULL)");
- CREATE TABLE IF NOT EXISTS `work_day` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `date` INTEGER, `worktime` INTEGER, `percentDeclaredTime` REAL NOT NULL)");
- CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)
- INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9b3cab27ee6c8c880f4794eb9af10a84')
+    CREATE TABLE IF NOT EXISTS `come_event` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `date` INTEGER, `type` TEXT, `workDayId` INTEGER NOT NULL)
+    CREATE TABLE IF NOT EXISTS `work_day` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `date` INTEGER, `worktime` INTEGER, `percentDeclaredTime` REAL NOT NULL)
+    CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)
+    INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9b3cab27ee6c8c880f4794eb9af10a84')
+
+Version 3 database schema
+    CREATE TABLE IF NOT EXISTS `come_event` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `date` INTEGER, `type` TEXT, `workDayId` INTEGER NOT NULL)
+    CREATE TABLE IF NOT EXISTS `work_day` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `date` INTEGER, `beginSlot` INTEGER, `endSlot` INTEGER, `worktime` INTEGER, `percentDeclaredTime` REAL NOT NULL)
+    CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)
+    INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b9013c5fca385464713ff3a6cbdc193b')
  */
 
-@Database(entities = {ComeEvent.class, WorkDay.class}, version = 2)
+@Database(entities = {ComeEvent.class, WorkDay.class}, version = 3)
 @TypeConverters({DatabaseConverters.DateConverter.class, DatabaseConverters.ComeEventTypeConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -75,7 +81,21 @@ public abstract class AppDatabase extends RoomDatabase {
             }
         });
 
-        // TODO: 2018-08-08 Implement switch between Version 2 -> 3
+        // Version 2 -> 3
+        migrations.add(new Migration(2, 3) {
+            @Override
+            public void migrate(@NonNull SupportSQLiteDatabase database) {
+                database.execSQL("ALTER TABLE work_day ADD COLUMN beginSlot INTEGER");
+                database.execSQL("ALTER TABLE work_day ADD COLUMN endSlot INTEGER");
+
+                database.execSQL("UPDATE work_day " +
+                        "SET beginSlot = CAST(date / (24*60*60*1000) AS INTEGER) * (24*60*60*1000)" +
+                        ", endSlot = CAST(date / (24*60*60*1000) AS INTEGER) * (24*60*60*1000) + (24*60*60*1000) " +
+                        "WHERE beginSlot IS NULL " +
+                        "OR endSlot IS NULL");
+            }
+        });
+
 
         return migrations.toArray(new Migration[0]);
     }
