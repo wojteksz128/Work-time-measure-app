@@ -18,7 +18,16 @@ import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayDao;
 import java.util.ArrayList;
 import java.util.List;
 
-@Database(entities = {ComeEvent.class, WorkDay.class}, version = 2, exportSchema = false)
+/*
+Version 2 database schema
+
+ CREATE TABLE IF NOT EXISTS `come_event` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `date` INTEGER, `type` TEXT, `workDayId` INTEGER NOT NULL)");
+ CREATE TABLE IF NOT EXISTS `work_day` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `date` INTEGER, `worktime` INTEGER, `percentDeclaredTime` REAL NOT NULL)");
+ CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)
+ INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9b3cab27ee6c8c880f4794eb9af10a84')
+ */
+
+@Database(entities = {ComeEvent.class, WorkDay.class}, version = 2)
 @TypeConverters({DatabaseConverters.DateConverter.class, DatabaseConverters.ComeEventTypeConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 
