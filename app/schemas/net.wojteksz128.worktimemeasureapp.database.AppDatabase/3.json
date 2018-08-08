@@ -2,17 +2,17 @@
   "formatVersion": 1,
   "database": {
     "version": 3,
-    "identityHash": "b9013c5fca385464713ff3a6cbdc193b",
+    "identityHash": "c97dcd34c0770eb9b99bbd46e64f6cca",
     "entities": [
       {
         "tableName": "come_event",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `date` INTEGER, `type` TEXT, `workDayId` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `date` INTEGER, `type` TEXT, `workDayId` INTEGER)",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "date",
@@ -30,7 +30,7 @@
             "fieldPath": "workDayId",
             "columnName": "workDayId",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -44,13 +44,13 @@
       },
       {
         "tableName": "work_day",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `date` INTEGER, `beginSlot` INTEGER, `endSlot` INTEGER, `worktime` INTEGER, `percentDeclaredTime` REAL NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `date` INTEGER, `beginSlot` INTEGER, `endSlot` INTEGER, `worktime` INTEGER, `percentDeclaredTime` REAL NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "date",
@@ -95,7 +95,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"b9013c5fca385464713ff3a6cbdc193b\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"c97dcd34c0770eb9b99bbd46e64f6cca\")"
     ]
   }
 }

@@ -23,7 +23,7 @@ public class ComeEventAdapter extends RecyclerView.Adapter<ComeEventViewHolder> 
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
-        View view = inflater.inflate(R.layout.day_list_item, parent, false);
+        View view = inflater.inflate(R.layout.main_day_event_list_item, parent, false);
         return new ComeEventViewHolder(view);
     }
 
