@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEvent;
 
+// TODO: 10.08.2018 Change view and viewholder implementations
 public class ComeEventViewHolder extends RecyclerView.ViewHolder {
 
     private final TextView dateTV;

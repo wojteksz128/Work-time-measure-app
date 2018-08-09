@@ -18,6 +18,7 @@ import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayDao;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO: 10.08.2018 Upgrade database version to 4 and create Migration Version 3 -> 4
 @Database(entities = {ComeEvent.class, WorkDay.class}, version = 3)
 @TypeConverters({DatabaseConverters.DateConverter.class, DatabaseConverters.ComeEventTypeConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
