@@ -12,7 +12,7 @@
         android:layout_margin="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Monday, Jan 1 2018" />
+        tools:text="@string/main_work_day_label_example" />
 
     <TextView
         android:id="@+id/day_workDuration"
@@ -22,7 +22,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/day_label"
         app:layout_constraintBottom_toBottomOf="@id/day_label"
-        tools:text="08:30" />
+        tools:text="@string/main_work_day_duration_example" />
 
     <LinearLayout
         android:id="@+id/day_events_list"

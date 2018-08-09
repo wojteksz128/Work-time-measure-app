@@ -1,5 +1,20 @@
 <resources>
     <string name="app_name">Work Time Measure App</string>
+
+    <!--##########################################-->
+    <!--############# Main Activity ##############-->
+    <!--##########################################-->
+
+    <!-- Come Event types labels -->
     <string name="main_come_in_label">Income</string>
     <string name="main_come_out_label">Outcome</string>
+
+    <!-- Day Event list item examples -->
+    <string name="main_day_event_date_example">2018&#8211;01&#8211;01 12:00</string>
+    <string name="main_day_event_item_type_example">Income</string>
+
+    <!-- Work Day list item examples -->
+    <string name="main_work_day_label_example">Mon, 2018&#8211;01&#8211;01</string>
+    <string name="main_work_day_duration_example">08:30</string>
+
 </resources>
