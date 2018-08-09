@@ -1,4 +1,4 @@
-package net.wojteksz128.worktimemeasureapp.database;
+package net.wojteksz128.worktimemeasureapp.database.comeEvent;
 
 import net.wojteksz128.worktimemeasureapp.R;
 

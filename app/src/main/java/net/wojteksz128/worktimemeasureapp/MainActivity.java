@@ -3,7 +3,6 @@ package net.wojteksz128.worktimemeasureapp;
 import android.arch.core.util.Function;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -13,19 +12,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import net.wojteksz128.worktimemeasureapp.database.AppDatabase;
-import net.wojteksz128.worktimemeasureapp.database.ComeEvent;
-import net.wojteksz128.worktimemeasureapp.database.ComeEventDao;
-import net.wojteksz128.worktimemeasureapp.database.ComeEventType;
+import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventType;
+import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayDao;
+import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents;
+import net.wojteksz128.worktimemeasureapp.util.ComeEventUtils;
 
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     private ConstraintLayout mLayout;
-    private ComeEventDao eventDao;
-    private ComeEventAdapter eventAdapter;
+    private WorkDayAdapter mWorkDayAdapter;
+    private ProgressBar mLoadingIndicator;
 
 
     @Override
@@ -34,21 +35,22 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mLayout = findViewById(R.id.main_layout);
-        FloatingActionButton mEnterFab = findViewById(R.id.enterFab);
+        mLoadingIndicator = findViewById(R.id.main_loading_indicator);
+        FloatingActionButton mEnterFab = findViewById(R.id.main_enter_fab);
         RecyclerView mDayList = findViewById(R.id.main_rv_days);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mDayList.setLayoutManager(layoutManager);
 
-        eventAdapter = new ComeEventAdapter();
-        mDayList.setAdapter(eventAdapter);
+        mWorkDayAdapter = new WorkDayAdapter();
+        mDayList.setAdapter(mWorkDayAdapter);
 
-        eventDao = AppDatabase.getInstance(this).comeEventDao();
-        LiveData<List<ComeEvent>> eventsData = eventDao.findAllInLiveData();
-        eventsData.observe(this, new Observer<List<ComeEvent>>() {
+        final WorkDayDao workDayDao = AppDatabase.getInstance(this).workDayDao();
+        final LiveData<List<WorkDayEvents>> workDayData = workDayDao.findAllInLiveData();
+        workDayData.observe(this, new Observer<List<WorkDayEvents>>() {
             @Override
-            public void onChanged(@Nullable List<ComeEvent> comeEvents) {
-                eventAdapter.setEvents(comeEvents);
+            public void onChanged(@Nullable List<WorkDayEvents> workDayEvents) {
+                mWorkDayAdapter.setWorkDays(workDayEvents);
             }
         });
 
@@ -56,27 +58,35 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
-                ComeEventExecutor.registerNewEvent(MainActivity.this, new Function<ComeEventType, Void>() {
-                    @Override
-                    public Void apply(ComeEventType input) {
-                        // TODO: 2018-08-07 Add loading indicator
-                        String message;
+                ComeEventUtils.registerNewEvent(MainActivity.this,
+                        new Function<Void, Void>() {
+                            @Override
+                            public Void apply(Void input) {
+                                mLoadingIndicator.setVisibility(View.VISIBLE);
+                                return null;
+                            }
+                        },
+                        new Function<ComeEventType, Void>() {
+                            @Override
+                            public Void apply(ComeEventType input) {
+                                String message;
 
-                        switch (input) {
-                            case COME_IN:
-                                message = "Zarejestrowano wejście do pracy";
-                                break;
-                            case COME_OUT:
-                                message = "Zarejestrowano wyjście z pracy";
-                                break;
-                            default:
-                                message = "Incorrect event type";
-                        }
+                                mLoadingIndicator.setVisibility(View.INVISIBLE);
+                                switch (input) {
+                                    case COME_IN:
+                                        message = "Zarejestrowano wejście do pracy";
+                                        break;
+                                    case COME_OUT:
+                                        message = "Zarejestrowano wyjście z pracy";
+                                        break;
+                                    default:
+                                        message = "Incorrect event type";
+                                }
 
-                        Snackbar.make(mLayout, message, Snackbar.LENGTH_LONG).show();
-                        return null;
-                    }
-                });
+                                Snackbar.make(mLayout, message, Snackbar.LENGTH_LONG).show();
+                                return null;
+                            }
+                        });
 
             }
         });

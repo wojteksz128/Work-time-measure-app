@@ -2,6 +2,8 @@ package net.wojteksz128.worktimemeasureapp.database;
 
 import android.arch.persistence.room.TypeConverter;
 
+import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventType;
+
 import java.util.Date;
 
 public class DatabaseConverters {

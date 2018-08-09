@@ -7,7 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import net.wojteksz128.worktimemeasureapp.database.ComeEvent;
+import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEvent;
 
 import java.util.List;
 
@@ -23,7 +23,7 @@ public class ComeEventAdapter extends RecyclerView.Adapter<ComeEventViewHolder> 
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
-        View view = inflater.inflate(R.layout.day_list_item, parent, false);
+        View view = inflater.inflate(R.layout.main_day_event_list_item, parent, false);
         return new ComeEventViewHolder(view);
     }
 

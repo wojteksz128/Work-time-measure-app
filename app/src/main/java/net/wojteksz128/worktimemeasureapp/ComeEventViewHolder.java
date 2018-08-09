@@ -1,18 +1,23 @@
 package net.wojteksz128.worktimemeasureapp;
 
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.TextView;
 
-import net.wojteksz128.worktimemeasureapp.database.ComeEvent;
+import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEvent;
 
 public class ComeEventViewHolder extends RecyclerView.ViewHolder {
 
     private final TextView dateTV;
     private final TextView typeTV;
+
     private final View view;
 
 
+    @SuppressWarnings("WeakerAccess")
     public ComeEventViewHolder(View itemView) {
         super(itemView);
 
@@ -22,11 +27,23 @@ public class ComeEventViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(ComeEvent comeEvent) {
-        dateTV.setText(comeEvent.getDate().toString());
+        final String enterTime = DateFormat.format("E, HH:mm:ss", comeEvent.getDate()).toString();
+        dateTV.setText(enterTime);
 
         typeTV.setText(comeEvent.getType().getDisplayLabel());
-        // TODO: 2018-08-07 Solve problem with API versions
-        typeTV.setBackground(view.getContext().getDrawable(comeEvent.getType().getBackground()));
+        setTypeBackground(view.getContext().getResources().getDrawable(comeEvent.getType().getBackground()));
         typeTV.setPadding(8, 4, 8, 4);
+    }
+
+    private void setTypeBackground(Drawable drawable) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            typeTV.setBackground(drawable);
+        } else {
+            typeTV.setBackgroundDrawable(drawable);
+        }
+    }
+
+    public View getView() {
+        return view;
     }
 }
