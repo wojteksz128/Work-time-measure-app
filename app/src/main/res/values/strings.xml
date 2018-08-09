@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Work Time Measure App</string>
 
@@ -11,10 +12,14 @@
 
     <!-- Day Event list item examples -->
     <string name="main_day_event_date_example">2018&#8211;01&#8211;01 12:00</string>
-    <string name="main_day_event_item_type_example">Income</string>
+    <string name="main_day_event_item_type_example">@string/main_come_in_label</string>
 
     <!-- Work Day list item examples -->
     <string name="main_work_day_label_example">Mon, 2018&#8211;01&#8211;01</string>
     <string name="main_work_day_duration_example">08:30</string>
+
+    <!-- Snackbar info's -->
+    <string name="main_snackbar_info_income_registered">The entrance to work was registered</string>
+    <string name="main_snackbar_info_outcome_registered">An exit to work was registered</string>
 
 </resources>
