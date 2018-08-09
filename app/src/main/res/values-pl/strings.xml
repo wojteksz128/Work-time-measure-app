@@ -16,7 +16,6 @@
 
     <!-- Work Day list item strings -->
     <string name="main_work_day_label_example">Pon, 01.01.2018</string>
-    <string name="main_work_day_duration_example">08:30</string>
     <string name="main_work_day_label_format">E, dd.MM.yyyy</string>
 
     <!-- Snackbar info's -->

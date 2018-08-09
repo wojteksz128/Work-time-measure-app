@@ -17,7 +17,7 @@
 
     <!-- Work Day list item strings -->
     <string name="main_work_day_label_example">Mon, 2018&#8211;01&#8211;01</string>
-    <string name="main_work_day_duration_example">08:30</string>
+    <string name="main_work_day_duration_example" translatable="false">08:30:00</string>
     <string name="main_work_day_label_format" translatable="false">E, yyyy-MM-dd</string>
     <string name="main_work_day_duration_format" translatable="false">HH:mm:ss</string>
 

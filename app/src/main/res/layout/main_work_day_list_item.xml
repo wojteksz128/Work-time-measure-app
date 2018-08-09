@@ -22,12 +22,14 @@
         tools:text="@string/main_work_day_label_example" />
 
     <TextView
-        android:id="@+id/day_workDuration"
+        android:id="@+id/day_work_duration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         app:layout_constraintBottom_toBottomOf="@id/day_label"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/day_label"
         app:layout_constraintTop_toTopOf="@+id/day_label"
         tools:text="@string/main_work_day_duration_example" />
 

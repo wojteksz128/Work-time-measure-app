@@ -26,7 +26,7 @@ class WorkDayViewHolder extends RecyclerView.ViewHolder {
 
         view = itemView;
         dateTV = itemView.findViewById(R.id.day_label);
-        workDurationTV = itemView.findViewById(R.id.day_workDuration);
+        workDurationTV = itemView.findViewById(R.id.day_work_duration);
         eventsList = itemView.findViewById(R.id.day_events_list);
     }
 
