@@ -15,9 +15,7 @@ import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents;
 import java.util.ArrayList;
 import java.util.Date;
 
-// TODO: 09.08.2018 Zaimplementuj pooprawne obliczenia czasu (przechowuj i licz w UTC - przeliczaj na bieżący)
 public class ComeEventUtils {
-
 
     public static void registerNewEvent(Context context, final Function<Void, Void> preFunction, final Function<ComeEventType, Void> postFunction) {
         final ComeEventDao comeEventDao = AppDatabase.getInstance(context).comeEventDao();
