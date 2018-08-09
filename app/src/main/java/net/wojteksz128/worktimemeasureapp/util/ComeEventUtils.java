@@ -3,6 +3,7 @@ package net.wojteksz128.worktimemeasureapp.util;
 import android.arch.core.util.Function;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 
 import net.wojteksz128.worktimemeasureapp.database.AppDatabase;
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEvent;
@@ -35,23 +36,14 @@ public class ComeEventUtils {
                 ComeEventType comeEventType;
 
                 if (workDay == null) {
-                    workDay = new WorkDayEvents();
-                    workDay.setWorkDay(new WorkDay(registerDate));
-                    workDay.setEvents(new ArrayList<ComeEvent>());
-                    final Long insertedWorkdayId = workDayDao.insert(workDay.getWorkDay());
-                    workDay.setWorkDay(new WorkDay(insertedWorkdayId.intValue(),
-                            workDay.getWorkDay().getDate(), workDay.getWorkDay().getBeginSlot(),
-                            workDay.getWorkDay().getEndSlot(), workDay.getWorkDay().getWorktime(),
-                            workDay.getWorkDay().getPercentDeclaredTime()));
-                    comeEventType = ComeEventType.COME_IN;
+                    workDay = createNewWorkDay(registerDate, workDayDao);
+                }
 
+                if (workDay.getEvents() == null || workDay.getEvents().isEmpty()) {
+                    comeEventType = ComeEventType.COME_IN;
                 } else {
-                    if (workDay.getEvents() == null || workDay.getEvents().isEmpty()) {
-                        comeEventType = ComeEventType.COME_IN;
-                    } else {
-                        final ComeEventType type = workDay.getEvents().get(0).getType();
-                        comeEventType = type.equals(ComeEventType.COME_IN) ? ComeEventType.COME_OUT : ComeEventType.COME_IN;
-                    }
+                    final ComeEventType type = workDay.getEvents().get(0).getType();
+                    comeEventType = type.equals(ComeEventType.COME_IN) ? ComeEventType.COME_OUT : ComeEventType.COME_IN;
                 }
 
                 final ComeEvent comeEvent = new ComeEvent(registerDate, comeEventType, workDay.getWorkDay());
@@ -65,5 +57,19 @@ public class ComeEventUtils {
                 postFunction.apply(comeEventType);
             }
         }.execute();
+    }
+
+    @NonNull
+    private static WorkDayEvents createNewWorkDay(Date registerDate, WorkDayDao workDayDao) {
+        WorkDayEvents workDay;
+        workDay = new WorkDayEvents();
+        workDay.setWorkDay(new WorkDay(registerDate));
+        workDay.setEvents(new ArrayList<ComeEvent>());
+        final Long insertedWorkdayId = workDayDao.insert(workDay.getWorkDay());
+        workDay.setWorkDay(new WorkDay(insertedWorkdayId.intValue(),
+                workDay.getWorkDay().getDate(), workDay.getWorkDay().getBeginSlot(),
+                workDay.getWorkDay().getEndSlot(), workDay.getWorkDay().getWorktime(),
+                workDay.getWorkDay().getPercentDeclaredTime()));
+        return workDay;
     }
 }
