@@ -26,15 +26,15 @@ class WorkDayViewHolder extends RecyclerView.ViewHolder {
 
         view = itemView;
         dateTV = itemView.findViewById(R.id.day_label);
-        workDurationTV = itemView.findViewById(R.id.day_workDuration);
+        workDurationTV = itemView.findViewById(R.id.day_work_duration);
         eventsList = itemView.findViewById(R.id.day_events_list);
     }
 
     public void bind(WorkDayEvents workDay) {
-        final String label = DateFormat.format("E, dd.MM.yyyy", workDay.getWorkDay().getDate()).toString();
+        final String label = DateFormat.format(view.getContext().getString(R.string.main_work_day_label_format), workDay.getWorkDay().getDate()).toString();
         dateTV.setText(label);
 
-        workDurationTV.setText(DateFormat.format("HH:mm:ss", workDay.getWorkDay().getWorktime()));
+        workDurationTV.setText(DateFormat.format(view.getContext().getString(R.string.main_work_day_duration_format), workDay.getWorkDay().getWorktime()));
         prepareListWithEvents(workDay.getEvents());
     }
 

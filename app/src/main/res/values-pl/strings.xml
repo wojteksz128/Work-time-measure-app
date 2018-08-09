@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Pomiar czasu pracy</string>
+
+    <!--##########################################-->
+    <!--############# Main Activity ##############-->
+    <!--##########################################-->
+
+    <!-- Come Event types labels -->
+    <string name="main_come_in_label">Wejście</string>
+    <string name="main_come_out_label">Wyjście</string>
+
+    <!-- Day Event list item strings -->
+    <string name="main_day_event_date_example">01.01.2018 12:00</string>
+    <string name="main_day_event_item_type_example">@string/main_come_in_label</string>
+
+    <!-- Work Day list item strings -->
+    <string name="main_work_day_label_example">Pon, 01.01.2018</string>
+    <string name="main_work_day_label_format">E, dd.MM.yyyy</string>
+
+    <!-- Snackbar info's -->
+    <string name="main_snackbar_info_income_registered">Zarejestrowano wejście do pracy</string>
+    <string name="main_snackbar_info_outcome_registered">Zarejestrowano wyjście z pracy</string>
+
+</resources>

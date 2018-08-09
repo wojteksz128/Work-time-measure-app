@@ -27,7 +27,7 @@ public class ComeEventViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(ComeEvent comeEvent) {
-        final String enterTime = DateFormat.format("E, HH:mm:ss", comeEvent.getDate()).toString();
+        final String enterTime = DateFormat.format(view.getContext().getString(R.string.main_day_event_time_format), comeEvent.getDate()).toString();
         dateTV.setText(enterTime);
 
         typeTV.setText(comeEvent.getType().getDisplayLabel());

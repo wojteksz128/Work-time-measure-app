@@ -13,7 +13,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="2018-01-01 12:00" />
+        tools:text="@string/main_day_event_date_example" />
 
     <TextView
         android:id="@+id/day_item_type"
@@ -25,5 +25,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:background="@drawable/come_in_background"
-        tools:text="COME_IN" />
+        tools:text="@string/main_day_event_item_type_example" />
 </android.support.constraint.ConstraintLayout>

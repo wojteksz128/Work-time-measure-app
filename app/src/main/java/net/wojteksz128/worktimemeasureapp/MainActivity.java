@@ -22,6 +22,8 @@ import net.wojteksz128.worktimemeasureapp.util.ComeEventUtils;
 
 import java.util.List;
 
+// TODO: 09.08.2018 Dodaj joba, który automatycznie zamknie dzień pracy o godzinie zmiany dnia pracy
+
 public class MainActivity extends AppCompatActivity {
 
     private ConstraintLayout mLayout;
@@ -74,10 +76,10 @@ public class MainActivity extends AppCompatActivity {
                                 mLoadingIndicator.setVisibility(View.INVISIBLE);
                                 switch (input) {
                                     case COME_IN:
-                                        message = "Zarejestrowano wejście do pracy";
+                                        message = getString(R.string.main_snackbar_info_income_registered);
                                         break;
                                     case COME_OUT:
-                                        message = "Zarejestrowano wyjście z pracy";
+                                        message = getString(R.string.main_snackbar_info_outcome_registered);
                                         break;
                                     default:
                                         message = "Incorrect event type";
