@@ -38,15 +38,24 @@ public class MainActivity extends AppCompatActivity {
 
         mLayout = findViewById(R.id.main_layout);
         mLoadingIndicator = findViewById(R.id.main_loading_indicator);
-        FloatingActionButton mEnterFab = findViewById(R.id.main_enter_fab);
-        RecyclerView mDayList = findViewById(R.id.main_rv_days);
+
+        initWorkDaysRecyclerView();
+        initFab();
+    }
+
+    private void initWorkDaysRecyclerView() {
+        mWorkDayAdapter = new WorkDayAdapter();
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        mDayList.setLayoutManager(layoutManager);
 
-        mWorkDayAdapter = new WorkDayAdapter();
+        RecyclerView mDayList = findViewById(R.id.main_rv_days);
+        mDayList.setLayoutManager(layoutManager);
         mDayList.setAdapter(mWorkDayAdapter);
 
+        initLiveData();
+    }
+
+    private void initLiveData() {
         final WorkDayDao workDayDao = AppDatabase.getInstance(this).workDayDao();
         final LiveData<List<WorkDayEvents>> workDayData = workDayDao.findAllInLiveData();
         workDayData.observe(this, new Observer<List<WorkDayEvents>>() {
@@ -55,7 +64,10 @@ public class MainActivity extends AppCompatActivity {
                 mWorkDayAdapter.setWorkDays(workDayEvents);
             }
         });
+    }
 
+    private void initFab() {
+        FloatingActionButton mEnterFab = findViewById(R.id.main_enter_fab);
         mEnterFab.setOnClickListener(new View.OnClickListener() {
 
             @Override
