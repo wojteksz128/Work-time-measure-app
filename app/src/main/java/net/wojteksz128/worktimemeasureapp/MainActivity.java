@@ -23,7 +23,15 @@ import net.wojteksz128.worktimemeasureapp.util.ComeEventUtils;
 import java.util.List;
 
 // TODO: 09.08.2018 Dodaj joba, który automatycznie zamknie dzień pracy o godzinie zmiany dnia pracy
-
+// TODO: 11.08.2018 Dodaj wątek, który będzie automatycznie zmieniać sekundy, gdy widzi się czas i leci czas pracy
+// TODO: 11.08.2018 Jeśli aktualny dzień istnieje - przenieś FABa w to miejsce
+// TODO: 11.08.2018 Dodaj statystyki
+// TODO: 11.08.2018 Dodaj notyfikację na kilka minut przed wyjściem z pracy
+// TODO: 11.08.2018 Dodaj konfigurację
+// TODO: 11.08.2018 dodaj możliwość importu eventów
+// TODO: 11.08.2018 Dodaj możliwość edycji istniejących eventów lub ich usunięcia (części lub całości)
+// TODO: 11.08.2018 Dodaj widok kalendarza
+// TODO: 11.08.2018 dodaj drawer layout (hamburger)
 public class MainActivity extends AppCompatActivity {
 
     private ConstraintLayout mLayout;
