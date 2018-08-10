@@ -14,6 +14,7 @@ import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayDao;
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 public class ComeEventUtils {
@@ -39,15 +40,27 @@ public class ComeEventUtils {
                     workDay = createNewWorkDay(registerDate, workDayDao);
                 }
 
+                final ComeEvent comeEvent;
                 if (workDay.getEvents() == null || workDay.getEvents().isEmpty()) {
                     comeEventType = ComeEventType.COME_IN;
+                    comeEvent = new ComeEvent(registerDate, workDay.getWorkDay());
+                    comeEventDao.insert(comeEvent);
                 } else {
-                    final ComeEventType type = workDay.getEvents().get(0).getType();
-                    comeEventType = type.equals(ComeEventType.COME_IN) ? ComeEventType.COME_OUT : ComeEventType.COME_IN;
-                }
+                    final ComeEvent tmpEvent = workDay.getEvents().get(0);
+                    if (tmpEvent.getEndDate() != null) {
+                        comeEvent = new ComeEvent(registerDate, workDay.getWorkDay());
+                        comeEventDao.insert(comeEvent);
 
-                final ComeEvent comeEvent = new ComeEvent(registerDate, comeEventType, workDay.getWorkDay());
-                comeEventDao.insert(comeEvent);
+                        comeEventType = ComeEventType.COME_IN;
+                    } else {
+                        comeEvent = tmpEvent;
+                        comeEvent.setEndDate(registerDate);
+                        comeEvent.setDuration(calculateDuration(comeEvent));
+                        comeEventDao.update(comeEvent);
+
+                        comeEventType = ComeEventType.COME_OUT;
+                    }
+                }
 
                 return comeEventType;
             }
@@ -59,6 +72,12 @@ public class ComeEventUtils {
         }.execute();
     }
 
+    private static Date calculateDuration(ComeEvent comeEvent) {
+        final Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(comeEvent.getEndDate().getTime() - comeEvent.getStartDate().getTime());
+        return calendar.getTime();
+    }
+
     @NonNull
     private static WorkDayEvents createNewWorkDay(Date registerDate, WorkDayDao workDayDao) {
         WorkDayEvents workDay;
@@ -66,10 +85,19 @@ public class ComeEventUtils {
         workDay.setWorkDay(new WorkDay(registerDate));
         workDay.setEvents(new ArrayList<ComeEvent>());
         final Long insertedWorkdayId = workDayDao.insert(workDay.getWorkDay());
-        workDay.setWorkDay(new WorkDay(insertedWorkdayId.intValue(),
-                workDay.getWorkDay().getDate(), workDay.getWorkDay().getBeginSlot(),
-                workDay.getWorkDay().getEndSlot(), workDay.getWorkDay().getWorktime(),
+        workDay.setWorkDay(new WorkDay(insertedWorkdayId.intValue(), workDay.getWorkDay().getDate(),
+                workDay.getWorkDay().getBeginSlot(), workDay.getWorkDay().getEndSlot(),
                 workDay.getWorkDay().getPercentDeclaredTime()));
         return workDay;
+    }
+
+    public static Date calculateSummaryDuration(WorkDayEvents workDay) {
+        long millisSum = 0;
+
+        for (ComeEvent comeEvent : workDay.getEvents()) {
+            millisSum += comeEvent.getDuration() != null ? comeEvent.getDuration().getTime() : 0;
+        }
+
+        return new Date(millisSum);
     }
 }

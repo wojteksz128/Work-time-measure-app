@@ -13,10 +13,10 @@ import java.util.List;
 @Dao
 public interface ComeEventDao {
 
-    @Query("SELECT * FROM come_event ORDER BY date DESC")
+    @Query("SELECT * FROM come_event ORDER BY startDate DESC")
     LiveData<List<ComeEvent>> findAllInLiveData();
 
-    @Query("SELECT * FROM come_event ORDER BY date DESC")
+    @Query("SELECT * FROM come_event ORDER BY startDate DESC")
     List<ComeEvent> findAll();
 
     @Query("SELECT * FROM come_event WHERE id = :id")

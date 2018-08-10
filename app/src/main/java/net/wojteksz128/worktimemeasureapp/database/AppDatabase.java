@@ -18,7 +18,7 @@ import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayDao;
 import java.util.ArrayList;
 import java.util.List;
 
-@Database(entities = {ComeEvent.class, WorkDay.class}, version = 3)
+@Database(entities = {ComeEvent.class, WorkDay.class}, version = 5)
 @TypeConverters({DatabaseConverters.DateConverter.class, DatabaseConverters.ComeEventTypeConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -78,6 +78,63 @@ public abstract class AppDatabase extends RoomDatabase {
             }
         });
 
+        // Version 3 -> 4
+        migrations.add(new Migration(3, 4) {
+            @Override
+            public void migrate(@NonNull SupportSQLiteDatabase database) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS come_event_tmp (" +
+                        "    `id` INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        "    `startDate` INTEGER, " +
+                        "    `endDate` INTEGER, " +
+                        "    `duration` INTEGER, " +
+                        "    `workDayId` INTEGER NOT NULL" +
+                        ")");
+
+                database.execSQL("INSERT INTO come_event_tmp(startDate, endDate, duration, workDayId) " +
+                        "SELECT startEvent.date AS startDate," +
+                        "    MIN(endEvent.date) AS endDate," +
+                        "    (MIN(endEvent.date) - startEvent.date) AS duration," +
+                        "    startEvent.workDayId AS workDayId " +
+                        "FROM (" +
+                        "    SELECT date," +
+                        "        workDayId" +
+                        "    FROM come_event " +
+                        "    WHERE type = 'COME_IN'" +
+                        ") startEvent" +
+                        "LEFT JOIN (" +
+                        "    SELECT date," +
+                        "        workDayId" +
+                        "    FROM come_event " +
+                        "    WHERE type = 'COME_OUT'" +
+                        ") endEvent ON startEvent.workDayId = endEvent.workDayId" +
+                        "    AND startEvent.date <= endEvent.date " +
+                        "GROUP BY startDate");
+
+                database.execSQL("DROP TABLE come_event");
+                database.execSQL("ALTER TABLE come_event_tmp RENAME TO come_event");
+            }
+        });
+
+        // Version 4 -> 5
+        migrations.add(new Migration(4, 5) {
+            @Override
+            public void migrate(@NonNull SupportSQLiteDatabase database) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS work_day_tmp " +
+                        "( `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL" +
+                        ", `date` INTEGER" +
+                        ", `beginSlot` INTEGER" +
+                        ", `endSlot` INTEGER" +
+                        ", `percentDeclaredTime` REAL NOT NULL" +
+                        ")");
+
+                database.execSQL("INSERT INTO work_day_tmp " +
+                        "SELECT id, date, beginSlot, endSlot, percentDeclaredTime " +
+                        "FROM work_day");
+
+                database.execSQL("DROP TABLE work_day");
+                database.execSQL("ALTER TABLE work_day_tmp RENAME TO work_day");
+            }
+        });
 
         return migrations.toArray(new Migration[0]);
     }

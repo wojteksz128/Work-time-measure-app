@@ -14,43 +14,37 @@ import java.util.Date;
 public class ComeEvent implements Comparable<ComeEvent> {
 
     @PrimaryKey(autoGenerate = true)
-    private int id;
-    private Date date;
-    private ComeEventType type;
+    private Long id;
+    private Date startDate;
+    private Date endDate;
+    private Date duration;
     private int workDayId;
 
-    public ComeEvent(int id, Date date, ComeEventType type, Integer workDayId) {
+
+    public ComeEvent(Long id, Date startDate, Date endDate, Date duration, int workDayId) {
         this.id = id;
-        this.date = date;
-        this.type = type;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.duration = duration;
         this.workDayId = workDayId;
     }
 
     @Ignore
-    public ComeEvent(Date date, ComeEventType type, WorkDay workDay) {
-        this.date = date;
-        this.type = type;
+    public ComeEvent(Date startDate, Date endDate, Date duration, int workDayId) {
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.duration = duration;
+        this.workDayId = workDayId;
+    }
+
+    @Ignore
+    public ComeEvent(Date startDate, WorkDay workDay) {
+        this.startDate = startDate;
         this.workDayId = workDay.getId();
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public ComeEventType getType() {
-        return type;
-    }
-
-    public void setType(ComeEventType type) {
-        this.type = type;
     }
 
     public int getWorkDayId() {
@@ -61,8 +55,32 @@ public class ComeEvent implements Comparable<ComeEvent> {
         this.workDayId = workDayId;
     }
 
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
+    public Date getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Date duration) {
+        this.duration = duration;
+    }
+
     @Override
     public int compareTo(@NonNull ComeEvent comeEvent) {
-        return (int) (this.getDate().getTime() - comeEvent.getDate().getTime());
+        return (int) (this.getStartDate().getTime() - comeEvent.getStartDate().getTime());
     }
 }
