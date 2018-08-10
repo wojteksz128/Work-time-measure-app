@@ -14,16 +14,14 @@ public class WorkDay {
     private Date date;
     private Date beginSlot;
     private Date endSlot;
-    private Date worktime;
     private double percentDeclaredTime;
 
 
-    public WorkDay(int id, Date date, Date beginSlot, Date endSlot, Date worktime, double percentDeclaredTime) {
+    public WorkDay(int id, Date date, Date beginSlot, Date endSlot, double percentDeclaredTime) {
         this.id = id;
         this.date = date;
         this.beginSlot = beginSlot;
         this.endSlot = endSlot;
-        this.worktime = worktime;
         this.percentDeclaredTime = percentDeclaredTime;
     }
 
@@ -32,7 +30,6 @@ public class WorkDay {
         this.date = date;
         this.beginSlot = WorkDayUtils.calculateBeginSlot(date);
         this.endSlot = WorkDayUtils.calculateEndSlot(date);
-        this.worktime = new Date(0);
         this.percentDeclaredTime = 0;
     }
 
@@ -62,14 +59,6 @@ public class WorkDay {
 
     public void setEndSlot(Date endSlot) {
         this.endSlot = endSlot;
-    }
-
-    public Date getWorktime() {
-        return worktime;
-    }
-
-    public void setWorktime(Date worktime) {
-        this.worktime = worktime;
     }
 
     public double getPercentDeclaredTime() {

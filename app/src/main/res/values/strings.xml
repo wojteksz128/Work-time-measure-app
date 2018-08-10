@@ -22,7 +22,7 @@
     <string name="main_work_day_label_example">Mon, 2018&#8211;01&#8211;01</string>
     <string name="main_work_day_duration_example" translatable="false">08:30:00</string>
     <string name="main_work_day_label_format" translatable="false">E, yyyy-MM-dd</string>
-    <string name="main_work_day_duration_format" translatable="false">HH:mm:ss</string>
+    <string name="main_work_day_duration_format" translatable="false">H:mm:ss</string>
 
     <!-- Snackbar info's -->
     <string name="main_snackbar_info_income_registered">The entrance to work was registered</string>

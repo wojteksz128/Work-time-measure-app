@@ -85,10 +85,19 @@ public class ComeEventUtils {
         workDay.setWorkDay(new WorkDay(registerDate));
         workDay.setEvents(new ArrayList<ComeEvent>());
         final Long insertedWorkdayId = workDayDao.insert(workDay.getWorkDay());
-        workDay.setWorkDay(new WorkDay(insertedWorkdayId.intValue(),
-                workDay.getWorkDay().getDate(), workDay.getWorkDay().getBeginSlot(),
-                workDay.getWorkDay().getEndSlot(), workDay.getWorkDay().getWorktime(),
+        workDay.setWorkDay(new WorkDay(insertedWorkdayId.intValue(), workDay.getWorkDay().getDate(),
+                workDay.getWorkDay().getBeginSlot(), workDay.getWorkDay().getEndSlot(),
                 workDay.getWorkDay().getPercentDeclaredTime()));
         return workDay;
+    }
+
+    public static Date calculateSummaryDuration(WorkDayEvents workDay) {
+        long millisSum = 0;
+
+        for (ComeEvent comeEvent : workDay.getEvents()) {
+            millisSum += comeEvent.getDuration() != null ? comeEvent.getDuration().getTime() : 0;
+        }
+
+        return new Date(millisSum);
     }
 }

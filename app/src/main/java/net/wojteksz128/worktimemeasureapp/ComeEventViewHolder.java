@@ -33,7 +33,7 @@ public class ComeEventViewHolder extends RecyclerView.ViewHolder {
     public void bind(ComeEvent comeEvent) {
         final String startTime = DateFormat.format(view.getContext().getString(R.string.main_day_event_time_format), comeEvent.getStartDate()).toString();
         final String endTime = comeEvent.getEndDate() != null ? DateFormat.format(view.getContext().getString(R.string.main_day_event_time_format), comeEvent.getEndDate()).toString() : "Teraz";
-        final SimpleDateFormat formatter = new SimpleDateFormat("H:mm:ss");
+        final SimpleDateFormat formatter = new SimpleDateFormat(view.getContext().getString(R.string.main_work_day_duration_format));
         formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
         final String duration = comeEvent.getDuration() != null ? formatter.format(comeEvent.getDuration()) : "";
 

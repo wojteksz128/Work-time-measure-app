@@ -18,7 +18,7 @@ import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayDao;
 import java.util.ArrayList;
 import java.util.List;
 
-@Database(entities = {ComeEvent.class, WorkDay.class}, version = 4)
+@Database(entities = {ComeEvent.class, WorkDay.class}, version = 5)
 @TypeConverters({DatabaseConverters.DateConverter.class, DatabaseConverters.ComeEventTypeConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -112,6 +112,27 @@ public abstract class AppDatabase extends RoomDatabase {
 
                 database.execSQL("DROP TABLE come_event");
                 database.execSQL("ALTER TABLE come_event_tmp RENAME TO come_event");
+            }
+        });
+
+        // Version 4 -> 5
+        migrations.add(new Migration(4, 5) {
+            @Override
+            public void migrate(@NonNull SupportSQLiteDatabase database) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS work_day_tmp " +
+                        "( `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL" +
+                        ", `date` INTEGER" +
+                        ", `beginSlot` INTEGER" +
+                        ", `endSlot` INTEGER" +
+                        ", `percentDeclaredTime` REAL NOT NULL" +
+                        ")");
+
+                database.execSQL("INSERT INTO work_day_tmp " +
+                        "SELECT id, date, beginSlot, endSlot, percentDeclaredTime " +
+                        "FROM work_day");
+
+                database.execSQL("DROP TABLE work_day");
+                database.execSQL("ALTER TABLE work_day_tmp RENAME TO work_day");
             }
         });
 
