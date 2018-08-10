@@ -18,8 +18,7 @@ import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayDao;
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO: 10.08.2018 Upgrade database version to 4 and create Migration Version 3 -> 4
-@Database(entities = {ComeEvent.class, WorkDay.class}, version = 3)
+@Database(entities = {ComeEvent.class, WorkDay.class}, version = 4)
 @TypeConverters({DatabaseConverters.DateConverter.class, DatabaseConverters.ComeEventTypeConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -79,6 +78,42 @@ public abstract class AppDatabase extends RoomDatabase {
             }
         });
 
+        // Version 3 -> 4
+        migrations.add(new Migration(3, 4) {
+            @Override
+            public void migrate(@NonNull SupportSQLiteDatabase database) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS come_event_tmp (" +
+                        "    `id` INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        "    `startDate` INTEGER, " +
+                        "    `endDate` INTEGER, " +
+                        "    `duration` INTEGER, " +
+                        "    `workDayId` INTEGER NOT NULL" +
+                        ")");
+
+                database.execSQL("INSERT INTO come_event_tmp(startDate, endDate, duration, workDayId) " +
+                        "SELECT startEvent.date AS startDate," +
+                        "    MIN(endEvent.date) AS endDate," +
+                        "    (MIN(endEvent.date) - startEvent.date) AS duration," +
+                        "    startEvent.workDayId AS workDayId " +
+                        "FROM (" +
+                        "    SELECT date," +
+                        "        workDayId" +
+                        "    FROM come_event " +
+                        "    WHERE type = 'COME_IN'" +
+                        ") startEvent" +
+                        "LEFT JOIN (" +
+                        "    SELECT date," +
+                        "        workDayId" +
+                        "    FROM come_event " +
+                        "    WHERE type = 'COME_OUT'" +
+                        ") endEvent ON startEvent.workDayId = endEvent.workDayId" +
+                        "    AND startEvent.date <= endEvent.date " +
+                        "GROUP BY startDate");
+
+                database.execSQL("DROP TABLE come_event");
+                database.execSQL("ALTER TABLE come_event_tmp RENAME TO come_event");
+            }
+        });
 
         return migrations.toArray(new Migration[0]);
     }
