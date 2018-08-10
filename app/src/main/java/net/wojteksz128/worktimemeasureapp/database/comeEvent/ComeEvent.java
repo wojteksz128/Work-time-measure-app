@@ -6,6 +6,8 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
+import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDay;
+
 import java.util.Date;
 
 @Entity(tableName = "come_event")
@@ -28,12 +30,17 @@ public class ComeEvent implements Comparable<ComeEvent> {
     }
 
     @Ignore
-    // TODO: 10.08.2018 Zmień konstruktor
     public ComeEvent(Date startDate, Date endDate, Date duration, int workDayId) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.duration = duration;
         this.workDayId = workDayId;
+    }
+
+    @Ignore
+    public ComeEvent(Date startDate, WorkDay workDay) {
+        this.startDate = startDate;
+        this.workDayId = workDay.getId();
     }
 
     public Long getId() {

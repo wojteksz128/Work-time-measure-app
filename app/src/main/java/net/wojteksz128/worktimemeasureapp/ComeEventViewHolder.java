@@ -7,6 +7,9 @@ import android.widget.TextView;
 
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEvent;
 
+import java.text.SimpleDateFormat;
+import java.util.TimeZone;
+
 // DONE: 10.08.2018 Change view and viewholder implementations
 public class ComeEventViewHolder extends RecyclerView.ViewHolder {
 
@@ -29,8 +32,10 @@ public class ComeEventViewHolder extends RecyclerView.ViewHolder {
 
     public void bind(ComeEvent comeEvent) {
         final String startTime = DateFormat.format(view.getContext().getString(R.string.main_day_event_time_format), comeEvent.getStartDate()).toString();
-        final String endTime = DateFormat.format(view.getContext().getString(R.string.main_day_event_time_format), comeEvent.getEndDate()).toString();
-        final String duration = DateFormat.format("H:mm:ss", comeEvent.getDuration()).toString();
+        final String endTime = comeEvent.getEndDate() != null ? DateFormat.format(view.getContext().getString(R.string.main_day_event_time_format), comeEvent.getEndDate()).toString() : "Teraz";
+        final SimpleDateFormat formatter = new SimpleDateFormat("H:mm:ss");
+        formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+        final String duration = comeEvent.getDuration() != null ? formatter.format(comeEvent.getDuration()) : "";
 
         mStartDateTV.setText(startTime);
         mEndDateTV.setText(endTime);
