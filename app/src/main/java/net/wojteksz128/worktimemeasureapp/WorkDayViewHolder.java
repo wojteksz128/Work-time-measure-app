@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEvent;
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents;
-import net.wojteksz128.worktimemeasureapp.util.ComeEventUtils;
 import net.wojteksz128.worktimemeasureapp.util.DateTimeUtils;
 
 import java.util.List;
@@ -36,7 +35,7 @@ class WorkDayViewHolder extends RecyclerView.ViewHolder {
         final String dateLabel = DateTimeUtils.formatDate(view.getContext().getString(R.string.main_work_day_label_format),
                 workDay.getWorkDay().getDate());
         final String duration = DateTimeUtils.formatDate(view.getContext().getString(R.string.main_work_day_duration_format),
-                ComeEventUtils.calculateSummaryDuration(workDay), TimeZone.getTimeZone("UTC"));
+                DateTimeUtils.mergeComeEventsDuration(workDay), TimeZone.getTimeZone("UTC"));
 
         dateTV.setText(dateLabel);
         workDurationTV.setText(duration);

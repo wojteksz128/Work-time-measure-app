@@ -14,7 +14,6 @@ import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayDao;
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 
 public class ComeEventUtils {
@@ -58,12 +57,10 @@ public class ComeEventUtils {
 
     @NonNull
     private static ComeEventType assignEndDateIntoCurrentEvent(ComeEvent comeEvent, Date registerDate, ComeEventDao comeEventDao) {
-        ComeEventType comeEventType;
         comeEvent.setEndDate(registerDate);
-        comeEvent.setDuration(calculateDuration(comeEvent));
+        comeEvent.setDuration(DateTimeUtils.calculateDuration(comeEvent));
         comeEventDao.update(comeEvent);
-        comeEventType = ComeEventType.COME_OUT;
-        return comeEventType;
+        return ComeEventType.COME_OUT;
     }
 
     @NonNull
@@ -87,16 +84,10 @@ public class ComeEventUtils {
         return workDay;
     }
 
-    private static Date calculateDuration(ComeEvent comeEvent) {
-        final Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(comeEvent.getEndDate().getTime() - comeEvent.getStartDate().getTime());
-        return calendar.getTime();
-    }
-
     @NonNull
     private static WorkDayEvents createNewWorkDay(Date registerDate, WorkDayDao workDayDao) {
-        WorkDayEvents workDay;
-        workDay = new WorkDayEvents();
+        final WorkDayEvents workDay = new WorkDayEvents();
+
         workDay.setWorkDay(new WorkDay(registerDate));
         workDay.setEvents(new ArrayList<ComeEvent>());
         final Long insertedWorkdayId = workDayDao.insert(workDay.getWorkDay());
@@ -104,15 +95,5 @@ public class ComeEventUtils {
                 workDay.getWorkDay().getBeginSlot(), workDay.getWorkDay().getEndSlot(),
                 workDay.getWorkDay().getPercentDeclaredTime()));
         return workDay;
-    }
-
-    public static Date calculateSummaryDuration(WorkDayEvents workDay) {
-        long millisSum = 0;
-
-        for (ComeEvent comeEvent : workDay.getEvents()) {
-            millisSum += comeEvent.getDuration() != null ? comeEvent.getDuration().getTime() : 0;
-        }
-
-        return new Date(millisSum);
     }
 }
