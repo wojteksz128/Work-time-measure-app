@@ -32,6 +32,7 @@ import java.util.List;
 // TODO: 11.08.2018 Dodaj możliwość edycji istniejących eventów lub ich usunięcia (części lub całości)
 // TODO: 11.08.2018 Dodaj widok kalendarza
 // TODO: 11.08.2018 dodaj drawer layout (hamburger)
+// TODO: 11.08.2018 popraw liczenie czasu pracy (może nie brać pod uwagę ms?)
 public class MainActivity extends AppCompatActivity {
 
     private ConstraintLayout mLayout;
