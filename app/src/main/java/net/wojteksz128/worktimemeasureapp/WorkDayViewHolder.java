@@ -2,7 +2,6 @@ package net.wojteksz128.worktimemeasureapp;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -11,8 +10,8 @@ import android.widget.TextView;
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEvent;
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents;
 import net.wojteksz128.worktimemeasureapp.util.ComeEventUtils;
+import net.wojteksz128.worktimemeasureapp.util.DateTimeUtils;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -34,12 +33,13 @@ class WorkDayViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(WorkDayEvents workDay) {
-        final String label = DateFormat.format(view.getContext().getString(R.string.main_work_day_label_format), workDay.getWorkDay().getDate()).toString();
-        dateTV.setText(label);
+        final String dateLabel = DateTimeUtils.formatDate(view.getContext().getString(R.string.main_work_day_label_format),
+                workDay.getWorkDay().getDate());
+        final String duration = DateTimeUtils.formatDate(view.getContext().getString(R.string.main_work_day_duration_format),
+                ComeEventUtils.calculateSummaryDuration(workDay), TimeZone.getTimeZone("UTC"));
 
-        final SimpleDateFormat formatter = new SimpleDateFormat(view.getContext().getString(R.string.main_work_day_duration_format));
-        formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
-        workDurationTV.setText(formatter.format(ComeEventUtils.calculateSummaryDuration(workDay)));
+        dateTV.setText(dateLabel);
+        workDurationTV.setText(duration);
 
         prepareListWithEvents(workDay.getEvents());
     }
