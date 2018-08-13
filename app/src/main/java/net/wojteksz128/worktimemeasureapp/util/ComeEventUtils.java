@@ -14,14 +14,12 @@ import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayDao;
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 
 public class ComeEventUtils {
 
-    public static void registerNewEvent(Context context, final Function<Void, Void> preFunction, final Function<ComeEventType, Void> postFunction) {
+    public static void registerNewEvent(final Context context, final Function<Void, Void> preFunction, final Function<ComeEventType, Void> postFunction) {
         final ComeEventDao comeEventDao = AppDatabase.getInstance(context).comeEventDao();
-        final WorkDayDao workDayDao = AppDatabase.getInstance(context).workDayDao();
         final Date registerDate = new Date();
 
         new AsyncTask<Void, Void, ComeEventType>() {
@@ -33,32 +31,17 @@ public class ComeEventUtils {
 
             @Override
             protected ComeEventType doInBackground(Void... voids) {
-                WorkDayEvents workDay = workDayDao.findByIntervalContains(registerDate);
                 ComeEventType comeEventType;
+                WorkDayEvents workDay = getCurrentWorkDay(registerDate, context);
 
-                if (workDay == null) {
-                    workDay = createNewWorkDay(registerDate, workDayDao);
-                }
-
-                final ComeEvent comeEvent;
-                if (workDay.getEvents() == null || workDay.getEvents().isEmpty()) {
-                    comeEventType = ComeEventType.COME_IN;
-                    comeEvent = new ComeEvent(registerDate, workDay.getWorkDay());
-                    comeEventDao.insert(comeEvent);
+                if (isFirstWorkDayEvent(workDay)) {
+                    comeEventType = createNewEvent(workDay, registerDate, comeEventDao);
                 } else {
-                    final ComeEvent tmpEvent = workDay.getEvents().get(0);
-                    if (tmpEvent.getEndDate() != null) {
-                        comeEvent = new ComeEvent(registerDate, workDay.getWorkDay());
-                        comeEventDao.insert(comeEvent);
-
-                        comeEventType = ComeEventType.COME_IN;
+                    final ComeEvent comeEvent = workDay.getEvents().get(0);
+                    if (comeEvent.getEndDate() != null) {
+                        comeEventType = createNewEvent(workDay, registerDate, comeEventDao);
                     } else {
-                        comeEvent = tmpEvent;
-                        comeEvent.setEndDate(registerDate);
-                        comeEvent.setDuration(calculateDuration(comeEvent));
-                        comeEventDao.update(comeEvent);
-
-                        comeEventType = ComeEventType.COME_OUT;
+                        comeEventType = assignEndDateIntoCurrentEvent(comeEvent, registerDate, comeEventDao);
                     }
                 }
 
@@ -72,16 +55,39 @@ public class ComeEventUtils {
         }.execute();
     }
 
-    private static Date calculateDuration(ComeEvent comeEvent) {
-        final Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(comeEvent.getEndDate().getTime() - comeEvent.getStartDate().getTime());
-        return calendar.getTime();
+    @NonNull
+    private static ComeEventType assignEndDateIntoCurrentEvent(ComeEvent comeEvent, Date registerDate, ComeEventDao comeEventDao) {
+        comeEvent.setEndDate(registerDate);
+        comeEvent.setDuration(DateTimeUtils.calculateDuration(comeEvent));
+        comeEventDao.update(comeEvent);
+        return ComeEventType.COME_OUT;
+    }
+
+    @NonNull
+    private static ComeEventType createNewEvent(WorkDayEvents workDay, Date registerDate, ComeEventDao comeEventDao) {
+        comeEventDao.insert(new ComeEvent(registerDate, workDay.getWorkDay()));
+        return ComeEventType.COME_IN;
+    }
+
+    private static boolean isFirstWorkDayEvent(WorkDayEvents workDay) {
+        return workDay.getEvents() == null || workDay.getEvents().isEmpty();
+    }
+
+    @NonNull
+    private static WorkDayEvents getCurrentWorkDay(Date registerDate, Context context) {
+        final WorkDayDao workDayDao = AppDatabase.getInstance(context).workDayDao();
+        WorkDayEvents workDay = workDayDao.findByIntervalContains(registerDate);
+
+        if (workDay == null) {
+            workDay = createNewWorkDay(registerDate, workDayDao);
+        }
+        return workDay;
     }
 
     @NonNull
     private static WorkDayEvents createNewWorkDay(Date registerDate, WorkDayDao workDayDao) {
-        WorkDayEvents workDay;
-        workDay = new WorkDayEvents();
+        final WorkDayEvents workDay = new WorkDayEvents();
+
         workDay.setWorkDay(new WorkDay(registerDate));
         workDay.setEvents(new ArrayList<ComeEvent>());
         final Long insertedWorkdayId = workDayDao.insert(workDay.getWorkDay());
@@ -89,15 +95,5 @@ public class ComeEventUtils {
                 workDay.getWorkDay().getBeginSlot(), workDay.getWorkDay().getEndSlot(),
                 workDay.getWorkDay().getPercentDeclaredTime()));
         return workDay;
-    }
-
-    public static Date calculateSummaryDuration(WorkDayEvents workDay) {
-        long millisSum = 0;
-
-        for (ComeEvent comeEvent : workDay.getEvents()) {
-            millisSum += comeEvent.getDuration() != null ? comeEvent.getDuration().getTime() : 0;
-        }
-
-        return new Date(millisSum);
     }
 }

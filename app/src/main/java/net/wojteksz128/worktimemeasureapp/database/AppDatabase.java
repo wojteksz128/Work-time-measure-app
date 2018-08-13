@@ -1,22 +1,23 @@
 package net.wojteksz128.worktimemeasureapp.database;
 
-import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.TypeConverters;
 import android.arch.persistence.room.migration.Migration;
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEvent;
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventDao;
+import net.wojteksz128.worktimemeasureapp.database.migration.MigrateFrom1To2;
+import net.wojteksz128.worktimemeasureapp.database.migration.MigrateFrom2To3;
+import net.wojteksz128.worktimemeasureapp.database.migration.MigrateFrom3To4;
+import net.wojteksz128.worktimemeasureapp.database.migration.MigrateFrom4To5;
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDay;
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayDao;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
 @Database(entities = {ComeEvent.class, WorkDay.class}, version = 5)
 @TypeConverters({DatabaseConverters.DateConverter.class, DatabaseConverters.ComeEventTypeConverter.class})
@@ -42,101 +43,12 @@ public abstract class AppDatabase extends RoomDatabase {
     }
 
     private static Migration[] getDatabaseMigrations() {
-        List<Migration> migrations = new ArrayList<>();
-
-        // Version 1 -> 2
-        migrations.add(new Migration(1, 2) {
-            @Override
-            public void migrate(@NonNull SupportSQLiteDatabase database) {
-                database.execSQL("DROP TABLE come_event");
-
-                database.execSQL("CREATE TABLE IF NOT EXISTS `work_day` " +
-                        "( `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL" +
-                        ", `date` INTEGER" +
-                        ", `worktime` INTEGER" +
-                        ", `percentDeclaredTime` REAL NOT NULL" +
-                        ")");
-
-                database.execSQL("CREATE TABLE IF NOT EXISTS come_event " +
-                        "( `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL" +
-                        ", `date` INTEGER" +
-                        ", `type` TEXT" +
-                        ", `workDayId` INTEGER NOT NULL" +
-                        ")");
-            }
-        });
-
-        // Version 2 -> 3
-        migrations.add(new Migration(2, 3) {
-            @Override
-            public void migrate(@NonNull SupportSQLiteDatabase database) {
-                database.execSQL("DELETE FROM work_day");
-                database.execSQL("DELETE FROM come_event");
-
-                database.execSQL("ALTER TABLE work_day ADD COLUMN beginSlot INTEGER");
-                database.execSQL("ALTER TABLE work_day ADD COLUMN endSlot INTEGER");
-            }
-        });
-
-        // Version 3 -> 4
-        migrations.add(new Migration(3, 4) {
-            @Override
-            public void migrate(@NonNull SupportSQLiteDatabase database) {
-                database.execSQL("CREATE TABLE IF NOT EXISTS come_event_tmp (" +
-                        "    `id` INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        "    `startDate` INTEGER, " +
-                        "    `endDate` INTEGER, " +
-                        "    `duration` INTEGER, " +
-                        "    `workDayId` INTEGER NOT NULL" +
-                        ")");
-
-                database.execSQL("INSERT INTO come_event_tmp(startDate, endDate, duration, workDayId) " +
-                        "SELECT startEvent.date AS startDate," +
-                        "    MIN(endEvent.date) AS endDate," +
-                        "    (MIN(endEvent.date) - startEvent.date) AS duration," +
-                        "    startEvent.workDayId AS workDayId " +
-                        "FROM (" +
-                        "    SELECT date," +
-                        "        workDayId" +
-                        "    FROM come_event " +
-                        "    WHERE type = 'COME_IN'" +
-                        ") startEvent" +
-                        "LEFT JOIN (" +
-                        "    SELECT date," +
-                        "        workDayId" +
-                        "    FROM come_event " +
-                        "    WHERE type = 'COME_OUT'" +
-                        ") endEvent ON startEvent.workDayId = endEvent.workDayId" +
-                        "    AND startEvent.date <= endEvent.date " +
-                        "GROUP BY startDate");
-
-                database.execSQL("DROP TABLE come_event");
-                database.execSQL("ALTER TABLE come_event_tmp RENAME TO come_event");
-            }
-        });
-
-        // Version 4 -> 5
-        migrations.add(new Migration(4, 5) {
-            @Override
-            public void migrate(@NonNull SupportSQLiteDatabase database) {
-                database.execSQL("CREATE TABLE IF NOT EXISTS work_day_tmp " +
-                        "( `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL" +
-                        ", `date` INTEGER" +
-                        ", `beginSlot` INTEGER" +
-                        ", `endSlot` INTEGER" +
-                        ", `percentDeclaredTime` REAL NOT NULL" +
-                        ")");
-
-                database.execSQL("INSERT INTO work_day_tmp " +
-                        "SELECT id, date, beginSlot, endSlot, percentDeclaredTime " +
-                        "FROM work_day");
-
-                database.execSQL("DROP TABLE work_day");
-                database.execSQL("ALTER TABLE work_day_tmp RENAME TO work_day");
-            }
-        });
-
-        return migrations.toArray(new Migration[0]);
+        return Arrays.asList(
+                new MigrateFrom1To2(),      // Version 1    ->      2
+                new MigrateFrom2To3(),      // Version 2    ->      3
+                new MigrateFrom3To4(),      // Version 3    ->      4
+                new MigrateFrom4To5()       // Version 4    ->      5
+        ).toArray(new Migration[0]);
     }
 
     public abstract ComeEventDao comeEventDao();
