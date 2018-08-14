@@ -8,7 +8,7 @@ public class MigrateFrom4To5 extends Migration {
 
 
     public MigrateFrom4To5() {
-        super(3, 4);
+        super(4, 5);
     }
 
     @Override
