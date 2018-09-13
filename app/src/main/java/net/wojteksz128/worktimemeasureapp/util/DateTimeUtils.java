@@ -30,7 +30,7 @@ public class DateTimeUtils {
         long millisSum = 0;
 
         for (ComeEvent comeEvent : workDay.getEvents()) {
-            millisSum += comeEvent.getDuration() != null ? comeEvent.getDuration().getTime() : 0;
+            millisSum += comeEvent.getDuration() != null ? comeEvent.getDuration().getTime() : System.currentTimeMillis() - comeEvent.getStartDate().getTime();
         }
 
         return new Date(millisSum);
