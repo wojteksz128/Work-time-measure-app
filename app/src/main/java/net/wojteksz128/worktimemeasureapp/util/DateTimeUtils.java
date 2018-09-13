@@ -23,14 +23,16 @@ public class DateTimeUtils {
     }
 
     public static Date calculateDuration(ComeEvent comeEvent) {
-        return new Date(comeEvent.getEndDate().getTime() - comeEvent.getStartDate().getTime());
+        final long startTime = comeEvent.getStartDate().getTime();
+        final long endTime = comeEvent.getEndDate() != null ? comeEvent.getEndDate().getTime() : System.currentTimeMillis();
+        return new Date(endTime - startTime);
     }
 
     public static Date mergeComeEventsDuration(WorkDayEvents workDay) {
         long millisSum = 0;
 
         for (ComeEvent comeEvent : workDay.getEvents()) {
-            millisSum += comeEvent.getDuration() != null ? comeEvent.getDuration().getTime() : System.currentTimeMillis() - comeEvent.getStartDate().getTime();
+            millisSum += comeEvent.getDuration() != null ? comeEvent.getDuration().getTime() : calculateDuration(comeEvent).getTime();
         }
 
         return new Date(millisSum);
