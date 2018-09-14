@@ -17,6 +17,7 @@ public class ComeEventViewHolder extends RecyclerView.ViewHolder {
     private final TextView mDurationTV;
 
     private final View mView;
+    private ComeEvent comeEvent;
 
 
     @SuppressWarnings("WeakerAccess")
@@ -30,6 +31,8 @@ public class ComeEventViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(ComeEvent comeEvent) {
+        this.comeEvent = comeEvent;
+
         fillStartTime(comeEvent);
         fillEndTime(comeEvent);
         fillDuration(comeEvent);
@@ -53,5 +56,9 @@ public class ComeEventViewHolder extends RecyclerView.ViewHolder {
 
     public View getView() {
         return mView;
+    }
+
+    public void updateBind() {
+        this.bind(this.comeEvent);
     }
 }
