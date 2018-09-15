@@ -11,9 +11,7 @@ import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEvent;
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents;
 import net.wojteksz128.worktimemeasureapp.util.DateTimeUtils;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.TimeZone;
 
 class WorkDayViewHolder extends RecyclerView.ViewHolder {
@@ -21,9 +19,8 @@ class WorkDayViewHolder extends RecyclerView.ViewHolder {
     private final TextView mDateTV;
     private final TextView mWorkDurationTV;
     private final LinearLayout mEventsListLayout;
-    private final View mView;
-    private final Map<ComeEvent, ComeEventViewHolder> mComeEventMap;
 
+    private final View mView;
 
     public WorkDayViewHolder(View itemView) {
         super(itemView);
@@ -32,7 +29,6 @@ class WorkDayViewHolder extends RecyclerView.ViewHolder {
         mDateTV = itemView.findViewById(R.id.day_label);
         mWorkDurationTV = itemView.findViewById(R.id.day_work_duration);
         mEventsListLayout = itemView.findViewById(R.id.day_events_list);
-        mComeEventMap = new HashMap<>();
     }
 
     public void bind(WorkDayEvents workDay) {
@@ -58,17 +54,12 @@ class WorkDayViewHolder extends RecyclerView.ViewHolder {
         final Context context = mView.getContext();
         final LayoutInflater inflater = LayoutInflater.from(context);
 
-//        mEventsListLayout.removeAllViews();
+        mEventsListLayout.removeAllViews();
 
         for (ComeEvent event : events) {
-            if (mComeEventMap.containsKey(event)) {
-                mComeEventMap.get(event).updateBind();
-            } else {
-                final ComeEventViewHolder eventViewHolder = new ComeEventViewHolder(inflater.inflate(R.layout.main_day_event_list_item, mEventsListLayout, false));
-                eventViewHolder.bind(event);
-                mEventsListLayout.addView(eventViewHolder.getView());
-                mComeEventMap.put(event, eventViewHolder);
-            }
+            final ComeEventViewHolder eventViewHolder = new ComeEventViewHolder(inflater.inflate(R.layout.main_day_event_list_item, mEventsListLayout, false));
+            eventViewHolder.bind(event);
+            mEventsListLayout.addView(eventViewHolder.getView());
         }
     }
 }
