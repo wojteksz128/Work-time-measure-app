@@ -1,4 +1,4 @@
-package net.wojteksz128.worktimemeasureapp;
+package net.wojteksz128.worktimemeasureapp.window.main;
 
 import android.arch.core.util.Function;
 import android.arch.lifecycle.LiveData;
@@ -14,6 +14,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import net.wojteksz128.worktimemeasureapp.R;
 import net.wojteksz128.worktimemeasureapp.database.AppDatabase;
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventType;
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayDao;
