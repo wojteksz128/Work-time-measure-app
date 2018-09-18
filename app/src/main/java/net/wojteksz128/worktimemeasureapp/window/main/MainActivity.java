@@ -1,8 +1,8 @@
 package net.wojteksz128.worktimemeasureapp.window.main;
 
 import android.arch.core.util.Function;
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -15,9 +15,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 
 import net.wojteksz128.worktimemeasureapp.R;
-import net.wojteksz128.worktimemeasureapp.database.AppDatabase;
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventType;
-import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayDao;
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents;
 import net.wojteksz128.worktimemeasureapp.util.ComeEventUtils;
 
@@ -70,9 +68,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void fillDayList() {
-        final WorkDayDao workDayDao = AppDatabase.getInstance(this).workDayDao();
-        final LiveData<List<WorkDayEvents>> workDayData = workDayDao.findAllInLiveData();
-        workDayData.observe(this, new Observer<List<WorkDayEvents>>() {
+        final MainViewModel mainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        mainViewModel.getWorkDays().observe(this, new Observer<List<WorkDayEvents>>() {
             @Override
             public void onChanged(@Nullable List<WorkDayEvents> workDayEvents) {
                 mWorkDayAdapter.setWorkDays(workDayEvents);
