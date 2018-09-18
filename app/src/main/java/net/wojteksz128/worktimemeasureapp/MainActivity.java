@@ -52,6 +52,12 @@ public class MainActivity extends AppCompatActivity {
         initFab();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        fillDayList();
+    }
+
     private void initWorkDaysRecyclerView() {
         mWorkDayAdapter = new WorkDayAdapter();
 
@@ -60,11 +66,9 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView mDayList = findViewById(R.id.main_rv_days);
         mDayList.setLayoutManager(layoutManager);
         mDayList.setAdapter(mWorkDayAdapter);
-
-        initLiveData();
     }
 
-    private void initLiveData() {
+    private void fillDayList() {
         final WorkDayDao workDayDao = AppDatabase.getInstance(this).workDayDao();
         final LiveData<List<WorkDayEvents>> workDayData = workDayDao.findAllInLiveData();
         workDayData.observe(this, new Observer<List<WorkDayEvents>>() {
