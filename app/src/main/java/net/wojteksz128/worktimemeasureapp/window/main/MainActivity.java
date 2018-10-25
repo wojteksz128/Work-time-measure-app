@@ -11,6 +11,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -18,6 +19,8 @@ import net.wojteksz128.worktimemeasureapp.R;
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventType;
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents;
 import net.wojteksz128.worktimemeasureapp.util.ComeEventUtils;
+import net.wojteksz128.worktimemeasureapp.util.Consumer;
+import net.wojteksz128.worktimemeasureapp.util.PeriodicOperationRunner;
 
 import java.util.List;
 
@@ -34,6 +37,8 @@ import java.util.List;
 // TODO: 11.08.2018 popraw liczenie czasu pracy (może nie brać pod uwagę ms?)
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = MainActivity.class.getSimpleName();
+    private final int LAST_SAVED_DAY = 0;
     private ConstraintLayout mLayout;
     private WorkDayAdapter mWorkDayAdapter;
     private ProgressBar mLoadingIndicator;
@@ -73,6 +78,33 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChanged(@Nullable List<WorkDayEvents> workDayEvents) {
                 mWorkDayAdapter.setWorkDays(workDayEvents);
+
+                if (workDayEvents != null) {
+                    final WorkDayEvents currentDayEvents = workDayEvents.get(LAST_SAVED_DAY);
+                    if (!currentDayEvents.hasEventsEnded()) {
+                        if (mainViewModel.getSecondRunner() == null || !mainViewModel.getSecondRunner().isRunning()) {
+                            mainViewModel.setSecondRunner(new PeriodicOperationRunner<>(new Consumer<WorkDayEvents>(currentDayEvents) {
+
+                                @Override
+                                public void action(WorkDayEvents obj) {
+                                    Log.d(TAG, "Update work day");
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            mWorkDayAdapter.notifyItemChanged(0);
+                                        }
+                                    });
+                                }
+                            }));
+                        }
+                        mainViewModel.getSecondRunner().start();
+                    } else {
+                        if (mainViewModel.getSecondRunner() != null) {
+                            mainViewModel.getSecondRunner().stop();
+                        }
+                    }
+                }
+
             }
         });
     }

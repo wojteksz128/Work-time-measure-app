@@ -9,22 +9,32 @@ import android.util.Log;
 import net.wojteksz128.worktimemeasureapp.database.AppDatabase;
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayDao;
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents;
+import net.wojteksz128.worktimemeasureapp.util.PeriodicOperationRunner;
 
 import java.util.List;
 
 public class MainViewModel extends AndroidViewModel {
 
     private static final String TAG = MainViewModel.class.getSimpleName();
-    private LiveData<List<WorkDayEvents>> workDays;
+    private final LiveData<List<WorkDayEvents>> workDays;
+    private PeriodicOperationRunner<WorkDayEvents> secondRunner;
 
     public MainViewModel(@NonNull Application application) {
         super(application);
-        Log.d(TAG, "Retrieve work days with events");
+        Log.d(TAG, "ctor: Retrieve work days with events");
         final WorkDayDao workDayDao = AppDatabase.getInstance(application).workDayDao();
         this.workDays = workDayDao.findAllInLiveData();
     }
 
     public LiveData<List<WorkDayEvents>> getWorkDays() {
         return this.workDays;
+    }
+
+    public PeriodicOperationRunner<WorkDayEvents> getSecondRunner() {
+        return this.secondRunner;
+    }
+
+    public void setSecondRunner(PeriodicOperationRunner<WorkDayEvents> secondRunner) {
+        this.secondRunner = secondRunner;
     }
 }
