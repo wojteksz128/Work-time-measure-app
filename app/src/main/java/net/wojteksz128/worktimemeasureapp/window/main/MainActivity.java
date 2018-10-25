@@ -4,6 +4,7 @@ import android.arch.core.util.Function;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -21,12 +22,11 @@ import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventType;
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents;
 import net.wojteksz128.worktimemeasureapp.util.ComeEventUtils;
 import net.wojteksz128.worktimemeasureapp.util.Consumer;
-import net.wojteksz128.worktimemeasureapp.util.PeriodicOperationRunner;
 
 import java.util.List;
 
 // TODO: 09.08.2018 Dodaj joba, który automatycznie zamknie dzień pracy o godzinie zmiany dnia pracy
-// TODO: 11.08.2018 Dodaj wątek, który będzie automatycznie zmieniać sekundy, gdy widzi się czas i leci czas pracy
+// DONE: 11.08.2018 Dodaj wątek, który będzie automatycznie zmieniać sekundy, gdy widzi się czas i leci czas pracy
 // TODO: 11.08.2018 Jeśli aktualny dzień istnieje - przenieś FABa w to miejsce
 // TODO: 11.08.2018 Dodaj statystyki
 // TODO: 11.08.2018 Dodaj notyfikację na kilka minut przed wyjściem z pracy
@@ -39,7 +39,6 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-    private final int LAST_SAVED_DAY = 0;
     private MainViewModel mainViewModel;
     private ConstraintLayout mLayout;
     private WorkDayAdapter mWorkDayAdapter;
@@ -49,8 +48,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
         setContentView(R.layout.activity_main);
+        Log.v(TAG, "onCreate: Create or get MainViewModel object");
+        mainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
 
         mLayout = findViewById(R.id.main_layout);
         mLoadingIndicator = findViewById(R.id.main_loading_indicator);
@@ -62,13 +62,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        fillDayList();
+        Log.v(TAG, "onResume: Fill days list");
+        mainViewModel.getWorkDays().observe(this, new DayListObserver());
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d(TAG, "onPause(): stop second updater");
+        Log.v(TAG, "onPause: Stop second updater");
         this.mainViewModel.getSecondRunner().stop();
     }
 
@@ -80,44 +81,7 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView mDayList = findViewById(R.id.main_rv_days);
         mDayList.setLayoutManager(layoutManager);
         mDayList.setAdapter(mWorkDayAdapter);
-        ((SimpleItemAnimator)mDayList.getItemAnimator()).setSupportsChangeAnimations(false);
-    }
-
-    private void fillDayList() {
-        mainViewModel.getWorkDays().observe(this, new Observer<List<WorkDayEvents>>() {
-            @Override
-            public void onChanged(@Nullable List<WorkDayEvents> workDayEvents) {
-                mWorkDayAdapter.setWorkDays(workDayEvents);
-
-                if (workDayEvents != null) {
-                    final WorkDayEvents currentDayEvents = workDayEvents.get(LAST_SAVED_DAY);
-                    if (!currentDayEvents.hasEventsEnded()) {
-                        if (mainViewModel.getSecondRunner() == null || !mainViewModel.getSecondRunner().isRunning()) {
-                            mainViewModel.setSecondRunner(new PeriodicOperationRunner<>(new Consumer<WorkDayEvents>(currentDayEvents) {
-
-                                @Override
-                                public void action(WorkDayEvents obj) {
-                                    Log.d(TAG, "Update work day");
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            mWorkDayAdapter.notifyItemChanged(0);
-                                        }
-                                    });
-                                }
-                            }));
-                        }
-                        Log.d(TAG, "onChanged: start second updater");
-                        mainViewModel.getSecondRunner().start();
-                    } else {
-                        if (mainViewModel.getSecondRunner() != null) {
-                            mainViewModel.getSecondRunner().stop();
-                        }
-                    }
-                }
-
-            }
-        });
+        ((SimpleItemAnimator) mDayList.getItemAnimator()).setSupportsChangeAnimations(false);
     }
 
     private void initFab() {
@@ -158,5 +122,48 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private class DayListObserver implements Observer<List<WorkDayEvents>> {
+
+        private final String TAG = MainActivity.DayListObserver.class.getSimpleName();
+        // FIXME: 25.10.2018 This way is not correct - fix it in the mean time
+        private final int LAST_SAVED_DAY = 0;
+
+
+        @Override
+        public void onChanged(@Nullable List<WorkDayEvents> workDayEvents) {
+            mWorkDayAdapter.setWorkDays(workDayEvents);
+
+            if (workDayEvents != null) {
+                final WorkDayEvents currentDayEvents = workDayEvents.get(LAST_SAVED_DAY);
+                if (!currentDayEvents.hasEventsEnded()) {
+                    if (!mainViewModel.getSecondRunner().isRunning()) {
+                        mainViewModel.getSecondRunner().setConsumer(getUpdateAction(currentDayEvents));
+                        Log.v(TAG, "onChanged: start second updater");
+                        mainViewModel.getSecondRunner().start();
+                    }
+                } else {
+                    mainViewModel.getSecondRunner().stop();
+                }
+            }
+        }
+
+        @NonNull
+        private Consumer<WorkDayEvents> getUpdateAction(final WorkDayEvents currentDayEvents) {
+            return new Consumer<WorkDayEvents>(currentDayEvents) {
+
+                @Override
+                public void action(WorkDayEvents obj) {
+                    Log.v(TAG, "onChanged: Update work day");
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mWorkDayAdapter.notifyItemChanged(0);
+                        }
+                    });
+                }
+            };
+        }
     }
 }

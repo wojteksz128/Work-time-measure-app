@@ -7,16 +7,15 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class PeriodicOperationRunner<T> {
 
     private int sleepDuration = 1000;
-    private final Consumer<T> consumer;
+    private Consumer<T> consumer;
     private final AtomicBoolean running = new AtomicBoolean(false);
     private Thread thread;
 
-    public PeriodicOperationRunner(Consumer<T> consumer) {
-        this.consumer = consumer;
-    }
+
+    public PeriodicOperationRunner() {}
 
     public void start() {
-        if (thread == null || running.get()) {
+        if (thread == null || !isRunning()) {
             this.thread = new PeriodicRun();
             thread.start();
         }
@@ -26,8 +25,13 @@ public class PeriodicOperationRunner<T> {
         running.set(false);
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isRunning() {
         return running.get();
+    }
+
+    public void setConsumer(Consumer<T> consumer) {
+        this.consumer = consumer;
     }
 
     private class PeriodicRun extends Thread {

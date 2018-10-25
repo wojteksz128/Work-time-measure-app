@@ -17,13 +17,14 @@ public class MainViewModel extends AndroidViewModel {
 
     private static final String TAG = MainViewModel.class.getSimpleName();
     private final LiveData<List<WorkDayEvents>> workDays;
-    private PeriodicOperationRunner<WorkDayEvents> secondRunner;
+    private final PeriodicOperationRunner<WorkDayEvents> secondRunner;
 
     public MainViewModel(@NonNull Application application) {
         super(application);
         Log.d(TAG, "ctor: Retrieve work days with events");
         final WorkDayDao workDayDao = AppDatabase.getInstance(application).workDayDao();
         this.workDays = workDayDao.findAllInLiveData();
+        this.secondRunner = new PeriodicOperationRunner<>();
     }
 
     public LiveData<List<WorkDayEvents>> getWorkDays() {
@@ -32,9 +33,5 @@ public class MainViewModel extends AndroidViewModel {
 
     public PeriodicOperationRunner<WorkDayEvents> getSecondRunner() {
         return this.secondRunner;
-    }
-
-    public void setSecondRunner(PeriodicOperationRunner<WorkDayEvents> secondRunner) {
-        this.secondRunner = secondRunner;
     }
 }
