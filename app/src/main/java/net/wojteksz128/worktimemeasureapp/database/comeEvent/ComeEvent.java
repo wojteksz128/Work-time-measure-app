@@ -79,6 +79,10 @@ public class ComeEvent implements Comparable<ComeEvent> {
         this.duration = duration;
     }
 
+    public boolean isEnded() {
+        return this.endDate != null && this.duration != null;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
