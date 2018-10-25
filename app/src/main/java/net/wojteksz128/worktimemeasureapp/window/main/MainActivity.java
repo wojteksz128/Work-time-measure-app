@@ -11,6 +11,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SimpleItemAnimator;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private final int LAST_SAVED_DAY = 0;
+    private MainViewModel mainViewModel;
     private ConstraintLayout mLayout;
     private WorkDayAdapter mWorkDayAdapter;
     private ProgressBar mLoadingIndicator;
@@ -47,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
         setContentView(R.layout.activity_main);
 
         mLayout = findViewById(R.id.main_layout);
@@ -62,6 +65,13 @@ public class MainActivity extends AppCompatActivity {
         fillDayList();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause(): stop second updater");
+        this.mainViewModel.getSecondRunner().stop();
+    }
+
     private void initWorkDaysRecyclerView() {
         mWorkDayAdapter = new WorkDayAdapter();
 
@@ -70,10 +80,10 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView mDayList = findViewById(R.id.main_rv_days);
         mDayList.setLayoutManager(layoutManager);
         mDayList.setAdapter(mWorkDayAdapter);
+        ((SimpleItemAnimator)mDayList.getItemAnimator()).setSupportsChangeAnimations(false);
     }
 
     private void fillDayList() {
-        final MainViewModel mainViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
         mainViewModel.getWorkDays().observe(this, new Observer<List<WorkDayEvents>>() {
             @Override
             public void onChanged(@Nullable List<WorkDayEvents> workDayEvents) {
@@ -97,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             }));
                         }
+                        Log.d(TAG, "onChanged: start second updater");
                         mainViewModel.getSecondRunner().start();
                     } else {
                         if (mainViewModel.getSecondRunner() != null) {
