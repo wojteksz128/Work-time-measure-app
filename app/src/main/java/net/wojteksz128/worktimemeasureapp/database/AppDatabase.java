@@ -25,15 +25,18 @@ public abstract class AppDatabase extends RoomDatabase {
 
     private static final String LOG_TAG = AppDatabase.class.getSimpleName();
     private static final Object LOCK = new Object();
-    private static final String DATABASE_NAME = "work-time-measure";
+    private static final String DATABASE_FILENAME =  "work-time-measure.db";
+    private static final String TAG = AppDatabase.class.getSimpleName();
     private static AppDatabase sInstance;
 
     public static AppDatabase getInstance(Context context) {
         if (sInstance == null) {
             synchronized (LOCK) {
                 Log.d(LOG_TAG, "getInstance: Creating new database instance");
+                final String filePath = context.getExternalFilesDir(null).getAbsolutePath() + "/" + AppDatabase.DATABASE_FILENAME;
+                Log.d(TAG, "getInstance: Database path: " + filePath);
                 sInstance = Room.databaseBuilder(context.getApplicationContext(),
-                        AppDatabase.class, AppDatabase.DATABASE_NAME)
+                        AppDatabase.class, filePath)
                         .addMigrations(getDatabaseMigrations())
                         .build();
             }

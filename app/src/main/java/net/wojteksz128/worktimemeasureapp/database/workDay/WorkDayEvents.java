@@ -6,9 +6,7 @@ import android.arch.persistence.room.Relation;
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEvent;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.function.Function;
 
 public class WorkDayEvents {
 
@@ -33,5 +31,14 @@ public class WorkDayEvents {
 
     public void setEvents(List<ComeEvent> events) {
         this.events = events;
+    }
+
+    public boolean hasEventsEnded() {
+        for (ComeEvent comeEvent : this.events) {
+            if (!comeEvent.isEnded()) {
+                return false;
+            }
+        }
+        return true;
     }
 }

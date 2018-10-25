@@ -1,4 +1,4 @@
-package net.wojteksz128.worktimemeasureapp;
+package net.wojteksz128.worktimemeasureapp.window.main;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import net.wojteksz128.worktimemeasureapp.R;
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEvent;
 
 import java.util.List;

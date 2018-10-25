@@ -79,6 +79,30 @@ public class ComeEvent implements Comparable<ComeEvent> {
         this.duration = duration;
     }
 
+    public boolean isEnded() {
+        return this.endDate != null && this.duration != null;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ComeEvent event = (ComeEvent) o;
+
+        if (workDayId != event.workDayId) return false;
+        if (id != null ? !id.equals(event.id) : event.id != null) return false;
+        return startDate.equals(event.startDate);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + startDate.hashCode();
+        result = 31 * result + workDayId;
+        return result;
+    }
+
     @Override
     public int compareTo(@NonNull ComeEvent comeEvent) {
         return (int) (this.getStartDate().getTime() - comeEvent.getStartDate().getTime());
