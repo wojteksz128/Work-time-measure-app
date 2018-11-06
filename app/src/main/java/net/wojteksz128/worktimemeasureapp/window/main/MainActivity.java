@@ -22,6 +22,7 @@ import net.wojteksz128.worktimemeasureapp.R;
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventType;
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents;
 import net.wojteksz128.worktimemeasureapp.notification.EndOfWorkIntentService;
+import net.wojteksz128.worktimemeasureapp.notification.EndOfWorkNotification;
 import net.wojteksz128.worktimemeasureapp.notification.NotificationTask;
 import net.wojteksz128.worktimemeasureapp.util.ComeEventUtils;
 import net.wojteksz128.worktimemeasureapp.util.Consumer;
@@ -129,6 +130,10 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    public void testNotification(View view) {
+        EndOfWorkNotification.create(this);
     }
 
     private class DayListObserver implements Observer<List<WorkDayEvents>> {
