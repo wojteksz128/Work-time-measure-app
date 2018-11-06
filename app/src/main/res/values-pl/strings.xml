@@ -10,6 +10,15 @@
     <string name="channel_end_of_work_description">Powiadomienia, gdy czas bieżącego dnia pracy zbliża się do końca.</string>
 
     <!--##########################################-->
+    <!--############# Notifications ##############-->
+    <!--##########################################-->
+
+    <string name="notification_end_of_work_title">Musisz wyjść!</string>
+    <string name="notification_end_of_work_text">Przesiedziałeś już swoje. Czas wrócić do domu ;)</string>
+    <string name="notification_end_of_work_action_ingore">Wycisz</string>
+    <string name="notification_end_of_work_action_come_out">Wychodzę</string>
+
+    <!--##########################################-->
     <!--############# Main Activity ##############-->
     <!--##########################################-->
 

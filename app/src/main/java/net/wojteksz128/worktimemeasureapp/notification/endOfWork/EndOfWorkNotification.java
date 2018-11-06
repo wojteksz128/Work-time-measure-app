@@ -21,12 +21,14 @@ import net.wojteksz128.worktimemeasureapp.window.main.MainActivity;
 
 import java.text.MessageFormat;
 
+import static net.wojteksz128.worktimemeasureapp.notification.Notification.END_OF_WORK;
+
 public class EndOfWorkNotification {
 
     private static final String LOG = EndOfWorkNotification.class.getSimpleName();
 
-    private static final int END_OF_WORK_NOTIFICATION_ID = 251;
-    private static final int END_OF_WORK_PENDING_INTENT_ID = 481;
+    private static final int END_OF_WORK_NOTIFICATION_ID = END_OF_WORK.getNotificationId();
+    private static final int END_OF_WORK_PENDING_INTENT_ID = END_OF_WORK.getPendingIntentId();
 
     private static final String CHANNEL_ID = Channel.END_OF_WORK_CHANNEL.getId();
 
@@ -36,9 +38,9 @@ public class EndOfWorkNotification {
                 .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setLargeIcon(largeIcon(context))
-                .setContentTitle("Testowy tytuł")
-                .setContentText("Testowa treść notyfikacji")
-                .setStyle(new NotificationCompat.BigTextStyle().bigText("Testowa treść notyfikacji"))
+                .setContentTitle(context.getString(R.string.notification_end_of_work_title))
+                .setContentText(context.getString(R.string.notification_end_of_work_text))
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(context.getString(R.string.notification_end_of_work_text)))
                 .setDefaults(Notification.DEFAULT_VIBRATE)
                 .setContentIntent(contentIntent(context))
                 .addAction(getAction(context, Action.IGNORE_REMINDER_ACTION))
@@ -61,7 +63,7 @@ public class EndOfWorkNotification {
         final Intent intent = new Intent(context, NotificationIntentService.class);
         intent.setAction(action.name());
         final PendingIntent pendingIntent = PendingIntent.getService(context, action.getPendingIntentId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        return new NotificationCompat.Action(action.getIcon(), action.getTitle(), pendingIntent);
+        return new NotificationCompat.Action(action.getIcon(), context.getString(action.getTitle()), pendingIntent);
     }
 
     private static PendingIntent contentIntent(Context context) {
@@ -75,15 +77,15 @@ public class EndOfWorkNotification {
     }
 
     public enum Action {
-        END_OF_WORK_ACTION(new EndOfWorkAction(), 60, R.drawable.come_out_background, "Wyszedłem"),
-        IGNORE_REMINDER_ACTION(new IgnoreReminderAction(), 871, R.drawable.come_in_background, "Wycisz");
+        END_OF_WORK_ACTION(new EndOfWorkAction(), 60, R.drawable.come_out_background, R.string.notification_end_of_work_action_come_out),
+        IGNORE_REMINDER_ACTION(new IgnoreReminderAction(), 871, R.drawable.come_in_background, R.string.notification_end_of_work_action_ingore);
 
         private final NotificationAction notificationAction;
         private final int pendingIntentId;
         private final int icon;
-        private final String title;
+        private final int title;
 
-        Action(NotificationAction notificationAction, int pendingIntentId, int icon, String title) {
+        Action(NotificationAction notificationAction, int pendingIntentId, int icon, int title) {
 
             this.notificationAction = notificationAction;
             this.pendingIntentId = pendingIntentId;
@@ -103,7 +105,7 @@ public class EndOfWorkNotification {
             return icon;
         }
 
-        public String getTitle() {
+        public int getTitle() {
             return title;
         }
     }
