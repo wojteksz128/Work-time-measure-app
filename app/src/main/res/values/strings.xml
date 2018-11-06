@@ -3,6 +3,13 @@
     <string name="app_name">Work Time Measure App</string>
 
     <!--##########################################-->
+    <!--################ Channels ################-->
+    <!--##########################################-->
+
+    <string name="channel_end_of_work_name">End of work notifications</string>
+    <string name="channel_end_of_work_description">Notifications, when time of current work day approach to the end.</string>
+
+    <!--##########################################-->
     <!--############# Main Activity ##############-->
     <!--##########################################-->
 

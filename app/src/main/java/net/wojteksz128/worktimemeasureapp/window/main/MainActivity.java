@@ -23,7 +23,7 @@ import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventType;
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents;
 import net.wojteksz128.worktimemeasureapp.notification.EndOfWorkIntentService;
 import net.wojteksz128.worktimemeasureapp.notification.EndOfWorkNotification;
-import net.wojteksz128.worktimemeasureapp.notification.NotificationTask;
+import net.wojteksz128.worktimemeasureapp.notification.NotificationUtils;
 import net.wojteksz128.worktimemeasureapp.util.ComeEventUtils;
 import net.wojteksz128.worktimemeasureapp.util.Consumer;
 
@@ -61,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
 
         initWorkDaysRecyclerView();
         initFab();
+        NotificationUtils.initNotifications(this);
     }
 
     @Override
@@ -70,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         mainViewModel.getWorkDays().observe(this, new DayListObserver());
         // FIXME: 03.11.2018 Remove this test code
         final Intent intent = new Intent(this, EndOfWorkIntentService.class);
-        intent.setAction(NotificationTask.END_OF_WORK_ACTION.name());
+        intent.setAction(EndOfWorkNotification.Action.END_OF_WORK_ACTION.name());
         startService(intent);
     }
 
@@ -133,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void testNotification(View view) {
-        EndOfWorkNotification.create(this);
+        EndOfWorkNotification.createNotification(this);
     }
 
     private class DayListObserver implements Observer<List<WorkDayEvents>> {

@@ -17,6 +17,6 @@ public class EndOfWorkIntentService extends IntentService {
     protected void onHandleIntent(@Nullable Intent intent) {
         assert intent != null;
         final String action = intent.getAction();
-        NotificationTask.valueOf(action).doAction(this);
+        EndOfWorkNotification.Action.valueOf(action).doAction(this);
     }
 }

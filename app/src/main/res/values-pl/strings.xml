@@ -3,6 +3,13 @@
     <string name="app_name">Pomiar czasu pracy</string>
 
     <!--##########################################-->
+    <!--################ Channels ################-->
+    <!--##########################################-->
+
+    <string name="channel_end_of_work_name">Koniec czasu pracy</string>
+    <string name="channel_end_of_work_description">Powiadomienia, gdy czas bieżącego dnia pracy zbliża się do końca.</string>
+
+    <!--##########################################-->
     <!--############# Main Activity ##############-->
     <!--##########################################-->
 
