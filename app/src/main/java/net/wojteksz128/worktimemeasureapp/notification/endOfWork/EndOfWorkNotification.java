@@ -43,6 +43,7 @@ public class EndOfWorkNotification {
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(context.getString(R.string.notification_end_of_work_text)))
                 .setDefaults(Notification.DEFAULT_VIBRATE)
                 .setContentIntent(contentIntent(context))
+                .addAction(getAction(context, Action.END_OF_WORK_ACTION))
                 .addAction(getAction(context, Action.IGNORE_REMINDER_ACTION))
                 .setAutoCancel(true);
 
