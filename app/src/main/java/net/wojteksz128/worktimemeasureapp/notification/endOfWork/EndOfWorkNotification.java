@@ -1,4 +1,4 @@
-package net.wojteksz128.worktimemeasureapp.notification;
+package net.wojteksz128.worktimemeasureapp.notification.endOfWork;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -14,6 +14,9 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import net.wojteksz128.worktimemeasureapp.R;
+import net.wojteksz128.worktimemeasureapp.notification.Channel;
+import net.wojteksz128.worktimemeasureapp.notification.NotificationAction;
+import net.wojteksz128.worktimemeasureapp.notification.NotificationIntentService;
 import net.wojteksz128.worktimemeasureapp.window.main.MainActivity;
 
 import java.text.MessageFormat;
@@ -25,7 +28,7 @@ public class EndOfWorkNotification {
     private static final int END_OF_WORK_NOTIFICATION_ID = 251;
     private static final int END_OF_WORK_PENDING_INTENT_ID = 481;
 
-    private static final String CHANNEL_ID = "end-of-work-channel";
+    private static final String CHANNEL_ID = Channel.END_OF_WORK_CHANNEL.getId();
 
     public static void createNotification(Context context) {
         Log.d(LOG, "createNotification: Create notification");
@@ -55,7 +58,7 @@ public class EndOfWorkNotification {
 
     private static NotificationCompat.Action getAction(Context context, Action action) {
         Log.v(LOG, MessageFormat.format("getAction: Create action {0}", action.name()));
-        final Intent intent = new Intent(context, EndOfWorkIntentService.class);
+        final Intent intent = new Intent(context, NotificationIntentService.class);
         intent.setAction(action.name());
         final PendingIntent pendingIntent = PendingIntent.getService(context, action.getPendingIntentId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
         return new NotificationCompat.Action(action.getIcon(), action.getTitle(), pendingIntent);

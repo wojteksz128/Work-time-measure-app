@@ -4,13 +4,15 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 
-public class EndOfWorkIntentService extends IntentService {
+import net.wojteksz128.worktimemeasureapp.notification.endOfWork.EndOfWorkNotification;
+
+public class NotificationIntentService extends IntentService {
 
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.
      */
-    public EndOfWorkIntentService() {
-        super(EndOfWorkIntentService.class.getName());
+    public NotificationIntentService() {
+        super(NotificationIntentService.class.getName());
     }
 
     @Override

@@ -1,7 +1,9 @@
-package net.wojteksz128.worktimemeasureapp.notification;
+package net.wojteksz128.worktimemeasureapp.notification.endOfWork;
 
 import android.content.Context;
 import android.widget.Toast;
+
+import net.wojteksz128.worktimemeasureapp.notification.NotificationAction;
 
 class EndOfWorkAction implements NotificationAction {
 

@@ -22,7 +22,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".notification.EndOfWorkIntentService"
+        <service android:name=".notification.NotificationIntentService"
             android:exported="false"/>
     </application>
 

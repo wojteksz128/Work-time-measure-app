@@ -1,17 +1,15 @@
 package net.wojteksz128.worktimemeasureapp.notification;
 
 import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 
 import net.wojteksz128.worktimemeasureapp.R;
 
-@RequiresApi(Build.VERSION_CODES.O)
 public enum Channel {
 
-    END_OF_WORK_CHANNEL("end-of-work-channel", R.string.channel_end_of_work_name, R.string.channel_end_of_work_description, NotificationManager.IMPORTANCE_HIGH);
+    END_OF_WORK_CHANNEL("end-of-work-channel", R.string.channel_end_of_work_name, R.string.channel_end_of_work_description, 4/*NotificationManager.IMPORTANCE_HIGH*/);
 
     private final String id;
     private final int name;
@@ -27,6 +25,7 @@ public enum Channel {
         this.importance = importance;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public NotificationChannel getNotificationChannel(Context context) {
         String name = context.getString(this.getName());
         String description = context.getString(this.getDescription());
