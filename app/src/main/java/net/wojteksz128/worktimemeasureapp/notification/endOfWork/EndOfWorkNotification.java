@@ -16,7 +16,6 @@ import android.util.Log;
 import net.wojteksz128.worktimemeasureapp.R;
 import net.wojteksz128.worktimemeasureapp.notification.Channel;
 import net.wojteksz128.worktimemeasureapp.notification.NotificationAction;
-import net.wojteksz128.worktimemeasureapp.notification.NotificationIntentService;
 import net.wojteksz128.worktimemeasureapp.window.main.MainActivity;
 
 import java.text.MessageFormat;
@@ -61,7 +60,7 @@ public class EndOfWorkNotification {
 
     private static NotificationCompat.Action getAction(Context context, Action action) {
         Log.v(LOG, MessageFormat.format("getAction: Create action {0}", action.name()));
-        final Intent intent = new Intent(context, NotificationIntentService.class);
+        final Intent intent = new Intent(context, EndOfWorkNotificationIntentService.class);
         intent.setAction(action.name());
         final PendingIntent pendingIntent = PendingIntent.getService(context, action.getPendingIntentId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
         return new NotificationCompat.Action(action.getIcon(), context.getString(action.getTitle()), pendingIntent);
