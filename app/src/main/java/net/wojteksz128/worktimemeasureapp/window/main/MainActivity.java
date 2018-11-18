@@ -128,7 +128,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void testNotification(View view) {
-        EndOfWorkNotification.createNotification(this);
+        EndOfWorkNotification.scheduleEndOfWorkReminder(this);
+//        EndOfWorkNotification.createNotification(this);
     }
 
     private class DayListObserver implements Observer<List<WorkDayEvents>> {
