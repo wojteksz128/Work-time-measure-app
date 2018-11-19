@@ -20,9 +20,10 @@ import android.widget.ProgressBar;
 import net.wojteksz128.worktimemeasureapp.R;
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventType;
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents;
-import net.wojteksz128.worktimemeasureapp.notification.endOfWork.EndOfWorkNotification;
+import net.wojteksz128.worktimemeasureapp.job.AppJob;
 import net.wojteksz128.worktimemeasureapp.util.ComeEventUtils;
 import net.wojteksz128.worktimemeasureapp.util.Consumer;
+import net.wojteksz128.worktimemeasureapp.util.job.JobUtils;
 import net.wojteksz128.worktimemeasureapp.util.notification.NotificationUtils;
 
 import java.util.List;
@@ -128,8 +129,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void testNotification(View view) {
-        EndOfWorkNotification.scheduleEndOfWorkReminder(this);
-//        EndOfWorkNotification.createNotification(this);
+        JobUtils.scheduleJob(this, AppJob.END_OF_WORK_REMINDER);
     }
 
     private class DayListObserver implements Observer<List<WorkDayEvents>> {

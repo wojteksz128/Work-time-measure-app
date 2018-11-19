@@ -9,17 +9,9 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
-import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-
-import com.firebase.jobdispatcher.Driver;
-import com.firebase.jobdispatcher.FirebaseJobDispatcher;
-import com.firebase.jobdispatcher.GooglePlayDriver;
-import com.firebase.jobdispatcher.Job;
-import com.firebase.jobdispatcher.Lifetime;
-import com.firebase.jobdispatcher.Trigger;
 
 import net.wojteksz128.worktimemeasureapp.R;
 import net.wojteksz128.worktimemeasureapp.notification.Channel;
@@ -27,7 +19,6 @@ import net.wojteksz128.worktimemeasureapp.util.notification.NotificationAction;
 import net.wojteksz128.worktimemeasureapp.window.main.MainActivity;
 
 import java.text.MessageFormat;
-import java.util.concurrent.TimeUnit;
 
 import static net.wojteksz128.worktimemeasureapp.notification.Notification.END_OF_WORK;
 
@@ -37,29 +28,7 @@ public class EndOfWorkNotification {
 
     private static final String CHANNEL_ID = Channel.END_OF_WORK_CHANNEL.getId();
 
-    // TODO: 18.11.2018 Make it more flexible - calculate required time.
-    private static final int END_OF_WORK_INTERVAL_MINUTES = (int) (1/*8.5 * 60*/);
-    private static final int END_OF_WORK_INTERVAL_SECONDS = (int) (TimeUnit.MINUTES.toSeconds(END_OF_WORK_INTERVAL_MINUTES));
-    private static final int SYNC_FLEXTIME_SECONDS = (int) TimeUnit.MINUTES.toSeconds(1);
-
-    private static final String END_OF_WORK_REMINDER_JOB_TAG = "end_of_work_reminder_tag";
-
-    synchronized public static void scheduleEndOfWorkReminder(@NonNull final Context context) {
-
-        final Driver driver = new GooglePlayDriver(context);
-        FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(driver);
-        final Job endOfWorkReminderJob = dispatcher.newJobBuilder()
-                .setService(EndOfWorkFirebaseJobService.class)
-                .setTag(END_OF_WORK_REMINDER_JOB_TAG)
-                .setLifetime(Lifetime.FOREVER)
-                .setTrigger(Trigger.executionWindow(10, 15))
-                .setReplaceCurrent(true)
-                .build();
-        dispatcher.schedule(endOfWorkReminderJob);
-        Log.i(LOG, "scheduleEndOfWorkReminder: End of work reminder scheduled");
-    }
-
-    static void createNotification(Context context) {
+    public static void createNotification(Context context) {
         Log.d(LOG, "createNotification: Create notification");
         final NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setColor(ContextCompat.getColor(context, R.color.colorPrimary))

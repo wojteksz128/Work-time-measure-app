@@ -26,7 +26,7 @@
         <service android:name=".notification.endOfWork.EndOfWorkNotificationIntentService"
             android:exported="false"/>
         <service
-            android:name=".notification.endOfWork.EndOfWorkFirebaseJobService"
+            android:name=".job.EndOfWorkFirebaseJobService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />

@@ -1,4 +1,4 @@
-package net.wojteksz128.worktimemeasureapp.notification.endOfWork;
+package net.wojteksz128.worktimemeasureapp.job;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -6,6 +6,8 @@ import android.os.AsyncTask;
 
 import com.firebase.jobdispatcher.JobParameters;
 import com.firebase.jobdispatcher.JobService;
+
+import net.wojteksz128.worktimemeasureapp.notification.endOfWork.EndOfWorkNotification;
 
 public class EndOfWorkFirebaseJobService extends JobService {
 
