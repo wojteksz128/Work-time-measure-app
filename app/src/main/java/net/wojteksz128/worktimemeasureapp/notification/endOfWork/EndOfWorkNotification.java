@@ -35,9 +35,6 @@ public class EndOfWorkNotification {
 
     private static final String LOG = EndOfWorkNotification.class.getSimpleName();
 
-    private static final int END_OF_WORK_NOTIFICATION_ID = END_OF_WORK.getNotificationId();
-    private static final int END_OF_WORK_PENDING_INTENT_ID = END_OF_WORK.getPendingIntentId();
-
     private static final String CHANNEL_ID = Channel.END_OF_WORK_CHANNEL.getId();
 
     // TODO: 18.11.2018 Make it more flexible - calculate required time.
@@ -62,7 +59,7 @@ public class EndOfWorkNotification {
         Log.i(LOG, "scheduleEndOfWorkReminder: End of work reminder scheduled");
     }
 
-    public static void createNotification(Context context) {
+    static void createNotification(Context context) {
         Log.d(LOG, "createNotification: Create notification");
         final NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
@@ -85,7 +82,7 @@ public class EndOfWorkNotification {
 
         if (notificationManager != null) {
             Log.d(LOG, "createNotification: Notification notifying");
-            notificationManager.notify(END_OF_WORK_NOTIFICATION_ID, notificationBuilder.build());
+            notificationManager.notify(END_OF_WORK.getNotificationId(), notificationBuilder.build());
         }
     }
 
@@ -99,7 +96,7 @@ public class EndOfWorkNotification {
 
     private static PendingIntent contentIntent(Context context) {
         Intent intent = new Intent(context, MainActivity.class);
-        return PendingIntent.getActivity(context, END_OF_WORK_PENDING_INTENT_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        return PendingIntent.getActivity(context, END_OF_WORK.getPendingIntentId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     private static Bitmap largeIcon(Context context) {
