@@ -3,8 +3,8 @@ package net.wojteksz128.worktimemeasureapp.notification.endOfWork;
 import android.content.Context;
 import android.util.Log;
 
-import net.wojteksz128.worktimemeasureapp.notification.NotificationAction;
-import net.wojteksz128.worktimemeasureapp.notification.NotificationUtils;
+import net.wojteksz128.worktimemeasureapp.util.notification.NotificationAction;
+import net.wojteksz128.worktimemeasureapp.util.notification.NotificationUtils;
 
 class IgnoreReminderAction implements NotificationAction {
 

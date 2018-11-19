@@ -1,9 +1,11 @@
-package net.wojteksz128.worktimemeasureapp.notification;
+package net.wojteksz128.worktimemeasureapp.util.notification;
 
 import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Build;
 import android.util.Log;
+
+import net.wojteksz128.worktimemeasureapp.notification.Channel;
 
 public class NotificationUtils {
 

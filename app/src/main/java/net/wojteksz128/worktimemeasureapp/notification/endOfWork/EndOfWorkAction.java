@@ -6,8 +6,8 @@ import android.os.Looper;
 import android.widget.Toast;
 
 import net.wojteksz128.worktimemeasureapp.R;
-import net.wojteksz128.worktimemeasureapp.notification.NotificationAction;
-import net.wojteksz128.worktimemeasureapp.notification.NotificationUtils;
+import net.wojteksz128.worktimemeasureapp.util.notification.NotificationAction;
+import net.wojteksz128.worktimemeasureapp.util.notification.NotificationUtils;
 
 class EndOfWorkAction implements NotificationAction {
 

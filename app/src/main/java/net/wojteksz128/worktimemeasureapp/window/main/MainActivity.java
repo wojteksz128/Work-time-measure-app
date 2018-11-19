@@ -20,10 +20,10 @@ import android.widget.ProgressBar;
 import net.wojteksz128.worktimemeasureapp.R;
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventType;
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents;
-import net.wojteksz128.worktimemeasureapp.notification.NotificationUtils;
 import net.wojteksz128.worktimemeasureapp.notification.endOfWork.EndOfWorkNotification;
 import net.wojteksz128.worktimemeasureapp.util.ComeEventUtils;
 import net.wojteksz128.worktimemeasureapp.util.Consumer;
+import net.wojteksz128.worktimemeasureapp.util.notification.NotificationUtils;
 
 import java.util.List;
 

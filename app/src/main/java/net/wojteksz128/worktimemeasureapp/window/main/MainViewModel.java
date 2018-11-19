@@ -13,6 +13,7 @@ import net.wojteksz128.worktimemeasureapp.util.PeriodicOperationRunner;
 
 import java.util.List;
 
+@SuppressWarnings("WeakerAccess")
 public class MainViewModel extends AndroidViewModel {
 
     private static final String TAG = MainViewModel.class.getSimpleName();

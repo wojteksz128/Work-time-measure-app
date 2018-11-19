@@ -23,7 +23,7 @@ import com.firebase.jobdispatcher.Trigger;
 
 import net.wojteksz128.worktimemeasureapp.R;
 import net.wojteksz128.worktimemeasureapp.notification.Channel;
-import net.wojteksz128.worktimemeasureapp.notification.NotificationAction;
+import net.wojteksz128.worktimemeasureapp.util.notification.NotificationAction;
 import net.wojteksz128.worktimemeasureapp.window.main.MainActivity;
 
 import java.text.MessageFormat;
