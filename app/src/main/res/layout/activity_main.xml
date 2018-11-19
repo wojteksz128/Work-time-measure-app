@@ -21,12 +21,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/ic_add_black_24dp" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="testNotification"
-        android:text="Test notification"/>
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/main_rv_days"
         android:layout_width="match_parent"

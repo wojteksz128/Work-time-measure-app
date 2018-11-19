@@ -3,9 +3,16 @@ package net.wojteksz128.worktimemeasureapp.job;
 import com.firebase.jobdispatcher.JobService;
 import com.firebase.jobdispatcher.Lifetime;
 
+import java.util.concurrent.TimeUnit;
+
 public enum AppJob {
     // TODO: 18.11.2018 Make it more flexible - calculate required time.
-    END_OF_WORK_REMINDER(EndOfWorkFirebaseJobService.class, "end_of_work_reminder_tag", Lifetime.FOREVER, 10, 15, true);
+    END_OF_WORK_REMINDER(EndOfWorkFirebaseJobService.class,
+            "end_of_work_reminder_tag",
+            Lifetime.FOREVER,
+            (int)(TimeUnit.HOURS.toSeconds(8) + TimeUnit.MINUTES.toSeconds(30)),
+            15,
+            true);
 
 
     private final Class<? extends JobService> jobServiceClass;

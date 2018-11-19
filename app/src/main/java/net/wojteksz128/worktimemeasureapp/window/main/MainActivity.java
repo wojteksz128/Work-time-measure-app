@@ -111,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
                                 switch (input) {
                                     case COME_IN:
                                         message = getString(R.string.main_snackbar_info_income_registered);
+                                        JobUtils.scheduleJob(MainActivity.this, AppJob.END_OF_WORK_REMINDER);
                                         break;
                                     case COME_OUT:
                                         message = getString(R.string.main_snackbar_info_outcome_registered);
@@ -126,10 +127,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-    }
-
-    public void testNotification(View view) {
-        JobUtils.scheduleJob(this, AppJob.END_OF_WORK_REMINDER);
     }
 
     private class DayListObserver implements Observer<List<WorkDayEvents>> {
