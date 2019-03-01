@@ -1,8 +1,11 @@
 package net.wojteksz128.worktimemeasureapp.job;
 
+import android.util.Log;
+
 import com.firebase.jobdispatcher.JobService;
 import com.firebase.jobdispatcher.Lifetime;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 public enum AppJob {
@@ -15,12 +18,17 @@ public enum AppJob {
             true);
 
 
-    private final Class<? extends JobService> jobServiceClass;
-    private final String tag;
-    private final int lifetime;
+
+    private static final String LOG = AppJob.class.getSimpleName();
+    private static final int EMPTY_INTERVAL = -1;
+
+    public final Class<? extends JobService> jobServiceClass;
+    public final String tag;
+    public final int lifetime;
     private final int interval;
-    private final int syncFlexTime;
-    private final boolean replaceCurrent;
+    private final Callable<Integer> intervalCalculator;
+    public final int syncFlexTime;
+    public final boolean replaceCurrent;
 
     AppJob(Class<? extends JobService> jobServiceClass, String tag, int lifetime, int interval, int syncFlexTime, boolean replaceCurrent) {
 
@@ -28,31 +36,30 @@ public enum AppJob {
         this.tag = tag;
         this.lifetime = lifetime;
         this.interval = interval;
+        this.intervalCalculator = null;
         this.syncFlexTime = syncFlexTime;
         this.replaceCurrent = replaceCurrent;
     }
 
-    public Class<? extends JobService> getJobServiceClass() {
-        return jobServiceClass;
-    }
+    AppJob(Class<? extends JobService> jobServiceClass, String tag, int lifetime, Callable<Integer> intervalCalculator, int syncFlexTime, boolean replaceCurrent) {
 
-    public String getTag() {
-        return tag;
-    }
-
-    public int getLifetime() {
-        return lifetime;
+        this.jobServiceClass = jobServiceClass;
+        this.tag = tag;
+        this.lifetime = lifetime;
+        this.interval = EMPTY_INTERVAL;
+        this.intervalCalculator = intervalCalculator;
+        this.syncFlexTime = syncFlexTime;
+        this.replaceCurrent = replaceCurrent;
     }
 
     public int getInterval() {
-        return interval;
-    }
-
-    public int getSyncFlexTime() {
-        return syncFlexTime;
-    }
-
-    public boolean isReplaceCurrent() {
-        return replaceCurrent;
+        try {
+            return this.interval != EMPTY_INTERVAL
+                    ? this.interval
+                    : this.intervalCalculator != null ? this.intervalCalculator.call() : 0;
+        } catch (Exception e) {
+            Log.e(LOG, e.getLocalizedMessage());
+            return 0;
+        }
     }
 }
