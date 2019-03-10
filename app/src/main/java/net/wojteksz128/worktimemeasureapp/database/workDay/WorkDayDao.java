@@ -35,6 +35,10 @@ public interface WorkDayDao {
     @Query("SELECT * FROM work_day WHERE :date BETWEEN beginSlot AND endSlot")
     WorkDayEvents findByIntervalContains(Date date);
 
+    @Transaction
+    @Query("SELECT * FROM work_day WHERE date(beginSlot) = date(current_date)")
+    WorkDayEvents findCurrentWorkDay();
+
     @Insert
     Long insert(WorkDay workDay);
 
