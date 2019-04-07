@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
         public void onChanged(@Nullable List<WorkDayEvents> workDayEvents) {
             mWorkDayAdapter.setWorkDays(workDayEvents);
 
-            if (workDayEvents != null) {
+            if (workDayEvents != null && !workDayEvents.isEmpty()) {
                 final WorkDayEvents currentDayEvents = workDayEvents.get(LAST_SAVED_DAY);
                 if (!currentDayEvents.hasEventsEnded()) {
                     if (!mainViewModel.getSecondRunner().isRunning()) {
