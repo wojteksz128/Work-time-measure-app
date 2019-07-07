@@ -31,10 +31,7 @@ internal class WorkDayViewHolder(private val mView: View) : RecyclerView.ViewHol
     }
 
     private fun fillDateLabel(workDay: WorkDayEvents) {
-        val dateLabel = workDay.workDay.date?.let {
-            DateTimeUtils.formatDate(mView.context.getString(R.string.main_work_day_label_format),
-                    it)
-        }
+        val dateLabel = DateTimeUtils.formatDate(mView.context.getString(R.string.main_work_day_label_format), workDay.workDay.date)
         mDateTV.text = dateLabel
     }
 

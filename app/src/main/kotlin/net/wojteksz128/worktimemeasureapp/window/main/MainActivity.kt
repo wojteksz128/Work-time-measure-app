@@ -2,6 +2,7 @@ package net.wojteksz128.worktimemeasureapp.window.main
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.arch.paging.PagedList
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.support.design.widget.FloatingActionButton
@@ -93,15 +94,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private inner class DayListObserver : Observer<List<WorkDayEvents>> {
+    private inner class DayListObserver : Observer<PagedList<WorkDayEvents>> {
 
         private val TAG = DayListObserver::class.java.simpleName
 
-        override fun onChanged(workDayEvents: List<WorkDayEvents>?) {
+        override fun onChanged(workDayEvents: PagedList<WorkDayEvents>?) {
             workDayEvents?.let {
-                mWorkDayAdapter!!.setWorkDays(it)
+                mWorkDayAdapter!!.submitList(it)
 
-                val currentDayEvents = workDayEvents.maxBy { it.workDay.date }
+                val currentDayEvents = workDayEvents.first()
                 currentDayEvents?.let {
                     if (!currentDayEvents.hasEventsEnded()) {
                         if (!mainViewModel!!.secondRunner.isRunning) {

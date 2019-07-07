@@ -1,6 +1,7 @@
 package net.wojteksz128.worktimemeasureapp.database.workDay
 
 import android.arch.lifecycle.LiveData
+import android.arch.paging.DataSource
 import android.arch.persistence.room.*
 import java.util.*
 
@@ -10,7 +11,7 @@ interface WorkDayDao {
 
     @Transaction
     @Query("SELECT * FROM work_day ORDER BY date DESC")
-    fun findAllInLiveData(): LiveData<List<WorkDayEvents>>
+    fun findAllInLiveData(): DataSource.Factory<Int, WorkDayEvents>
 
     @Transaction
     @Query("SELECT * FROM work_day ORDER BY date DESC")
