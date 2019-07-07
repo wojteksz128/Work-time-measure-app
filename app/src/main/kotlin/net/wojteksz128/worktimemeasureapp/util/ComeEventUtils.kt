@@ -1,6 +1,5 @@
 package net.wojteksz128.worktimemeasureapp.util
 
-import android.arch.core.util.Function
 import android.content.Context
 import android.os.AsyncTask
 import net.wojteksz128.worktimemeasureapp.database.AppDatabase
@@ -14,28 +13,29 @@ import java.util.*
 
 object ComeEventUtils {
 
-    fun registerNewEvent(context: Context, preFunction: Function<Void, Void>, postFunction: Function<ComeEventType, Void>) {
+    // TODO: 07.07.2019 Move to separate action object.
+    fun registerNewEvent(context: Context, preFunction: () -> Unit, postFunction: (ComeEventType) -> Unit) {
         val comeEventDao = AppDatabase.getInstance(context).comeEventDao()
         val registerDate = Date()
 
         object : AsyncTask<Void, Void, ComeEventType>() {
 
             override fun onPreExecute() {
-                preFunction.apply(null)
+                preFunction()
             }
 
             override fun doInBackground(vararg voids: Void): ComeEventType {
                 val comeEventType: ComeEventType
                 val workDay = getCurrentWorkDay(registerDate, context)
 
-                if (isFirstWorkDayEvent(workDay)) {
-                    comeEventType = createNewEvent(workDay, registerDate, comeEventDao)
+                comeEventType = if (isFirstWorkDayEvent(workDay)) {
+                    createNewEvent(workDay, registerDate, comeEventDao)
                 } else {
                     val comeEvent = workDay.events[0]
                     if (comeEvent.endDate != null) {
-                        comeEventType = createNewEvent(workDay, registerDate, comeEventDao)
+                        createNewEvent(workDay, registerDate, comeEventDao)
                     } else {
-                        comeEventType = assignEndDateIntoCurrentEvent(comeEvent, registerDate, comeEventDao)
+                        assignEndDateIntoCurrentEvent(comeEvent, registerDate, comeEventDao)
                     }
                 }
 
@@ -43,7 +43,7 @@ object ComeEventUtils {
             }
 
             override fun onPostExecute(comeEventType: ComeEventType) {
-                postFunction.apply(comeEventType)
+                postFunction(comeEventType)
             }
         }.execute()
     }
@@ -61,7 +61,7 @@ object ComeEventUtils {
     }
 
     private fun isFirstWorkDayEvent(workDay: WorkDayEvents): Boolean {
-        return workDay.events == null || workDay.events.isEmpty()
+        return workDay.events.isEmpty()
     }
 
     private fun getCurrentWorkDay(registerDate: Date, context: Context): WorkDayEvents {
@@ -69,20 +69,15 @@ object ComeEventUtils {
         var workDay: WorkDayEvents? = workDayDao.findByIntervalContains(registerDate)
 
         if (workDay == null) {
-            workDay = createNewWorkDay(registerDate, workDayDao)
+            createNewWorkDay(registerDate, workDayDao)
+            workDay = workDayDao.findByIntervalContains(registerDate)
         }
         return workDay
     }
 
-    private fun createNewWorkDay(registerDate: Date, workDayDao: WorkDayDao): WorkDayEvents {
-        val workDay = WorkDayEvents()
+    private fun createNewWorkDay(registerDate: Date, workDayDao: WorkDayDao) {
+        val workDay = WorkDay(registerDate)
 
-        workDay.workDay = WorkDay(registerDate)
-        workDay.events = ArrayList()
-        val insertedWorkdayId = workDayDao.insert(workDay.workDay)
-        workDay.workDay = WorkDay(insertedWorkdayId!!.toInt(), workDay.workDay.date,
-                workDay.workDay.beginSlot, workDay.workDay.endSlot,
-                workDay.workDay.percentDeclaredTime)
-        return workDay
+        workDayDao.insert(workDay)
     }
 }

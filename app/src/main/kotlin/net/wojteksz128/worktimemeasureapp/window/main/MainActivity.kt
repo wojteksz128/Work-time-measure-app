@@ -17,7 +17,7 @@ import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventType
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents
 import net.wojteksz128.worktimemeasureapp.util.ComeEventUtils
-import net.wojteksz128.worktimemeasureapp.util.Consumer
+import net.wojteksz128.worktimemeasureapp.util.FunctionWithParameter
 
 // TODO: 09.08.2018 Dodaj joba, który automatycznie zamknie dzień pracy o godzinie zmiany dnia pracy
 // DONE: 11.08.2018 Dodaj wątek, który będzie automatycznie zmieniać sekundy, gdy widzi się czas i leci czas pracy
@@ -122,8 +122,8 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        private fun getUpdateAction(currentDayEvents: WorkDayEvents): Consumer<WorkDayEvents> {
-            return object : Consumer<WorkDayEvents>(currentDayEvents) {
+        private fun getUpdateAction(currentDayEvents: WorkDayEvents): FunctionWithParameter<WorkDayEvents> {
+            return object : FunctionWithParameter<WorkDayEvents>(currentDayEvents) {
 
                 override fun action(obj: WorkDayEvents) {
                     Log.v(TAG, "onChanged: Update work day")

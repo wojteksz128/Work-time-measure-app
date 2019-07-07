@@ -17,7 +17,7 @@ object DateTimeUtils {
 
     fun calculateDuration(comeEvent: ComeEvent): Date {
         val startTime = comeEvent.startDate.time
-        val endTime = if (comeEvent.endDate != null) comeEvent.endDate.time else System.currentTimeMillis()
+        val endTime = if (comeEvent.endDate != null) comeEvent.endDate!!.time else System.currentTimeMillis()
         return Date(endTime - startTime)
     }
 
@@ -25,7 +25,7 @@ object DateTimeUtils {
         var millisSum: Long = 0
 
         for (comeEvent in workDay.events) {
-            millisSum += if (comeEvent.duration != null) comeEvent.duration.time else calculateDuration(comeEvent).time
+            millisSum += if (comeEvent.duration != null) comeEvent.duration!!.time else calculateDuration(comeEvent).time
         }
 
         return Date(millisSum)

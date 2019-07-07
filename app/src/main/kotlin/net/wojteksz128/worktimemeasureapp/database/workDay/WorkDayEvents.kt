@@ -8,7 +8,7 @@ import java.util.*
 class WorkDayEvents(
         @Embedded val workDay: WorkDay,
         @Relation(parentColumn = "id", entityColumn = "workDayId", entity = ComeEvent::class)
-        private val events: List<ComeEvent>
+        val events: List<ComeEvent>
 ) {
 
     init {
