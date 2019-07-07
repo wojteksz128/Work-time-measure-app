@@ -25,21 +25,14 @@ object ComeEventUtils {
             }
 
             override fun doInBackground(vararg voids: Void): ComeEventType {
-                val comeEventType: ComeEventType
                 val workDay = getCurrentWorkDay(registerDate, context)
+                val comeEvent = workDay.events.lastOrNull { !it.isEnded }
 
-                comeEventType = if (isFirstWorkDayEvent(workDay)) {
-                    createNewEvent(workDay, registerDate, comeEventDao)
+                return if (comeEvent != null) {
+                    assignEndDateIntoCurrentEvent(comeEvent, registerDate, comeEventDao)
                 } else {
-                    val comeEvent = workDay.events[0]
-                    if (comeEvent.endDate != null) {
-                        createNewEvent(workDay, registerDate, comeEventDao)
-                    } else {
-                        assignEndDateIntoCurrentEvent(comeEvent, registerDate, comeEventDao)
-                    }
+                    createNewEvent(workDay, registerDate, comeEventDao)
                 }
-
-                return comeEventType
             }
 
             override fun onPostExecute(comeEventType: ComeEventType) {
