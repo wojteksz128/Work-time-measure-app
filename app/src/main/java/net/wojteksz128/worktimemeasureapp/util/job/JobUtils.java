@@ -36,7 +36,8 @@ public abstract class JobUtils {
                 .setTrigger(Trigger.executionWindow(interval, windowEnd))
                 .setReplaceCurrent(replaceCurrent)
                 .build();
-        Log.d(LOG, MessageFormat.format("Create job:\n" +
+        Log.d(LOG, MessageFormat.format("scheduleJob:\n" +
+                        "Create job:\n" +
                         "\tservice class: {0},\n" +
                         "\ttag: {1},\n" +
                         "\tlifetime: {2},\n" +
