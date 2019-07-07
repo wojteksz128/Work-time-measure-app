@@ -3,16 +3,17 @@ package net.wojteksz128.worktimemeasureapp.database.workDay
 import android.arch.persistence.room.Embedded
 import android.arch.persistence.room.Relation
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEvent
-import java.util.*
 
-class WorkDayEvents(
-        @Embedded val workDay: WorkDay,
-        @Relation(parentColumn = "id", entityColumn = "workDayId", entity = ComeEvent::class)
-        val events: List<ComeEvent>
-) {
+class WorkDayEvents {
 
-    init {
-        Collections.sort(events, Collections.reverseOrder())
+    @Embedded
+    var workDay: WorkDay
+
+    @Relation(parentColumn = "id", entityColumn = "workDayId", entity = ComeEvent::class)
+    lateinit var events: List<ComeEvent>
+
+    constructor(workDay: WorkDay) {
+        this.workDay = workDay
     }
 
     fun hasEventsEnded() = events.all { it.isEnded }

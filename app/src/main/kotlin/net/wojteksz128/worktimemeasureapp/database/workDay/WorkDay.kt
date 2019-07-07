@@ -10,8 +10,8 @@ class WorkDay(
         @PrimaryKey(autoGenerate = true)
         val id: Long?,
         var date: Date?,
-        var beginSlot: Date?,
-        var endSlot: Date?,
+        var beginSlot: Date,
+        var endSlot: Date,
         var percentDeclaredTime: Double
 ) {
 

@@ -1,19 +1,20 @@
 package net.wojteksz128.worktimemeasureapp.database.comeEvent
 
-import android.arch.persistence.room.Entity
-import android.arch.persistence.room.Ignore
-import android.arch.persistence.room.PrimaryKey
+import android.arch.persistence.room.*
+import android.arch.persistence.room.ForeignKey.CASCADE
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDay
 import java.util.*
 
-@Entity(tableName = "come_event")
+@Entity(tableName = "come_event"
+        , foreignKeys = [ForeignKey(entity = WorkDay::class, parentColumns = ["id"], childColumns = ["workDayId"], onDelete = CASCADE)])
 class ComeEvent(
         @PrimaryKey(autoGenerate = true)
         val id: Long?,
         var startDate: Date,
         var endDate: Date?,
         var duration: Date?,
-        private val workDayId: Long
+        @ColumnInfo(index = true)
+        val workDayId: Long
 ) : Comparable<ComeEvent> {
 
     val isEnded: Boolean
