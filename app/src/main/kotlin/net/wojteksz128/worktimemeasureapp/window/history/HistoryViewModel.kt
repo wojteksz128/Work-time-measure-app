@@ -1,4 +1,4 @@
-package net.wojteksz128.worktimemeasureapp.window.main
+package net.wojteksz128.worktimemeasureapp.window.history
 
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
@@ -10,7 +10,7 @@ import net.wojteksz128.worktimemeasureapp.database.AppDatabase
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents
 import net.wojteksz128.worktimemeasureapp.util.PeriodicOperationRunner
 
-class MainViewModel(application: Application) : AndroidViewModel(application) {
+class HistoryViewModel(application: Application) : AndroidViewModel(application) {
     val workDays: LiveData<PagedList<WorkDayEvents>>
     val secondRunner: PeriodicOperationRunner<WorkDayEvents>
 
@@ -23,6 +23,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     companion object {
 
-        private val TAG = MainViewModel::class.java.simpleName!!
+        private val TAG = HistoryViewModel::class.java.simpleName!!
     }
 }

@@ -21,7 +21,7 @@
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="@string/main_work_day_label_example" />
+        tools:text="@string/history_work_day_label_example" />
 
     <TextView
         android:id="@+id/day_work_duration"
@@ -35,7 +35,7 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/day_label"
         app:layout_constraintTop_toTopOf="@+id/day_label"
-        tools:text="@string/main_work_day_duration_example" />
+        tools:text="@string/history_work_day_duration_example" />
 
     <LinearLayout
         android:id="@+id/day_events_list"

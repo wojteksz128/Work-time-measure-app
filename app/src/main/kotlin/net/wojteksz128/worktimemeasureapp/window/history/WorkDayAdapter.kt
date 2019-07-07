@@ -1,4 +1,4 @@
-package net.wojteksz128.worktimemeasureapp.window.main
+package net.wojteksz128.worktimemeasureapp.window.history
 
 import android.arch.paging.PagedListAdapter
 import android.support.v7.util.DiffUtil
@@ -14,7 +14,7 @@ internal class WorkDayAdapter : PagedListAdapter<WorkDayEvents, WorkDayViewHolde
         val context = parent.context
         val inflater = LayoutInflater.from(context)
 
-        val view = inflater.inflate(R.layout.main_work_day_list_item, parent, false)
+        val view = inflater.inflate(R.layout.history_work_day_list_item, parent, false)
         return WorkDayViewHolder(view)
     }
 

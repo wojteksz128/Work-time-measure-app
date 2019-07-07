@@ -1,4 +1,4 @@
-package net.wojteksz128.worktimemeasureapp.window.main
+package net.wojteksz128.worktimemeasureapp.window.history
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -25,13 +25,13 @@ internal class WorkDayViewHolder(private val mView: View) : RecyclerView.ViewHol
     }
 
     private fun fillDurationLabel(workDay: WorkDayEvents) {
-        val duration = DateTimeUtils.formatDate(mView.context.getString(R.string.main_work_day_duration_format),
+        val duration = DateTimeUtils.formatDate(mView.context.getString(R.string.history_work_day_duration_format),
                 DateTimeUtils.mergeComeEventsDuration(workDay), TimeZone.getTimeZone("UTC"))
         mWorkDurationTV.text = duration
     }
 
     private fun fillDateLabel(workDay: WorkDayEvents) {
-        val dateLabel = DateTimeUtils.formatDate(mView.context.getString(R.string.main_work_day_label_format), workDay.workDay.date)
+        val dateLabel = DateTimeUtils.formatDate(mView.context.getString(R.string.history_work_day_label_format), workDay.workDay.date)
         mDateTV.text = dateLabel
     }
 
@@ -42,7 +42,7 @@ internal class WorkDayViewHolder(private val mView: View) : RecyclerView.ViewHol
         mEventsListLayout.removeAllViews()
 
         for (event in events) {
-            val eventViewHolder = ComeEventViewHolder(inflater.inflate(R.layout.main_day_event_list_item, mEventsListLayout, false))
+            val eventViewHolder = ComeEventViewHolder(inflater.inflate(R.layout.history_day_event_list_item, mEventsListLayout, false))
             eventViewHolder.bind(event)
             mEventsListLayout.addView(eventViewHolder.view)
         }

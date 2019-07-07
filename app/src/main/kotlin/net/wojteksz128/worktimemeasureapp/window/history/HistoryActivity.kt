@@ -1,4 +1,4 @@
-package net.wojteksz128.worktimemeasureapp.window.main
+package net.wojteksz128.worktimemeasureapp.window.history
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
@@ -31,8 +31,8 @@ import net.wojteksz128.worktimemeasureapp.util.FunctionWithParameter
 // TODO: 11.08.2018 dodaj drawer layout (hamburger)
 // TODO: 11.08.2018 popraw liczenie czasu pracy (może nie brać pod uwagę ms?)
 // TODO: 07.07.2019 Uwzględniaj strefę czasową
-class MainActivity : AppCompatActivity() {
-    private var mainViewModel: MainViewModel? = null
+class HistoryActivity : AppCompatActivity() {
+    private var viewModel: HistoryViewModel? = null
     private var mLayout: ConstraintLayout? = null
     private var mWorkDayAdapter: WorkDayAdapter? = null
     private var mLoadingIndicator: ProgressBar? = null
@@ -40,12 +40,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        Log.v(TAG, "onCreate: Create or get MainViewModel object")
-        mainViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
+        setContentView(R.layout.activity_history)
+        Log.v(TAG, "onCreate: Create or get HistoryViewModel object")
+        viewModel = ViewModelProviders.of(this).get(HistoryViewModel::class.java)
 
-        mLayout = findViewById(R.id.main_layout)
-        mLoadingIndicator = findViewById(R.id.main_loading_indicator)
+        mLayout = findViewById(R.id.history_layout)
+        mLoadingIndicator = findViewById(R.id.history_loading_indicator)
 
         initWorkDaysRecyclerView()
         initFab()
@@ -54,13 +54,13 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         Log.v(TAG, "onResume: Fill days list")
-        mainViewModel!!.workDays.observe(this, DayListObserver())
+        viewModel!!.workDays.observe(this, DayListObserver())
     }
 
     override fun onPause() {
         super.onPause()
         Log.v(TAG, "onPause: Stop second updater")
-        this.mainViewModel!!.secondRunner.stop()
+        this.viewModel!!.secondRunner.stop()
     }
 
     private fun initWorkDaysRecyclerView() {
@@ -68,23 +68,23 @@ class MainActivity : AppCompatActivity() {
 
         val layoutManager = LinearLayoutManager(this)
 
-        val mDayList = findViewById<RecyclerView>(R.id.main_rv_days)
+        val mDayList = findViewById<RecyclerView>(R.id.history_rv_days)
         mDayList.layoutManager = layoutManager
         mDayList.adapter = mWorkDayAdapter
         (mDayList.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
     }
 
     private fun initFab() {
-        val mEnterFab = findViewById<FloatingActionButton>(R.id.main_enter_fab)
+        val mEnterFab = findViewById<FloatingActionButton>(R.id.history_enter_fab)
         mEnterFab.setOnClickListener {
-            ComeEventUtils.registerNewEvent(this@MainActivity,
+            ComeEventUtils.registerNewEvent(this@HistoryActivity,
                     {
                         mLoadingIndicator!!.visibility = View.VISIBLE
                     },
                     { input ->
                         val message: String = when (input) {
-                            ComeEventType.COME_IN -> getString(R.string.main_snackbar_info_income_registered)
-                            ComeEventType.COME_OUT -> getString(R.string.main_snackbar_info_outcome_registered)
+                            ComeEventType.COME_IN -> getString(R.string.history_snackbar_info_income_registered)
+                            ComeEventType.COME_OUT -> getString(R.string.history_snackbar_info_outcome_registered)
                         }
 
                         mLoadingIndicator!!.visibility = View.INVISIBLE
@@ -105,13 +105,13 @@ class MainActivity : AppCompatActivity() {
                 val currentDayEvents = workDayEvents.first()
                 currentDayEvents?.let {
                     if (!currentDayEvents.hasEventsEnded()) {
-                        if (!mainViewModel!!.secondRunner.isRunning) {
-                            mainViewModel!!.secondRunner.setConsumer(getUpdateAction(currentDayEvents))
+                        if (!viewModel!!.secondRunner.isRunning) {
+                            viewModel!!.secondRunner.setConsumer(getUpdateAction(currentDayEvents))
                             Log.v(TAG, "onChanged: start second updater")
-                            mainViewModel!!.secondRunner.start()
+                            viewModel!!.secondRunner.start()
                         }
                     } else {
-                        mainViewModel!!.secondRunner.stop()
+                        viewModel!!.secondRunner.stop()
                     }
                 }
             }
@@ -130,6 +130,6 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
 
-        private val TAG = MainActivity::class.java.simpleName
+        private val TAG = HistoryActivity::class.java.simpleName
     }
 }
