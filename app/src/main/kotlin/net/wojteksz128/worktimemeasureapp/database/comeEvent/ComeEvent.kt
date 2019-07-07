@@ -1,6 +1,5 @@
 package net.wojteksz128.worktimemeasureapp.database.comeEvent
 
-
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.Ignore
 import android.arch.persistence.room.PrimaryKey
@@ -8,46 +7,31 @@ import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDay
 import java.util.*
 
 @Entity(tableName = "come_event")
-class ComeEvent : Comparable<ComeEvent> {
-
-    @PrimaryKey(autoGenerate = true)
-    val id: Long?
-    var startDate: Date? = null
-    var endDate: Date? = null
-    var duration: Date? = null
-    var workDayId: Int = 0
+class ComeEvent(
+        @PrimaryKey(autoGenerate = true)
+        val id: Long?,
+        var startDate: Date,
+        var endDate: Date?,
+        var duration: Date?,
+        private val workDayId: Long
+) : Comparable<ComeEvent> {
 
     val isEnded: Boolean
         get() = this.endDate != null && this.duration != null
 
-
-    constructor(id: Long?, startDate: Date, endDate: Date, duration: Date, workDayId: Int) {
-        this.id = id
-        this.startDate = startDate
-        this.endDate = endDate
-        this.duration = duration
-        this.workDayId = workDayId
-    }
+    @Ignore
+    constructor(startDate: Date, endDate: Date?, duration: Date?, workDayId: Long)
+            : this(null, startDate, endDate, duration, workDayId)
 
     @Ignore
-    constructor(startDate: Date, endDate: Date, duration: Date, workDayId: Int) {
-        this.startDate = startDate
-        this.endDate = endDate
-        this.duration = duration
-        this.workDayId = workDayId
-    }
+    constructor(startDate: Date, workDay: WorkDay)
+            : this(startDate, null, null, workDay.id!!)
 
-    @Ignore
-    constructor(startDate: Date, workDay: WorkDay) {
-        this.startDate = startDate
-        this.workDayId = workDay.id
-    }
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || javaClass != other.javaClass) return false
 
-    override fun equals(o: Any?): Boolean {
-        if (this === o) return true
-        if (o == null || javaClass != o.javaClass) return false
-
-        val event = o as ComeEvent?
+        val event = other as ComeEvent?
 
         if (workDayId != event!!.workDayId) return false
         return if (if (id != null) id != event.id else event.id != null) false else startDate == event.startDate
@@ -55,12 +39,12 @@ class ComeEvent : Comparable<ComeEvent> {
 
     override fun hashCode(): Int {
         var result = id?.hashCode() ?: 0
-        result = 31 * result + startDate!!.hashCode()
-        result = 31 * result + workDayId
+        result = 31 * result + startDate.hashCode()
+        result = 31 * result + workDayId.toInt()
         return result
     }
 
-    override fun compareTo(comeEvent: ComeEvent): Int {
-        return (this.startDate!!.time - comeEvent.getStartDate().getTime()).toInt()
+    override fun compareTo(other: ComeEvent): Int {
+        return (this.startDate.time - other.startDate.time).toInt()
     }
 }

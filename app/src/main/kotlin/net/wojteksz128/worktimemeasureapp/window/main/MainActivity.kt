@@ -30,6 +30,7 @@ import net.wojteksz128.worktimemeasureapp.util.Consumer
 // TODO: 11.08.2018 Dodaj widok kalendarza
 // TODO: 11.08.2018 dodaj drawer layout (hamburger)
 // TODO: 11.08.2018 popraw liczenie czasu pracy (może nie brać pod uwagę ms?)
+// TODO: 07.07.2019 Uwzględniaj strefę czasową
 class MainActivity : AppCompatActivity() {
     private var mainViewModel: MainViewModel? = null
     private var mLayout: ConstraintLayout? = null

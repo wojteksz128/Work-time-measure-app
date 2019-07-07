@@ -5,29 +5,15 @@ import android.arch.persistence.room.Relation
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEvent
 import java.util.*
 
-class WorkDayEvents {
+class WorkDayEvents(
+        @Embedded val workDay: WorkDay,
+        @Relation(parentColumn = "id", entityColumn = "workDayId", entity = ComeEvent::class)
+        private val events: List<ComeEvent>
+) {
 
-    @Embedded
-    var workDay: WorkDay? = null
-
-    @Relation(parentColumn = "id", entityColumn = "workDayId", entity = ComeEvent::class)
-    private var events: List<ComeEvent>? = null
-
-    fun getEvents(): List<ComeEvent> {
-        Collections.sort(events!!, Collections.reverseOrder())
-        return events
+    init {
+        Collections.sort(events, Collections.reverseOrder())
     }
 
-    fun setEvents(events: List<ComeEvent>) {
-        this.events = events
-    }
-
-    fun hasEventsEnded(): Boolean {
-        for (comeEvent in this.events!!) {
-            if (!comeEvent.isEnded) {
-                return false
-            }
-        }
-        return true
-    }
+    fun hasEventsEnded() = events.all { it.isEnded }
 }

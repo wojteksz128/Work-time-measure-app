@@ -5,6 +5,7 @@ import android.arch.persistence.room.*
 import java.util.*
 
 @Dao
+@Suppress("unused")
 interface WorkDayDao {
 
     @Transaction

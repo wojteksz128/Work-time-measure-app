@@ -6,29 +6,16 @@ import android.arch.persistence.room.PrimaryKey
 import java.util.*
 
 @Entity(tableName = "work_day")
-class WorkDay {
-
-    @PrimaryKey(autoGenerate = true)
-    val id: Int
-    var date: Date? = null
-    var beginSlot: Date? = null
-    var endSlot: Date? = null
-    var percentDeclaredTime: Double = 0.toDouble()
-
-
-    constructor(id: Int, date: Date, beginSlot: Date, endSlot: Date, percentDeclaredTime: Double) {
-        this.id = id
-        this.date = date
-        this.beginSlot = beginSlot
-        this.endSlot = endSlot
-        this.percentDeclaredTime = percentDeclaredTime
-    }
+class WorkDay(
+        @PrimaryKey(autoGenerate = true)
+        val id: Long?,
+        var date: Date?,
+        var beginSlot: Date?,
+        var endSlot: Date?,
+        var percentDeclaredTime: Double
+) {
 
     @Ignore
-    constructor(date: Date) {
-        this.date = date
-        this.beginSlot = WorkDayUtils.calculateBeginSlot(date)
-        this.endSlot = WorkDayUtils.calculateEndSlot(date)
-        this.percentDeclaredTime = 0.0
-    }
+    constructor(date: Date)
+            : this(null, date, WorkDayUtils.calculateBeginSlot(date), WorkDayUtils.calculateEndSlot(date), 0.0)
 }

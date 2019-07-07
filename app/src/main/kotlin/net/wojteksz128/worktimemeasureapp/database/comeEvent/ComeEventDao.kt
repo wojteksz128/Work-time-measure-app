@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.*
 
 @Dao
+@Suppress("unused")
 interface ComeEventDao {
 
     @Query("SELECT * FROM come_event ORDER BY startDate DESC")
