@@ -96,23 +96,22 @@ class MainActivity : AppCompatActivity() {
     private inner class DayListObserver : Observer<List<WorkDayEvents>> {
 
         private val TAG = DayListObserver::class.java.simpleName
-        // FIXME: 25.10.2018 This way is not correct - fix it in the mean time
-        private val LAST_SAVED_DAY = 0
-
 
         override fun onChanged(workDayEvents: List<WorkDayEvents>?) {
             workDayEvents?.let {
                 mWorkDayAdapter!!.setWorkDays(it)
 
-                val currentDayEvents = workDayEvents[LAST_SAVED_DAY]
-                if (!currentDayEvents.hasEventsEnded()) {
-                    if (!mainViewModel!!.secondRunner.isRunning) {
-                        mainViewModel!!.secondRunner.setConsumer(getUpdateAction(currentDayEvents))
-                        Log.v(TAG, "onChanged: start second updater")
-                        mainViewModel!!.secondRunner.start()
+                val currentDayEvents = workDayEvents.maxBy { it.workDay.date }
+                currentDayEvents?.let {
+                    if (!currentDayEvents.hasEventsEnded()) {
+                        if (!mainViewModel!!.secondRunner.isRunning) {
+                            mainViewModel!!.secondRunner.setConsumer(getUpdateAction(currentDayEvents))
+                            Log.v(TAG, "onChanged: start second updater")
+                            mainViewModel!!.secondRunner.start()
+                        }
+                    } else {
+                        mainViewModel!!.secondRunner.stop()
                     }
-                } else {
-                    mainViewModel!!.secondRunner.stop()
                 }
             }
         }

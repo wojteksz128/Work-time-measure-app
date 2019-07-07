@@ -15,7 +15,7 @@ import net.wojteksz128.worktimemeasureapp.database.migration.*
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDay
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayDao
 
-@Database(entities = [ComeEvent::class, WorkDay::class], version = 6)
+@Database(entities = [ComeEvent::class, WorkDay::class], version = 7)
 @TypeConverters(DateConverter::class, ComeEventTypeConverter::class)
 abstract class AppDatabase : RoomDatabase() {
 
@@ -48,6 +48,6 @@ abstract class AppDatabase : RoomDatabase() {
         }
 
         private val databaseMigrations: Array<Migration>
-            get() = listOf(MigrateFrom1To2(), MigrateFrom2To3(), MigrateFrom3To4(), MigrateFrom4To5(), MigrateFrom5To6()).toTypedArray()
+            get() = arrayOf(MigrateFrom1To2(), MigrateFrom2To3(), MigrateFrom3To4(), MigrateFrom4To5(), MigrateFrom5To6(), MigrateFrom6To7())
     }
 }

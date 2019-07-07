@@ -9,13 +9,12 @@ import java.util.*
 class WorkDay(
         @PrimaryKey(autoGenerate = true)
         val id: Long?,
-        var date: Date?,
+        var date: Date,
         var beginSlot: Date,
-        var endSlot: Date,
-        var percentDeclaredTime: Double
+        var endSlot: Date
 ) {
 
     @Ignore
     constructor(date: Date)
-            : this(null, date, WorkDayUtils.calculateBeginSlot(date), WorkDayUtils.calculateEndSlot(date), 0.0)
+            : this(null, date, WorkDayUtils.calculateBeginSlot(date), WorkDayUtils.calculateEndSlot(date))
 }
