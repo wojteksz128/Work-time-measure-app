@@ -8,19 +8,12 @@ import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEvent
 import net.wojteksz128.worktimemeasureapp.util.DateTimeUtils
 import java.util.*
 
-// DONE: 10.08.2018 Change mView and viewholder implementations
 class ComeEventViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
 
-    private val mStartDateTV: TextView
-    private val mEndDateTV: TextView
-    private val mDurationTV: TextView
+    private val mStartDateTV: TextView = view.findViewById(R.id.main_day_event_start_date)
+    private val mEndDateTV: TextView = view.findViewById(R.id.main_day_event_end_date)
+    private val mDurationTV: TextView = view.findViewById(R.id.main_day_event_duration)
 
-
-    init {
-        mStartDateTV = view.findViewById(R.id.main_day_event_start_date)
-        mEndDateTV = view.findViewById(R.id.main_day_event_end_date)
-        mDurationTV = view.findViewById(R.id.main_day_event_duration)
-    }
 
     fun bind(comeEvent: ComeEvent) {
         fillStartTime(comeEvent)
@@ -31,14 +24,14 @@ class ComeEventViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
     private fun fillDuration(comeEvent: ComeEvent) {
         val duration = if (comeEvent.duration != null)
             DateTimeUtils.formatDate(view.context.getString(R.string.main_work_day_duration_format),
-                    comeEvent.duration, TimeZone.getTimeZone("UTC"))
+                    comeEvent.duration!!, TimeZone.getTimeZone("UTC"))
         else
             ""
         mDurationTV.text = duration
     }
 
     private fun fillEndTime(comeEvent: ComeEvent) {
-        val endTime = if (comeEvent.endDate != null) DateTimeUtils.formatDate(view.context.getString(R.string.main_day_event_time_format), comeEvent.endDate) else "Teraz"
+        val endTime = if (comeEvent.endDate != null) DateTimeUtils.formatDate(view.context.getString(R.string.main_day_event_time_format), comeEvent.endDate!!) else "Teraz"
         mEndDateTV.text = endTime
     }
 

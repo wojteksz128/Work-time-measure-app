@@ -21,6 +21,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     companion object {
 
-        private val TAG = MainViewModel::class.java.simpleName
+        private val TAG = MainViewModel::class.java.simpleName!!
     }
 }

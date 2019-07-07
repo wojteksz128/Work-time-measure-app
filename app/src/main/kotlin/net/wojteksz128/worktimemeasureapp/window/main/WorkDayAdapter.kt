@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents
 
-class WorkDayAdapter : RecyclerView.Adapter<WorkDayViewHolder>() {
+internal class WorkDayAdapter : RecyclerView.Adapter<WorkDayViewHolder>() {
 
     private var workDays: List<WorkDayEvents>? = null
 

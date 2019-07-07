@@ -20,7 +20,6 @@ import net.wojteksz128.worktimemeasureapp.util.ComeEventUtils
 import net.wojteksz128.worktimemeasureapp.util.FunctionWithParameter
 
 // TODO: 09.08.2018 Dodaj joba, który automatycznie zamknie dzień pracy o godzinie zmiany dnia pracy
-// DONE: 11.08.2018 Dodaj wątek, który będzie automatycznie zmieniać sekundy, gdy widzi się czas i leci czas pracy
 // TODO: 11.08.2018 Jeśli aktualny dzień istnieje - przenieś FABa w to miejsce
 // TODO: 11.08.2018 Dodaj statystyki
 // TODO: 11.08.2018 Dodaj notyfikację na kilka minut przed wyjściem z pracy
@@ -80,20 +79,16 @@ class MainActivity : AppCompatActivity() {
             ComeEventUtils.registerNewEvent(this@MainActivity,
                     {
                         mLoadingIndicator!!.visibility = View.VISIBLE
-                        null
                     },
                     { input ->
-                        val message: String
-
-                        mLoadingIndicator!!.visibility = View.INVISIBLE
-                        when (input) {
-                            ComeEventType.COME_IN -> message = getString(R.string.main_snackbar_info_income_registered)
-                            ComeEventType.COME_OUT -> message = getString(R.string.main_snackbar_info_outcome_registered)
-                            else -> message = "Incorrect event type"
+                        val message: String = when (input) {
+                            ComeEventType.COME_IN -> getString(R.string.main_snackbar_info_income_registered)
+                            ComeEventType.COME_OUT -> getString(R.string.main_snackbar_info_outcome_registered)
                         }
 
+                        mLoadingIndicator!!.visibility = View.INVISIBLE
+
                         Snackbar.make(mLayout!!, message, Snackbar.LENGTH_LONG).show()
-                        null
                     })
         }
     }
@@ -106,9 +101,9 @@ class MainActivity : AppCompatActivity() {
 
 
         override fun onChanged(workDayEvents: List<WorkDayEvents>?) {
-            mWorkDayAdapter!!.setWorkDays(workDayEvents)
+            workDayEvents?.let {
+                mWorkDayAdapter!!.setWorkDays(it)
 
-            if (workDayEvents != null) {
                 val currentDayEvents = workDayEvents[LAST_SAVED_DAY]
                 if (!currentDayEvents.hasEventsEnded()) {
                     if (!mainViewModel!!.secondRunner.isRunning) {

@@ -13,15 +13,9 @@ import java.util.*
 
 internal class WorkDayViewHolder(private val mView: View) : RecyclerView.ViewHolder(mView) {
 
-    private val mDateTV: TextView
-    private val mWorkDurationTV: TextView
-    private val mEventsListLayout: LinearLayout
-
-    init {
-        mDateTV = mView.findViewById(R.id.day_label)
-        mWorkDurationTV = mView.findViewById(R.id.day_work_duration)
-        mEventsListLayout = mView.findViewById(R.id.day_events_list)
-    }
+    private val mDateTV: TextView = mView.findViewById(R.id.day_label)
+    private val mWorkDurationTV: TextView = mView.findViewById(R.id.day_work_duration)
+    private val mEventsListLayout: LinearLayout = mView.findViewById(R.id.day_events_list)
 
     fun bind(workDay: WorkDayEvents) {
         fillDateLabel(workDay)
@@ -37,8 +31,10 @@ internal class WorkDayViewHolder(private val mView: View) : RecyclerView.ViewHol
     }
 
     private fun fillDateLabel(workDay: WorkDayEvents) {
-        val dateLabel = DateTimeUtils.formatDate(mView.context.getString(R.string.main_work_day_label_format),
-                workDay.workDay.date)
+        val dateLabel = workDay.workDay.date?.let {
+            DateTimeUtils.formatDate(mView.context.getString(R.string.main_work_day_label_format),
+                    it)
+        }
         mDateTV.text = dateLabel
     }
 
