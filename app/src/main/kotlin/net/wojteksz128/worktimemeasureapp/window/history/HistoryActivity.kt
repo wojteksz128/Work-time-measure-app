@@ -73,7 +73,7 @@ class HistoryActivity : AppCompatActivity() {
             workDayEvents?.let {
                 workDayAdapter.submitList(it)
 
-                val currentDayEvents = workDayEvents.first()
+                val currentDayEvents = workDayEvents.firstOrNull()
                 currentDayEvents?.let {
                     if (!currentDayEvents.hasEventsEnded()) {
                         if (!viewModel.secondRunner.isRunning) {
