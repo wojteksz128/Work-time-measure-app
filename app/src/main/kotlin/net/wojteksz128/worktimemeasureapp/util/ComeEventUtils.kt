@@ -16,7 +16,7 @@ object ComeEventUtils {
     // TODO: 07.07.2019 Move to separate action object.
     fun registerNewEvent(context: Context, preFunction: () -> Unit, postFunction: (ComeEventType) -> Unit) {
         val comeEventDao = AppDatabase.getInstance(context).comeEventDao()
-        val registerDate = Date()
+        val registerDate = DateTimeProvider.currentTime
 
         object : AsyncTask<Void, Void, ComeEventType>() {
 
@@ -51,10 +51,6 @@ object ComeEventUtils {
     private fun createNewEvent(workDay: WorkDayEvents, registerDate: Date, comeEventDao: ComeEventDao): ComeEventType {
         comeEventDao.insert(ComeEvent(registerDate, workDay.workDay))
         return ComeEventType.COME_IN
-    }
-
-    private fun isFirstWorkDayEvent(workDay: WorkDayEvents): Boolean {
-        return workDay.events.isEmpty()
     }
 
     private fun getCurrentWorkDay(registerDate: Date, context: Context): WorkDayEvents {

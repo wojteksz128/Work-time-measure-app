@@ -1,10 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Pomiar czasu pracy</string>
+    <string name="about">Aplikacja stworzona przez Wojciecha Szczepaniaka (227360@edu.p.lodz.pl)</string>
+
+    <!--##########################################-->
+    <!--########### Dashboard Activity ###########-->
+    <!--##########################################-->
+    <string name="dashboard_activity_title">@string/app_name</string>
+    <string name="dashboard_remaining_working_time">Pozostało do wypracowania</string>
+    <string name="dashboard_today">Dzisiaj:</string>
+    <string name="dashboard_week">W tym tygodniu:</string>
+
+    <!-- Navigation drawer strings -->
+    <string name="navigation_drawer_open">Otwórz panel</string>
+    <string name="navigation_drawer_close">Zamknij panel</string>
+
+    <!-- Navigation drawer header strings -->
+    <string name="nav_header_title">Wojciech Szczepaniak</string>
+    <string name="nav_header_subtitle">227360@edu.p.lodz.pl</string>
+    <string name="nav_header_desc">Nagłówek panelu</string>
+
+    <!-- Navigation drawer items strings -->
+    <string name="menu_home">Strona główna</string>
+    <string name="menu_history">Historia</string>
+    <string name="menu_header_info">Informacje</string>
+    <string name="menu_about">O aplikacji…</string>
+
+    <!-- Snackbar info's -->
+    <string name="dashboard_snackbar_info_income_registered">Zarejestrowano wejście do pracy</string>
+    <string name="dashboard_snackbar_info_outcome_registered">Zarejestrowano wyjście z pracy</string>
 
     <!--##########################################-->
     <!--############ History Activity ############-->
     <!--##########################################-->
+
+    <string name="history_activity_title">Historia</string>
 
     <!-- Come Event types labels -->
     <string name="history_come_in_label">Wejście</string>
@@ -17,9 +47,7 @@
     <!-- Work Day list item strings -->
     <string name="history_work_day_label_example">Pon, 01.01.2018</string>
     <string name="history_work_day_label_format">E, dd.MM.yyyy</string>
-
-    <!-- Snackbar info's -->
-    <string name="history_snackbar_info_income_registered">Zarejestrowano wejście do pracy</string>
-    <string name="history_snackbar_info_outcome_registered">Zarejestrowano wyjście z pracy</string>
+    <string name="dashboard_today_work_time_label">Dzisiaj przepracowano:</string>
+    <string name="dashboard_current_day_empty_events_message">Brak zdarzeń</string>
 
 </resources>

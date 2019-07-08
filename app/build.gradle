@@ -48,7 +48,11 @@ dependencies {
     kapt 'android.arch.lifecycle:compiler:1.1.1'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'android.arch.paging:runtime:1.0.1'
+    implementation 'com.github.medavox:MuTime:0.5'
 }
 repositories {
     mavenCentral()
+    maven {
+        url "https://jitpack.io"
+    }
 }

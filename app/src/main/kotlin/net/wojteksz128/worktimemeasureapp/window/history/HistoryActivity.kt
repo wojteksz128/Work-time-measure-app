@@ -5,19 +5,14 @@ import android.arch.lifecycle.ViewModelProviders
 import android.arch.paging.PagedList
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
-import android.support.design.widget.FloatingActionButton
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SimpleItemAnimator
 import android.util.Log
-import android.view.View
-import android.widget.ProgressBar
 import net.wojteksz128.worktimemeasureapp.R
-import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventType
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents
-import net.wojteksz128.worktimemeasureapp.util.ComeEventUtils
+import net.wojteksz128.worktimemeasureapp.util.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.FunctionWithParameter
 
 // TODO: 09.08.2018 Dodaj joba, który automatycznie zamknie dzień pracy o godzinie zmiany dnia pracy
@@ -32,10 +27,9 @@ import net.wojteksz128.worktimemeasureapp.util.FunctionWithParameter
 // TODO: 11.08.2018 popraw liczenie czasu pracy (może nie brać pod uwagę ms?)
 // TODO: 07.07.2019 Uwzględniaj strefę czasową
 class HistoryActivity : AppCompatActivity() {
-    private var viewModel: HistoryViewModel? = null
-    private var mLayout: ConstraintLayout? = null
-    private var mWorkDayAdapter: WorkDayAdapter? = null
-    private var mLoadingIndicator: ProgressBar? = null
+    private lateinit var viewModel: HistoryViewModel
+    private lateinit var layout: ConstraintLayout
+    private lateinit var workDayAdapter: WorkDayAdapter
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,54 +38,33 @@ class HistoryActivity : AppCompatActivity() {
         Log.v(TAG, "onCreate: Create or get HistoryViewModel object")
         viewModel = ViewModelProviders.of(this).get(HistoryViewModel::class.java)
 
-        mLayout = findViewById(R.id.history_layout)
-        mLoadingIndicator = findViewById(R.id.history_loading_indicator)
+        layout = findViewById(R.id.history_layout)
 
         initWorkDaysRecyclerView()
-        initFab()
     }
 
     override fun onResume() {
         super.onResume()
         Log.v(TAG, "onResume: Fill days list")
-        viewModel!!.workDays.observe(this, DayListObserver())
+        viewModel.workDays.observe(this, DayListObserver())
+        DateTimeProvider.updateOffset(this, "ntp.comarch.pl")
     }
 
     override fun onPause() {
         super.onPause()
         Log.v(TAG, "onPause: Stop second updater")
-        this.viewModel!!.secondRunner.stop()
+        this.viewModel.secondRunner.stop()
     }
 
     private fun initWorkDaysRecyclerView() {
-        mWorkDayAdapter = WorkDayAdapter()
+        workDayAdapter = WorkDayAdapter()
 
         val layoutManager = LinearLayoutManager(this)
 
         val mDayList = findViewById<RecyclerView>(R.id.history_rv_days)
         mDayList.layoutManager = layoutManager
-        mDayList.adapter = mWorkDayAdapter
+        mDayList.adapter = workDayAdapter
         (mDayList.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
-    }
-
-    private fun initFab() {
-        val mEnterFab = findViewById<FloatingActionButton>(R.id.history_enter_fab)
-        mEnterFab.setOnClickListener {
-            ComeEventUtils.registerNewEvent(this@HistoryActivity,
-                    {
-                        mLoadingIndicator!!.visibility = View.VISIBLE
-                    },
-                    { input ->
-                        val message: String = when (input) {
-                            ComeEventType.COME_IN -> getString(R.string.history_snackbar_info_income_registered)
-                            ComeEventType.COME_OUT -> getString(R.string.history_snackbar_info_outcome_registered)
-                        }
-
-                        mLoadingIndicator!!.visibility = View.INVISIBLE
-
-                        Snackbar.make(mLayout!!, message, Snackbar.LENGTH_LONG).show()
-                    })
-        }
     }
 
     private inner class DayListObserver : Observer<PagedList<WorkDayEvents>> {
@@ -100,18 +73,18 @@ class HistoryActivity : AppCompatActivity() {
 
         override fun onChanged(workDayEvents: PagedList<WorkDayEvents>?) {
             workDayEvents?.let {
-                mWorkDayAdapter!!.submitList(it)
+                workDayAdapter.submitList(it)
 
-                val currentDayEvents = workDayEvents.first()
+                val currentDayEvents = workDayEvents.firstOrNull()
                 currentDayEvents?.let {
                     if (!currentDayEvents.hasEventsEnded()) {
-                        if (!viewModel!!.secondRunner.isRunning) {
-                            viewModel!!.secondRunner.setConsumer(getUpdateAction(currentDayEvents))
+                        if (!viewModel.secondRunner.isRunning) {
+                            viewModel.secondRunner.setConsumer(getUpdateAction(currentDayEvents))
                             Log.v(TAG, "onChanged: start second updater")
-                            viewModel!!.secondRunner.start()
+                            viewModel.secondRunner.start()
                         }
                     } else {
-                        viewModel!!.secondRunner.stop()
+                        viewModel.secondRunner.stop()
                     }
                 }
             }
@@ -122,14 +95,13 @@ class HistoryActivity : AppCompatActivity() {
 
                 override fun action(obj: WorkDayEvents) {
                     Log.v(TAG, "onChanged: Update work day")
-                    runOnUiThread { mWorkDayAdapter!!.notifyItemChanged(0) }
+                    runOnUiThread { workDayAdapter.notifyItemChanged(0) }
                 }
             }
         }
     }
 
     companion object {
-
         private val TAG = HistoryActivity::class.java.simpleName
     }
 }
