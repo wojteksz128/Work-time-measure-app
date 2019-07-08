@@ -29,6 +29,14 @@ interface WorkDayDao {
     @Query("SELECT * FROM work_day WHERE :date BETWEEN beginSlot AND endSlot")
     fun findByIntervalContains(date: Date): WorkDayEvents
 
+    @Transaction
+    @Query("SELECT * FROM work_day WHERE :date BETWEEN beginSlot AND endSlot")
+    fun findByIntervalContainsInLiveData(date: Date): LiveData<WorkDayEvents>
+
+    @Transaction
+    @Query("SELECT * FROM work_day WHERE date BETWEEN :beginDate AND :endDate")
+    fun findBetweenDates(beginDate: Date, endDate: Date): DataSource.Factory<Int, WorkDayEvents>
+
     @Insert
     fun insert(workDay: WorkDay): Long?
 
