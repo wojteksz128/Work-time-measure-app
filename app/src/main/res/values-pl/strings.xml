@@ -1,10 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Pomiar czasu pracy</string>
+    <string name="about">Aplikacja stworzona przez Wojciecha Szczepaniaka (227360@edu.p.lodz.pl)</string>
+
+    <!--##########################################-->
+    <!--########### Dashboard Activity ###########-->
+    <!--##########################################-->
+    <string name="dashboard_activity_title">@string/app_name</string>
+
+    <!-- Navigation drawer strings -->
+    <string name="navigation_drawer_open">Otwórz panel</string>
+    <string name="navigation_drawer_close">Zamknij panel</string>
+
+    <!-- Navigation drawer header strings -->
+    <string name="nav_header_title">Wojciech Szczepaniak</string>
+    <string name="nav_header_subtitle">227360@edu.p.lodz.pl</string>
+    <string name="nav_header_desc">Nagłówek panelu</string>
+
+    <!-- Navigation drawer items strings -->
+    <string name="menu_home">Strona główna</string>
+    <string name="menu_history">Historia</string>
+    <string name="menu_header_info">Informacje</string>
+    <string name="menu_about">O aplikacji…</string>
 
     <!--##########################################-->
     <!--############ History Activity ############-->
     <!--##########################################-->
+
+    <string name="history_activity_title">Historia</string>
 
     <!-- Come Event types labels -->
     <string name="history_come_in_label">Wejście</string>

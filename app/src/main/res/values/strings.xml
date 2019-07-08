@@ -1,10 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Work Time Measure App</string>
+    <string name="about">Application created by Wojciech Szczepaniak (227360@edu.p.lodz.pl)</string>
+
+    <!--##########################################-->
+    <!--########### Dashboard Activity ###########-->
+    <!--##########################################-->
+    <string name="dashboard_activity_title">@string/app_name</string>
+
+    <!-- Navigation drawer strings -->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <!-- Navigation drawer header strings -->
+    <string name="nav_header_title">Wojciech Szczepaniak</string>
+    <string name="nav_header_subtitle">227360@edu.p.lodz.pl</string>
+    <string name="nav_header_desc">Navigation header</string>
+
+    <!-- Navigation drawer items strings -->
+    <string name="menu_home">Home</string>
+    <string name="menu_history">History</string>
+    <string name="menu_header_info">Information</string>
+    <string name="menu_about">About…</string>
 
     <!--##########################################-->
     <!--############ History Activity ############-->
     <!--##########################################-->
+
+    <string name="history_activity_title">History</string>
 
     <!-- Come Event types labels -->
     <string name="history_come_in_label">Income</string>
@@ -12,7 +35,6 @@
 
     <!-- Day Event list item strings -->
     <string name="history_day_event_start_date_example">Mon., 08:00</string>
-    <string name="history_day_event_end_date_example">Mon., 16:30</string>
     <string name="history_day_event_item_type_example">@string/history_come_in_label</string>
     <string name="history_day_event_duration_example" translatable="false">8:30:00</string>
     <string name="history_day_event_time_format" translatable="false">E, HH:mm:ss</string>
