@@ -18,6 +18,7 @@ import android.widget.ProgressBar
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventType
 import net.wojteksz128.worktimemeasureapp.util.ComeEventUtils
+import net.wojteksz128.worktimemeasureapp.util.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.window.history.HistoryActivity
 
 class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -37,6 +38,11 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
         initFab()
         initNavBar()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        DateTimeProvider.updateOffset(this, "ntp.comarch.pl")
     }
 
     private fun initFab() {

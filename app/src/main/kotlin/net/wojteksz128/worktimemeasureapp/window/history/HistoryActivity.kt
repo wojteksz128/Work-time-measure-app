@@ -12,6 +12,7 @@ import android.support.v7.widget.SimpleItemAnimator
 import android.util.Log
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents
+import net.wojteksz128.worktimemeasureapp.util.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.FunctionWithParameter
 
 // TODO: 09.08.2018 Dodaj joba, który automatycznie zamknie dzień pracy o godzinie zmiany dnia pracy
@@ -46,6 +47,7 @@ class HistoryActivity : AppCompatActivity() {
         super.onResume()
         Log.v(TAG, "onResume: Fill days list")
         viewModel.workDays.observe(this, DayListObserver())
+        DateTimeProvider.updateOffset(this, "ntp.comarch.pl")
     }
 
     override fun onPause() {
