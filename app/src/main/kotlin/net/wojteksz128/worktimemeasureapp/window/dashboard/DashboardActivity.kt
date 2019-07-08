@@ -11,7 +11,6 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
-import android.widget.Toast
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.window.history.HistoryActivity
 
@@ -51,15 +50,17 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_home -> {
-                Toast.makeText(this, "TODO: Pokaż stronę domową", Toast.LENGTH_LONG).show()
-                // TODO Pokaż stronę domową
+                val intent = Intent(this, DashboardActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
             }
             R.id.nav_history -> {
                 val intent = Intent(this, HistoryActivity::class.java)
                 startActivity(intent)
             }
             R.id.nav_about -> {
-                Toast.makeText(this, R.string.about, Toast.LENGTH_LONG).show()
+                Snackbar.make(findViewById(R.id.content), R.string.about, Snackbar.LENGTH_LONG).show()
             }
         }
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
