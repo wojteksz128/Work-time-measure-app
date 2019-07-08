@@ -23,6 +23,10 @@
     <string name="menu_header_info">Information</string>
     <string name="menu_about">About…</string>
 
+    <!-- Snackbar info's -->
+    <string name="dashboard_snackbar_info_income_registered">The entrance to work was registered</string>
+    <string name="dashboard_snackbar_info_outcome_registered">An exit to work was registered</string>
+
     <!--##########################################-->
     <!--############ History Activity ############-->
     <!--##########################################-->
@@ -45,9 +49,5 @@
     <string name="history_work_day_duration_example" translatable="false">08:30:00</string>
     <string name="history_work_day_label_format" translatable="false">E, yyyy-MM-dd</string>
     <string name="history_work_day_duration_format" translatable="false">H:mm:ss</string>
-
-    <!-- Snackbar info's -->
-    <string name="history_snackbar_info_income_registered">The entrance to work was registered</string>
-    <string name="history_snackbar_info_outcome_registered">An exit to work was registered</string>
 
 </resources>

@@ -23,6 +23,10 @@
     <string name="menu_header_info">Informacje</string>
     <string name="menu_about">O aplikacji…</string>
 
+    <!-- Snackbar info's -->
+    <string name="dashboard_snackbar_info_income_registered">Zarejestrowano wejście do pracy</string>
+    <string name="dashboard_snackbar_info_outcome_registered">Zarejestrowano wyjście z pracy</string>
+
     <!--##########################################-->
     <!--############ History Activity ############-->
     <!--##########################################-->
@@ -40,9 +44,5 @@
     <!-- Work Day list item strings -->
     <string name="history_work_day_label_example">Pon, 01.01.2018</string>
     <string name="history_work_day_label_format">E, dd.MM.yyyy</string>
-
-    <!-- Snackbar info's -->
-    <string name="history_snackbar_info_income_registered">Zarejestrowano wejście do pracy</string>
-    <string name="history_snackbar_info_outcome_registered">Zarejestrowano wyjście z pracy</string>
 
 </resources>

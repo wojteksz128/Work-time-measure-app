@@ -1,8 +1,21 @@
-<resources>ic_menu_camera
+<resources>
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="nav_header_vertical_spacing">8dp</dimen>
     <dimen name="nav_header_height">176dp</dimen>
-    <dimen name="fab_margin">16dp</dimen>
+
+    <!--##########################################-->
+    <!--########### Dashboard Activity ###########-->
+    <!--##########################################-->
+
+    <dimen name="dashboard_fab_margin">16dp</dimen>
+    <dimen name="dashboard_loading_indicator_size">42dp</dimen>
+
+    <!--##########################################-->
+    <!--############ History Activity ############-->
+    <!--##########################################-->
+
+    <dimen name="history_rv_vertical_margin">4dp</dimen>
+    <dimen name="history_rv_horizontal_margin">0dp</dimen>
 </resources>

@@ -6,39 +6,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".window.history.HistoryActivity"
-    android:background="#dddddd">
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/history_enter_fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:clickable="true"
-        android:focusable="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_add_black_24dp" />
+    android:background="@color/history_background">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/history_rv_days"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ProgressBar
-        android:id="@+id/history_loading_indicator"
-        android:layout_width="42dp"
-        android:layout_height="42dp"
-        android:visibility="invisible"
+        android:layout_marginStart="@dimen/history_rv_horizontal_margin"
+        android:layout_marginTop="@dimen/history_rv_vertical_margin"
+        android:layout_marginEnd="@dimen/history_rv_horizontal_margin"
+        android:layout_marginBottom="@dimen/history_rv_vertical_margin"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="visible" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

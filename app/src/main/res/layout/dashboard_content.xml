@@ -6,6 +6,27 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".window.dashboard.DashboardActivity"
-    tools:showIn="@layout/app_bar_dashboard">
+    android:background="@color/dashboard_background"
+    tools:showIn="@layout/dashboard_app_bar">
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/dashboard_enter_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/dashboard_fab_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_add_black_24dp" />
+
+    <ProgressBar
+        android:id="@+id/dashboard_loading_indicator"
+        android:layout_width="@dimen/dashboard_loading_indicator_size"
+        android:layout_height="@dimen/dashboard_loading_indicator_size"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
 
 </android.support.constraint.ConstraintLayout>

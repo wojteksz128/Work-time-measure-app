@@ -22,7 +22,6 @@ class HistoryViewModel(application: Application) : AndroidViewModel(application)
     }
 
     companion object {
-
         private val TAG = HistoryViewModel::class.java.simpleName!!
     }
 }
