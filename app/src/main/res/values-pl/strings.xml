@@ -7,6 +7,9 @@
     <!--########### Dashboard Activity ###########-->
     <!--##########################################-->
     <string name="dashboard_activity_title">@string/app_name</string>
+    <string name="dashboard_remaining_working_time">Pozostało do wypracowania</string>
+    <string name="dashboard_today">Dzisiaj:</string>
+    <string name="dashboard_week">W tym tygodniu:</string>
 
     <!-- Navigation drawer strings -->
     <string name="navigation_drawer_open">Otwórz panel</string>
@@ -44,5 +47,7 @@
     <!-- Work Day list item strings -->
     <string name="history_work_day_label_example">Pon, 01.01.2018</string>
     <string name="history_work_day_label_format">E, dd.MM.yyyy</string>
+    <string name="dashboard_today_work_time_label">Dzisiaj przepracowano:</string>
+    <string name="dashboard_current_day_empty_events_message">Brak zdarzeń</string>
 
 </resources>

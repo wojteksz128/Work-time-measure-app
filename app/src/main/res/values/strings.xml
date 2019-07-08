@@ -7,6 +7,11 @@
     <!--########### Dashboard Activity ###########-->
     <!--##########################################-->
     <string name="dashboard_activity_title">@string/app_name</string>
+    <string name="dashboard_remaining_working_time">Remaining working time</string>
+    <string name="dashboard_today">Today:</string>
+    <string name="dashboard_week">In this week:</string>
+    <string name="dashboard_today_work_time_label">Today works:</string>
+    <string name="dashboard_current_day_empty_events_message">Empty list of events</string>
 
     <!-- Navigation drawer strings -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
