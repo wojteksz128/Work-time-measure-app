@@ -168,13 +168,13 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
 
         private fun fillRemainingWorkDayTime(it: WorkDayEvents) {
-            val elapsedTime = Date(Date(14400000).time - DateTimeUtils.mergeComeEventsDuration(it).time)
-            val formatDate = DateTimeUtils.formatDate(getString(R.string.history_work_day_duration_format), elapsedTime)
+            val elapsedTime = Date(Date(30600000).time - DateTimeUtils.mergeComeEventsDuration(it).time)
+            val formatDate = DateTimeUtils.formatDate(getString(R.string.history_work_day_duration_format), elapsedTime, TimeZone.getTimeZone("UTC"))
             remainingDayTime.text = formatDate
         }
 
         private fun fillTodayWorkTime(it: WorkDayEvents) {
-            val formatDate = DateTimeUtils.formatDate(getString(R.string.history_work_day_duration_format), DateTimeUtils.mergeComeEventsDuration(it))
+            val formatDate = DateTimeUtils.formatDate(getString(R.string.history_work_day_duration_format), DateTimeUtils.mergeComeEventsDuration(it), TimeZone.getTimeZone("UTC"))
             todayWorkTime.text = formatDate
         }
 
@@ -226,8 +226,8 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
 
         private fun fillRemainingWeekWorkDayTime(it: PagedList<WorkDayEvents>) {
-            val elapsedTime = Date(Date(72000000).time - it.sumBy { DateTimeUtils.mergeComeEventsDuration(it).time.toInt() })
-            val formatDate = DateTimeUtils.formatDate(getString(R.string.history_work_day_duration_format), elapsedTime)
+            val elapsedTime = Date(Date(153000000).time - it.sumBy { DateTimeUtils.mergeComeEventsDuration(it).time.toInt() })
+            val formatDate = DateTimeUtils.formatDate(getString(R.string.history_work_day_duration_format), elapsedTime, TimeZone.getTimeZone("UTC"))
             remainingWeekTime.text = formatDate
         }
 
