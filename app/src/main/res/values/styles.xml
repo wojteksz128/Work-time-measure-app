@@ -45,8 +45,46 @@
     </style>
 
     <!--##########################################-->
+    <!--############# Base Activity ##############-->
+    <!--##########################################-->
+    <style name="base">
+        <item name="android:fitsSystemWindows">true</item>
+    </style>
+
+    <style name="base_navbar">
+        <item name="android:layout_gravity">start</item>
+        <item name="android:fitsSystemWindows">true</item>
+    </style>
+
+    <style name="base_navbar_header" parent="ThemeOverlay.AppCompat.Dark">
+        <item name="android:background">@drawable/side_nav_bar</item>
+        <item name="android:gravity">bottom</item>
+        <item name="android:paddingLeft">@dimen/large_padding</item>
+        <item name="android:paddingTop">@dimen/large_padding</item>
+        <item name="android:paddingRight">@dimen/large_padding</item>
+        <item name="android:paddingBottom">@dimen/large_padding</item>
+    </style>
+
+    <style name="base_navbar_header_icon">
+        <item name="android:paddingTop">@dimen/default_padding</item>
+    </style>
+
+    <style name="base_navbar_header_username">
+        <item name="android:paddingTop">@dimen/default_padding</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Body1</item>
+    </style>
+
+    <style name="base_navbar_header_email" />
+
+    <!--##########################################-->
     <!--########### Dashboard Activity ###########-->
     <!--##########################################-->
+
+    <style name="dashboard" parent="window" />
+
+    <style name="dashboard_layout">
+        <item name="android:layout_margin">8dp</item>
+    </style>
 
     <!--##########################################-->
     <!--############ History Activity ############-->

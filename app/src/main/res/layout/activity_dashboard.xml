@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout"
+    style="@style/base"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     tools:openDrawer="start">
 
     <include
@@ -15,10 +15,9 @@
 
     <android.support.design.widget.NavigationView
         android:id="@+id/dashboard_nav_view"
+        style="@style/base_navbar"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:fitsSystemWindows="true"
         app:headerLayout="@layout/dashboard_nav_header"
         app:menu="@menu/dashboard_navigation_drawer" />
 
