@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="background">#dddddd</color>
+    <color name="rv_background">@android:color/white</color>
 
     <!--##########################################-->
     <!--########### Dashboard Activity ###########-->
@@ -15,5 +16,4 @@
     <!--############ History Activity ############-->
     <!--##########################################-->
 
-    <color name="history_background">@color/background</color>
 </resources>

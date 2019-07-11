@@ -2,34 +2,24 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    style="@style/history_rv_work_day"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginLeft="@dimen/history_work_day_item_horizontal_margin"
-    android:layout_marginTop="@dimen/history_work_day_item_vertical_margin"
-    android:layout_marginRight="@dimen/history_work_day_item_horizontal_margin"
-    android:layout_marginBottom="@dimen/history_work_day_item_vertical_margin"
-    android:background="@android:color/white"
-    android:elevation="@dimen/history_work_day_item_elevation"
-    android:padding="8dp"><!-- TODO android:elevation - rozważ problem z API... -->
+    android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/day_label"
+        style="@style/history_rv_work_day_header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/history_work_day_item_label_margin"
-        android:textSize="@dimen/history_work_day_item_label_text_size"
-        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="@string/history_work_day_label_example" />
 
     <TextView
         android:id="@+id/day_work_duration"
+        style="@style/history_rv_work_day_duration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="24dp"
-        android:textSize="18sp"
-        android:textStyle="italic"
         app:layout_constraintBottom_toBottomOf="@id/day_label"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
@@ -39,16 +29,19 @@
 
     <LinearLayout
         android:id="@+id/day_events_list"
+        style="@style/history_rv_work_day_events"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/day_label" />
+        app:layout_constraintTop_toBottomOf="@+id/day_label">
+
+        <include
+            layout="@layout/history_day_event_list_item"
+            android:visibility="gone"
+            tools:visibility="visible" />
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
