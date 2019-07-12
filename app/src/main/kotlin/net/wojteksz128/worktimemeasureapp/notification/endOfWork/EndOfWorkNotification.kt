@@ -63,7 +63,7 @@ object EndOfWorkNotification {
         return PendingIntent.getActivity(context, END_OF_WORK.pendingIntentId, intent, PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
-    private fun largeIcon(context: Context): Bitmap {
+    private fun largeIcon(context: Context): Bitmap? {
         val resources = context.resources
         return BitmapFactory.decodeResource(resources, R.drawable.ic_launcher_foreground)
     }

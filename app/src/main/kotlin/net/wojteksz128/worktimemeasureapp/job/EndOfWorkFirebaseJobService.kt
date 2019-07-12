@@ -8,19 +8,18 @@ import net.wojteksz128.worktimemeasureapp.notification.endOfWork.EndOfWorkNotifi
 
 class EndOfWorkFirebaseJobService : JobService() {
 
-    private var mBackgroundTask: AsyncTask<Void, Void, Void>? = null
+    private var mBackgroundTask: AsyncTask<Unit, Unit, Unit>? = null
 
     @SuppressLint("StaticFieldLeak")
     override fun onStartJob(jobParameters: JobParameters): Boolean {
-        mBackgroundTask = object : AsyncTask<Void, Void, Void>() {
+        mBackgroundTask = object : AsyncTask<Unit, Unit, Unit>() {
 
-            override fun doInBackground(objects: Array<Void>): Void? {
+            override fun doInBackground(vararg p0: Unit?) {
                 val context = this@EndOfWorkFirebaseJobService
                 EndOfWorkNotification.createNotification(context)
-                return null
             }
 
-            override fun onPostExecute(o: Void) {
+            override fun onPostExecute(result: Unit?) {
                 jobFinished(jobParameters, false)
             }
         }

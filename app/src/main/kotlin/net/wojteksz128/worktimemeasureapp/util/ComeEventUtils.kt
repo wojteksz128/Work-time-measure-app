@@ -18,13 +18,13 @@ object ComeEventUtils {
         val comeEventDao = AppDatabase.getInstance(context).comeEventDao()
         val registerDate = DateTimeProvider.currentTime
 
-        object : AsyncTask<Void, Void, ComeEventType>() {
+        object : AsyncTask<Unit, Unit, ComeEventType>() {
 
             override fun onPreExecute() {
                 preFunction()
             }
 
-            override fun doInBackground(vararg voids: Void): ComeEventType {
+            override fun doInBackground(vararg voids: Unit): ComeEventType {
                 val workDay = getCurrentWorkDay(registerDate, context)
                 val comeEvent = workDay.events.lastOrNull { !it.isEnded }
 
