@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
@@ -17,4 +17,176 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="window">
+        <item name="android:background">@color/background</item>
+    </style>
+
+    <style name="header_label">
+        <item name="android:textSize">@dimen/extra_large_text</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="card">
+        <item name="android:background">@color/rv_background</item>
+        <item name="android:elevation" tools:targetApi="lollipop">@dimen/primary_elevation</item>
+        <item name="android:padding">@dimen/default_padding</item>
+    </style>
+
+    <style name="subcard" parent="card">
+        <item name="android:elevation" tools:targetApi="lollipop">@dimen/secondary_elevation</item>
+    </style>
+
+    <style name="card_items">
+        <item name="android:layout_margin">@dimen/large_margin</item>
+    </style>
+
+    <style name="recycler_view">
+        <item name="android:layout_marginLeft">@dimen/no_margin</item>
+        <item name="android:layout_marginTop">@dimen/small_margin</item>
+        <item name="android:layout_marginRight">@dimen/no_margin</item>
+        <item name="android:layout_marginBottom">@dimen/small_margin</item>
+    </style>
+
+    <style name="recycler_view_item" parent="card">
+        <item name="android:layout_marginLeft">@dimen/default_margin</item>
+        <item name="android:layout_marginTop">@dimen/small_margin</item>
+        <item name="android:layout_marginRight">@dimen/default_margin</item>
+        <item name="android:layout_marginBottom">@dimen/small_margin</item>
+    </style>
+
+    <style name="recycler_view_item_header" parent="header_label">
+        <item name="android:layout_margin">@dimen/default_margin</item>
+    </style>
+
+    <!--##########################################-->
+    <!--<editor-fold desc="############# Base Activity ##############">-->
+
+    <style name="base">
+        <item name="android:fitsSystemWindows">true</item>
+    </style>
+
+    <style name="base_navbar">
+        <item name="android:layout_gravity">start</item>
+        <item name="android:fitsSystemWindows">true</item>
+    </style>
+
+    <style name="base_navbar_header" parent="ThemeOverlay.AppCompat.Dark">
+        <item name="android:background">@drawable/side_nav_bar</item>
+        <item name="android:gravity">bottom</item>
+        <item name="android:paddingLeft">@dimen/large_padding</item>
+        <item name="android:paddingTop">@dimen/large_padding</item>
+        <item name="android:paddingRight">@dimen/large_padding</item>
+        <item name="android:paddingBottom">@dimen/large_padding</item>
+    </style>
+
+    <style name="base_navbar_header_icon">
+        <item name="android:paddingTop">@dimen/default_padding</item>
+    </style>
+
+    <style name="base_navbar_header_username">
+        <item name="android:paddingTop">@dimen/default_padding</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Body1</item>
+    </style>
+
+    <style name="base_navbar_header_email" />
+
+    <!--</editor-fold>-->
+    <!--##########################################-->
+
+    <!--##########################################-->
+    <!--<editor-fold desc="########### Dashboard Activity ###########">-->
+
+    <style name="dashboard" parent="window" />
+
+    <style name="dashboard_layout">
+        <item name="android:padding">@dimen/default_padding</item>
+    </style>
+
+    <style name="dashboard_section_header" parent="card">
+        <item name="android:layout_marginBottom">@dimen/extra_small_margin</item>
+    </style>
+
+    <style name="dashboard_section_header_label" parent="header_label">
+        <item name="android:layout_gravity">center</item>
+    </style>
+
+    <style name="dashboard_section_card" parent="card">
+        <item name="android:layout_height">@dimen/dashboard_card_height</item>
+        <item name="android:layout_marginTop">@dimen/default_margin</item>
+        <item name="android:layout_marginBottom">@dimen/extra_small_margin</item>
+        <item name="android:padding">@dimen/no_padding</item>
+    </style>
+
+    <style name="dashboard_section_subcard" parent="subcard">
+        <item name="android:layout_height">@dimen/dashboard_card_height</item>
+        <item name="android:layout_marginTop">@dimen/extra_small_margin</item>
+        <item name="android:layout_marginBottom">@dimen/extra_small_margin</item>
+        <item name="android:padding">@dimen/no_padding</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+
+    <style name="dashboard_section_subcard_left" parent="dashboard_section_subcard">
+        <item name="android:layout_marginEnd">@dimen/extra_small_margin</item>
+        <item name="android:layout_marginRight">@dimen/extra_small_margin</item>
+    </style>
+
+    <style name="dashboard_section_subcard_right" parent="dashboard_section_subcard">
+        <item name="android:layout_marginStart">@dimen/extra_small_margin</item>
+        <item name="android:layout_marginLeft">@dimen/extra_small_margin</item>
+    </style>
+
+    <style name="dashboard_section_time_display">
+        <item name="android:textSize">@dimen/dashboard_time_display_text</item>
+    </style>
+
+    <style name="dashboard_current_day" parent="dashboard_section_card">
+        <item name="android:layout_marginBottom">@dimen/default_margin</item>
+    </style>
+
+    <style name="dashboard_current_day_date" parent="header_label" />
+
+    <style name="dashboard_current_day_events" parent="card_items" />
+
+    <style name="dashboard_current_day_no_events_label">
+        <item name="android:padding">@dimen/default_padding</item>
+        <item name="android:textStyle">italic</item>
+    </style>
+
+    <style name="dashboard_enter_fab">
+        <item name="android:layout_margin">@dimen/large_margin</item>
+    </style>
+
+    <style name="dashboard_loading_indicator">
+        <item name="android:layout_width">@dimen/dashboard_loading_indicator_size</item>
+        <item name="android:layout_height">@dimen/dashboard_loading_indicator_size</item>
+    </style>
+
+    <!--</editor-fold>-->
+    <!--##########################################-->
+
+    <!--##########################################-->
+    <!--<editor-fold desc="############ History Activity ############">-->
+
+    <style name="history" parent="window" />
+
+    <style name="history_rv" parent="recycler_view" />
+
+    <style name="history_rv_work_day" parent="recycler_view_item" />
+
+    <style name="history_rv_work_day_header" parent="recycler_view_item_header" />
+
+    <style name="history_rv_work_day_duration">
+        <item name="android:layout_margin">@dimen/extra_large_margin</item>
+        <item name="android:textSize">@dimen/large_text</item>
+        <item name="android:textStyle">italic</item>
+    </style>
+
+    <style name="history_rv_work_day_events" parent="card_items" />
+
+    <style name="history_rv_work_day_events_item_label">
+        <item name="android:layout_margin">@dimen/default_margin</item>
+    </style>
+
+    <!--</editor-fold>-->
+    <!--##########################################-->
 </resources>

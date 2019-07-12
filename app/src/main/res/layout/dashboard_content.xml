@@ -2,11 +2,11 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    style="@style/dashboard"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".window.dashboard.DashboardActivity"
-    android:background="@color/dashboard_background"
     tools:showIn="@layout/dashboard_app_bar">
 
     <ScrollView
@@ -14,9 +14,9 @@
         android:layout_height="match_parent">
 
         <LinearLayout
+            style="@style/dashboard_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintBottom_toTopOf="parent"
@@ -25,20 +25,15 @@
 
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/dashboard_remaining_work_time"
+                style="@style/dashboard_section_header"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="2dp"
-                android:background="@android:color/white"
-                android:elevation="4dp"
-                android:padding="8dp">
+                android:layout_height="wrap_content">
 
                 <TextView
+                    style="@style/dashboard_section_header_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
                     android:text="@string/dashboard_remaining_working_time"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -53,15 +48,8 @@
 
                 <android.support.constraint.ConstraintLayout
                     android:id="@+id/dashboard_remaining_day_time_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="100dp"
-                    android:layout_marginTop="2dp"
-                    android:layout_marginEnd="2dp"
-                    android:layout_marginRight="2dp"
-                    android:layout_marginBottom="2dp"
-                    android:layout_weight="1"
-                    android:background="@android:color/white"
-                    android:elevation="2dp">
+                    style="@style/dashboard_section_subcard_left"
+                    android:layout_width="match_parent"><!-- layout_height defined by style -->
 
                     <TextView
                         android:id="@+id/dashboard_remaining_day_time_label"
@@ -74,9 +62,9 @@
 
                     <TextView
                         android:id="@+id/dashboard_remaining_day_time"
+                        style="@style/dashboard_section_time_display"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="40sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -86,16 +74,8 @@
 
                 <android.support.constraint.ConstraintLayout
                     android:id="@+id/dashboard_remaining_week_time_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="100dp"
-                    android:layout_marginStart="2dp"
-                    android:layout_marginLeft="2dp"
-                    android:layout_marginTop="2dp"
-                    android:layout_marginBottom="2dp"
-                    android:layout_weight="1"
-                    android:background="@android:color/white"
-                    android:elevation="2dp"
-                    tools:layout_editor_absoluteX="2dp">
+                    style="@style/dashboard_section_subcard_right"
+                    android:layout_width="match_parent"><!-- layout_height defined by style -->
 
                     <TextView
                         android:id="@+id/dashboard_remaining_week_time_label"
@@ -108,9 +88,9 @@
 
                     <TextView
                         android:id="@+id/dashboard_remaining_week_time"
+                        style="@style/dashboard_section_time_display"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="40sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -122,12 +102,8 @@
 
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/dashboard_today_work_time_container"
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="4dp"
-                android:background="@android:color/white"
-                android:elevation="4dp">
+                style="@style/dashboard_section_card"
+                android:layout_width="match_parent"><!-- layout_height defined by style -->
 
                 <TextView
                     android:id="@+id/dashboard_today_work_time_label"
@@ -140,9 +116,9 @@
 
                 <TextView
                     android:id="@+id/dashboard_today_work_time"
+                    style="@style/dashboard_section_time_display"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="40sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -152,20 +128,14 @@
 
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/dashboard_current_day_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="4dp"
-                android:background="@android:color/white"
-                android:elevation="4dp">
+                style="@style/dashboard_current_day"
+                android:layout_width="match_parent">
 
                 <TextView
                     android:id="@+id/dashboard_current_day_date"
+                    style="@style/dashboard_current_day_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="8dp"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -173,48 +143,43 @@
 
                 <LinearLayout
                     android:id="@+id/dashboard_current_day_events_list"
+                    style="@style/dashboard_current_day_events"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginBottom="8dp"
                     android:orientation="vertical"
                     android:visibility="invisible"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/dashboard_current_day_date"
-                    tools:visibility="visible"/>
+                    tools:visibility="visible" />
 
                 <TextView
                     android:id="@+id/dashboard_current_day_empty_events_message"
+                    style="@style/dashboard_current_day_no_events_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="8dp"
                     android:text="@string/dashboard_current_day_empty_events_message"
-                    android:textStyle="italic"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/dashboard_current_day_date"/>
+                    app:layout_constraintTop_toBottomOf="@id/dashboard_current_day_date" />
             </android.support.constraint.ConstraintLayout>
         </LinearLayout>
     </ScrollView>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/dashboard_enter_fab"
+        style="@style/dashboard_enter_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/dashboard_fab_margin"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/ic_add_black_24dp" />
 
     <ProgressBar
         android:id="@+id/dashboard_loading_indicator"
-        android:layout_width="@dimen/dashboard_loading_indicator_size"
-        android:layout_height="@dimen/dashboard_loading_indicator_size"
+        style="@style/dashboard_loading_indicator"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
