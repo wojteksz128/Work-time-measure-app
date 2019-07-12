@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Work Time Measure App</string>
+    <string name="about">Application created by Wojciech Szczepaniak (227360@edu.p.lodz.pl)</string>
 
     <!--##########################################-->
     <!--################ Channels ################-->
@@ -19,29 +20,55 @@
     <string name="notification_end_of_work_action_come_out">I\'m going out</string>
 
     <!--##########################################-->
-    <!--############# Main Activity ##############-->
+    <!--########### Dashboard Activity ###########-->
     <!--##########################################-->
+    <string name="dashboard_activity_title">@string/app_name</string>
+    <string name="dashboard_remaining_working_time">Remaining working time</string>
+    <string name="dashboard_today">Today:</string>
+    <string name="dashboard_week">In this week:</string>
+    <string name="dashboard_today_work_time_label">Today works:</string>
+    <string name="dashboard_current_day_empty_events_message">Empty list of events</string>
 
-    <!-- Come Event types labels -->
-    <string name="main_come_in_label">Income</string>
-    <string name="main_come_out_label">Outcome</string>
+    <!-- Navigation drawer strings -->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <!-- Day Event list item strings -->
-    <string name="main_day_event_start_date_example">Mon., 08:00</string>
-    <string name="main_day_event_end_date_example">Mon., 16:30</string>
-    <string name="main_day_event_item_type_example">@string/main_come_in_label</string>
-    <string name="main_day_event_duration_example" translatable="false">8:30:00</string>
-    <string name="main_day_event_time_format" translatable="false">E, HH:mm:ss</string>
-    <string name="main_day_event_realization_dates_divider" translatable="false">—</string>
+    <!-- Navigation drawer header strings -->
+    <string name="nav_header_title">Wojciech Szczepaniak</string>
+    <string name="nav_header_subtitle">227360@edu.p.lodz.pl</string>
+    <string name="nav_header_desc">Navigation header</string>
 
-    <!-- Work Day list item strings -->
-    <string name="main_work_day_label_example">Mon, 2018&#8211;01&#8211;01</string>
-    <string name="main_work_day_duration_example" translatable="false">08:30:00</string>
-    <string name="main_work_day_label_format" translatable="false">E, yyyy-MM-dd</string>
-    <string name="main_work_day_duration_format" translatable="false">H:mm:ss</string>
+    <!-- Navigation drawer items strings -->
+    <string name="menu_home">Home</string>
+    <string name="menu_history">History</string>
+    <string name="menu_header_info">Information</string>
+    <string name="menu_about">About…</string>
 
     <!-- Snackbar info's -->
-    <string name="main_snackbar_info_income_registered">The entrance to work was registered</string>
-    <string name="main_snackbar_info_outcome_registered">An exit to work was registered</string>
+    <string name="dashboard_snackbar_info_income_registered">The entrance to work was registered</string>
+    <string name="dashboard_snackbar_info_outcome_registered">An exit to work was registered</string>
+
+    <!--##########################################-->
+    <!--############ History Activity ############-->
+    <!--##########################################-->
+
+    <string name="history_activity_title">History</string>
+
+    <!-- Come Event types labels -->
+    <string name="history_come_in_label">Income</string>
+    <string name="history_come_out_label">Outcome</string>
+
+    <!-- Day Event list item strings -->
+    <string name="history_day_event_start_date_example">Mon., 08:00</string>
+    <string name="history_day_event_item_type_example">@string/history_come_in_label</string>
+    <string name="history_day_event_duration_example" translatable="false">8:30:00</string>
+    <string name="history_day_event_time_format" translatable="false">E, HH:mm:ss</string>
+    <string name="history_day_event_realization_dates_divider" translatable="false">—</string>
+
+    <!-- Work Day list item strings -->
+    <string name="history_work_day_label_example">Mon, 2018&#8211;01&#8211;01</string>
+    <string name="history_work_day_duration_example" translatable="false">08:30:00</string>
+    <string name="history_work_day_label_format" translatable="false">E, yyyy-MM-dd</string>
+    <string name="history_work_day_duration_format" translatable="false">H:mm:ss</string>
 
 </resources>

@@ -3,5 +3,17 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="backgroundDefault">#dddddd</color>
+    <color name="background">#dddddd</color>
+    <color name="rv_background">@android:color/white</color>
+
+    <!--##########################################-->
+    <!--########### Dashboard Activity ###########-->
+    <!--##########################################-->
+
+    <color name="dashboard_background">@color/background</color>
+
+    <!--##########################################-->
+    <!--############ History Activity ############-->
+    <!--##########################################-->
+
 </resources>
