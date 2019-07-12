@@ -70,13 +70,14 @@
         <item name="android:fitsSystemWindows">true</item>
     </style>
 
-    <style name="base_navbar_header" parent="ThemeOverlay.AppCompat.Dark">
+    <style name="base_navbar_header">
         <item name="android:background">@drawable/side_nav_bar</item>
         <item name="android:gravity">bottom</item>
         <item name="android:paddingLeft">@dimen/large_padding</item>
         <item name="android:paddingTop">@dimen/large_padding</item>
         <item name="android:paddingRight">@dimen/large_padding</item>
         <item name="android:paddingBottom">@dimen/large_padding</item>
+        <item name="android:theme">@style/ThemeOverlay.AppCompat.Dark</item>
     </style>
 
     <style name="base_navbar_header_icon">
