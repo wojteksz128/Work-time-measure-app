@@ -141,7 +141,7 @@
     </style>
 
     <style name="dashboard_current_day" parent="dashboard_section_card">
-        <item name="android:layout_marginBottom">@dimen/default_margin</item>
+        <item name="android:layout_height">wrap_content</item>
     </style>
 
     <style name="dashboard_current_day_date" parent="header_label" />

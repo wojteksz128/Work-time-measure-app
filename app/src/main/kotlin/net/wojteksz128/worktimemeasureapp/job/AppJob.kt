@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.math.max
 
 enum class AppJob {
-    // TODO: 18.11.2018 Make it more flexible - calculate required time.
+
     END_OF_WORK_REMINDER(EndOfWorkFirebaseJobService::class.java,
             "end_of_work_reminder_tag",
             Lifetime.FOREVER,
