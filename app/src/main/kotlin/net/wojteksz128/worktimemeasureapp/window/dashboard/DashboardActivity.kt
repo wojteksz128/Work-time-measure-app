@@ -3,19 +3,13 @@ package net.wojteksz128.worktimemeasureapp.window.dashboard
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.arch.paging.PagedList
-import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
-import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
-import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.ProgressBar
@@ -30,11 +24,11 @@ import net.wojteksz128.worktimemeasureapp.util.DateTimeUtils
 import net.wojteksz128.worktimemeasureapp.util.FunctionWithParameter
 import net.wojteksz128.worktimemeasureapp.util.job.JobUtils
 import net.wojteksz128.worktimemeasureapp.util.notification.NotificationUtils
+import net.wojteksz128.worktimemeasureapp.window.BaseActivity
 import net.wojteksz128.worktimemeasureapp.window.history.ComeEventViewHolder
-import net.wojteksz128.worktimemeasureapp.window.history.HistoryActivity
 import java.util.*
 
-class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class DashboardActivity : BaseActivity() {
     private val TAG = DashboardActivity::class.java.simpleName
     private lateinit var viewModel: DashboardViewModel
 
@@ -46,6 +40,9 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     private lateinit var currentDayEvents: LinearLayout
     private lateinit var currentDayEmptyEventsLabel: TextView
     private lateinit var loadingIndicator: ProgressBar
+
+    private lateinit var currentDayObserver: CurrentDayObserver
+    private lateinit var lastWeekObserver: LastWeekObserver
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,13 +61,8 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         loadingIndicator = findViewById(R.id.dashboard_loading_indicator)
 
         initFab()
-        initNavBar()
         NotificationUtils.initNotifications(this)
     }
-
-    private lateinit var currentDayObserver: CurrentDayObserver
-
-    private lateinit var lastWeekObserver: LastWeekObserver
 
     override fun onResume() {
         super.onResume()
@@ -112,48 +104,13 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
     }
 
-    private fun initNavBar() {
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
-
-        val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
-        val navView: NavigationView = findViewById(R.id.dashboard_nav_view)
-        val toggle = ActionBarDrawerToggle(
-                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
-        drawerLayout.addDrawerListener(toggle)
-        toggle.syncState()
-
-        navView.setNavigationItemSelectedListener(this)
-    }
-
     override fun onBackPressed() {
-        val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
+        val drawerLayout: DrawerLayout = findViewById(R.id.base_drawer_layout)
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START)
         } else {
             super.onBackPressed()
         }
-    }
-
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.nav_home -> {
-                val intent = Intent(this, DashboardActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
-            }
-            R.id.nav_history -> {
-                val intent = Intent(this, HistoryActivity::class.java)
-                startActivity(intent)
-            }
-            R.id.nav_about -> {
-                Snackbar.make(findViewById(R.id.dashboard_content), R.string.about, Snackbar.LENGTH_LONG).show()
-            }
-        }
-        val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
-        drawerLayout.closeDrawer(GravityCompat.START)
-        return true
     }
 
     private inner class CurrentDayObserver : Observer<WorkDayEvents> {
