@@ -15,6 +15,8 @@ import android.util.Log
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.notification.Channel
 import net.wojteksz128.worktimemeasureapp.notification.Notification.END_OF_WORK
+import net.wojteksz128.worktimemeasureapp.notification.action.EndOfWorkAction
+import net.wojteksz128.worktimemeasureapp.notification.action.IgnoreReminderAction
 import net.wojteksz128.worktimemeasureapp.util.notification.NotificationAction
 import net.wojteksz128.worktimemeasureapp.window.dashboard.DashboardActivity
 import java.text.MessageFormat
@@ -73,7 +75,7 @@ object EndOfWorkNotification {
         IGNORE_REMINDER_ACTION(IgnoreReminderAction(), 871, R.drawable.come_in_background, R.string.notification_end_of_work_action_ingore);
 
         fun doAction(context: Context) {
-            this.notificationAction.invoke(context)
+            this.notificationAction(context)
         }
     }
 }
