@@ -14,9 +14,8 @@ import android.support.v4.content.ContextCompat
 import android.util.Log
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.notification.Channel
-import net.wojteksz128.worktimemeasureapp.notification.Notification.END_OF_WORK
-import net.wojteksz128.worktimemeasureapp.notification.action.EndOfWorkAction
-import net.wojteksz128.worktimemeasureapp.util.notification.NotificationAction
+import net.wojteksz128.worktimemeasureapp.notification.action.Action
+import net.wojteksz128.worktimemeasureapp.notification.base.Notification.END_OF_WORK
 import net.wojteksz128.worktimemeasureapp.window.dashboard.DashboardActivity
 import java.text.MessageFormat
 
@@ -67,13 +66,5 @@ object InWorkNotification {
     private fun largeIcon(context: Context): Bitmap? {
         val resources = context.resources
         return BitmapFactory.decodeResource(resources, R.drawable.ic_launcher_foreground)
-    }
-
-    enum class Action(private val notificationAction: NotificationAction, val pendingIntentId: Int, val icon: Int, val title: Int) {
-        END_OF_WORK_ACTION(EndOfWorkAction(), 60, R.drawable.come_out_background, R.string.notification_end_of_work_action_come_out);
-
-        fun doAction(context: Context) {
-            this.notificationAction.invoke(context)
-        }
     }
 }

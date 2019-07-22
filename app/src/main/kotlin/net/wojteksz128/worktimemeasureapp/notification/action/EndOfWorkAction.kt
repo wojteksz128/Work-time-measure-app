@@ -7,10 +7,12 @@ import android.util.Log
 import android.widget.Toast
 
 import net.wojteksz128.worktimemeasureapp.R
-import net.wojteksz128.worktimemeasureapp.util.notification.NotificationAction
+import net.wojteksz128.worktimemeasureapp.notification.base.NotificationAction
 import net.wojteksz128.worktimemeasureapp.util.notification.NotificationUtils
 
-internal class EndOfWorkAction : NotificationAction {
+internal object EndOfWorkAction : NotificationAction {
+
+    private val LOG = EndOfWorkAction::class.java.simpleName
 
     override operator fun invoke(context: Context) {
         Log.d(LOG, "invoke: Ignore notification clicked")
@@ -19,9 +21,5 @@ internal class EndOfWorkAction : NotificationAction {
 
         val handler = Handler(Looper.getMainLooper())
         handler.post { Toast.makeText(context.applicationContext, context.getString(R.string.dashboard_snackbar_info_outcome_registered), Toast.LENGTH_LONG).show() }
-    }
-
-    companion object {
-        private val LOG = EndOfWorkAction::class.java.simpleName
     }
 }

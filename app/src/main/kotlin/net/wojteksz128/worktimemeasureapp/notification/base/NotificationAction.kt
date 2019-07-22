@@ -1,4 +1,4 @@
-package net.wojteksz128.worktimemeasureapp.util.notification
+package net.wojteksz128.worktimemeasureapp.notification.base
 
 import android.content.Context
 
