@@ -10,9 +10,16 @@
     <string name="channel_end_of_work_name">Koniec czasu pracy</string>
     <string name="channel_end_of_work_description">Powiadomienia, gdy czas bieżącego dnia pracy zbliża się do końca.</string>
 
+    <string name="channel_in_work_name">Notyfikacje w trakcie pracy</string>
+    <string name="channel_in_work_description">Wyświetlenie postępu pracy pracownika.</string>
+
     <!--##########################################-->
     <!--############# Notifications ##############-->
     <!--##########################################-->
+
+    <string name="notification_in_work_title">Obecny czas pracy</string>
+    <string name="notification_in_work_text">Oczekiwany czas końca pracy: {}</string>
+    <string name="notification_in_work_action_come_out">Wychodzę</string>
 
     <string name="notification_end_of_work_title">Musisz wyjść!</string>
     <string name="notification_end_of_work_text">Przesiedziałeś już swoje. Czas wrócić do domu ;)</string>
