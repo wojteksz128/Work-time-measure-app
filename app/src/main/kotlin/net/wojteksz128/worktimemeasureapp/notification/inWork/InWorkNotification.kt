@@ -2,11 +2,7 @@ package net.wojteksz128.worktimemeasureapp.notification.inWork
 
 import android.app.Notification
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Build
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
@@ -15,11 +11,9 @@ import android.util.Log
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.notification.Channel
 import net.wojteksz128.worktimemeasureapp.notification.action.Action
-import net.wojteksz128.worktimemeasureapp.notification.base.Notification.END_OF_WORK
-import net.wojteksz128.worktimemeasureapp.window.dashboard.DashboardActivity
-import java.text.MessageFormat
+import net.wojteksz128.worktimemeasureapp.notification.base.AppNotification
 
-object InWorkNotification {
+object InWorkNotification : AppNotification(252, 482) {
 
     private val LOG = InWorkNotification::class.java.simpleName
 
@@ -30,7 +24,7 @@ object InWorkNotification {
         val notificationBuilder = NotificationCompat.Builder(context, CHANNEL_ID)
                 .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setLargeIcon(largeIcon(context))
+                .setLargeIcon(largeIcon(context, R.drawable.ic_launcher_foreground))
                 .setContentTitle(context.getString(R.string.notification_in_work_title))
                 .setContentText(context.getString(R.string.notification_in_work_text))
                 .setStyle(NotificationCompat.BigTextStyle().bigText(context.getString(R.string.notification_in_work_text)))
@@ -46,25 +40,7 @@ object InWorkNotification {
 
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        Log.d(LOG, "createNotification: Notification notifying")
-        notificationManager.notify(END_OF_WORK.notificationId, notificationBuilder.build())
-    }
-
-    private fun getAction(context: Context, action: Action): NotificationCompat.Action {
-        Log.v(LOG, MessageFormat.format("getAction: Create action {0}", action.name))
-        val intent = Intent(context, InWorkNotificationIntentService::class.java)
-        intent.action = action.name
-        val pendingIntent = PendingIntent.getService(context, action.pendingIntentId, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-        return NotificationCompat.Action(action.icon, context.getString(action.title), pendingIntent)
-    }
-
-    private fun contentIntent(context: Context): PendingIntent {
-        val intent = Intent(context, DashboardActivity::class.java)
-        return PendingIntent.getActivity(context, END_OF_WORK.pendingIntentId, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-    }
-
-    private fun largeIcon(context: Context): Bitmap? {
-        val resources = context.resources
-        return BitmapFactory.decodeResource(resources, R.drawable.ic_launcher_foreground)
+        Log.d(LOG, "createNotification: AppNotification notifying")
+        notificationManager.notify(notificationId, notificationBuilder.build())
     }
 }
