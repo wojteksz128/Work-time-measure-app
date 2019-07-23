@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.os.AsyncTask
 import com.firebase.jobdispatcher.JobParameters
 import com.firebase.jobdispatcher.JobService
-import net.wojteksz128.worktimemeasureapp.notification.endOfWork.EndOfWorkNotification
+import net.wojteksz128.worktimemeasureapp.notification.EndOfWorkNotification
 
 class EndOfWorkFirebaseJobService : JobService() {
 

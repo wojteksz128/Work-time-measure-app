@@ -1,4 +1,4 @@
-package net.wojteksz128.worktimemeasureapp.notification.endOfWork
+package net.wojteksz128.worktimemeasureapp.notification
 
 import android.app.Notification
 import android.app.NotificationManager
@@ -9,7 +9,6 @@ import android.support.v4.app.NotificationManagerCompat
 import android.support.v4.content.ContextCompat
 import android.util.Log
 import net.wojteksz128.worktimemeasureapp.R
-import net.wojteksz128.worktimemeasureapp.notification.Channel
 import net.wojteksz128.worktimemeasureapp.notification.action.Action
 import net.wojteksz128.worktimemeasureapp.notification.base.AppNotification
 
