@@ -1,7 +1,5 @@
 package net.wojteksz128.worktimemeasureapp.notification
 
-import android.app.Notification
-import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import android.support.v4.app.NotificationCompat
@@ -27,19 +25,19 @@ object InWorkNotification : AppNotification(252, 482) {
                 .setContentTitle(context.getString(R.string.notification_in_work_title))
                 .setContentText(context.getString(R.string.notification_in_work_text))
                 .setStyle(NotificationCompat.BigTextStyle().bigText(context.getString(R.string.notification_in_work_text)))
-                .setDefaults(Notification.DEFAULT_ALL)
                 .setOngoing(true)
                 .setContentIntent(contentIntent(context))
                 .addAction(getAction(context, Action.END_OF_WORK_ACTION))
-                .setAutoCancel(true)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            notificationBuilder.priority = NotificationManagerCompat.IMPORTANCE_HIGH
+            notificationBuilder.priority = NotificationManagerCompat.IMPORTANCE_DEFAULT
         }
 
-        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        with(NotificationManagerCompat.from(context)) {
 
-        Log.d(LOG, "createNotification: AppNotification notifying")
-        notificationManager.notify(notificationId, notificationBuilder.build())
+            notificationBuilder.setProgress(100, 30, false)
+            Log.d(LOG, "createNotification: AppNotification notifying")
+            notify(notificationId, notificationBuilder.build())
+        }
     }
 }

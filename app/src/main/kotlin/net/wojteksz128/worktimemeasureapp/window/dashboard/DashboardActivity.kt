@@ -18,6 +18,7 @@ import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventType
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents
 import net.wojteksz128.worktimemeasureapp.job.AppJob
+import net.wojteksz128.worktimemeasureapp.notification.InWorkNotification
 import net.wojteksz128.worktimemeasureapp.util.ComeEventUtils
 import net.wojteksz128.worktimemeasureapp.util.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.DateTimeUtils
@@ -92,6 +93,7 @@ class DashboardActivity : BaseActivity() {
                             ComeEventType.COME_IN -> {
                                 // TODO: 12.07.2019 Store scheduleJob
                                 val scheduleJob = JobUtils.scheduleJob(this, AppJob.END_OF_WORK_REMINDER)
+                                InWorkNotification.createNotification(this)
                                 getString(R.string.dashboard_snackbar_info_income_registered)
                             }
                             ComeEventType.COME_OUT -> getString(R.string.dashboard_snackbar_info_outcome_registered)
