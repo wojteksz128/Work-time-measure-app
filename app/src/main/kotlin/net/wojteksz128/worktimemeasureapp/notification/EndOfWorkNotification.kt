@@ -1,7 +1,6 @@
 package net.wojteksz128.worktimemeasureapp.notification
 
 import android.app.Notification
-import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import android.support.v4.app.NotificationCompat
@@ -10,17 +9,12 @@ import android.support.v4.content.ContextCompat
 import android.util.Log
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.notification.action.Action
-import net.wojteksz128.worktimemeasureapp.notification.base.AppNotification
 
-object EndOfWorkNotification : AppNotification(251, 481) {
+class EndOfWorkNotification(context: Context) : AppNotification(251, 481, context) {
 
-    private val LOG = EndOfWorkNotification::class.java.simpleName
-
-    private val CHANNEL_ID = Channel.END_OF_WORK_CHANNEL.id
-
-    fun createNotification(context: Context) {
-        Log.d(LOG, "createNotification: Create notification")
-        val notificationBuilder = NotificationCompat.Builder(context, CHANNEL_ID)
+    init {
+        Log.d(LOG, "init: Init notificationBuilder")
+        notificationBuilder = NotificationCompat.Builder(context, CHANNEL_ID)
                 .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setLargeIcon(largeIcon(context, R.drawable.ic_launcher_foreground))
@@ -36,10 +30,10 @@ object EndOfWorkNotification : AppNotification(251, 481) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             notificationBuilder.priority = NotificationManagerCompat.IMPORTANCE_HIGH
         }
+    }
 
-        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-        Log.d(LOG, "createNotification: AppNotification notifying")
-        notificationManager.notify(notificationId, notificationBuilder.build())
+    companion object {
+        private val LOG = EndOfWorkNotification::class.java.simpleName
+        private val CHANNEL_ID = Channel.END_OF_WORK_CHANNEL.id
     }
 }

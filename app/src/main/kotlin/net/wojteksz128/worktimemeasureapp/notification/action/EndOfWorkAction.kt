@@ -7,7 +7,6 @@ import android.util.Log
 import android.widget.Toast
 
 import net.wojteksz128.worktimemeasureapp.R
-import net.wojteksz128.worktimemeasureapp.notification.base.NotificationAction
 import net.wojteksz128.worktimemeasureapp.util.notification.NotificationUtils
 
 internal object EndOfWorkAction : NotificationAction {

@@ -2,7 +2,6 @@ package net.wojteksz128.worktimemeasureapp.notification.action
 
 import android.content.Context
 import net.wojteksz128.worktimemeasureapp.R
-import net.wojteksz128.worktimemeasureapp.notification.base.NotificationAction
 
 enum class Action(private val notificationAction: NotificationAction, val pendingIntentId: Int, val icon: Int, val title: Int) {
     END_OF_WORK_ACTION(EndOfWorkAction, 60, R.drawable.come_out_background, R.string.notification_end_of_work_action_come_out),

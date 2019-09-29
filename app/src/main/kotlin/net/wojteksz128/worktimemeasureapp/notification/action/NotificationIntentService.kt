@@ -1,8 +1,7 @@
-package net.wojteksz128.worktimemeasureapp.notification.service
+package net.wojteksz128.worktimemeasureapp.notification.action
 
 import android.app.IntentService
 import android.content.Intent
-import net.wojteksz128.worktimemeasureapp.notification.action.Action
 
 /**
  * Creates an IntentService. Invoked by your subclass's constructor.

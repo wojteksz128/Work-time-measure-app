@@ -8,17 +8,12 @@ import android.support.v4.content.ContextCompat
 import android.util.Log
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.notification.action.Action
-import net.wojteksz128.worktimemeasureapp.notification.base.AppNotification
 
-object InWorkNotification : AppNotification(252, 482) {
+class InWorkNotification(context: Context) : AppNotification(252, 482, context) {
 
-    private val LOG = InWorkNotification::class.java.simpleName
-
-    private val CHANNEL_ID = Channel.IN_WORK_CHANNEL.id
-
-    fun createNotification(context: Context) {
-        Log.d(LOG, "createNotification: Create notification")
-        val notificationBuilder = NotificationCompat.Builder(context, CHANNEL_ID)
+    init {
+        Log.d(LOG, "init: Init notification builder")
+        notificationBuilder = NotificationCompat.Builder(context, CHANNEL_ID)
                 .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setLargeIcon(largeIcon(context, R.drawable.ic_launcher_foreground))
@@ -32,12 +27,10 @@ object InWorkNotification : AppNotification(252, 482) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             notificationBuilder.priority = NotificationManagerCompat.IMPORTANCE_DEFAULT
         }
+    }
 
-        with(NotificationManagerCompat.from(context)) {
-
-            notificationBuilder.setProgress(100, 30, false)
-            Log.d(LOG, "createNotification: AppNotification notifying")
-            notify(notificationId, notificationBuilder.build())
-        }
+    companion object {
+        private val LOG = InWorkNotification::class.java.simpleName
+        private val CHANNEL_ID = Channel.IN_WORK_CHANNEL.id
     }
 }

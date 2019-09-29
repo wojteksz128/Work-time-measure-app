@@ -1,4 +1,4 @@
-package net.wojteksz128.worktimemeasureapp.notification.base
+package net.wojteksz128.worktimemeasureapp.notification
 
 import android.app.PendingIntent
 import android.content.Context
@@ -6,12 +6,19 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.support.v4.app.NotificationCompat
+import android.support.v4.app.NotificationManagerCompat
 import android.util.Log
 import net.wojteksz128.worktimemeasureapp.notification.action.Action
-import net.wojteksz128.worktimemeasureapp.notification.service.NotificationIntentService
+import net.wojteksz128.worktimemeasureapp.notification.action.NotificationIntentService
 import net.wojteksz128.worktimemeasureapp.window.dashboard.DashboardActivity
 
-abstract class AppNotification(val notificationId: Int, private val pendingIntentId: Int) {
+abstract class AppNotification(private val notificationId: Int, private val pendingIntentId: Int, private val context: Context) {
+    protected lateinit var notificationBuilder: NotificationCompat.Builder
+
+    fun notifyUser() {
+        Log.d(LOG, "notifyUser: AppNotification notifying ${this::class.java.simpleName}")
+        NotificationManagerCompat.from(context).notify(notificationId, notificationBuilder.build())
+    }
 
     protected fun getAction(context: Context, action: Action): NotificationCompat.Action {
         Log.v(LOG, "getAction: Create action ${action.name} for ${this.javaClass.simpleName}")
@@ -26,7 +33,7 @@ abstract class AppNotification(val notificationId: Int, private val pendingInten
         return PendingIntent.getActivity(context, pendingIntentId, intent, PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
-    protected fun largeIcon(context: Context, resourceId: Int): Bitmap? {
+    protected fun largeIcon(context: Context, @Suppress("SameParameterValue") resourceId: Int): Bitmap? {
         val resources = context.resources
         return BitmapFactory.decodeResource(resources, resourceId)
     }

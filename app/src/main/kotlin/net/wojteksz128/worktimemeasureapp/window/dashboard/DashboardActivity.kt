@@ -93,7 +93,7 @@ class DashboardActivity : BaseActivity() {
                             ComeEventType.COME_IN -> {
                                 // TODO: 12.07.2019 Store scheduleJob
                                 val scheduleJob = JobUtils.scheduleJob(this, AppJob.END_OF_WORK_REMINDER)
-                                InWorkNotification.createNotification(this)
+                                InWorkNotification(this).notifyUser()
                                 getString(R.string.dashboard_snackbar_info_income_registered)
                             }
                             ComeEventType.COME_OUT -> getString(R.string.dashboard_snackbar_info_outcome_registered)

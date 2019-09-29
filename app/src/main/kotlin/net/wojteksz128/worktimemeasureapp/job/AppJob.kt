@@ -6,13 +6,12 @@ import com.firebase.jobdispatcher.JobService
 import com.firebase.jobdispatcher.Lifetime
 import net.wojteksz128.worktimemeasureapp.database.AppDatabase
 import net.wojteksz128.worktimemeasureapp.util.DateTimeProvider
-import net.wojteksz128.worktimemeasureapp.util.DateTimeUtils
 import java.util.concurrent.TimeUnit
 import kotlin.math.max
 
 enum class AppJob {
 
-    END_OF_WORK_REMINDER(EndOfWorkFirebaseJobService::class.java,
+    END_OF_WORK_REMINDER(WaitForEndOfWorkJob::class.java,
             "end_of_work_reminder_tag",
             Lifetime.FOREVER,
             { context ->

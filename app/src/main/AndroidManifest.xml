@@ -38,13 +38,13 @@
         </activity>
 
         <service
-            android:name=".job.EndOfWorkFirebaseJobService"
+            android:name=".job.WaitForEndOfWorkJob"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
             </intent-filter>
         </service>
-        <service android:name=".notification.service.NotificationIntentService" />
+        <service android:name=".notification.action.NotificationIntentService" />
 
     </application>
 
