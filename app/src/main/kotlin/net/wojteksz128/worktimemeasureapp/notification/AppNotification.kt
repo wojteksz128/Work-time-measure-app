@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.os.AsyncTask
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
 import android.util.Log
@@ -17,7 +18,11 @@ abstract class AppNotification(private val notificationId: Int, private val pend
 
     fun notifyUser() {
         Log.d(LOG, "notifyUser: AppNotification notifying ${this::class.java.simpleName}")
-        NotificationManagerCompat.from(context).notify(notificationId, notificationBuilder.build())
+        object : AsyncTask<Unit, Unit, Unit>() {
+            override fun doInBackground(vararg p0: Unit?) {
+                NotificationManagerCompat.from(context).notify(notificationId, notificationBuilder.build())
+            }
+        }.execute()
     }
 
     protected fun getAction(context: Context, action: Action): NotificationCompat.Action {

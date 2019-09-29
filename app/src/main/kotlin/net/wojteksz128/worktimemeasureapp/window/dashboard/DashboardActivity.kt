@@ -17,13 +17,12 @@ import android.widget.TextView
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventType
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents
-import net.wojteksz128.worktimemeasureapp.job.AppJob
+import net.wojteksz128.worktimemeasureapp.job.WaitForEndOfWorkJob
 import net.wojteksz128.worktimemeasureapp.notification.InWorkNotification
 import net.wojteksz128.worktimemeasureapp.util.ComeEventUtils
 import net.wojteksz128.worktimemeasureapp.util.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.DateTimeUtils
 import net.wojteksz128.worktimemeasureapp.util.FunctionWithParameter
-import net.wojteksz128.worktimemeasureapp.util.job.JobUtils
 import net.wojteksz128.worktimemeasureapp.util.notification.NotificationUtils
 import net.wojteksz128.worktimemeasureapp.window.BaseActivity
 import net.wojteksz128.worktimemeasureapp.window.history.ComeEventViewHolder
@@ -92,7 +91,7 @@ class DashboardActivity : BaseActivity() {
                         val message: String = when (input) {
                             ComeEventType.COME_IN -> {
                                 // TODO: 12.07.2019 Store scheduleJob
-                                val scheduleJob = JobUtils.scheduleJob(this, AppJob.END_OF_WORK_REMINDER)
+                                WaitForEndOfWorkJob.schedule(this)
                                 InWorkNotification(this).notifyUser()
                                 getString(R.string.dashboard_snackbar_info_income_registered)
                             }
