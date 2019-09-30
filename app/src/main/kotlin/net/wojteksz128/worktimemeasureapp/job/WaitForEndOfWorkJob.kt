@@ -34,7 +34,8 @@ class WaitForEndOfWorkJob : JobService() {
 
         fun getInterval(context: Context): Int {
             val currentWorkDay = AppDatabase.getInstance(context).workDayDao().findByIntervalContains(DateTimeProvider.currentTime)
-            return ConfigurationProvider.workTimeDuration.standardSeconds.toInt() - Duration(DateTimeUtils.mergeComeEventsDuration(currentWorkDay).time).standardSeconds.toInt()
+            val interval = ConfigurationProvider.workTimeDuration.standardSeconds.toInt() - Duration(DateTimeUtils.mergeComeEventsDuration(currentWorkDay).time).standardSeconds.toInt()
+            return if (interval > 0) interval else 0
         }
 
         fun schedule(context: Context): AsyncTask<Context, Unit, Job> {
