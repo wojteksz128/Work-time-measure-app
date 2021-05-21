@@ -5,6 +5,8 @@
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
 
     <application
         android:allowBackup="true"
@@ -14,6 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+
         <activity
             android:name=".window.dashboard.DashboardActivity"
             android:label="@string/dashboard_activity_title"
@@ -27,10 +30,22 @@
         <activity
             android:name=".window.history.HistoryActivity"
             android:label="@string/history_activity_title"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
             android:parentActivityName=".window.dashboard.DashboardActivity">
             <meta-data android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.wojteksz128.worktimemeasureapp.window.dashboard.DashboardActivity"/>
         </activity>
+
+        <service
+            android:name=".job.WaitForEndOfWorkJob"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
+            </intent-filter>
+        </service>
+        <service android:name=".notification.action.NotificationIntentService" />
+
     </application>
 
 </manifest>
