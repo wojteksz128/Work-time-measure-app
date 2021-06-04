@@ -1,8 +1,8 @@
 package net.wojteksz128.worktimemeasureapp.database.workDay
 
-import android.arch.lifecycle.LiveData
-import android.arch.paging.DataSource
-import android.arch.persistence.room.*
+import androidx.lifecycle.LiveData
+import androidx.paging.DataSource
+import androidx.room.*
 import java.util.*
 
 @Dao

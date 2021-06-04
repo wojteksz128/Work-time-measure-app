@@ -1,8 +1,8 @@
 package net.wojteksz128.worktimemeasureapp.database.migration
 
-import android.arch.persistence.db.SupportSQLiteDatabase
-import android.arch.persistence.room.migration.Migration
 import android.util.Log
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 
 class MigrateFrom6To7 : Migration(6, 7) {
 

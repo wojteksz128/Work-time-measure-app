@@ -1,20 +1,20 @@
 package net.wojteksz128.worktimemeasureapp.window
 
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.NavigationView
-import android.support.design.widget.Snackbar
-import android.support.v4.view.GravityCompat
-import android.support.v4.widget.DrawerLayout
-import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.navigation.NavigationView
+import com.google.android.material.snackbar.Snackbar
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.window.dashboard.DashboardActivity
 import net.wojteksz128.worktimemeasureapp.window.history.HistoryActivity
@@ -34,7 +34,7 @@ abstract class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationIt
         super.onCreate(savedInstanceState)
         super.setContentView(R.layout.activity_base)
 
-        viewModel = ViewModelProviders.of(this).get(BaseViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(BaseViewModel::class.java)
         toolbar = findViewById(R.id.base_toolbar)
         activityContent = findViewById(R.id.base_content)
         drawerLayout = findViewById(R.id.base_drawer_layout)

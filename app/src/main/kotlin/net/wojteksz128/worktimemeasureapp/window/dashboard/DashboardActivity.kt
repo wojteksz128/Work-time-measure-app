@@ -1,19 +1,19 @@
 package net.wojteksz128.worktimemeasureapp.window.dashboard
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
-import android.arch.paging.PagedList
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
-import android.support.design.widget.Snackbar
-import android.support.v4.view.GravityCompat
-import android.support.v4.widget.DrawerLayout
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.paging.PagedList
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventType
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents
@@ -49,7 +49,7 @@ class DashboardActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard)
         Log.v(TAG, "onCreate: Create or get DashboardViewModel object")
-        viewModel = ViewModelProviders.of(this).get(DashboardViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(DashboardViewModel::class.java)
 
         layout = findViewById(R.id.dashboard_content)
         remainingDayTime = findViewById(R.id.dashboard_remaining_day_time)

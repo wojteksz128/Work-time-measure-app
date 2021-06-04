@@ -1,11 +1,11 @@
 package net.wojteksz128.worktimemeasureapp.window.history
 
 import android.app.Application
-import android.arch.lifecycle.AndroidViewModel
-import android.arch.lifecycle.LiveData
-import android.arch.paging.LivePagedListBuilder
-import android.arch.paging.PagedList
 import android.util.Log
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.paging.*
+import kotlinx.coroutines.Dispatchers
 import net.wojteksz128.worktimemeasureapp.database.AppDatabase
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents
 import net.wojteksz128.worktimemeasureapp.util.PeriodicOperationRunner
@@ -19,7 +19,11 @@ class HistoryViewModel(application: Application) : AndroidViewModel(application)
     init {
         Log.d(TAG, "ctor: Retrieve work days with events")
         val workDayDao = AppDatabase.getInstance(application).workDayDao()
-        this.workDays = LivePagedListBuilder(workDayDao.findAllInLiveData(), 20).build()
+        this.workDays = Pager(
+            PagingConfig(20),
+            this.initialLoadKey,
+            workDayDao.findAllInLiveData().asPagingSourceFactory(Dispatchers.IO)
+        ).liveData.build()
         this.secondRunner = PeriodicOperationRunner()
     }
 }

@@ -1,7 +1,7 @@
 package net.wojteksz128.worktimemeasureapp.database.comeEvent
 
-import android.arch.persistence.room.*
-import android.arch.persistence.room.ForeignKey.CASCADE
+import androidx.room.*
+import androidx.room.ForeignKey.CASCADE
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDay
 import java.util.*
 

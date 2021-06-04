@@ -1,8 +1,8 @@
 package net.wojteksz128.worktimemeasureapp.window.history
 
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEvent
 import net.wojteksz128.worktimemeasureapp.util.DateTimeUtils

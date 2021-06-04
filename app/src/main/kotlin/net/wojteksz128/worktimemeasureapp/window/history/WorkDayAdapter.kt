@@ -1,13 +1,14 @@
 package net.wojteksz128.worktimemeasureapp.window.history
 
-import android.arch.paging.PagedListAdapter
-import android.support.v7.util.DiffUtil
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.DiffUtil
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents
 
-internal class WorkDayAdapter : PagedListAdapter<WorkDayEvents, WorkDayViewHolder>(DiffCallback()) {
+internal class WorkDayAdapter :
+    PagingDataAdapter<WorkDayEvents, WorkDayViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WorkDayViewHolder {
 
@@ -27,11 +28,11 @@ internal class WorkDayAdapter : PagedListAdapter<WorkDayEvents, WorkDayViewHolde
 
     private class DiffCallback : DiffUtil.ItemCallback<WorkDayEvents>() {
 
-        override fun areItemsTheSame(oldItem: WorkDayEvents?, newItem: WorkDayEvents?): Boolean {
-            return oldItem?.workDay!!.id!! == newItem?.workDay!!.id!!
+        override fun areItemsTheSame(oldItem: WorkDayEvents, newItem: WorkDayEvents): Boolean {
+            return oldItem.workDay.id!! == newItem.workDay.id!!
         }
 
-        override fun areContentsTheSame(oldItem: WorkDayEvents?, newItem: WorkDayEvents?) = oldItem?.equals(newItem)
-                ?: false
+        override fun areContentsTheSame(oldItem: WorkDayEvents, newItem: WorkDayEvents) =
+            oldItem == newItem
     }
 }

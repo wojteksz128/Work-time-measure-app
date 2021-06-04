@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/history_layout"
@@ -8,7 +8,7 @@
     android:layout_height="match_parent"
     tools:context=".window.history.HistoryActivity">
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/history_rv_days"
         style="@style/history_rv"
         android:layout_width="match_parent"
@@ -19,4 +19,4 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:listitem="@layout/history_work_day_list_item" />
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

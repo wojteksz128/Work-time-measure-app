@@ -1,6 +1,6 @@
 package net.wojteksz128.worktimemeasureapp.database.converter
 
-import android.arch.persistence.room.TypeConverter
+import androidx.room.TypeConverter
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventType
 
 class ComeEventTypeConverter {

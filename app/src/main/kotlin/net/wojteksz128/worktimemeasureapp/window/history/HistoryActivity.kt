@@ -1,15 +1,15 @@
 package net.wojteksz128.worktimemeasureapp.window.history
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
-import android.arch.paging.PagedList
 import android.os.Bundle
-import android.support.constraint.ConstraintLayout
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.SimpleItemAnimator
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.paging.PagedList
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SimpleItemAnimator
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents
 import net.wojteksz128.worktimemeasureapp.util.DateTimeProvider
@@ -36,7 +36,7 @@ class HistoryActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_history)
         Log.v(TAG, "onCreate: Create or get HistoryViewModel object")
-        viewModel = ViewModelProviders.of(this).get(HistoryViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(HistoryViewModel::class.java)
 
         layout = findViewById(R.id.history_layout)
 

@@ -1,11 +1,11 @@
 package net.wojteksz128.worktimemeasureapp.window.dashboard
 
 import android.app.Application
-import android.arch.lifecycle.AndroidViewModel
-import android.arch.lifecycle.LiveData
-import android.arch.paging.LivePagedListBuilder
-import android.arch.paging.PagedList
 import android.util.Log
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.paging.*
+import kotlinx.coroutines.Dispatchers
 import net.wojteksz128.worktimemeasureapp.database.AppDatabase
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents
 import net.wojteksz128.worktimemeasureapp.util.DateTimeProvider
@@ -22,7 +22,16 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
         Log.d(TAG, "ctor: Retrieve current work day with events")
         val workDayDao = AppDatabase.getInstance(application).workDayDao()
         this.workDay = workDayDao.findByIntervalContainsInLiveData(DateTimeProvider.currentTime)
-        this.weekWorkDays = LivePagedListBuilder(workDayDao.findBetweenDates(DateTimeProvider.weekBeginDay, DateTimeProvider.weekEndDay), 20).build()
+        this.weekWorkDays = Pager(
+            PagingConfig(
+                20
+            ),
+            this.initialLoadKey,
+            workDayDao.findBetweenDates(
+                DateTimeProvider.weekBeginDay,
+                DateTimeProvider.weekEndDay
+            ).asPagingSourceFactory(Dispatchers.IO)
+        ).liveData.build()
         this.secondRunner = PeriodicOperationRunner()
     }
 }
