@@ -6,8 +6,9 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents
+import net.wojteksz128.worktimemeasureapp.util.FunctionWithParameter
 
-internal class WorkDayAdapter :
+internal class WorkDayAdapter(private val uiThreadRunner: (Runnable) -> Unit) :
     PagingDataAdapter<WorkDayEvents, WorkDayViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WorkDayViewHolder {
@@ -21,7 +22,18 @@ internal class WorkDayAdapter :
 
     override fun onBindViewHolder(holder: WorkDayViewHolder, position: Int) {
         getItem(position)?.let {
-            holder.bind(it)
+            holder.bind(it, getUpdateAction(it, position))
+        }
+    }
+
+    private fun getUpdateAction(
+        currentDayEvents: WorkDayEvents,
+        position: Int
+    ): FunctionWithParameter<WorkDayEvents> {
+        return object : FunctionWithParameter<WorkDayEvents>(currentDayEvents) {
+            override fun action(obj: WorkDayEvents) {
+                uiThreadRunner { notifyItemChanged(position) }
+            }
         }
     }
 

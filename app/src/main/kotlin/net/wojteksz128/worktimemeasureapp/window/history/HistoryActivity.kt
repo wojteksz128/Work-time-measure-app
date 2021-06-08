@@ -4,17 +4,13 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.paging.PagingData
 import androidx.paging.liveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
 import net.wojteksz128.worktimemeasureapp.R
-import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents
 import net.wojteksz128.worktimemeasureapp.util.DateTimeProvider
-import net.wojteksz128.worktimemeasureapp.util.FunctionWithParameter
 
 // TODO: 09.08.2018 Dodaj joba, który automatycznie zamknie dzień pracy o godzinie zmiany dnia pracy
 // TODO: 11.08.2018 Jeśli aktualny dzień istnieje - przenieś FABa w to miejsce
@@ -27,6 +23,7 @@ import net.wojteksz128.worktimemeasureapp.util.FunctionWithParameter
 // TODO: 11.08.2018 dodaj drawer layout (hamburger)
 // TODO: 11.08.2018 popraw liczenie czasu pracy (może nie brać pod uwagę ms?)
 // TODO: 07.07.2019 Uwzględniaj strefę czasową
+// TODO: 09.06.2021 Uwzględnij przejścia poza jeden dzień oraz możliwość zamknięcia
 class HistoryActivity : AppCompatActivity() {
     private lateinit var viewModel: HistoryViewModel
     private lateinit var layout: ConstraintLayout
@@ -47,7 +44,8 @@ class HistoryActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         Log.v(TAG, "onResume: Fill days list")
-        viewModel.workDaysPager.liveData.observe(this, DayListObserver())
+        viewModel.workDaysPager.liveData.observe(this,
+            { workDayAdapter.submitData(this.lifecycle, it) })
         DateTimeProvider.updateOffset(this, "ntp.comarch.pl")
     }
 
@@ -58,7 +56,7 @@ class HistoryActivity : AppCompatActivity() {
     }
 
     private fun initWorkDaysRecyclerView() {
-        workDayAdapter = WorkDayAdapter()
+        workDayAdapter = WorkDayAdapter { action: Runnable -> runOnUiThread(action) }
 
         val layoutManager = LinearLayoutManager(this)
 
@@ -66,42 +64,6 @@ class HistoryActivity : AppCompatActivity() {
         mDayList.layoutManager = layoutManager
         mDayList.adapter = workDayAdapter
         (mDayList.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
-    }
-
-    private inner class DayListObserver : Observer<PagingData<WorkDayEvents>> {
-
-        private val TAG = DayListObserver::class.java.simpleName
-
-        override fun onChanged(workDayEvents: PagingData<WorkDayEvents>?) {
-            workDayEvents?.let {
-                // TODO: 08.06.2021 Czy to na pewno powinno być tutaj?!! Może bardziej to powinien być element adaptera dla elementów?
-                /*workDayAdapter.addLoadStateListener {
-                    val currentDayEvents = workDayAdapter.peek(0)
-                    currentDayEvents?.let {
-                        if (!currentDayEvents.hasEventsEnded()) {
-                            if (!viewModel.secondRunner.isRunning) {
-                                viewModel.secondRunner.setConsumer(getUpdateAction(currentDayEvents))
-                                Log.v(TAG, "onChanged: start second updater")
-                                viewModel.secondRunner.start()
-                            }
-                        } else {
-                            viewModel.secondRunner.stop()
-                        }
-                    }
-                }*/
-                workDayAdapter.submitData(this@HistoryActivity.lifecycle, it)
-            }
-        }
-
-        private fun getUpdateAction(currentDayEvents: WorkDayEvents): FunctionWithParameter<WorkDayEvents> {
-            return object : FunctionWithParameter<WorkDayEvents>(currentDayEvents) {
-
-                override fun action(obj: WorkDayEvents) {
-                    Log.v(TAG, "onChanged: Update work day")
-                    runOnUiThread { workDayAdapter.notifyItemChanged(0) }
-                }
-            }
-        }
     }
 
     companion object {
