@@ -1,19 +1,16 @@
 package net.wojteksz128.worktimemeasureapp.window.history
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
-import android.arch.paging.PagedList
 import android.os.Bundle
-import android.support.constraint.ConstraintLayout
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.SimpleItemAnimator
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.lifecycle.ViewModelProvider
+import androidx.paging.liveData
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SimpleItemAnimator
 import net.wojteksz128.worktimemeasureapp.R
-import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents
 import net.wojteksz128.worktimemeasureapp.util.DateTimeProvider
-import net.wojteksz128.worktimemeasureapp.util.FunctionWithParameter
 
 // TODO: 09.08.2018 Dodaj joba, który automatycznie zamknie dzień pracy o godzinie zmiany dnia pracy
 // TODO: 11.08.2018 Jeśli aktualny dzień istnieje - przenieś FABa w to miejsce
@@ -26,6 +23,7 @@ import net.wojteksz128.worktimemeasureapp.util.FunctionWithParameter
 // TODO: 11.08.2018 dodaj drawer layout (hamburger)
 // TODO: 11.08.2018 popraw liczenie czasu pracy (może nie brać pod uwagę ms?)
 // TODO: 07.07.2019 Uwzględniaj strefę czasową
+// TODO: 09.06.2021 Uwzględnij przejścia poza jeden dzień oraz możliwość zamknięcia
 class HistoryActivity : AppCompatActivity() {
     private lateinit var viewModel: HistoryViewModel
     private lateinit var layout: ConstraintLayout
@@ -36,7 +34,7 @@ class HistoryActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_history)
         Log.v(TAG, "onCreate: Create or get HistoryViewModel object")
-        viewModel = ViewModelProviders.of(this).get(HistoryViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(HistoryViewModel::class.java)
 
         layout = findViewById(R.id.history_layout)
 
@@ -46,7 +44,8 @@ class HistoryActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         Log.v(TAG, "onResume: Fill days list")
-        viewModel.workDays.observe(this, DayListObserver())
+        viewModel.workDaysPager.liveData.observe(this,
+            { workDayAdapter.submitData(this.lifecycle, it) })
         DateTimeProvider.updateOffset(this, "ntp.comarch.pl")
     }
 
@@ -57,7 +56,7 @@ class HistoryActivity : AppCompatActivity() {
     }
 
     private fun initWorkDaysRecyclerView() {
-        workDayAdapter = WorkDayAdapter()
+        workDayAdapter = WorkDayAdapter { action: Runnable -> runOnUiThread(action) }
 
         val layoutManager = LinearLayoutManager(this)
 
@@ -65,40 +64,6 @@ class HistoryActivity : AppCompatActivity() {
         mDayList.layoutManager = layoutManager
         mDayList.adapter = workDayAdapter
         (mDayList.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
-    }
-
-    private inner class DayListObserver : Observer<PagedList<WorkDayEvents>> {
-
-        private val TAG = DayListObserver::class.java.simpleName
-
-        override fun onChanged(workDayEvents: PagedList<WorkDayEvents>?) {
-            workDayEvents?.let {
-                workDayAdapter.submitList(it)
-
-                val currentDayEvents = workDayEvents.firstOrNull()
-                currentDayEvents?.let {
-                    if (!currentDayEvents.hasEventsEnded()) {
-                        if (!viewModel.secondRunner.isRunning) {
-                            viewModel.secondRunner.setConsumer(getUpdateAction(currentDayEvents))
-                            Log.v(TAG, "onChanged: start second updater")
-                            viewModel.secondRunner.start()
-                        }
-                    } else {
-                        viewModel.secondRunner.stop()
-                    }
-                }
-            }
-        }
-
-        private fun getUpdateAction(currentDayEvents: WorkDayEvents): FunctionWithParameter<WorkDayEvents> {
-            return object : FunctionWithParameter<WorkDayEvents>(currentDayEvents) {
-
-                override fun action(obj: WorkDayEvents) {
-                    Log.v(TAG, "onChanged: Update work day")
-                    runOnUiThread { workDayAdapter.notifyItemChanged(0) }
-                }
-            }
-        }
     }
 
     companion object {

@@ -1,8 +1,8 @@
 package net.wojteksz128.worktimemeasureapp.database.workDay
 
-import android.arch.lifecycle.LiveData
-import android.arch.paging.DataSource
-import android.arch.persistence.room.*
+import androidx.lifecycle.LiveData
+import androidx.paging.DataSource
+import androidx.room.*
 import java.util.*
 
 @Dao
@@ -35,7 +35,7 @@ interface WorkDayDao {
 
     @Transaction
     @Query("SELECT * FROM work_day WHERE date BETWEEN :beginDate AND :endDate")
-    fun findBetweenDates(beginDate: Date, endDate: Date): DataSource.Factory<Int, WorkDayEvents>
+    fun findBetweenDates(beginDate: Date, endDate: Date): LiveData<List<WorkDayEvents>>
 
     @Insert
     fun insert(workDay: WorkDay): Long?

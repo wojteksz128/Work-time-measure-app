@@ -31,10 +31,12 @@
             android:name=".window.history.HistoryActivity"
             android:label="@string/history_activity_title"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:parentActivityName=".window.dashboard.DashboardActivity">
-            <meta-data android:name="android.support.PARENT_ACTIVITY"
-                android:value="net.wojteksz128.worktimemeasureapp.window.dashboard.DashboardActivity"/>
+            android:parentActivityName=".window.dashboard.DashboardActivity"
+            android:screenOrientation="fullSensor"
+            tools:targetApi="jelly_bean">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="net.wojteksz128.worktimemeasureapp.window.dashboard.DashboardActivity" />
         </activity>
 
         <service

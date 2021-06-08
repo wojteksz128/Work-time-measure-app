@@ -3,7 +3,7 @@ package net.wojteksz128.worktimemeasureapp.notification
 import android.app.NotificationChannel
 import android.content.Context
 import android.os.Build
-import android.support.annotation.RequiresApi
+import androidx.annotation.RequiresApi
 
 import net.wojteksz128.worktimemeasureapp.R
 

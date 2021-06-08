@@ -55,6 +55,9 @@
     <string name="dashboard_snackbar_info_income_registered">The entrance to work was registered</string>
     <string name="dashboard_snackbar_info_outcome_registered">An exit to work was registered</string>
 
+    <!-- Enter fab -->
+    <string name="dashboard_enter_fab_description">Start or end work time button</string>
+
     <!--##########################################-->
     <!--############ History Activity ############-->
     <!--##########################################-->

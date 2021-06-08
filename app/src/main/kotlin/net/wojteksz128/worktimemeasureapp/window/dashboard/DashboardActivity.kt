@@ -1,19 +1,18 @@
 package net.wojteksz128.worktimemeasureapp.window.dashboard
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
-import android.arch.paging.PagedList
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
-import android.support.design.widget.Snackbar
-import android.support.v4.view.GravityCompat
-import android.support.v4.widget.DrawerLayout
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventType
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents
@@ -49,7 +48,7 @@ class DashboardActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard)
         Log.v(TAG, "onCreate: Create or get DashboardViewModel object")
-        viewModel = ViewModelProviders.of(this).get(DashboardViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(DashboardViewModel::class.java)
 
         layout = findViewById(R.id.dashboard_content)
         remainingDayTime = findViewById(R.id.dashboard_remaining_day_time)
@@ -182,18 +181,22 @@ class DashboardActivity : BaseActivity() {
 
     }
 
-    private inner class LastWeekObserver : Observer<PagedList<WorkDayEvents>> {
+    private inner class LastWeekObserver : Observer<List<WorkDayEvents>> {
         private val TAG = LastWeekObserver::class.java.simpleName
 
-        override fun onChanged(t: PagedList<WorkDayEvents>?) {
-            t?.let {
+        override fun onChanged(updatedCollection: List<WorkDayEvents>?) {
+            updatedCollection?.let {
                 fillRemainingWeekWorkDayTime(it)
             }
         }
 
-        private fun fillRemainingWeekWorkDayTime(it: PagedList<WorkDayEvents>) {
-            val elapsedTime = Date(Date(153000000).time - it.sumBy { DateTimeUtils.mergeComeEventsDuration(it).time.toInt() })
-            val formatDate = DateTimeUtils.formatDate(getString(R.string.history_work_day_duration_format), elapsedTime, TimeZone.getTimeZone("UTC"))
+        private fun fillRemainingWeekWorkDayTime(updatedCollection: List<WorkDayEvents>) {
+            val weekWorkDaysTime =
+                updatedCollection.sumOf { DateTimeUtils.mergeComeEventsDuration(it).time }
+            val elapsedTime = Date(Date(153000000).time - weekWorkDaysTime)
+            val format = getString(R.string.history_work_day_duration_format)
+            val formatDate =
+                DateTimeUtils.formatDate(format, elapsedTime, TimeZone.getTimeZone("UTC"))
             remainingWeekTime.text = formatDate
         }
 

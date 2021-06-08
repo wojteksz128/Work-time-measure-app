@@ -4,7 +4,8 @@ import android.util.Log
 
 import java.util.concurrent.atomic.AtomicBoolean
 
-
+// TODO: 08.06.2021 Make works better for CPU time (not sleep) - https://stackoverflow.com/questions/11434056/how-to-run-a-method-every-x-seconds
+// TODO: 08.06.2021 Parametrize runner
 class PeriodicOperationRunner<T> {
 
     private val sleepDuration = 1000
