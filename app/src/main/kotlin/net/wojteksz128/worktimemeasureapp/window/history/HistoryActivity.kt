@@ -7,6 +7,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.paging.PagingData
+import androidx.paging.liveData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
@@ -46,7 +47,7 @@ class HistoryActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         Log.v(TAG, "onResume: Fill days list")
-        viewModel.workDays.observe(this, DayListObserver())
+        viewModel.workDaysPager.liveData.observe(this, DayListObserver())
         DateTimeProvider.updateOffset(this, "ntp.comarch.pl")
     }
 
