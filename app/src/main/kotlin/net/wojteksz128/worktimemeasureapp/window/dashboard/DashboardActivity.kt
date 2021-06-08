@@ -11,7 +11,6 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.paging.PagedList
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import net.wojteksz128.worktimemeasureapp.R
@@ -182,18 +181,22 @@ class DashboardActivity : BaseActivity() {
 
     }
 
-    private inner class LastWeekObserver : Observer<PagedList<WorkDayEvents>> {
+    private inner class LastWeekObserver : Observer<List<WorkDayEvents>> {
         private val TAG = LastWeekObserver::class.java.simpleName
 
-        override fun onChanged(t: PagedList<WorkDayEvents>?) {
-            t?.let {
+        override fun onChanged(updatedCollection: List<WorkDayEvents>?) {
+            updatedCollection?.let {
                 fillRemainingWeekWorkDayTime(it)
             }
         }
 
-        private fun fillRemainingWeekWorkDayTime(it: PagedList<WorkDayEvents>) {
-            val elapsedTime = Date(Date(153000000).time - it.sumBy { DateTimeUtils.mergeComeEventsDuration(it).time.toInt() })
-            val formatDate = DateTimeUtils.formatDate(getString(R.string.history_work_day_duration_format), elapsedTime, TimeZone.getTimeZone("UTC"))
+        private fun fillRemainingWeekWorkDayTime(updatedCollection: List<WorkDayEvents>) {
+            val weekWorkDaysTime =
+                updatedCollection.sumOf { DateTimeUtils.mergeComeEventsDuration(it).time }
+            val elapsedTime = Date(Date(153000000).time - weekWorkDaysTime)
+            val format = getString(R.string.history_work_day_duration_format)
+            val formatDate =
+                DateTimeUtils.formatDate(format, elapsedTime, TimeZone.getTimeZone("UTC"))
             remainingWeekTime.text = formatDate
         }
 

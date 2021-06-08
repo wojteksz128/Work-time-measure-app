@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.paging.PagedList
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
@@ -67,26 +67,28 @@ class HistoryActivity : AppCompatActivity() {
         (mDayList.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
     }
 
-    private inner class DayListObserver : Observer<PagedList<WorkDayEvents>> {
+    private inner class DayListObserver : Observer<PagingData<WorkDayEvents>> {
 
         private val TAG = DayListObserver::class.java.simpleName
 
-        override fun onChanged(workDayEvents: PagedList<WorkDayEvents>?) {
+        override fun onChanged(workDayEvents: PagingData<WorkDayEvents>?) {
             workDayEvents?.let {
-                workDayAdapter.submitList(it)
-
-                val currentDayEvents = workDayEvents.firstOrNull()
-                currentDayEvents?.let {
-                    if (!currentDayEvents.hasEventsEnded()) {
-                        if (!viewModel.secondRunner.isRunning) {
-                            viewModel.secondRunner.setConsumer(getUpdateAction(currentDayEvents))
-                            Log.v(TAG, "onChanged: start second updater")
-                            viewModel.secondRunner.start()
+                // TODO: 08.06.2021 Czy to na pewno powinno być tutaj?!! Może bardziej to powinien być element adaptera dla elementów?
+                /*workDayAdapter.addLoadStateListener {
+                    val currentDayEvents = workDayAdapter.peek(0)
+                    currentDayEvents?.let {
+                        if (!currentDayEvents.hasEventsEnded()) {
+                            if (!viewModel.secondRunner.isRunning) {
+                                viewModel.secondRunner.setConsumer(getUpdateAction(currentDayEvents))
+                                Log.v(TAG, "onChanged: start second updater")
+                                viewModel.secondRunner.start()
+                            }
+                        } else {
+                            viewModel.secondRunner.stop()
                         }
-                    } else {
-                        viewModel.secondRunner.stop()
                     }
-                }
+                }*/
+                workDayAdapter.submitData(this@HistoryActivity.lifecycle, it)
             }
         }
 
