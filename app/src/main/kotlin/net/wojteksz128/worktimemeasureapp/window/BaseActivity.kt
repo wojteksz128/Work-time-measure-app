@@ -18,6 +18,7 @@ import com.google.android.material.snackbar.Snackbar
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.window.dashboard.DashboardActivity
 import net.wojteksz128.worktimemeasureapp.window.history.HistoryActivity
+import net.wojteksz128.worktimemeasureapp.window.settings.SettingsActivity
 
 abstract class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -80,8 +81,16 @@ abstract class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationIt
                 val intent = Intent(this, HistoryActivity::class.java)
                 startActivity(intent)
             }
+            R.id.nav_settings -> {
+                val intent = Intent(this, SettingsActivity::class.java)
+                startActivity(intent)
+            }
             R.id.nav_about -> {
-                Snackbar.make(findViewById(R.id.dashboard_content), R.string.about, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(
+                    findViewById(R.id.dashboard_content),
+                    R.string.about,
+                    Snackbar.LENGTH_LONG
+                ).show()
             }
         }
         val drawerLayout: DrawerLayout = findViewById(R.id.base_drawer_layout)

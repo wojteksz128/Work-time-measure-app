@@ -49,6 +49,7 @@
     <string name="menu_home">Home</string>
     <string name="menu_history">History</string>
     <string name="menu_header_info">Information</string>
+    <string name="menu_settings">Settings</string>
     <string name="menu_about">About…</string>
 
     <!-- Snackbar info's -->
@@ -80,5 +81,21 @@
     <string name="history_work_day_duration_example" translatable="false">08:30:00</string>
     <string name="history_work_day_label_format" translatable="false">E, yyyy-MM-dd</string>
     <string name="history_work_day_duration_format" translatable="false">H:mm:ss</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
 
 </resources>

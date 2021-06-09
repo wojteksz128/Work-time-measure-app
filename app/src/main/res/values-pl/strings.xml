@@ -47,6 +47,7 @@
     <string name="menu_home">Strona główna</string>
     <string name="menu_history">Historia</string>
     <string name="menu_header_info">Informacje</string>
+    <string name="menu_settings">Ustawienia</string>
     <string name="menu_about">O aplikacji…</string>
 
     <!-- Snackbar info's -->
