@@ -14,6 +14,12 @@ class SettingsActivity : AppCompatActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.settings_activity)
+        initView(savedInstanceState)
+        addOnBackClickTitleCorrector()
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    }
+
+    private fun initView(savedInstanceState: Bundle?) {
         if (savedInstanceState == null) {
             supportFragmentManager
                 .beginTransaction()
@@ -22,12 +28,14 @@ class SettingsActivity : AppCompatActivity(),
         } else {
             title = savedInstanceState.getCharSequence(TITLE_TAG)
         }
+    }
+
+    private fun addOnBackClickTitleCorrector() {
         supportFragmentManager.addOnBackStackChangedListener {
             if (supportFragmentManager.backStackEntryCount == 0) {
-                setTitle(R.string.title_activity_settings)
+                setTitle(R.string.settings_activity_title)
             }
         }
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -65,21 +73,4 @@ class SettingsActivity : AppCompatActivity(),
         return true
     }
 
-    class HeaderFragment : PreferenceFragmentCompat() {
-        override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-            setPreferencesFromResource(R.xml.header_preferences, rootKey)
-        }
-    }
-
-    class MessagesFragment : PreferenceFragmentCompat() {
-        override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-            setPreferencesFromResource(R.xml.messages_preferences, rootKey)
-        }
-    }
-
-    class SyncFragment : PreferenceFragmentCompat() {
-        override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-            setPreferencesFromResource(R.xml.sync_preferences, rootKey)
-        }
-    }
 }

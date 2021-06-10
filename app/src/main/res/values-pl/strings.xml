@@ -33,6 +33,8 @@
     <string name="dashboard_remaining_working_time">Pozostało do wypracowania</string>
     <string name="dashboard_today">Dzisiaj:</string>
     <string name="dashboard_week">W tym tygodniu:</string>
+    <string name="dashboard_today_work_time_label">Dzisiaj przepracowano:</string>
+    <string name="dashboard_current_day_empty_events_message">Brak zdarzeń</string>
 
     <!-- Navigation drawer strings -->
     <string name="navigation_drawer_open">Otwórz panel</string>
@@ -74,7 +76,27 @@
     <!-- Work Day list item strings -->
     <string name="history_work_day_label_example">Pon, 01.01.2018</string>
     <string name="history_work_day_label_format">E, dd.MM.yyyy</string>
-    <string name="dashboard_today_work_time_label">Dzisiaj przepracowano:</string>
-    <string name="dashboard_current_day_empty_events_message">Brak zdarzeń</string>
+
+    <!--##########################################-->
+    <!--############ Settings Activity ###########-->
+    <!--##########################################-->
+
+    <string name="settings_activity_title">Ustawienia</string>
+
+    <!-- Preference Titles -->
+    <string name="messages_header">Wiadomości</string>
+    <string name="sync_header">Synchronizacja</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Twój podpis</string>
+    <string name="reply_title">Domyślna akcja odpowiedzi</string>
+    <string name="settings_reply_entry">Odpowiedz</string>
+    <string name="settings_reply_all_entry">Odpowiedz na wszystkie</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Synchronizuj pocztę automatycznie</string>
+    <string name="attachment_title">Pobierz wszystkie załączniki</string>
+    <string name="attachment_summary_on">Automatycznie pobieraj załączniki dla e-maili przychodzących</string>
+    <string name="attachment_summary_off">Pobieraj załączniki tylko po ręcznym żądaniu</string>
 
 </resources>

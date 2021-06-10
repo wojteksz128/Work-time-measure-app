@@ -81,7 +81,12 @@
     <string name="history_work_day_duration_example" translatable="false">08:30:00</string>
     <string name="history_work_day_label_format" translatable="false">E, yyyy-MM-dd</string>
     <string name="history_work_day_duration_format" translatable="false">H:mm:ss</string>
-    <string name="title_activity_settings">SettingsActivity</string>
+
+    <!--##########################################-->
+    <!--############ Settings Activity ###########-->
+    <!--##########################################-->
+
+    <string name="settings_activity_title">Settings</string>
 
     <!-- Preference Titles -->
     <string name="messages_header">Messages</string>
@@ -90,6 +95,8 @@
     <!-- Messages Preferences -->
     <string name="signature_title">Your signature</string>
     <string name="reply_title">Default reply action</string>
+    <string name="settings_reply_entry">Reply</string>
+    <string name="settings_reply_all_entry">Reply to all</string>
 
     <!-- Sync Preferences -->
     <string name="sync_title">Sync email periodically</string>

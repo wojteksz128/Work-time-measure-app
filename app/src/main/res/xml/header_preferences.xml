@@ -1,13 +1,13 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <Preference
-        app:fragment="net.wojteksz128.worktimemeasureapp.window.settings.SettingsActivity$MessagesFragment"
+        app:fragment="net.wojteksz128.worktimemeasureapp.window.settings.MessagesFragment"
         app:icon="@drawable/messages"
         app:key="messages_header"
         app:title="@string/messages_header" />
 
     <Preference
-        app:fragment="net.wojteksz128.worktimemeasureapp.window.settings.SettingsActivity$SyncFragment"
+        app:fragment="net.wojteksz128.worktimemeasureapp.window.settings.SyncFragment"
         app:icon="@drawable/sync"
         app:key="sync_header"
         app:title="@string/sync_header" />
