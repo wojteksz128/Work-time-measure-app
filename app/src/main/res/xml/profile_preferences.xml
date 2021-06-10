@@ -1,0 +1,17 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="net.wojteksz128.worktimemeasureapp.window.settings.ProfileFragment">
+
+    <EditTextPreference
+        app:key="settings_profile_name"
+        app:title="@string/settings_profile_name_title"
+        app:useSimpleSummaryProvider="true" />
+
+    <EditTextPreference
+        app:key="settings_profile_mail"
+        app:title="@string/settings_profile_mail_title"
+        app:useSimpleSummaryProvider="true" />
+
+    <net.wojteksz128.worktimemeasureapp.window.settings.property.ImageViewPreference app:key="settings_profile_image" />
+
+</PreferenceScreen>

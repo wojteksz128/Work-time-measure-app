@@ -89,8 +89,17 @@
     <string name="settings_activity_title">Settings</string>
 
     <!-- Preference Titles -->
+    <string name="settings_header_profile_title">Profile</string>
     <string name="messages_header">Messages</string>
     <string name="sync_header">Sync</string>
+
+    <!-- Profile Preferences -->
+    <string name="settings_profile_name_title">First and last name</string>
+    <string name="settings_profile_mail_title">E-mail address</string>
+
+    <!-- Image View Preference - custom Preference -->
+    <string name="image_view_preference_image_desc">Profile image</string>
+    <string name="image_view_preference_image_hint">Tap to change profile picture</string>
 
     <!-- Messages Preferences -->
     <string name="signature_title">Your signature</string>
