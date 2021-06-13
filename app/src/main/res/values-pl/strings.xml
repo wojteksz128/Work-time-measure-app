@@ -91,6 +91,7 @@
     <!-- Profile Preferences -->
     <string name="settings_profile_name_title">Imię i nazwisko</string>
     <string name="settings_profile_mail_title">Adres e-mail</string>
+    <string name="settings_profile_mail_error">Niepoprawny format adresu e-mail</string>
 
     <!-- Image View Preference - custom Preference -->
     <string name="image_view_preference_image_desc">Zdjęcie profilowe</string>
