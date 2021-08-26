@@ -47,6 +47,7 @@ dependencies {
         exclude group: 'org.jetbrains.kotlinx', module: 'kotlinx-coroutines-core'
     }
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.1-native-mt'
     kapt 'androidx.lifecycle:lifecycle-compiler:2.3.1'
     implementation ('androidx.paging:paging-runtime-ktx:3.0.0') {
         exclude group: 'org.jetbrains.kotlinx', module: 'kotlinx-coroutines-core'

@@ -1,11 +1,10 @@
 package net.wojteksz128.worktimemeasureapp.window.settings
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.view.View
-import android.widget.Toast
+import android.text.InputType
+import android.view.inputmethod.EditorInfo
 import androidx.preference.EditTextPreference
+import androidx.preference.EditTextPreferenceDialogFragmentCompat
 import androidx.preference.PreferenceFragmentCompat
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.window.settings.property.ImageViewPreference
@@ -13,20 +12,24 @@ import net.wojteksz128.worktimemeasureapp.window.settings.property.ImageViewPref
 class ProfileFragment : PreferenceFragmentCompat() {
 
     lateinit var imageViewPreference: ImageViewPreference
-    lateinit var mailPreference: EditTextPreference
+    private lateinit var mailPreference: EditTextPreference
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.profile_preferences, rootKey)
 
-        imageViewPreference = findPreference("settings_profile_image")!!
-        imageViewPreference.imageClickListener = View.OnClickListener {
-            // TODO: 10.06.2021  Zmiana zdjęcia
-            Toast.makeText(context, "Image Clicked", Toast.LENGTH_SHORT).show()
-        }
+        prepareImageViewPreference()
+        prepareMailPreference()
+    }
 
+    private fun prepareImageViewPreference() {
+        imageViewPreference = findPreference("settings_profile_image")!!
+        imageViewPreference.attachImageSelector(this)
+    }
+
+    private fun prepareMailPreference() {
         mailPreference = findPreference("settings_profile_mail")!!
         mailPreference.setOnBindEditTextListener { editText ->
-            editText.addTextChangedListener(object : TextWatcher {
+            /*editText.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(
                     s: CharSequence?,
                     start: Int,
@@ -49,11 +52,36 @@ class ProfileFragment : PreferenceFragmentCompat() {
                     editText.rootView.findViewById<View>(android.R.id.button1).isEnabled =
                         validationError == null
                 }
-            })
+            })*/
+
+            editText.inputType =
+                InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
+            editText.imeOptions = EditorInfo.IME_ACTION_DONE
+            editText.setOnEditorActionListener { _, actionId, _ ->
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    dismissDialog()
+                    return@setOnEditorActionListener true
+                }
+                return@setOnEditorActionListener false
+            }
+        }
+        mailPreference.setOnPreferenceChangeListener { _, newValue ->
+            if (newValue is String) isEmailValid(
+                newValue
+            ) else false
         }
     }
 
-    fun isEmailValid(email: String): Boolean {
+    private fun dismissDialog() {
+        for (fragment in requireActivity().supportFragmentManager.fragments) {
+            if (fragment is EditTextPreferenceDialogFragmentCompat) {
+                fragment.dismiss()
+                return
+            }
+        }
+    }
+
+    private fun isEmailValid(email: String): Boolean {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
 }
