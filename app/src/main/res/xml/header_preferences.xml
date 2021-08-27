@@ -9,15 +9,21 @@
         app:title="@string/settings_header_profile_title" />
 
     <Preference
+        app:fragment="net.wojteksz128.worktimemeasureapp.window.settings.WorkFragment"
+        app:icon="@drawable/work"
+        app:key="@string/settings_key_workTime"
+        app:title="@string/settings_header_work_title" />
+
+    <Preference
         app:fragment="net.wojteksz128.worktimemeasureapp.window.settings.MessagesFragment"
         app:icon="@drawable/messages"
         app:key="@string/settings_key_messages"
-        app:title="@string/messages_header" />
+        app:title="@string/settings_header_messages_title" />
 
     <Preference
         app:fragment="net.wojteksz128.worktimemeasureapp.window.settings.SyncFragment"
         app:icon="@drawable/sync"
         app:key="@string/settings_key_sync"
-        app:title="@string/sync_header" />
+        app:title="@string/settings_header_sync_title" />
 
 </PreferenceScreen>

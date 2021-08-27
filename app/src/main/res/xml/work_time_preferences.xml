@@ -1,0 +1,10 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="net.wojteksz128.worktimemeasureapp.window.settings.WorkTimeFragment">
+
+    <net.wojteksz128.worktimemeasureapp.window.settings.property.TimePickerPreference
+        android:defaultValue="90"
+        android:key="@string/settings_key_workTime_duration"
+        android:summary="@string/settings_workTime_duration_summary"
+        android:title="@string/settings_workTime_duration_title" />
+</PreferenceScreen>

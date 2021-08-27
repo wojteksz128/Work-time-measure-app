@@ -85,8 +85,9 @@
 
     <!-- Preference Titles -->
     <string name="settings_header_profile_title">Profil</string>
-    <string name="messages_header">Wiadomości</string>
-    <string name="sync_header">Synchronizacja</string>
+    <string name="settings_header_work_title">Czas pracy</string>
+    <string name="settings_header_messages_title">Wiadomości</string>
+    <string name="settings_header_sync_title">Synchronizacja</string>
 
     <!-- Profile Preferences -->
     <string name="settings_profile_username_title">Imię i nazwisko</string>
@@ -96,6 +97,11 @@
     <!-- Image View Preference - custom Preference -->
     <string name="image_view_preference_image_desc">Zdjęcie profilowe</string>
     <string name="image_view_preference_image_hint">Dotknij, aby zmienić zdjęcie profilowe</string>
+
+    <!-- Work Preferences -->
+    <string name="settings_workTime_duration_title">Długość czasu pracy</string>
+    <string name="settings_workTime_duration_summary">Ustawienie długości czasu pracy, umożliwi wyświetlenie komunikatu o zakończeniu pracy.</string>
+    <string name="settings_workTime_duration_summaryValue">Obecna długość czasu pracy: %s.\n%s</string>
 
     <!-- Messages Preferences -->
     <string name="signature_title">Twój podpis</string>

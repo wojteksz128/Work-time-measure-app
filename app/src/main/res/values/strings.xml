@@ -90,8 +90,9 @@
 
     <!-- Preference Titles -->
     <string name="settings_header_profile_title">Profile</string>
-    <string name="messages_header">Messages</string>
-    <string name="sync_header">Sync</string>
+    <string name="settings_header_work_title">Work time</string>
+    <string name="settings_header_messages_title">Messages</string>
+    <string name="settings_header_sync_title">Sync</string>
 
     <!-- Profile Preferences -->
     <string name="settings_profile_username_title">First and last name</string>
@@ -101,6 +102,11 @@
     <!-- Image View Preference - custom Preference -->
     <string name="image_view_preference_image_desc">Profile image</string>
     <string name="image_view_preference_image_hint">Tap to change profile picture</string>
+
+    <!-- Work Preferences -->
+    <string name="settings_workTime_duration_title">Work time duration</string>
+    <string name="settings_workTime_duration_summary">By setting the length of the work time, you can display a message about the end of work.</string>
+    <string name="settings_workTime_duration_summaryValue">Current work time duration: %s.\n%s</string>
 
     <!-- Messages Preferences -->
     <string name="signature_title">Your signature</string>
@@ -121,8 +127,8 @@
     <string name="settings_key_profile_username" translatable="false">settings_profile_username</string>
     <string name="settings_key_profile_email" translatable="false">settings_profile_email</string>
 
-    <string name="settings_key_work" translatable="false">settings_work</string>
-    <string name="settings_key_work_workTimeDuration" translatable="false">settings_work_workTimeDuration</string>
+    <string name="settings_key_workTime" translatable="false">settings_workTime</string>
+    <string name="settings_key_workTime_duration" translatable="false">settings_workTime_duration</string>
 
     <string name="settings_key_messages" translatable="false">settings_messages</string>
     <string name="settings_key_messages_signature" translatable="false">settings_messages_signature</string>

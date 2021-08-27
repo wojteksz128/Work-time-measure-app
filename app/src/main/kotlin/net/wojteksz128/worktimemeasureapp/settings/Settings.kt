@@ -1,8 +1,6 @@
 package net.wojteksz128.worktimemeasureapp.settings
 
-import android.content.Context
 import net.wojteksz128.worktimemeasureapp.R
-import org.joda.time.Duration
 
 @Suppress("unused")
 object Settings {
@@ -12,14 +10,8 @@ object Settings {
         val Email = StringSettingsItem(R.string.settings_key_profile_email)
     }
 
-    // TODO: 27.08.2021 dodaj konfigurację
-    object Work : UnitSettingsItem(R.string.settings_key_work) {
-        // TODO: 27.08.2021 Napraw - jest to napisane, by mieć jakieś dane bez konfiguracji
-        val WorkTimeDuration =
-            object : DurationSettingsItem(R.string.settings_key_work_workTimeDuration) {
-                override fun getValue(context: Context, defaultValue: Duration?): Duration =
-                    Duration.millis(8L * 60 * 60 * 1000 + 30 * 60 * 1000)
-            }
+    object Work : UnitSettingsItem(R.string.settings_key_workTime) {
+        val WorkTimeDuration = DurationSettingsItem(R.string.settings_key_workTime_duration)
     }
 
     object Messages : UnitSettingsItem(R.string.settings_key_messages) {
