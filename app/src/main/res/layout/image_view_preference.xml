@@ -26,7 +26,7 @@
     </FrameLayout>
 
     <LinearLayout
-        android:id="@+id/linearLayout"
+        android:id="@+id/image_view_preference_layout"
         style="@style/image_view_preference_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

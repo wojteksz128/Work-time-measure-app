@@ -102,7 +102,7 @@ class ImageViewPreference(context: Context, attrs: AttributeSet) : Preference(co
             holder?.findViewById(R.id.image_view_preference_loading_indicator) as FrameLayout
 
         imageView = holder.findViewById(R.id.image_view_preference_image_preview) as ImageView
-        imageView.setOnClickListener {
+        holder.findViewById(R.id.image_view_preference_layout).setOnClickListener {
             Log.i(classTag, "onClickListener: Invoke selecting image")
             imageLoader.launch("image/*")
         }
