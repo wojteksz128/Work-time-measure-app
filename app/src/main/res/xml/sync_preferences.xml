@@ -3,12 +3,12 @@
     tools:context="net.wojteksz128.worktimemeasureapp.window.settings.SyncFragment">
 
     <SwitchPreferenceCompat
-        app:key="sync"
+        app:key="@string/settings_key_sync_sync"
         app:title="@string/sync_title" />
 
     <SwitchPreferenceCompat
-        app:dependency="sync"
-        app:key="attachment"
+        app:dependency="@string/settings_key_sync_sync"
+        app:key="@string/settings_key_sync_attachment"
         app:summaryOff="@string/attachment_summary_off"
         app:summaryOn="@string/attachment_summary_on"
         app:title="@string/attachment_title" />

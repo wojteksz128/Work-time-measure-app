@@ -115,4 +115,21 @@
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
 
+    <!-- Settings keys -->
+    <string name="settings_key_profile" translatable="false">settings_profile</string>
+    <string name="settings_key_profile_image" translatable="false">settings_profile_image</string>
+    <string name="settings_key_profile_username" translatable="false">settings_profile_username</string>
+    <string name="settings_key_profile_email" translatable="false">settings_profile_email</string>
+
+    <string name="settings_key_work" translatable="false">settings_work</string>
+    <string name="settings_key_work_workTimeDuration" translatable="false">settings_work_workTimeDuration</string>
+
+    <string name="settings_key_messages" translatable="false">settings_messages</string>
+    <string name="settings_key_messages_signature" translatable="false">settings_messages_signature</string>
+    <string name="settings_key_messages_reply" translatable="false">settings_messages_reply</string>
+
+    <string name="settings_key_sync" translatable="false">settings_sync</string>
+    <string name="settings_key_sync_sync" translatable="false">settings_sync_sync</string>
+    <string name="settings_key_sync_attachment" translatable="false">settings_sync_attachment</string>
+
 </resources>

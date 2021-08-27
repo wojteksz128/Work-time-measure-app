@@ -5,19 +5,19 @@
     <Preference
         app:fragment="net.wojteksz128.worktimemeasureapp.window.settings.ProfileFragment"
         app:icon="@drawable/ic_perm_identity_24dp"
-        app:key="profile"
+        app:key="@string/settings_key_profile"
         app:title="@string/settings_header_profile_title" />
 
     <Preference
         app:fragment="net.wojteksz128.worktimemeasureapp.window.settings.MessagesFragment"
         app:icon="@drawable/messages"
-        app:key="messages_header"
+        app:key="@string/settings_key_messages"
         app:title="@string/messages_header" />
 
     <Preference
         app:fragment="net.wojteksz128.worktimemeasureapp.window.settings.SyncFragment"
         app:icon="@drawable/sync"
-        app:key="sync_header"
+        app:key="@string/settings_key_sync"
         app:title="@string/sync_header" />
 
 </PreferenceScreen>

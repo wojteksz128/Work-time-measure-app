@@ -2,16 +2,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="net.wojteksz128.worktimemeasureapp.window.settings.ProfileFragment">
 
-    <net.wojteksz128.worktimemeasureapp.window.settings.property.ImageViewPreference app:key="settings_profile_image" />
-
     <EditTextPreference
-        app:key="settings_profile_username"
+        app:key="@string/settings_key_profile_username"
         app:title="@string/settings_profile_username_title"
         app:useSimpleSummaryProvider="true" />
 
     <EditTextPreference
-        app:key="settings_profile_email"
+        app:key="@string/settings_key_profile_email"
         app:title="@string/settings_profile_email_title"
         app:useSimpleSummaryProvider="true" />
+
+    <net.wojteksz128.worktimemeasureapp.window.settings.property.ImageViewPreference app:key="@string/settings_key_profile_image" />
 
 </PreferenceScreen>
