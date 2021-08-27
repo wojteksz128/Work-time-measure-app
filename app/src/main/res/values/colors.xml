@@ -5,6 +5,7 @@
     <color name="colorAccent">#FF4081</color>
     <color name="background">#dddddd</color>
     <color name="rv_background">@android:color/white</color>
+    <color name="waiting_background">#33000000</color>
 
     <!--##########################################-->
     <!--########### Dashboard Activity ###########-->

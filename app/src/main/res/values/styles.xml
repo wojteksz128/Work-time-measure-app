@@ -58,6 +58,16 @@
         <item name="android:layout_margin">@dimen/default_margin</item>
     </style>
 
+    <style name="loading_indicator">
+        <item name="android:layout_width">@dimen/loading_indicator_size</item>
+        <item name="android:layout_height">@dimen/loading_indicator_size</item>
+    </style>
+
+    <style name="profile_image">
+        <item name="android:layout_width">@dimen/image_view_preference_image_preview_width</item>
+        <item name="android:layout_height">@dimen/image_view_preference_image_preview_height</item>
+    </style>
+
     <!--##########################################-->
     <!--<editor-fold desc="############# Base Activity ##############">-->
 
@@ -80,16 +90,14 @@
         <item name="android:theme">@style/ThemeOverlay.AppCompat.Dark</item>
     </style>
 
-    <style name="base_navbar_header_icon">
-        <item name="android:paddingTop">@dimen/default_padding</item>
-    </style>
+    <style name="base_navbar_header_profile_image" parent="profile_image" />
 
-    <style name="base_navbar_header_username">
-        <item name="android:paddingTop">@dimen/default_padding</item>
+    <style name="base_navbar_header_profile_username">
+        <item name="android:layout_marginTop">@dimen/default_margin</item>
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Body1</item>
     </style>
 
-    <style name="base_navbar_header_email" />
+    <style name="base_navbar_header_profile_email" />
 
     <!--</editor-fold>-->
     <!--##########################################-->
@@ -157,10 +165,7 @@
         <item name="android:layout_margin">@dimen/large_margin</item>
     </style>
 
-    <style name="dashboard_loading_indicator">
-        <item name="android:layout_width">@dimen/dashboard_loading_indicator_size</item>
-        <item name="android:layout_height">@dimen/dashboard_loading_indicator_size</item>
-    </style>
+    <style name="dashboard_loading_indicator" parent="loading_indicator" />
 
     <!--</editor-fold>-->
     <!--##########################################-->
@@ -186,6 +191,36 @@
 
     <style name="history_rv_work_day_events_item_label">
         <item name="android:layout_margin">@dimen/default_margin</item>
+    </style>
+
+    <!--</editor-fold>-->
+    <!--##########################################-->
+
+    <!--##########################################-->
+    <!--<editor-fold desc="######### Image View Preference ##########">-->
+
+    <style name="image_view_preference_loading_indicator_background">
+        <item name="android:background">@color/waiting_background</item>
+    </style>
+
+    <style name="image_view_preference_loading_indicator" parent="loading_indicator">
+        <item name="android:layout_gravity">center</item>
+    </style>
+
+    <style name="image_view_preference_layout">
+        <item name="android:paddingStart">@dimen/large_padding</item>
+        <item name="android:paddingLeft">@dimen/large_padding</item>
+    </style>
+
+    <style name="image_view_preference_image_preview" parent="profile_image">
+        <item name="android:layout_marginTop">@dimen/default_margin</item>
+        <item name="android:layout_marginEnd">@dimen/large_margin</item>
+        <item name="android:layout_marginRight">@dimen/large_margin</item>
+        <item name="android:layout_marginBottom">@dimen/default_margin</item>
+    </style>
+
+    <style name="image_view_preference_image_instruction">
+        <item name="android:gravity">center_vertical</item>
     </style>
 
     <!--</editor-fold>-->

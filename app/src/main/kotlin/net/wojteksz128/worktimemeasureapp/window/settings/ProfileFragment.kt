@@ -45,25 +45,14 @@ class ProfileFragment : PreferenceFragmentCompat() {
 
                 override fun afterTextChanged(s: Editable?) {
                     val validationError: String? =
-                        if (s?.let { isEmailValid(s.toString()) } == true) null else getString(R.string.settings_profile_mail_error)
-
+                        if (s?.let { isEmailValid(s.toString()) } == true) null
+                        else getString(R.string.settings_profile_mail_error)
 
                     editText.error = validationError
                     editText.rootView.findViewById<View>(android.R.id.button1).isEnabled =
                         validationError == null
                 }
             })
-// TODO: 27.08.2021 Clean up code
-            /*editText.inputType =
-                InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
-            editText.imeOptions = EditorInfo.IME_ACTION_DONE
-            editText.setOnEditorActionListener { _, actionId, _ ->
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    dismissDialog()
-                    return@setOnEditorActionListener true
-                }
-                return@setOnEditorActionListener false
-            }*/
         }
         mailPreference.setOnPreferenceChangeListener { _, newValue ->
             if (newValue is String) isEmailValid(
@@ -71,15 +60,6 @@ class ProfileFragment : PreferenceFragmentCompat() {
             ) else false
         }
     }
-
-    /*private fun dismissDialog() {
-        for (fragment in requireActivity().supportFragmentManager.fragments) {
-            if (fragment is EditTextPreferenceDialogFragmentCompat) {
-                fragment.dismiss()
-                return
-            }
-        }
-    }*/
 
     private fun isEmailValid(email: String): Boolean {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()

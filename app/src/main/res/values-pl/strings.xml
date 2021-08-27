@@ -41,9 +41,9 @@
     <string name="navigation_drawer_close">Zamknij panel</string>
 
     <!-- Navigation drawer header strings -->
-    <string name="nav_header_title">Wojciech Szczepaniak</string>
-    <string name="nav_header_subtitle">227360@edu.p.lodz.pl</string>
-    <string name="nav_header_desc">Nagłówek panelu</string>
+    <string name="base_navbar_header_profile_username_example">Wojciech Szczepaniak</string>
+    <string name="base_navbar_header_profile_email_example">227360@edu.p.lodz.pl</string>
+    <string name="base_navbar_header_profile_image_desc">Nagłówek panelu</string>
 
     <!-- Navigation drawer items strings -->
     <string name="menu_home">Strona główna</string>
