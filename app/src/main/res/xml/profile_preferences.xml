@@ -5,13 +5,13 @@
     <net.wojteksz128.worktimemeasureapp.window.settings.property.ImageViewPreference app:key="settings_profile_image" />
 
     <EditTextPreference
-        app:key="settings_profile_name"
-        app:title="@string/settings_profile_name_title"
+        app:key="settings_profile_username"
+        app:title="@string/settings_profile_username_title"
         app:useSimpleSummaryProvider="true" />
 
     <EditTextPreference
-        app:key="settings_profile_mail"
-        app:title="@string/settings_profile_mail_title"
+        app:key="settings_profile_email"
+        app:title="@string/settings_profile_email_title"
         app:useSimpleSummaryProvider="true" />
 
 </PreferenceScreen>

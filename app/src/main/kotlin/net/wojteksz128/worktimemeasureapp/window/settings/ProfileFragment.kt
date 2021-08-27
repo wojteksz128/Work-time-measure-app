@@ -11,7 +11,7 @@ import net.wojteksz128.worktimemeasureapp.window.settings.property.ImageViewPref
 
 class ProfileFragment : PreferenceFragmentCompat() {
 
-    lateinit var imageViewPreference: ImageViewPreference
+    private lateinit var imageViewPreference: ImageViewPreference
     private lateinit var mailPreference: EditTextPreference
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -27,7 +27,7 @@ class ProfileFragment : PreferenceFragmentCompat() {
     }
 
     private fun prepareMailPreference() {
-        mailPreference = findPreference("settings_profile_mail")!!
+        mailPreference = findPreference("settings_profile_email")!!
         mailPreference.setOnBindEditTextListener { editText ->
             editText.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(

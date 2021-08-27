@@ -4,9 +4,9 @@ import android.content.Context
 import android.os.AsyncTask
 import android.util.Log
 import com.firebase.jobdispatcher.*
-import net.wojteksz128.worktimemeasureapp.configuration.ConfigurationProvider
 import net.wojteksz128.worktimemeasureapp.database.AppDatabase
 import net.wojteksz128.worktimemeasureapp.notification.EndOfWorkNotification
+import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.DateTimeUtils
 import org.joda.time.Duration
@@ -33,8 +33,12 @@ class WaitForEndOfWorkJob : JobService() {
         const val replaceCurrent = true
 
         fun getInterval(context: Context): Int {
-            val currentWorkDay = AppDatabase.getInstance(context).workDayDao().findByIntervalContains(DateTimeProvider.currentTime)
-            val interval = ConfigurationProvider.workTimeDuration.standardSeconds.toInt() - Duration(DateTimeUtils.mergeComeEventsDuration(currentWorkDay).time).standardSeconds.toInt()
+            val currentWorkDay = AppDatabase.getInstance(context).workDayDao()
+                .findByIntervalContains(DateTimeProvider.currentTime)
+
+            val interval =
+                Settings.Work.WorkTimeDuration.getValue(context)?.standardSeconds?.toInt()
+                    ?: 0 - Duration(DateTimeUtils.mergeComeEventsDuration(currentWorkDay).time).standardSeconds.toInt()
             return if (interval > 0) interval else 0
         }
 

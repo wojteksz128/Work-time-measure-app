@@ -18,13 +18,15 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceViewHolder
 import kotlinx.coroutines.*
 import net.wojteksz128.worktimemeasureapp.R
+import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
 
-class ImageViewPreference(context: Context, attrs: AttributeSet) : Preference(context, attrs) {
-    private val TAG = ImageViewPreference::class.java.simpleName
+class ImageViewPreference(context: Context, attrs: AttributeSet) : Preference(context, attrs),
+    ClassTagAware {
 
+    // TODO: 27.08.2021 popraw sposób odwoływania się do innego scope
     private var job = Job()
     private var scopeForSaving = CoroutineScope(job + Dispatchers.Main)
 
@@ -54,7 +56,7 @@ class ImageViewPreference(context: Context, attrs: AttributeSet) : Preference(co
 
     private suspend fun changeImage(uri: Uri) {
         withContext(Dispatchers.IO) {
-            Log.d(TAG, "changeImage: Selected image: $uri")
+            Log.d(classTag, "changeImage: Selected image: $uri")
             replaceImage(uri)
         }
         loadImage()
@@ -63,9 +65,9 @@ class ImageViewPreference(context: Context, attrs: AttributeSet) : Preference(co
     private fun replaceImage(newImageUri: Uri) {
         val newImageFile = File(context.filesDir, newImageUri.path!!.takeLastWhile { it != '/' })
 
-        Log.d(TAG, "replaceImage: Copy new image to internal storage start")
+        Log.d(classTag, "replaceImage: Copy new image to internal storage start")
         copyImageToInternalStorage(newImageUri, newImageFile)
-        Log.d(TAG, "replaceImage: Copy new image to internal storage end")
+        Log.d(classTag, "replaceImage: Copy new image to internal storage end")
 
         val oldImageFilePath: String? = getPersistedString(null)
         val newImageFilePath: String? = newImageFile.absolutePath
@@ -101,7 +103,7 @@ class ImageViewPreference(context: Context, attrs: AttributeSet) : Preference(co
 
         imageView = holder.findViewById(R.id.image_view_preference_image_preview) as ImageView
         imageView.setOnClickListener {
-            Log.i(TAG, "onClickListener: Invoke selecting image")
+            Log.i(classTag, "onClickListener: Invoke selecting image")
             imageLoader.launch("image/*")
         }
         scopeForSaving.launch {
