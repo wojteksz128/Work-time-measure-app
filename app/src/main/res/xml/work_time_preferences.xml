@@ -2,7 +2,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="net.wojteksz128.worktimemeasureapp.window.settings.WorkTimeFragment">
 
+    <SwitchPreference
+        android:key="@string/settings_key_workTime_notify_enable"
+        android:summaryOff="@string/settings_workTime_notify_summaryOff"
+        android:summaryOn="@string/settings_workTime_notify_summaryOn"
+        android:title="@string/settings_workTime_notify_title" />
+
     <net.wojteksz128.worktimemeasureapp.window.settings.property.TimePickerPreference
+        android:dependency="@string/settings_key_workTime_notify_enable"
         android:defaultValue="90"
         android:key="@string/settings_key_workTime_duration"
         android:summary="@string/settings_workTime_duration_summary"

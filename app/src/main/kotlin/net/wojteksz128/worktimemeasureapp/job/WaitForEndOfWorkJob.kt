@@ -37,7 +37,7 @@ class WaitForEndOfWorkJob : JobService() {
                 .findByIntervalContains(DateTimeProvider.currentTime)
 
             val interval =
-                Settings.Work.WorkTimeDuration.getValue(context)?.standardSeconds?.toInt()
+                Settings.Work.Duration.getValue(context)?.standardSeconds?.toInt()
                     ?: 0 - Duration(DateTimeUtils.mergeComeEventsDuration(currentWorkDay).time).standardSeconds.toInt()
             return if (interval > 0) interval else 0
         }

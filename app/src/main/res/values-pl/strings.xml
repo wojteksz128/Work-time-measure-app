@@ -99,6 +99,9 @@
     <string name="image_view_preference_image_hint">Dotknij, aby zmienić zdjęcie profilowe</string>
 
     <!-- Work Preferences -->
+    <string name="settings_workTime_notify_title">Powiadom o końcu pracy</string>
+    <string name="settings_workTime_notify_summaryOff">Użytkownik nie jest powiadamiany o nadejściu końca dnia pracy.</string>
+    <string name="settings_workTime_notify_summaryOn">Powiadomienie jest wysyłane, gdy nadejdzie koniec dnia pracy.</string>
     <string name="settings_workTime_duration_title">Długość czasu pracy</string>
     <string name="settings_workTime_duration_summary">Ustawienie długości czasu pracy, umożliwi wyświetlenie komunikatu o zakończeniu pracy.</string>
     <string name="settings_workTime_duration_summaryValue">Obecna długość czasu pracy: %s.\n%s</string>

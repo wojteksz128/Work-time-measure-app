@@ -11,7 +11,8 @@ object Settings {
     }
 
     object Work : UnitSettingsItem(R.string.settings_key_workTime) {
-        val WorkTimeDuration = DurationSettingsItem(R.string.settings_key_workTime_duration)
+        val NotifyingEnabled = BooleanSettingsItem(R.string.settings_key_workTime_notify_enable)
+        val Duration = DurationSettingsItem(R.string.settings_key_workTime_duration)
     }
 
     object Messages : UnitSettingsItem(R.string.settings_key_messages) {

@@ -104,6 +104,9 @@
     <string name="image_view_preference_image_hint">Tap to change profile picture</string>
 
     <!-- Work Preferences -->
+    <string name="settings_workTime_notify_title">Notify user at end of work</string>
+    <string name="settings_workTime_notify_summaryOff">The user is not notified when the end of work is arrived.</string>
+    <string name="settings_workTime_notify_summaryOn">Notification is raised when the end of work is arrived.</string>
     <string name="settings_workTime_duration_title">Work time duration</string>
     <string name="settings_workTime_duration_summary">By setting the length of the work time, you can display a message about the end of work.</string>
     <string name="settings_workTime_duration_summaryValue">Current work time duration: %s.\n%s</string>
@@ -128,6 +131,7 @@
     <string name="settings_key_profile_email" translatable="false">settings_profile_email</string>
 
     <string name="settings_key_workTime" translatable="false">settings_workTime</string>
+    <string name="settings_key_workTime_notify_enable" translatable="false">settings_workTime_notify_enable</string>
     <string name="settings_key_workTime_duration" translatable="false">settings_workTime_duration</string>
 
     <string name="settings_key_messages" translatable="false">settings_messages</string>
