@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.AsyncTask
 import android.util.Log
 import com.medavox.library.mutime.MuTime
+import net.wojteksz128.worktimemeasureapp.WorkTimeMeasureApp
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import java.util.*
 
@@ -14,25 +15,32 @@ object DateTimeProvider {
     val currentTime: Date
         get() = Date(System.currentTimeMillis() + offset)
 
-    // TODO: 30.08.2021 Konfigurowalne
     val weekEndDay: Date
         get() {
             val c = Calendar.getInstance()
             c.time = weekBeginDay
-            c.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY)
+            c.add(Calendar.WEEK_OF_YEAR, 1)
+            c.add(Calendar.MILLISECOND, -1)
             return c.time
         }
 
-    // TODO: 30.08.2021 Konfigurowalne
     val weekBeginDay: Date
         get() {
+            val firstWeekDay = Settings.WorkTime.FirstWeekDay.getValue(
+                WorkTimeMeasureApp.context.get()
+                    ?: throw NullPointerException("Cannot get application context for Work Time Measure App!")
+            )
             val c = Calendar.getInstance()
+            val currentTime = currentTime
             c.time = currentTime
             c.set(Calendar.HOUR_OF_DAY, 0)
             c.clear(Calendar.MINUTE)
             c.clear(Calendar.SECOND)
             c.clear(Calendar.MILLISECOND)
-            c.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY)
+            c.set(Calendar.DAY_OF_WEEK, firstWeekDay ?: Calendar.MONDAY)
+            if (c.time > currentTime)
+                c.add(Calendar.WEEK_OF_YEAR, -1)
+
             return c.time
         }
 

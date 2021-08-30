@@ -105,6 +105,14 @@
     <string name="settings_workTime_duration_title">Długość czasu pracy</string>
     <string name="settings_workTime_duration_summary">Ustawienie długości czasu pracy, umożliwi wyświetlenie komunikatu o zakończeniu pracy.</string>
     <string name="settings_workTime_duration_summaryValue">Obecna długość czasu pracy: %s.\n%s</string>
+    <string name="settings_workTime_firstWeekDay_title">Pierwszy dzień tygodnia</string>
+    <string name="settings_workTime_firstWeekDay_sundayEntry">Niedziela</string>
+    <string name="settings_workTime_firstWeekDay_mondayEntry">Poniedziałek</string>
+    <string name="settings_workTime_firstWeekDay_tuesdayEntry">Wtorek</string>
+    <string name="settings_workTime_firstWeekDay_wednesdayEntry">Środa</string>
+    <string name="settings_workTime_firstWeekDay_thursdayEntry">Czwartek</string>
+    <string name="settings_workTime_firstWeekDay_fridayEntry">Piątek</string>
+    <string name="settings_workTime_firstWeekDay_saturdayEntry">Sobota</string>
 
     <!-- Messages Preferences -->
     <string name="signature_title">Twój podpis</string>

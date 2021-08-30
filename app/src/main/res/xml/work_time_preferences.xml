@@ -1,5 +1,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="net.wojteksz128.worktimemeasureapp.window.settings.WorkTimeFragment">
 
     <SwitchPreference
@@ -13,4 +14,13 @@
         android:key="@string/settings_key_workTime_duration"
         android:summary="@string/settings_workTime_duration_summary"
         android:title="@string/settings_workTime_duration_title" />
+
+    <ListPreference
+        android:defaultValue="2"
+        android:entries="@array/day_of_week_entries"
+        android:entryValues="@array/day_of_week_values"
+        android:key="@string/settings_key_workTime_firstWeekDay"
+        android:title="@string/settings_workTime_firstWeekDay_title"
+        app:useSimpleSummaryProvider="true" />
+
 </PreferenceScreen>

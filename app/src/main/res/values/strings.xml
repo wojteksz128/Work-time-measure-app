@@ -110,6 +110,14 @@
     <string name="settings_workTime_duration_title">Work time duration</string>
     <string name="settings_workTime_duration_summary">By setting the length of the work time, you can display a message about the end of work.</string>
     <string name="settings_workTime_duration_summaryValue">Current work time duration: %s.\n%s</string>
+    <string name="settings_workTime_firstWeekDay_title">First day of week</string>
+    <string name="settings_workTime_firstWeekDay_sundayEntry">Sunday</string>
+    <string name="settings_workTime_firstWeekDay_mondayEntry">Monday</string>
+    <string name="settings_workTime_firstWeekDay_tuesdayEntry">Tuesday</string>
+    <string name="settings_workTime_firstWeekDay_wednesdayEntry">Wednesday</string>
+    <string name="settings_workTime_firstWeekDay_thursdayEntry">Thursday</string>
+    <string name="settings_workTime_firstWeekDay_fridayEntry">Friday</string>
+    <string name="settings_workTime_firstWeekDay_saturdayEntry">Saturday</string>
 
     <!-- Messages Preferences -->
     <string name="signature_title">Your signature</string>
@@ -134,6 +142,7 @@
     <string name="settings_key_workTime" translatable="false">settings_workTime</string>
     <string name="settings_key_workTime_notify_enable" translatable="false">settings_workTime_notify_enable</string>
     <string name="settings_key_workTime_duration" translatable="false">settings_workTime_duration</string>
+    <string name="settings_key_workTime_firstWeekDay" translatable="false">settings_workTime_firstWeekDay</string>
 
     <string name="settings_key_messages" translatable="false">settings_messages</string>
     <string name="settings_key_messages_signature" translatable="false">settings_messages_signature</string>

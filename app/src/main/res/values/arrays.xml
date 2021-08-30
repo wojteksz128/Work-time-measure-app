@@ -9,4 +9,25 @@
         <item>reply</item>
         <item>reply_all</item>
     </string-array>
+
+    <!-- Day of week -->
+    <string-array name="day_of_week_entries">
+        <item>@string/settings_workTime_firstWeekDay_sundayEntry</item>
+        <item>@string/settings_workTime_firstWeekDay_mondayEntry</item>
+        <item>@string/settings_workTime_firstWeekDay_tuesdayEntry</item>
+        <item>@string/settings_workTime_firstWeekDay_wednesdayEntry</item>
+        <item>@string/settings_workTime_firstWeekDay_thursdayEntry</item>
+        <item>@string/settings_workTime_firstWeekDay_fridayEntry</item>
+        <item>@string/settings_workTime_firstWeekDay_saturdayEntry</item>
+    </string-array>
+
+    <string-array name="day_of_week_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+    </string-array>
 </resources>
