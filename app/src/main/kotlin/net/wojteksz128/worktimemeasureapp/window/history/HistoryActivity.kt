@@ -16,11 +16,9 @@ import net.wojteksz128.worktimemeasureapp.util.DateTimeProvider
 // TODO: 11.08.2018 Jeśli aktualny dzień istnieje - przenieś FABa w to miejsce
 // TODO: 11.08.2018 Dodaj statystyki
 // TODO: 11.08.2018 Dodaj notyfikację na kilka minut przed wyjściem z pracy
-// TODO: 11.08.2018 Dodaj konfigurację
 // TODO: 11.08.2018 dodaj możliwość importu eventów
 // TODO: 11.08.2018 Dodaj możliwość edycji istniejących eventów lub ich usunięcia (części lub całości)
 // TODO: 11.08.2018 Dodaj widok kalendarza
-// TODO: 11.08.2018 dodaj drawer layout (hamburger)
 // TODO: 11.08.2018 popraw liczenie czasu pracy (może nie brać pod uwagę ms?)
 // TODO: 07.07.2019 Uwzględniaj strefę czasową
 // TODO: 09.06.2021 Uwzględnij przejścia poza jeden dzień oraz możliwość zamknięcia
@@ -46,7 +44,7 @@ class HistoryActivity : AppCompatActivity() {
         Log.v(TAG, "onResume: Fill days list")
         viewModel.workDaysPager.liveData.observe(this,
             { workDayAdapter.submitData(this.lifecycle, it) })
-        DateTimeProvider.updateOffset(this, "ntp.comarch.pl")
+        DateTimeProvider.updateOffset(this)
     }
 
     override fun onPause() {

@@ -17,6 +17,10 @@
     <item android:title="@string/menu_header_info">
         <menu>
             <item
+                android:id="@+id/nav_settings"
+                android:icon="@drawable/ic_menu_settings_24dp"
+                android:title="@string/menu_settings" />
+            <item
                 android:id="@+id/nav_about"
                 android:icon="@drawable/ic_menu_about_24dp"
                 android:title="@string/menu_about" />

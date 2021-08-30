@@ -8,8 +8,8 @@ import android.content.Intent
  */
 class NotificationIntentService : IntentService(NotificationIntentService::class.java.name) {
 
-    override fun onHandleIntent(intent: Intent) {
-        val action = intent.action
+    override fun onHandleIntent(intent: Intent?) {
+        val action = intent?.action
         action?.let { Action.valueOf(it)(this) }
     }
 }

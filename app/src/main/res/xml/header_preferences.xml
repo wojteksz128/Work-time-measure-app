@@ -1,0 +1,23 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="net.wojteksz128.worktimemeasureapp.window.settings.HeaderFragment">
+
+    <Preference
+        app:fragment="net.wojteksz128.worktimemeasureapp.window.settings.ProfileFragment"
+        app:icon="@drawable/ic_perm_identity_24dp"
+        app:key="@string/settings_key_profile"
+        app:title="@string/settings_header_profile_title" />
+
+    <Preference
+        app:fragment="net.wojteksz128.worktimemeasureapp.window.settings.WorkTimeFragment"
+        app:icon="@drawable/work"
+        app:key="@string/settings_key_workTime"
+        app:title="@string/settings_header_work_title" />
+
+    <Preference
+        app:fragment="net.wojteksz128.worktimemeasureapp.window.settings.SyncFragment"
+        app:icon="@drawable/sync"
+        app:key="@string/settings_key_sync"
+        app:title="@string/settings_header_sync_title" />
+
+</PreferenceScreen>

@@ -41,14 +41,15 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <!-- Navigation drawer header strings -->
-    <string name="nav_header_title">Wojciech Szczepaniak</string>
-    <string name="nav_header_subtitle">227360@edu.p.lodz.pl</string>
-    <string name="nav_header_desc">Navigation header</string>
+    <string name="base_navbar_header_profile_username_notSetMessage">Username is not set</string>
+    <string name="base_navbar_header_profile_email_notSetMessage">E-mail address is not set</string>
+    <string name="base_navbar_header_profile_image_desc">Navigation header</string>
 
     <!-- Navigation drawer items strings -->
     <string name="menu_home">Home</string>
     <string name="menu_history">History</string>
     <string name="menu_header_info">Information</string>
+    <string name="menu_settings">Settings</string>
     <string name="menu_about">About…</string>
 
     <!-- Snackbar info's -->
@@ -80,5 +81,64 @@
     <string name="history_work_day_duration_example" translatable="false">08:30:00</string>
     <string name="history_work_day_label_format" translatable="false">E, yyyy-MM-dd</string>
     <string name="history_work_day_duration_format" translatable="false">H:mm:ss</string>
+
+    <!--##########################################-->
+    <!--############ Settings Activity ###########-->
+    <!--##########################################-->
+
+    <string name="settings_activity_title">Settings</string>
+
+    <!-- Preference Titles -->
+    <string name="settings_header_profile_title">Profile</string>
+    <string name="settings_header_work_title">Work time</string>
+    <string name="settings_header_sync_title">Sync</string>
+
+    <!-- Profile Preferences -->
+    <string name="settings_profile_username_title">First and last name</string>
+    <string name="settings_profile_email_title">E-mail address</string>
+    <string name="settings_profile_mail_error">Incorrect e-mail address format</string>
+
+    <!-- Image View Preference - custom Preference -->
+    <string name="image_view_preference_image_desc">Profile image</string>
+    <string name="image_view_preference_image_hint">Tap to change profile picture</string>
+
+    <!-- Work Preferences -->
+    <string name="settings_workTime_notify_title">Notify user at end of work</string>
+    <string name="settings_workTime_notify_summaryOff">The user is not notified when the end of work is arrived.</string>
+    <string name="settings_workTime_notify_summaryOn">Notification is raised when the end of work is arrived.</string>
+    <string name="settings_workTime_duration_title">Work time duration</string>
+    <string name="settings_workTime_duration_summary">By setting the length of the work time, you can display a message about the end of work.</string>
+    <string name="settings_workTime_duration_summaryValue">Current work time duration: %s.\n%s</string>
+    <string name="settings_workTime_firstWeekDay_title">First day of week</string>
+    <string name="settings_workTime_firstWeekDay_sundayEntry">Sunday</string>
+    <string name="settings_workTime_firstWeekDay_mondayEntry">Monday</string>
+    <string name="settings_workTime_firstWeekDay_tuesdayEntry">Tuesday</string>
+    <string name="settings_workTime_firstWeekDay_wednesdayEntry">Wednesday</string>
+    <string name="settings_workTime_firstWeekDay_thursdayEntry">Thursday</string>
+    <string name="settings_workTime_firstWeekDay_fridayEntry">Friday</string>
+    <string name="settings_workTime_firstWeekDay_saturdayEntry">Saturday</string>
+
+    <!-- Sync Preferences -->
+    <string name="settings_sync_timeSync_category_title">Time synchronization</string>
+    <string name="settings_sync_timeSync_enable_title">Sync time with NTP server</string>
+    <string name="settings_sync_timeSync_enable_summary_on">Current time is synchronized with NTP server.</string>
+    <string name="settings_sync_timeSync_enable_summary_off">Current time is not synchronized with NTP server.</string>
+    <string name="settings_sync_timeSync_server_title">NTP server address</string>
+    <string name="settings_sync_timeSync_server_summary">Address of NTP server, used for time synchronization in app.</string>
+
+    <!-- Settings keys -->
+    <string name="settings_key_profile" translatable="false">settings_profile</string>
+    <string name="settings_key_profile_image" translatable="false">settings_profile_image</string>
+    <string name="settings_key_profile_username" translatable="false">settings_profile_username</string>
+    <string name="settings_key_profile_email" translatable="false">settings_profile_email</string>
+
+    <string name="settings_key_workTime" translatable="false">settings_workTime</string>
+    <string name="settings_key_workTime_notify_enable" translatable="false">settings_workTime_notify_enable</string>
+    <string name="settings_key_workTime_duration" translatable="false">settings_workTime_duration</string>
+    <string name="settings_key_workTime_firstWeekDay" translatable="false">settings_workTime_firstWeekDay</string>
+
+    <string name="settings_key_sync" translatable="false">settings_sync</string>
+    <string name="settings_key_sync_timeSync_enable" translatable="false">settings_sync_timeSync_enable</string>
+    <string name="settings_key_sync_timeSync_server" translatable="false">settings_sync_timeSync_server</string>
 
 </resources>

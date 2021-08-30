@@ -1,0 +1,21 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="net.wojteksz128.worktimemeasureapp.window.settings.SyncFragment">
+
+    <PreferenceCategory app:title="@string/settings_sync_timeSync_category_title">
+
+        <SwitchPreferenceCompat
+            app:key="@string/settings_key_sync_timeSync_enable"
+            app:summaryOff="@string/settings_sync_timeSync_enable_summary_off"
+            app:summaryOn="@string/settings_sync_timeSync_enable_summary_on"
+            app:title="@string/settings_sync_timeSync_enable_title" />
+
+        <EditTextPreference
+            app:dependency="@string/settings_key_sync_timeSync_enable"
+            app:key="@string/settings_key_sync_timeSync_server"
+            app:summary="@string/settings_sync_timeSync_server_summary"
+            app:title="@string/settings_sync_timeSync_server_title" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

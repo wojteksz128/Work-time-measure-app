@@ -3,12 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="net.wojteksz128.worktimemeasureapp">
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.VIBRATE" />
-
-
     <application
+        android:name=".WorkTimeMeasureApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -16,17 +12,17 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-
         <activity
             android:name=".window.dashboard.DashboardActivity"
             android:label="@string/dashboard_activity_title"
+            android:exported="true"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".window.history.HistoryActivity"
             android:label="@string/history_activity_title"
@@ -38,6 +34,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.wojteksz128.worktimemeasureapp.window.dashboard.DashboardActivity" />
         </activity>
+        <activity
+            android:name=".window.settings.SettingsActivity"
+            android:label="@string/settings_activity_title">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".window.dashboard.DashboardActivity" />
+        </activity>
 
         <service
             android:name=".job.WaitForEndOfWorkJob"
@@ -47,7 +50,12 @@
             </intent-filter>
         </service>
         <service android:name=".notification.action.NotificationIntentService" />
-
     </application>
+
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
 </manifest>
