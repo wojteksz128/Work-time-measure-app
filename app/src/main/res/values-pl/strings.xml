@@ -86,7 +86,6 @@
     <!-- Preference Titles -->
     <string name="settings_header_profile_title">Profil</string>
     <string name="settings_header_work_title">Czas pracy</string>
-    <string name="settings_header_messages_title">Wiadomości</string>
     <string name="settings_header_sync_title">Synchronizacja</string>
 
     <!-- Profile Preferences -->
@@ -113,12 +112,6 @@
     <string name="settings_workTime_firstWeekDay_thursdayEntry">Czwartek</string>
     <string name="settings_workTime_firstWeekDay_fridayEntry">Piątek</string>
     <string name="settings_workTime_firstWeekDay_saturdayEntry">Sobota</string>
-
-    <!-- Messages Preferences -->
-    <string name="signature_title">Twój podpis</string>
-    <string name="reply_title">Domyślna akcja odpowiedzi</string>
-    <string name="settings_reply_entry">Odpowiedz</string>
-    <string name="settings_reply_all_entry">Odpowiedz na wszystkie</string>
 
     <!-- Sync Preferences -->
     <string name="settings_sync_timeSync_category_title">Synchronizacja czasu</string>

@@ -13,15 +13,7 @@ object Settings {
     object WorkTime : UnitSettingsItem(R.string.settings_key_workTime) {
         val NotifyingEnabled = BooleanSettingsItem(R.string.settings_key_workTime_notify_enable)
         val Duration = DurationSettingsItem(R.string.settings_key_workTime_duration)
-        val FirstWeekDay =
-            object : IntFromStringSettingsItem(R.string.settings_key_workTime_firstWeekDay) {
-
-            }
-    }
-
-    object Messages : UnitSettingsItem(R.string.settings_key_messages) {
-        val Signature = StringSettingsItem(R.string.settings_key_messages_signature)
-        val ReplyDefaultAction = StringSettingsItem(R.string.settings_key_messages_reply)
+        val FirstWeekDay = IntFromStringSettingsItem(R.string.settings_key_workTime_firstWeekDay)
     }
 
     object Sync : UnitSettingsItem(R.string.settings_key_sync) {

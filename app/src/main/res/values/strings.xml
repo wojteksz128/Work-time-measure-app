@@ -91,7 +91,6 @@
     <!-- Preference Titles -->
     <string name="settings_header_profile_title">Profile</string>
     <string name="settings_header_work_title">Work time</string>
-    <string name="settings_header_messages_title">Messages</string>
     <string name="settings_header_sync_title">Sync</string>
 
     <!-- Profile Preferences -->
@@ -119,12 +118,6 @@
     <string name="settings_workTime_firstWeekDay_fridayEntry">Friday</string>
     <string name="settings_workTime_firstWeekDay_saturdayEntry">Saturday</string>
 
-    <!-- Messages Preferences -->
-    <string name="signature_title">Your signature</string>
-    <string name="reply_title">Default reply action</string>
-    <string name="settings_reply_entry">Reply</string>
-    <string name="settings_reply_all_entry">Reply to all</string>
-
     <!-- Sync Preferences -->
     <string name="settings_sync_timeSync_category_title">Time synchronization</string>
     <string name="settings_sync_timeSync_enable_title">Sync time with NTP server</string>
@@ -143,10 +136,6 @@
     <string name="settings_key_workTime_notify_enable" translatable="false">settings_workTime_notify_enable</string>
     <string name="settings_key_workTime_duration" translatable="false">settings_workTime_duration</string>
     <string name="settings_key_workTime_firstWeekDay" translatable="false">settings_workTime_firstWeekDay</string>
-
-    <string name="settings_key_messages" translatable="false">settings_messages</string>
-    <string name="settings_key_messages_signature" translatable="false">settings_messages_signature</string>
-    <string name="settings_key_messages_reply" translatable="false">settings_messages_reply</string>
 
     <string name="settings_key_sync" translatable="false">settings_sync</string>
     <string name="settings_key_sync_timeSync_enable" translatable="false">settings_sync_timeSync_enable</string>

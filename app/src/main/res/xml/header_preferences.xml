@@ -15,12 +15,6 @@
         app:title="@string/settings_header_work_title" />
 
     <Preference
-        app:fragment="net.wojteksz128.worktimemeasureapp.window.settings.MessagesFragment"
-        app:icon="@drawable/messages"
-        app:key="@string/settings_key_messages"
-        app:title="@string/settings_header_messages_title" />
-
-    <Preference
         app:fragment="net.wojteksz128.worktimemeasureapp.window.settings.SyncFragment"
         app:icon="@drawable/sync"
         app:key="@string/settings_key_sync"
