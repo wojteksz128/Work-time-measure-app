@@ -46,7 +46,7 @@ class HistoryActivity : AppCompatActivity() {
         Log.v(TAG, "onResume: Fill days list")
         viewModel.workDaysPager.liveData.observe(this,
             { workDayAdapter.submitData(this.lifecycle, it) })
-        DateTimeProvider.updateOffset(this, "ntp.comarch.pl")
+        DateTimeProvider.updateOffset(this)
     }
 
     override fun onPause() {

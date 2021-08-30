@@ -21,8 +21,10 @@ object Settings {
     }
 
     object Sync : UnitSettingsItem(R.string.settings_key_sync) {
-        val Sync = BooleanSettingsItem(R.string.settings_key_sync_sync)
-        val Attachment = BooleanSettingsItem(R.string.settings_key_sync_attachment)
+        object TimeSync {
+            val Enabled = BooleanSettingsItem(R.string.settings_key_sync_timeSync_enable)
+            val ServerAddress = StringSettingsItem(R.string.settings_key_sync_timeSync_server)
+        }
     }
 }
 

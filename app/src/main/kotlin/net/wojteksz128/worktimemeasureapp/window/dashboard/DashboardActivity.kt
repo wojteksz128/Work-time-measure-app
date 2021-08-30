@@ -69,8 +69,7 @@ class DashboardActivity : BaseActivity(), ClassTagAware {
         lastWeekObserver = LastWeekObserver()
         viewModel.workDay.observe(this, currentDayObserver)
         viewModel.weekWorkDays.observe(this, lastWeekObserver)
-        // TODO: 30.08.2021 Dodaj do konfiguracji ustawienia synchronizacji czasu
-        DateTimeProvider.updateOffset(this, "ntp.comarch.pl")
+        DateTimeProvider.updateOffset(this)
     }
 
     override fun onPause() {

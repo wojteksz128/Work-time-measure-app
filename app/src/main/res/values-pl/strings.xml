@@ -113,9 +113,11 @@
     <string name="settings_reply_all_entry">Odpowiedz na wszystkie</string>
 
     <!-- Sync Preferences -->
-    <string name="sync_title">Synchronizuj pocztę automatycznie</string>
-    <string name="attachment_title">Pobierz wszystkie załączniki</string>
-    <string name="attachment_summary_on">Automatycznie pobieraj załączniki dla e-maili przychodzących</string>
-    <string name="attachment_summary_off">Pobieraj załączniki tylko po ręcznym żądaniu</string>
+    <string name="settings_sync_timeSync_category_title">Synchronizacja czasu</string>
+    <string name="settings_sync_timeSync_enable_title">Synchronizuj z serwerem NTP</string>
+    <string name="settings_sync_timeSync_enable_summary_on">Obecny czas jest synchronizowany z serwerem NTP.</string>
+    <string name="settings_sync_timeSync_enable_summary_off">Obecny czas nie jest synchronizowany z serwerem NTP.</string>
+    <string name="settings_sync_timeSync_server_title">Adres serwera NTP</string>
+    <string name="settings_sync_timeSync_server_summary">Adres serwera NTP, używany do synchronizacji czasu w aplikacji.</string>
 
 </resources>

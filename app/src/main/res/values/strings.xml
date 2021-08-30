@@ -118,11 +118,12 @@
     <string name="settings_reply_all_entry">Reply to all</string>
 
     <!-- Sync Preferences -->
-    <string name="sync_title">Sync email periodically</string>
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails
-    </string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="settings_sync_timeSync_category_title">Time synchronization</string>
+    <string name="settings_sync_timeSync_enable_title">Sync time with NTP server</string>
+    <string name="settings_sync_timeSync_enable_summary_on">Current time is synchronized with NTP server.</string>
+    <string name="settings_sync_timeSync_enable_summary_off">Current time is not synchronized with NTP server.</string>
+    <string name="settings_sync_timeSync_server_title">NTP server address</string>
+    <string name="settings_sync_timeSync_server_summary">Address of NTP server, used for time synchronization in app.</string>
 
     <!-- Settings keys -->
     <string name="settings_key_profile" translatable="false">settings_profile</string>
@@ -139,7 +140,7 @@
     <string name="settings_key_messages_reply" translatable="false">settings_messages_reply</string>
 
     <string name="settings_key_sync" translatable="false">settings_sync</string>
-    <string name="settings_key_sync_sync" translatable="false">settings_sync_sync</string>
-    <string name="settings_key_sync_attachment" translatable="false">settings_sync_attachment</string>
+    <string name="settings_key_sync_timeSync_enable" translatable="false">settings_sync_timeSync_enable</string>
+    <string name="settings_key_sync_timeSync_server" translatable="false">settings_sync_timeSync_server</string>
 
 </resources>
