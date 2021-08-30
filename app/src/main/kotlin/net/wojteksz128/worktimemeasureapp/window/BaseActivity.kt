@@ -83,12 +83,12 @@ abstract class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationIt
             viewModel.profileImageBitmap.let { profileImage.setImageBitmap(it) }
             viewModel.profileUsername = Settings.Profile.Username.getValue(
                 baseContext,
-                getString(R.string.base_navbar_header_profile_username_example)
+                getString(R.string.base_navbar_header_profile_username_notSetMessage)
             )
             profileUsername.text = viewModel.profileUsername
             viewModel.profileEmail = Settings.Profile.Email.getValue(
                 baseContext,
-                getString(R.string.base_navbar_header_profile_email_example)
+                getString(R.string.base_navbar_header_profile_email_notSetMessage)
             )
             profileEmail.text = viewModel.profileEmail
         }

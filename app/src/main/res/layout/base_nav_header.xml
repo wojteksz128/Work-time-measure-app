@@ -17,13 +17,13 @@
         style="@style/base_navbar_header_profile_username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/base_navbar_header_profile_username_example" />
+        android:text="@string/base_navbar_header_profile_username_notSetMessage" />
 
     <TextView
         android:id="@+id/base_navbar_header_profile_email"
         style="@style/base_navbar_header_profile_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/base_navbar_header_profile_email_example" />
+        android:text="@string/base_navbar_header_profile_email_notSetMessage" />
 
 </LinearLayout>

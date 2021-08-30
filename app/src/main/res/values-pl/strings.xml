@@ -41,8 +41,8 @@
     <string name="navigation_drawer_close">Zamknij panel</string>
 
     <!-- Navigation drawer header strings -->
-    <string name="base_navbar_header_profile_username_example">Wojciech Szczepaniak</string>
-    <string name="base_navbar_header_profile_email_example">227360@edu.p.lodz.pl</string>
+    <string name="base_navbar_header_profile_username_notSetMessage">Nazwa użytkownika nie jest ustawiona</string>
+    <string name="base_navbar_header_profile_email_notSetMessage">Adres e-mail nie jest ustawiony</string>
     <string name="base_navbar_header_profile_image_desc">Nagłówek panelu</string>
 
     <!-- Navigation drawer items strings -->
