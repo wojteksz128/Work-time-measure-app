@@ -8,10 +8,13 @@ class WorkTimeMeasureApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        context = WeakReference(applicationContext)
+        appContext = WeakReference(applicationContext)
     }
 
     companion object {
-        lateinit var context: WeakReference<Context>
+        private lateinit var appContext: WeakReference<Context>
+        val context: Context
+            get() = appContext.get()
+                ?: throw NullPointerException("Cannot get application context!")
     }
 }

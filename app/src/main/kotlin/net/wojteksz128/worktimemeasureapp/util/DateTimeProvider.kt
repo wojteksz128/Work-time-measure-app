@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.AsyncTask
 import android.util.Log
 import com.medavox.library.mutime.MuTime
-import net.wojteksz128.worktimemeasureapp.WorkTimeMeasureApp
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import java.util.*
 
@@ -26,10 +25,7 @@ object DateTimeProvider {
 
     val weekBeginDay: Date
         get() {
-            val firstWeekDay = Settings.WorkTime.FirstWeekDay.getValue(
-                WorkTimeMeasureApp.context.get()
-                    ?: throw NullPointerException("Cannot get application context for Work Time Measure App!")
-            )
+            val firstWeekDay = Settings.WorkTime.FirstWeekDay.valueNullable
             val c = Calendar.getInstance()
             val currentTime = currentTime
             c.time = currentTime
@@ -45,23 +41,9 @@ object DateTimeProvider {
         }
 
     fun updateOffset(context: Context) {
-        val timeSyncEnabled = Settings.Sync.TimeSync.Enabled.getValue(context)
-            ?: throw NullPointerException(
-                "Cannot read value '${
-                    Settings.Sync.TimeSync.Enabled.getKey(
-                        context
-                    )
-                }' from Settings."
-            )
+        val timeSyncEnabled = Settings.Sync.TimeSync.Enabled.value
         if (timeSyncEnabled) {
-            val ntpHost = Settings.Sync.TimeSync.ServerAddress.getValue(context)
-                ?: throw NullPointerException(
-                    "Cannot read value '${
-                        Settings.Sync.TimeSync.ServerAddress.getKey(
-                            context
-                        )
-                    }' from Settings."
-                )
+            val ntpHost = Settings.Sync.TimeSync.ServerAddress.value
             object : AsyncTask<Unit, Unit, Long>() {
                 override fun doInBackground(vararg p0: Unit?): Long {
                     return try {
