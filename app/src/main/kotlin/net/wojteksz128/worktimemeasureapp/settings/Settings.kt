@@ -10,7 +10,7 @@ object Settings {
         val Email = StringSettingsItem(R.string.settings_key_profile_email)
     }
 
-    object Work : UnitSettingsItem(R.string.settings_key_workTime) {
+    object WorkTime : UnitSettingsItem(R.string.settings_key_workTime) {
         val NotifyingEnabled = BooleanSettingsItem(R.string.settings_key_workTime_notify_enable)
         val Duration = DurationSettingsItem(R.string.settings_key_workTime_duration)
     }

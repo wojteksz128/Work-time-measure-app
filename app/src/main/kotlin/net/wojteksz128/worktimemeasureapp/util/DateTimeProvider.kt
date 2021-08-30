@@ -13,6 +13,7 @@ object DateTimeProvider {
     val currentTime: Date
         get() = Date(System.currentTimeMillis() + offset)
 
+    // TODO: 30.08.2021 Konfigurowalne
     val weekEndDay: Date
         get() {
             val c = Calendar.getInstance()
@@ -20,6 +21,8 @@ object DateTimeProvider {
             c.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY)
             return c.time
         }
+
+    // TODO: 30.08.2021 Konfigurowalne
     val weekBeginDay: Date
         get() {
             val c = Calendar.getInstance()
