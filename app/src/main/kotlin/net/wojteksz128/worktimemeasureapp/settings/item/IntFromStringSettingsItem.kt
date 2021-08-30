@@ -1,11 +1,11 @@
-package net.wojteksz128.worktimemeasureapp.settings
+package net.wojteksz128.worktimemeasureapp.settings.item
 
 open class IntFromStringSettingsItem(name: Int) : SettingsItem<Int>(
     name,
-    { sharedPreferences, key, defaultValue ->
+    { sharedPreferences, key ->
         sharedPreferences.getString(
             key,
-            defaultValue.toString()
+            null
         )?.toInt()
     }
 )

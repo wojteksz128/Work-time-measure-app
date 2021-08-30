@@ -81,15 +81,11 @@ abstract class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationIt
                 loadImage()
             }
             viewModel.profileImageBitmap.let { profileImage.setImageBitmap(it) }
-            viewModel.profileUsername = Settings.Profile.Username.getValue(
-                baseContext,
-                getString(R.string.base_navbar_header_profile_username_notSetMessage)
-            )
+            viewModel.profileUsername = Settings.Profile.Username.valueNullable
+                ?: getString(R.string.base_navbar_header_profile_username_notSetMessage)
             profileUsername.text = viewModel.profileUsername
-            viewModel.profileEmail = Settings.Profile.Email.getValue(
-                baseContext,
-                getString(R.string.base_navbar_header_profile_email_notSetMessage)
-            )
+            viewModel.profileEmail = Settings.Profile.Email.valueNullable
+                ?: getString(R.string.base_navbar_header_profile_email_notSetMessage)
             profileEmail.text = viewModel.profileEmail
         }
     }
@@ -98,7 +94,7 @@ abstract class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationIt
         var imageBitmap: Bitmap? = null
         var imagePath: String?
         withContext(Dispatchers.IO) {
-            imagePath = Settings.Profile.ImagePath.getValue(baseContext, null)
+            imagePath = Settings.Profile.ImagePath.valueNullable
             imagePath?.let {
                 imageBitmap = BitmapFactory.decodeFile(imagePath)
             }

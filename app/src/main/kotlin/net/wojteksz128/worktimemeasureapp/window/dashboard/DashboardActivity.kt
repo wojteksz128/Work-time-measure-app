@@ -89,7 +89,7 @@ class DashboardActivity : BaseActivity(), ClassTagAware {
                         val message: String = when (input) {
                             ComeEventType.COME_IN -> {
                                 // TODO: 12.07.2019 Store scheduleJob
-                                if (Settings.WorkTime.NotifyingEnabled.getValue(this) == true) {
+                                if (Settings.WorkTime.NotifyingEnabled.valueNullable == true) {
                                     WaitForEndOfWorkJob.schedule(this)
                                     InWorkNotification(this).notifyUser()
                                 }
@@ -134,9 +134,7 @@ class DashboardActivity : BaseActivity(), ClassTagAware {
 
         private fun fillRemainingWorkDayTime(it: WorkDayEvents) {
             // TODO: 29.08.2021 Zmień sposób realizacji liczenia czasu pracy
-            val workDayDuration =
-                (Settings.WorkTime.Duration.getValue(this@DashboardActivity)?.millis
-                    ?: throw NullPointerException("Cannot read duration of work time in one day from Settings."))
+            val workDayDuration = Settings.WorkTime.Duration.value.millis
             val elapsedTime = workDayDuration - mergeComeEventsDuration(it).time
             val formatDate = formatCounterTime(elapsedTime)
             remainingDayTime.text = formatDate
@@ -203,9 +201,7 @@ class DashboardActivity : BaseActivity(), ClassTagAware {
             // TODO: 29.08.2021 Zmień sposób realizacji liczenia czasu pracy
             // TODO: 30.08.2021 Obsługa określenia dni roboczych
             // TODO: 30.08.2021 Obsługa określenia nierównomiernych dni roboczych
-            val weekWorkDuration =
-                Settings.WorkTime.Duration.getValue(this@DashboardActivity)?.millis?.times(5)
-                    ?: throw NullPointerException("Cannot read duration of work time in one day from Settings.")
+            val weekWorkDuration = Settings.WorkTime.Duration.value.millis.times(5)
             val elapsedTime = weekWorkDuration - weekWorkDaysTime
             remainingWeekTime.text = formatCounterTime(elapsedTime)
         }
