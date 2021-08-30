@@ -1,4 +1,4 @@
-package net.wojteksz128.worktimemeasureapp.settings
+package net.wojteksz128.worktimemeasureapp.settings.item
 
 import org.joda.time.Duration
 

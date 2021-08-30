@@ -1,9 +1,9 @@
 package net.wojteksz128.worktimemeasureapp.settings
 
 import net.wojteksz128.worktimemeasureapp.R
+import net.wojteksz128.worktimemeasureapp.settings.item.*
 
-@Suppress("unused")
-object Settings {
+object Settings : SettingsItemsAware() {
     object Profile {
         val ImagePath = StringSettingsItem(R.string.settings_key_profile_image)
         val Username = StringSettingsItem(R.string.settings_key_profile_username)

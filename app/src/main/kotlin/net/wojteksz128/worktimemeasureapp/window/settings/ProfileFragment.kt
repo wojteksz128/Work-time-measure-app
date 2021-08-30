@@ -7,9 +7,12 @@ import android.view.View
 import androidx.preference.EditTextPreference
 import androidx.preference.PreferenceFragmentCompat
 import net.wojteksz128.worktimemeasureapp.R
+import net.wojteksz128.worktimemeasureapp.settings.item.SettingsItemsNotifier
 import net.wojteksz128.worktimemeasureapp.window.settings.property.ImageViewPreference
 
 class ProfileFragment : PreferenceFragmentCompat() {
+
+    private val settingsItemsNotifier = SettingsItemsNotifier { context }
 
     private lateinit var imageViewPreference: ImageViewPreference
     private lateinit var mailPreference: EditTextPreference
@@ -19,6 +22,20 @@ class ProfileFragment : PreferenceFragmentCompat() {
 
         prepareImageViewPreference()
         prepareMailPreference()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(
+            settingsItemsNotifier
+        )
+    }
+
+    override fun onPause() {
+        super.onPause()
+        preferenceManager.sharedPreferences.unregisterOnSharedPreferenceChangeListener(
+            settingsItemsNotifier
+        )
     }
 
     private fun prepareImageViewPreference() {
