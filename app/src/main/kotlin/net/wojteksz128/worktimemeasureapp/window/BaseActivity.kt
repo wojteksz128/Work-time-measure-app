@@ -1,61 +1,56 @@
 package net.wojteksz128.worktimemeasureapp.window
 
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.LinearLayout
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
+import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.*
 import net.wojteksz128.worktimemeasureapp.R
-import net.wojteksz128.worktimemeasureapp.settings.Settings
+import net.wojteksz128.worktimemeasureapp.databinding.ActivityBaseBinding
+import net.wojteksz128.worktimemeasureapp.databinding.BaseNavHeaderBinding
 import net.wojteksz128.worktimemeasureapp.window.dashboard.DashboardActivity
 import net.wojteksz128.worktimemeasureapp.window.history.HistoryActivity
 import net.wojteksz128.worktimemeasureapp.window.settings.SettingsActivity
 
-abstract class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
-
-    private var job = Job()
-    private var scopeForSaving = CoroutineScope(job + Dispatchers.Main)
+abstract class BaseActivity : AppCompatActivity() {
 
     private lateinit var viewModel: BaseViewModel
-
-    private lateinit var activityContent: FrameLayout
-    private lateinit var toolbar: Toolbar
-    private lateinit var drawerLayout: DrawerLayout
-    private lateinit var navView: NavigationView
-
-    private lateinit var profileImage: ImageView
-    private lateinit var profileUsername: TextView
-    private lateinit var profileEmail: TextView
+    private var activityContent: FrameLayout? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        super.setContentView(R.layout.activity_base)
+        val activityBaseBinding =
+            DataBindingUtil.setContentView<ActivityBaseBinding>(this, R.layout.activity_base)
+                .apply {
+                    this.lifecycleOwner = this@BaseActivity
+                    this.menuItemSelectedListener = MenuItemSelectedListener()
+                }
+
+        activityContent = findViewById(R.id.base_content)
 
         viewModel = ViewModelProvider(this).get(BaseViewModel::class.java)
-        toolbar = findViewById(R.id.base_toolbar)
-        activityContent = findViewById(R.id.base_content)
-        drawerLayout = findViewById(R.id.base_drawer_layout)
-        navView = findViewById(R.id.base_nav_view)
 
-        initNavBar()
+        initActionBar()
+        initNavBar(activityBaseBinding)
     }
 
-    private fun initNavBar() {
+    private fun initActionBar() {
+        val toolbar = findViewById<Toolbar>(R.id.base_toolbar)
+        val drawerLayout = findViewById<DrawerLayout>(R.id.base_drawer_layout)
+
         setSupportActionBar(toolbar)
 
         val toggle = ActionBarDrawerToggle(
@@ -67,84 +62,81 @@ abstract class BaseActivity : AppCompatActivity(), NavigationView.OnNavigationIt
         )
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
-
-        navView.setNavigationItemSelectedListener(this)
-        val headerView = navView.getHeaderView(0)
-
-        profileImage = headerView.findViewById(R.id.base_navbar_header_profile_image)
-        profileUsername = headerView.findViewById(R.id.base_navbar_header_profile_username)
-        profileEmail = headerView.findViewById(R.id.base_navbar_header_profile_email)
-
-        // TODO: 27.08.2021 Zmień sposób ładowania
-        scopeForSaving.launch {
-            if (viewModel.profileImageBitmap == null) {
-                loadImage()
-            }
-            viewModel.profileImageBitmap.let { profileImage.setImageBitmap(it) }
-            viewModel.profileUsername = Settings.Profile.Username.valueNullable
-                ?: getString(R.string.base_navbar_header_profile_username_notSetMessage)
-            profileUsername.text = viewModel.profileUsername
-            viewModel.profileEmail = Settings.Profile.Email.valueNullable
-                ?: getString(R.string.base_navbar_header_profile_email_notSetMessage)
-            profileEmail.text = viewModel.profileEmail
-        }
     }
 
-    private suspend fun loadImage() {
-        var imageBitmap: Bitmap? = null
-        var imagePath: String?
-        withContext(Dispatchers.IO) {
-            imagePath = Settings.Profile.ImagePath.valueNullable
-            imagePath?.let {
-                imageBitmap = BitmapFactory.decodeFile(imagePath)
+    private fun initNavBar(activityBaseBinding: ActivityBaseBinding) {
+        val headerView = activityBaseBinding.baseNavView.getHeaderView(0) as LinearLayout
+
+        BaseNavHeaderBinding.bind(headerView)
+            .apply {
+                this.lifecycleOwner = this@BaseActivity
+                this.viewModel = this@BaseActivity.viewModel
             }
-        }
-        imageBitmap?.let {
-            viewModel.profileImageBitmap = it
-        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        // TODO: 27.08.2021 Zmień sposób ładowania - bind ustawień observable
+        viewModel.update()
     }
 
     override fun setContentView(layoutResID: Int) {
-        activityContent.removeAllViews()
-        LayoutInflater.from(this).inflate(layoutResID, activityContent)
+        if (activityContent != null) {
+            activityContent!!.removeAllViews()
+            LayoutInflater.from(this).inflate(layoutResID, activityContent)
+        } else {
+            super.setContentView(layoutResID)
+        }
     }
 
     override fun setContentView(view: View?) {
-        activityContent.removeAllViews()
-        activityContent.addView(view)
+        if (activityContent != null) {
+            activityContent!!.removeAllViews()
+            activityContent!!.addView(view)
+        } else {
+            super.setContentView(view)
+        }
     }
 
     override fun setContentView(view: View?, params: ViewGroup.LayoutParams?) {
-        activityContent.removeAllViews()
-        activityContent.addView(view)
+        if (activityContent != null) {
+            activityContent!!.removeAllViews()
+            activityContent!!.addView(view)
+        } else {
+            super.setContentView(view, params)
+        }
     }
 
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.nav_home -> {
-                val intent = Intent(this, DashboardActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
+    inner class MenuItemSelectedListener : NavigationView.OnNavigationItemSelectedListener {
+
+        override fun onNavigationItemSelected(item: MenuItem): Boolean {
+            when (item.itemId) {
+                R.id.nav_home -> {
+                    val intent = Intent(this@BaseActivity, DashboardActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
+                }
+                R.id.nav_history -> {
+                    val intent = Intent(this@BaseActivity, HistoryActivity::class.java)
+                    startActivity(intent)
+                }
+                R.id.nav_settings -> {
+                    val intent = Intent(this@BaseActivity, SettingsActivity::class.java)
+                    startActivity(intent)
+                }
+                R.id.nav_about -> {
+                    Snackbar.make(
+                        findViewById(R.id.dashboard_content),
+                        R.string.about,
+                        Snackbar.LENGTH_LONG
+                    ).show()
+                }
             }
-            R.id.nav_history -> {
-                val intent = Intent(this, HistoryActivity::class.java)
-                startActivity(intent)
-            }
-            R.id.nav_settings -> {
-                val intent = Intent(this, SettingsActivity::class.java)
-                startActivity(intent)
-            }
-            R.id.nav_about -> {
-                Snackbar.make(
-                    findViewById(R.id.dashboard_content),
-                    R.string.about,
-                    Snackbar.LENGTH_LONG
-                ).show()
-            }
+            val drawerLayout: DrawerLayout = findViewById(R.id.base_drawer_layout)
+            drawerLayout.closeDrawer(GravityCompat.START)
+            return true
         }
-        val drawerLayout: DrawerLayout = findViewById(R.id.base_drawer_layout)
-        drawerLayout.closeDrawer(GravityCompat.START)
-        return true
     }
 }
