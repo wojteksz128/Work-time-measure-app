@@ -10,6 +10,11 @@
         android:layout_height="match_parent"
         tools:openDrawer="start">
 
+        <include
+            layout="@layout/base_app_bar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
         <com.google.android.material.navigation.NavigationView
             android:id="@+id/base_nav_view"
             style="@style/base_navbar"
@@ -18,11 +23,6 @@
             app:headerLayout="@layout/base_nav_header"
             app:menu="@menu/base_navigation_drawer"
             app:navigationItemSelectedListener="@{menuItemSelectedListener}" />
-
-        <include
-            layout="@layout/base_app_bar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
 
     </androidx.drawerlayout.widget.DrawerLayout>
 
