@@ -34,26 +34,26 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
     private val _profileEmail = MutableLiveData<String>()
     private val _isProfileEmailDefined = MutableLiveData(false)
 
-
-    fun update() {
+    init {
         viewModelScope.launch {
             loadImage()
 
             setStringField(
-                Settings.Profile.Username,
-                _profileUsername::setValue,
-                R.string.base_navbar_header_profile_username_notSetMessage,
-                _isProfileUsernameDefined::setValue
+                    Settings.Profile.Username,
+                    _profileUsername::setValue,
+                    R.string.base_navbar_header_profile_username_notSetMessage,
+                    _isProfileUsernameDefined::setValue
             )
             setStringField(
-                Settings.Profile.Email,
-                _profileEmail::setValue,
-                R.string.base_navbar_header_profile_email_notSetMessage,
-                _isProfileEmailDefined::setValue
+                    Settings.Profile.Email,
+                    _profileEmail::setValue,
+                    R.string.base_navbar_header_profile_email_notSetMessage,
+                    _isProfileEmailDefined::setValue
             )
 
         }
     }
+
 
     private suspend fun loadImage() {
         var imageBitmap: Bitmap?
@@ -72,17 +72,17 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     private fun setStringField(
-        settingsItem: StringSettingsItem,
-        textUpdate: KFunction1<String, Unit>,
-        defaultMessageResId: Int,
-        textDefinedUpdate: KFunction1<Boolean, Unit>
+            settingsItem: StringSettingsItem,
+            textUpdate: KFunction1<String, Unit>,
+            defaultMessageResId: Int,
+            textDefinedUpdate: KFunction1<Boolean, Unit>
     ) {
         val profileUsernameNullable = settingsItem.valueNullable
         textUpdate(
-            profileUsernameNullable
-                ?: getApplication<WorkTimeMeasureApp>().getString(
-                    defaultMessageResId
-                )
+                profileUsernameNullable
+                        ?: getApplication<WorkTimeMeasureApp>().getString(
+                                defaultMessageResId
+                        )
         )
         textDefinedUpdate(profileUsernameNullable != null)
     }

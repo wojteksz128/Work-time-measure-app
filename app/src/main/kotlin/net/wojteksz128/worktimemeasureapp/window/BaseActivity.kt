@@ -8,13 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.*
@@ -27,7 +27,7 @@ import net.wojteksz128.worktimemeasureapp.window.settings.SettingsActivity
 
 abstract class BaseActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: BaseViewModel
+    private val viewModel: BaseViewModel by viewModels()
     private var activityContent: FrameLayout? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,8 +40,6 @@ abstract class BaseActivity : AppCompatActivity() {
                 }
 
         activityContent = findViewById(R.id.base_content)
-
-        viewModel = ViewModelProvider(this).get(BaseViewModel::class.java)
 
         initActionBar()
         initNavBar(activityBaseBinding)
@@ -72,13 +70,6 @@ abstract class BaseActivity : AppCompatActivity() {
                 this.lifecycleOwner = this@BaseActivity
                 this.viewModel = this@BaseActivity.viewModel
             }
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        // TODO: 27.08.2021 Zmień sposób ładowania - bind ustawień observable
-        viewModel.update()
     }
 
     override fun setContentView(layoutResID: Int) {
