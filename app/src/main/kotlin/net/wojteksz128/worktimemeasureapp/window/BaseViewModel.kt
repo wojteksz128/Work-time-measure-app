@@ -16,17 +16,15 @@ import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.settings.item.StringSettingsItem
 import kotlin.reflect.KFunction1
 
-class BaseViewModel(application: Application) : AndroidViewModel(application) {
+open class BaseViewModel(application: Application) : AndroidViewModel(application) {
     val profileImageBitmap: LiveData<Bitmap>
         get() = _profileImageBitmap
     val profileUsername: LiveData<String>
         get() = _profileUsername
     val isProfileUsernameDefined: LiveData<Boolean>
         get() = _isProfileUsernameDefined
-
     val profileEmail: LiveData<String>
         get() = _profileEmail
-
     val isProfileEmailDefined: LiveData<Boolean>
         get() = _isProfileEmailDefined
 
@@ -57,6 +55,22 @@ class BaseViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    private suspend fun loadImage() {
+        var imageBitmap: Bitmap?
+        var imagePath: String?
+        withContext(Dispatchers.IO) {
+            imagePath = Settings.Profile.ImagePath.valueNullable
+            imageBitmap = if (imagePath != null) {
+                BitmapFactory.decodeFile(imagePath)
+            } else {
+                BitmapFactory.decodeResource(WorkTimeMeasureApp.context.resources, R.mipmap.ic_launcher_round)
+            }
+        }
+        imageBitmap?.let {
+            _profileImageBitmap.value = it
+        }
+    }
+
     private fun setStringField(
         settingsItem: StringSettingsItem,
         textUpdate: KFunction1<String, Unit>,
@@ -71,20 +85,6 @@ class BaseViewModel(application: Application) : AndroidViewModel(application) {
                 )
         )
         textDefinedUpdate(profileUsernameNullable != null)
-    }
-
-    private suspend fun loadImage() {
-        var imageBitmap: Bitmap? = null
-        var imagePath: String?
-        withContext(Dispatchers.IO) {
-            imagePath = Settings.Profile.ImagePath.valueNullable
-            imagePath?.let {
-                imageBitmap = BitmapFactory.decodeFile(imagePath)
-            }
-        }
-        imageBitmap?.let {
-            _profileImageBitmap.value = it
-        }
     }
 }
 
