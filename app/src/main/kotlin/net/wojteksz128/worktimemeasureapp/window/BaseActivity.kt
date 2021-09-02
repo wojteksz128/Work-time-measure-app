@@ -2,11 +2,8 @@ package net.wojteksz128.worktimemeasureapp.window
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.MenuItem
-import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -28,21 +25,21 @@ import net.wojteksz128.worktimemeasureapp.window.settings.SettingsActivity
 abstract class BaseActivity : AppCompatActivity() {
 
     private val viewModel: BaseViewModel by viewModels()
-    private var activityContent: FrameLayout? = null
+    private lateinit var activityBaseBinding: ActivityBaseBinding
+    protected val baseContainer: ViewGroup
+        get() = activityBaseBinding.baseAppBar.baseContent
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val activityBaseBinding =
+        activityBaseBinding =
             DataBindingUtil.setContentView<ActivityBaseBinding>(this, R.layout.activity_base)
                 .apply {
                     this.lifecycleOwner = this@BaseActivity
                     this.menuItemSelectedListener = MenuItemSelectedListener()
                 }
 
-        activityContent = findViewById(R.id.base_content)
-
         initActionBar()
-        initNavBar(activityBaseBinding)
+        initNavBar()
     }
 
     private fun initActionBar() {
@@ -62,7 +59,7 @@ abstract class BaseActivity : AppCompatActivity() {
         toggle.syncState()
     }
 
-    private fun initNavBar(activityBaseBinding: ActivityBaseBinding) {
+    private fun initNavBar() {
         val headerView = activityBaseBinding.baseNavView.getHeaderView(0) as LinearLayout
 
         BaseNavHeaderBinding.bind(headerView)
@@ -70,33 +67,6 @@ abstract class BaseActivity : AppCompatActivity() {
                 this.lifecycleOwner = this@BaseActivity
                 this.viewModel = this@BaseActivity.viewModel
             }
-    }
-
-    override fun setContentView(layoutResID: Int) {
-        if (activityContent != null) {
-            activityContent!!.removeAllViews()
-            LayoutInflater.from(this).inflate(layoutResID, activityContent)
-        } else {
-            super.setContentView(layoutResID)
-        }
-    }
-
-    override fun setContentView(view: View?) {
-        if (activityContent != null) {
-            activityContent!!.removeAllViews()
-            activityContent!!.addView(view)
-        } else {
-            super.setContentView(view)
-        }
-    }
-
-    override fun setContentView(view: View?, params: ViewGroup.LayoutParams?) {
-        if (activityContent != null) {
-            activityContent!!.removeAllViews()
-            activityContent!!.addView(view)
-        } else {
-            super.setContentView(view, params)
-        }
     }
 
     inner class MenuItemSelectedListener : NavigationView.OnNavigationItemSelectedListener {
