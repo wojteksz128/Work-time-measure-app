@@ -7,11 +7,9 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.core.view.GravityCompat
-import androidx.databinding.DataBindingUtil
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import net.wojteksz128.worktimemeasureapp.R
@@ -29,10 +27,10 @@ import net.wojteksz128.worktimemeasureapp.window.BaseActivity
 import net.wojteksz128.worktimemeasureapp.window.history.ComeEventViewHolder
 import java.util.*
 
-class DashboardActivity : BaseActivity(), ClassTagAware {
-    private lateinit var viewModel: DashboardViewModel
+class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activity_dashboard),
+    ClassTagAware {
+    private val viewModel: DashboardViewModel by viewModels()
 
-    private lateinit var layout: View
     private lateinit var remainingDayTime: TextView
     private lateinit var remainingWeekTime: TextView
     private lateinit var todayWorkTime: TextView
@@ -47,18 +45,14 @@ class DashboardActivity : BaseActivity(), ClassTagAware {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        DataBindingUtil.inflate<ActivityDashboardBinding>(layoutInflater, R.layout.activity_dashboard, baseContainer, false)
-        Log.v(classTag, "onCreate: Create or get DashboardViewModel object")
-        viewModel = ViewModelProvider(this).get(DashboardViewModel::class.java)
 
-        layout = findViewById(R.id.dashboard_content)
-        remainingDayTime = findViewById(R.id.dashboard_remaining_day_time)
-        remainingWeekTime = findViewById(R.id.dashboard_remaining_week_time)
-        todayWorkTime = findViewById(R.id.dashboard_today_work_time)
-        currentDayDateLabel = findViewById(R.id.dashboard_current_day_date)
-        currentDayEvents = findViewById(R.id.dashboard_current_day_events_list)
-        currentDayEmptyEventsLabel = findViewById(R.id.dashboard_current_day_empty_events_message)
-        loadingIndicator = findViewById(R.id.dashboard_loading_indicator)
+        remainingDayTime = binding.dashboardRemainingDayTime
+        remainingWeekTime = binding.dashboardRemainingWeekTime
+        todayWorkTime = binding.dashboardTodayWorkTime
+        currentDayDateLabel = binding.dashboardCurrentDayDate
+        currentDayEvents = binding.dashboardCurrentDayEventsList
+        currentDayEmptyEventsLabel = binding.dashboardCurrentDayEmptyEventsMessage
+        loadingIndicator = binding.dashboardLoadingIndicator
 
         initFab()
         NotificationUtils.initNotifications(this)
@@ -81,7 +75,7 @@ class DashboardActivity : BaseActivity(), ClassTagAware {
     }
 
     private fun initFab() {
-        val enterFab: FloatingActionButton = findViewById(R.id.dashboard_enter_fab)
+        val enterFab: FloatingActionButton = binding.dashboardEnterFab
         enterFab.setOnClickListener {
             ComeEventUtils.registerNewEvent(this@DashboardActivity,
                     {
@@ -102,17 +96,8 @@ class DashboardActivity : BaseActivity(), ClassTagAware {
 
                         loadingIndicator.visibility = View.INVISIBLE
 
-                        Snackbar.make(layout, message, Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(baseContainer, message, Snackbar.LENGTH_LONG).show()
                     })
-        }
-    }
-
-    override fun onBackPressed() {
-        val drawerLayout: DrawerLayout = findViewById(R.id.base_drawer_layout)
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
         }
     }
 

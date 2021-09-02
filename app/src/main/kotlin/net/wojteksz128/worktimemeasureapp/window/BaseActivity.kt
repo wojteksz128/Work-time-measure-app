@@ -2,15 +2,17 @@ package net.wojteksz128.worktimemeasureapp.window
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.view.MenuItem
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.activity.viewModels
+import androidx.annotation.LayoutRes
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
@@ -22,29 +24,48 @@ import net.wojteksz128.worktimemeasureapp.window.dashboard.DashboardActivity
 import net.wojteksz128.worktimemeasureapp.window.history.HistoryActivity
 import net.wojteksz128.worktimemeasureapp.window.settings.SettingsActivity
 
-abstract class BaseActivity : AppCompatActivity() {
+abstract class BaseActivity<VDB>(@LayoutRes val layoutResId: Int? = null) :
+    AppCompatActivity() where VDB : ViewDataBinding {
 
     private val viewModel: BaseViewModel by viewModels()
-    private lateinit var activityBaseBinding: ActivityBaseBinding
+    private lateinit var baseBinding: ActivityBaseBinding
+    protected lateinit var binding: VDB
+
     protected val baseContainer: ViewGroup
-        get() = activityBaseBinding.baseAppBar.baseContent
+        get() = baseBinding.baseAppBar.baseContent
+    private val baseRoot: DrawerLayout
+        get() = baseBinding.baseDrawerLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        activityBaseBinding =
-            DataBindingUtil.setContentView<ActivityBaseBinding>(this, R.layout.activity_base)
-                .apply {
-                    this.lifecycleOwner = this@BaseActivity
-                    this.menuItemSelectedListener = MenuItemSelectedListener()
-                }
-
+        initBindingsAndContentView()
         initActionBar()
         initNavBar()
     }
 
+    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
+        super.onCreate(savedInstanceState, persistentState)
+        initBindingsAndContentView()
+        initActionBar()
+        initNavBar()
+    }
+
+    private fun initBindingsAndContentView() {
+        baseBinding =
+            ActivityBaseBinding.inflate(layoutInflater)
+                .apply {
+                    this.lifecycleOwner = this@BaseActivity
+                    this.menuItemSelectedListener = MenuItemSelectedListener { this@BaseActivity }
+                }
+        layoutResId?.let {
+            binding = DataBindingUtil.inflate(layoutInflater, layoutResId, baseContainer, true)
+        }
+        setContentView(baseRoot)
+    }
+
     private fun initActionBar() {
-        val toolbar = findViewById<Toolbar>(R.id.base_toolbar)
-        val drawerLayout = findViewById<DrawerLayout>(R.id.base_drawer_layout)
+        val toolbar = baseBinding.baseAppBar.baseToolbar
+        val drawerLayout = baseBinding.baseDrawerLayout
 
         setSupportActionBar(toolbar)
 
@@ -60,7 +81,7 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     private fun initNavBar() {
-        val headerView = activityBaseBinding.baseNavView.getHeaderView(0) as LinearLayout
+        val headerView = baseBinding.baseNavView.getHeaderView(0) as LinearLayout
 
         BaseNavHeaderBinding.bind(headerView)
             .apply {
@@ -69,34 +90,42 @@ abstract class BaseActivity : AppCompatActivity() {
             }
     }
 
-    inner class MenuItemSelectedListener : NavigationView.OnNavigationItemSelectedListener {
+    override fun onBackPressed() {
+        if (baseRoot.isDrawerOpen(GravityCompat.START)) {
+            baseRoot.closeDrawer(GravityCompat.START)
+        } else {
+            super.onBackPressed()
+        }
+    }
+
+    class MenuItemSelectedListener<VDB>(val baseActivityGetter: () -> BaseActivity<VDB>) :
+        NavigationView.OnNavigationItemSelectedListener where VDB : ViewDataBinding {
 
         override fun onNavigationItemSelected(item: MenuItem): Boolean {
             when (item.itemId) {
                 R.id.nav_home -> {
-                    val intent = Intent(this@BaseActivity, DashboardActivity::class.java)
+                    val intent = Intent(baseActivityGetter(), DashboardActivity::class.java)
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    startActivity(intent)
+                    baseActivityGetter().startActivity(intent)
                 }
                 R.id.nav_history -> {
-                    val intent = Intent(this@BaseActivity, HistoryActivity::class.java)
-                    startActivity(intent)
+                    val intent = Intent(baseActivityGetter(), HistoryActivity::class.java)
+                    baseActivityGetter().startActivity(intent)
                 }
                 R.id.nav_settings -> {
-                    val intent = Intent(this@BaseActivity, SettingsActivity::class.java)
-                    startActivity(intent)
+                    val intent = Intent(baseActivityGetter(), SettingsActivity::class.java)
+                    baseActivityGetter().startActivity(intent)
                 }
                 R.id.nav_about -> {
                     Snackbar.make(
-                        findViewById(R.id.dashboard_content),
+                        baseActivityGetter().baseBinding.baseAppBar.baseContent,
                         R.string.about,
                         Snackbar.LENGTH_LONG
                     ).show()
                 }
             }
-            val drawerLayout: DrawerLayout = findViewById(R.id.base_drawer_layout)
-            drawerLayout.closeDrawer(GravityCompat.START)
+            baseActivityGetter().baseBinding.baseDrawerLayout.closeDrawer(GravityCompat.START)
             return true
         }
     }
