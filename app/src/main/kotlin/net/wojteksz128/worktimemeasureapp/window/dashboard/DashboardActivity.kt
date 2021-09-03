@@ -4,11 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.LinearLayout
-import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.activity.viewModels
-import androidx.core.view.GravityCompat
 import androidx.lifecycle.Observer
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
@@ -31,14 +27,6 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
     ClassTagAware {
     private val viewModel: DashboardViewModel by viewModels()
 
-    private lateinit var remainingDayTime: TextView
-    private lateinit var remainingWeekTime: TextView
-    private lateinit var todayWorkTime: TextView
-    private lateinit var currentDayDateLabel: TextView
-    private lateinit var currentDayEvents: LinearLayout
-    private lateinit var currentDayEmptyEventsLabel: TextView
-    private lateinit var loadingIndicator: ProgressBar
-
     private lateinit var currentDayObserver: CurrentDayObserver
     private lateinit var lastWeekObserver: LastWeekObserver
 
@@ -46,15 +34,13 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        remainingDayTime = binding.dashboardRemainingDayTime
-        remainingWeekTime = binding.dashboardRemainingWeekTime
-        todayWorkTime = binding.dashboardTodayWorkTime
-        currentDayDateLabel = binding.dashboardCurrentDayDate
-        currentDayEvents = binding.dashboardCurrentDayEventsList
-        currentDayEmptyEventsLabel = binding.dashboardCurrentDayEmptyEventsMessage
-        loadingIndicator = binding.dashboardLoadingIndicator
+        binding.apply {
+            lifecycleOwner = this@DashboardActivity
+            viewModel = this@DashboardActivity.viewModel
+        }
 
         initFab()
+        // TODO: 02.09.2021 move to another place
         NotificationUtils.initNotifications(this)
     }
 
@@ -79,7 +65,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
         enterFab.setOnClickListener {
             ComeEventUtils.registerNewEvent(this@DashboardActivity,
                     {
-                        loadingIndicator.visibility = View.VISIBLE
+                        viewModel.waitingFor.value = true
                     },
                     { input ->
                         val message: String = when (input) {
@@ -94,7 +80,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
                             ComeEventType.COME_OUT -> getString(R.string.dashboard_snackbar_info_outcome_registered)
                         }
 
-                        loadingIndicator.visibility = View.INVISIBLE
+                        viewModel.waitingFor.value = false
 
                         Snackbar.make(baseContainer, message, Snackbar.LENGTH_LONG).show()
                     })
@@ -124,7 +110,8 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
             val workDayDuration = Settings.WorkTime.Duration.value.millis
             val elapsedTime = workDayDuration - mergeComeEventsDuration(it).time
             val formatDate = formatCounterTime(elapsedTime)
-            remainingDayTime.text = formatDate
+            viewModel.remainingTodayWorkTime.value = formatDate
+
         }
 
         private fun fillTodayWorkTime(it: WorkDayEvents) {
@@ -133,27 +120,30 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
                 mergeComeEventsDuration(it),
                 TimeZone.getTimeZone("UTC")
             )
-            todayWorkTime.text = formatDate
+            viewModel.todayWorkTime.value = formatDate
         }
 
         private fun fillTodayEvents(it: WorkDayEvents) {
-            val formatDate = DateTimeUtils.formatDate(getString(R.string.history_work_day_label_format), it.workDay.date)
-            currentDayDateLabel.text = formatDate
+            val formatDate = DateTimeUtils.formatDate(
+                getString(R.string.history_work_day_label_format),
+                it.workDay.date
+            )
+            viewModel.currentDayDate.value = formatDate
 
-            if (it.events.isEmpty()) {
-                currentDayEvents.visibility = View.INVISIBLE
-                currentDayEmptyEventsLabel.visibility = View.VISIBLE
-            } else {
-                currentDayEvents.visibility = View.VISIBLE
-                currentDayEmptyEventsLabel.visibility = View.INVISIBLE
-
+            if (it.events.isNotEmpty()) {
                 val inflater = LayoutInflater.from(this@DashboardActivity)
-                currentDayEvents.removeAllViews()
+                binding.dashboardCurrentDayEventsList.removeAllViews()
 
                 it.events.forEach {
-                    val eventViewHolder = ComeEventViewHolder(inflater.inflate(R.layout.history_day_event_list_item, currentDayEvents, false))
+                    val eventViewHolder = ComeEventViewHolder(
+                        inflater.inflate(
+                            R.layout.history_day_event_list_item,
+                            binding.dashboardCurrentDayEventsList,
+                            false
+                        )
+                    )
                     eventViewHolder.bind(it)
-                    currentDayEvents.addView(eventViewHolder.view)
+                    binding.dashboardCurrentDayEventsList.addView(eventViewHolder.view)
                 }
             }
         }
@@ -190,7 +180,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
             // TODO: 30.08.2021 Obsługa określenia nierównomiernych dni roboczych
             val weekWorkDuration = Settings.WorkTime.Duration.value.millis.times(5)
             val elapsedTime = weekWorkDuration - weekWorkDaysTime
-            remainingWeekTime.text = formatCounterTime(elapsedTime)
+            viewModel.remainingWeekWorkTime.value = formatCounterTime(elapsedTime)
         }
 
     }

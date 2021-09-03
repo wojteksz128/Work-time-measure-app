@@ -9,8 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:context=".window.dashboard.DashboardActivity"
-        tools:showIn="@layout/base_app_bar">
+        tools:context=".window.dashboard.DashboardActivity">
 
         <ScrollView
             android:layout_width="match_parent"
@@ -51,6 +50,7 @@
                             style="@style/dashboard_section_time_display"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:text="@{viewModel.remainingTodayWorkTime}"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
@@ -77,6 +77,7 @@
                             style="@style/dashboard_section_time_display"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:text="@{viewModel.remainingWeekWorkTime}"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
@@ -122,6 +123,7 @@
                         style="@style/dashboard_section_time_display"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:text="@{viewModel.todayWorkTime}"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -139,6 +141,7 @@
                         style="@style/dashboard_current_day_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:text="@{viewModel.currentDayDate}"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -150,7 +153,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:visibility="invisible"
+                        android:visibility="@{viewModel.workDay.events.empty ? View.INVISIBLE : View.VISIBLE}"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -163,6 +166,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/dashboard_current_day_empty_events_message"
+                        android:visibility="@{viewModel.workDay.events.empty ? View.VISIBLE : View.INVISIBLE}"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -184,7 +188,7 @@
         <ProgressBar
             android:id="@+id/dashboard_loading_indicator"
             style="@style/dashboard_loading_indicator"
-            android:visibility="invisible"
+            android:visibility="@{viewModel.waitingFor ? View.VISIBLE : View.INVISIBLE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -192,4 +196,12 @@
             tools:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <data>
+
+        <import type="android.view.View" />
+        <variable
+            name="viewModel"
+            type="net.wojteksz128.worktimemeasureapp.window.dashboard.DashboardViewModel" />
+    </data>
 </layout>
