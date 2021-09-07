@@ -50,7 +50,7 @@
                             style="@style/dashboard_section_time_display"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@{viewModel.remainingTodayWorkTime}"
+                            android:text="@{workTimeData.remainingTodayWorkTime}"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
@@ -77,7 +77,7 @@
                             style="@style/dashboard_section_time_display"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@{viewModel.remainingWeekWorkTime}"
+                            android:text="@{workTimeData.remainingWeekWorkTime}"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
@@ -123,7 +123,7 @@
                         style="@style/dashboard_section_time_display"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@{viewModel.todayWorkTime}"
+                        android:text="@{workTimeData.todayWorkTime}"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -141,7 +141,7 @@
                         style="@style/dashboard_current_day_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@{viewModel.currentDayDate}"
+                        android:text="@{workTimeData.currentDayDate}"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -200,8 +200,12 @@
     <data>
 
         <import type="android.view.View" />
+
         <variable
             name="viewModel"
             type="net.wojteksz128.worktimemeasureapp.window.dashboard.DashboardViewModel" />
+        <variable
+            name="workTimeData"
+            type="net.wojteksz128.worktimemeasureapp.window.dashboard.WorkTimeData" />
     </data>
 </layout>

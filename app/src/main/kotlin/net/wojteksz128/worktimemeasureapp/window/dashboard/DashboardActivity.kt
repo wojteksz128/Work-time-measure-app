@@ -3,7 +3,6 @@ package net.wojteksz128.worktimemeasureapp.window.dashboard
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -37,6 +36,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
         binding.apply {
             lifecycleOwner = this@DashboardActivity
             viewModel = this@DashboardActivity.viewModel
+            workTimeData = this@DashboardActivity.viewModel.workTimeData.value
         }
 
         initFab()
@@ -110,7 +110,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
             val workDayDuration = Settings.WorkTime.Duration.value.millis
             val elapsedTime = workDayDuration - mergeComeEventsDuration(it).time
             val formatDate = formatCounterTime(elapsedTime)
-            viewModel.remainingTodayWorkTime.value = formatDate
+            viewModel.workTimeData.value?.remainingTodayWorkTime = formatDate
 
         }
 
@@ -120,7 +120,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
                 mergeComeEventsDuration(it),
                 TimeZone.getTimeZone("UTC")
             )
-            viewModel.todayWorkTime.value = formatDate
+            viewModel.workTimeData.value?.todayWorkTime = formatDate
         }
 
         private fun fillTodayEvents(it: WorkDayEvents) {
@@ -128,7 +128,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
                 getString(R.string.history_work_day_label_format),
                 it.workDay.date
             )
-            viewModel.currentDayDate.value = formatDate
+            viewModel.workTimeData.value?.currentDayDate = formatDate
 
             if (it.events.isNotEmpty()) {
                 val inflater = LayoutInflater.from(this@DashboardActivity)
@@ -180,7 +180,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
             // TODO: 30.08.2021 Obsługa określenia nierównomiernych dni roboczych
             val weekWorkDuration = Settings.WorkTime.Duration.value.millis.times(5)
             val elapsedTime = weekWorkDuration - weekWorkDaysTime
-            viewModel.remainingWeekWorkTime.value = formatCounterTime(elapsedTime)
+            viewModel.workTimeData.value?.remainingWeekWorkTime = formatCounterTime(elapsedTime)
         }
 
     }
