@@ -49,8 +49,8 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
         Log.d(classTag, "onResume: Fill days list")
         currentDayObserver = CurrentDayObserver()
         lastWeekObserver = LastWeekObserver()
-        viewModel.workDay.observe(this, currentDayObserver)
-        viewModel.weekWorkDays.observe(this, lastWeekObserver)
+        viewModel.workTimeData.value?.workDay?.observe(this, currentDayObserver)
+        viewModel.workTimeData.value?.weekWorkDays?.observe(this, lastWeekObserver)
         DateTimeProvider.updateOffset(this)
     }
 
@@ -154,8 +154,8 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
                 override fun action(obj: WorkDayEvents) {
                     Log.v(classTag, "onChanged: Update work day")
                     runOnUiThread {
-                        lastWeekObserver.onChanged(viewModel.weekWorkDays.value)
-                        currentDayObserver.onChanged(viewModel.workDay.value)
+                        lastWeekObserver.onChanged(viewModel.workTimeData.value?.weekWorkDays?.value)
+                        currentDayObserver.onChanged(viewModel.workTimeData.value?.workDay?.value)
                     }
                 }
 
