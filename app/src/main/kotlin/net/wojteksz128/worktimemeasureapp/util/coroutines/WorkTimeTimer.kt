@@ -4,7 +4,7 @@ import android.util.Log
 import kotlinx.coroutines.*
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 
-class WorkTimeTimer : ClassTagAware {
+object WorkTimeTimer : ClassTagAware {
 
     fun startTimer(params: WorkTimeTimerParams): WorkTimeTimerRunner {
         val workTimeTimerRunner = WorkTimeTimerRunner(params)

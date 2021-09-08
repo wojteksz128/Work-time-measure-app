@@ -25,9 +25,8 @@ import java.util.*
 class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activity_dashboard),
     ClassTagAware {
     private val viewModel: DashboardViewModel by viewModels()
-    private val workTimeCounter = WorkTimeTimer()
 
-    private lateinit var currentDayObserver: CurrentDayObserver
+    private val currentDayObserver = CurrentDayObserver()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,7 +46,6 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
     override fun onResume() {
         super.onResume()
         Log.d(classTag, "onResume: Fill days list")
-        currentDayObserver = CurrentDayObserver()
         // TODO: 07.09.2021 change way of observe
         viewModel.workDay.observe(this, currentDayObserver)
         DateTimeProvider.updateOffset(this)
@@ -56,7 +54,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
     override fun onPause() {
         super.onPause()
         Log.d(classTag, "onPause: Stop second updater")
-        viewModel.workTimeCounterRunner?.let { workTimeCounter.cancelTimer(it) }
+        viewModel.workTimeCounterRunner?.let { WorkTimeTimer.cancelTimer(it) }
     }
 
     private fun initFab() {
@@ -120,9 +118,9 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
                 if (!dayEvents.hasEventsEnded()) {
                     val params = WorkTimeTimer.WorkTimeTimerParams(repeatMillis = 1000,
                         mainThreadAction = { updateData(dayEvents) })
-                    viewModel.workTimeCounterRunner = workTimeCounter.startTimer(params)
+                    viewModel.workTimeCounterRunner = WorkTimeTimer.startTimer(params)
                 } else {
-                    viewModel.workTimeCounterRunner?.let { workTimeCounter.cancelTimer(it) }
+                    viewModel.workTimeCounterRunner?.let { WorkTimeTimer.cancelTimer(it) }
                 }
             }
         }
