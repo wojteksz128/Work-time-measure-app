@@ -12,7 +12,6 @@ import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents
 import net.wojteksz128.worktimemeasureapp.util.DateTimeUtils
 import net.wojteksz128.worktimemeasureapp.util.FunctionWithParameter
 import net.wojteksz128.worktimemeasureapp.util.PeriodicOperationRunner
-import java.util.*
 
 internal class WorkDayViewHolder(private val mView: View) : RecyclerView.ViewHolder(mView) {
 
@@ -30,8 +29,7 @@ internal class WorkDayViewHolder(private val mView: View) : RecyclerView.ViewHol
     }
 
     private fun fillDurationLabel(workDay: WorkDayEvents) {
-        val duration = DateTimeUtils.formatDate(mView.context.getString(R.string.history_work_day_duration_format),
-                DateTimeUtils.mergeComeEventsDuration(workDay), TimeZone.getTimeZone("UTC"))
+        val duration = DateTimeUtils.formatCounterTime(DateTimeUtils.mergeComeEventsDuration(workDay))
         mWorkDurationTV.text = duration
     }
 

@@ -17,15 +17,12 @@ class WorkDayEvents(@Embedded var workDay: WorkDay) {
         other as WorkDayEvents
 
         if (workDay != other.workDay) return false
-        if (events != other.events) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        var result = workDay.hashCode()
-        result = 31 * result + events.hashCode()
-        return result
+        return workDay.hashCode()
     }
 
 

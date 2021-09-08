@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.RecyclerView
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEvent
 import net.wojteksz128.worktimemeasureapp.util.DateTimeUtils
-import java.util.*
 
 class ComeEventViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
 
@@ -22,11 +21,7 @@ class ComeEventViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
     }
 
     private fun fillDuration(comeEvent: ComeEvent) {
-        val duration = if (comeEvent.duration != null)
-            DateTimeUtils.formatDate(view.context.getString(R.string.history_work_day_duration_format),
-                    comeEvent.duration!!, TimeZone.getTimeZone("UTC"))
-        else
-            ""
+        val duration = DateTimeUtils.formatCounterTime(comeEvent.duration)
         mDurationTV.text = duration
     }
 

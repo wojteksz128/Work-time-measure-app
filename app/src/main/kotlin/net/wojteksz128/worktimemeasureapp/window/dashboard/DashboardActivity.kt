@@ -15,8 +15,6 @@ import net.wojteksz128.worktimemeasureapp.job.WaitForEndOfWorkJob
 import net.wojteksz128.worktimemeasureapp.notification.InWorkNotification
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.*
-import net.wojteksz128.worktimemeasureapp.util.DateTimeUtils.formatCounterTime
-import net.wojteksz128.worktimemeasureapp.util.DateTimeUtils.mergeComeEventsDuration
 import net.wojteksz128.worktimemeasureapp.util.notification.NotificationUtils
 import net.wojteksz128.worktimemeasureapp.window.BaseActivity
 import net.wojteksz128.worktimemeasureapp.window.history.ComeEventViewHolder
@@ -27,7 +25,6 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
     private val viewModel: DashboardViewModel by viewModels()
 
     private lateinit var currentDayObserver: CurrentDayObserver
-    private lateinit var lastWeekObserver: LastWeekObserver
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,7 +33,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
         binding.apply {
             lifecycleOwner = this@DashboardActivity
             viewModel = this@DashboardActivity.viewModel
-            workTimeData = this@DashboardActivity.viewModel.workTimeData.value
+            workTimeData = this@DashboardActivity.viewModel.workTimeData
         }
 
         initFab()
@@ -48,9 +45,8 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
         super.onResume()
         Log.d(classTag, "onResume: Fill days list")
         currentDayObserver = CurrentDayObserver()
-        lastWeekObserver = LastWeekObserver()
-        viewModel.workTimeData.value?.workDay?.observe(this, currentDayObserver)
-        viewModel.workTimeData.value?.weekWorkDays?.observe(this, lastWeekObserver)
+        // TODO: 07.09.2021 change way of observe
+        viewModel.workDay.observe(this, currentDayObserver)
         DateTimeProvider.updateOffset(this)
     }
 
@@ -87,12 +83,12 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
         }
     }
 
+    // TODO: 07.09.2021 change way of
     private inner class CurrentDayObserver : Observer<WorkDayEvents>, ClassTagAware {
 
         override fun onChanged(workDayEvents: WorkDayEvents?) {
             workDayEvents?.let {
-                fillRemainingWorkDayTime(it)
-                fillTodayWorkTime(it)
+                viewModel.workTimeData.value?.updateData()
                 fillTodayEvents(it)
 
                 if (!it.hasEventsEnded()) {
@@ -105,31 +101,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
             }
         }
 
-        private fun fillRemainingWorkDayTime(it: WorkDayEvents) {
-            // TODO: 29.08.2021 Zmień sposób realizacji liczenia czasu pracy
-            val workDayDuration = Settings.WorkTime.Duration.value.millis
-            val elapsedTime = workDayDuration - mergeComeEventsDuration(it).time
-            val formatDate = formatCounterTime(elapsedTime)
-            viewModel.workTimeData.value?.remainingTodayWorkTime = formatDate
-
-        }
-
-        private fun fillTodayWorkTime(it: WorkDayEvents) {
-            val formatDate = DateTimeUtils.formatDate(
-                getString(R.string.history_work_day_duration_format),
-                mergeComeEventsDuration(it),
-                TimeZone.getTimeZone("UTC")
-            )
-            viewModel.workTimeData.value?.todayWorkTime = formatDate
-        }
-
         private fun fillTodayEvents(it: WorkDayEvents) {
-            val formatDate = DateTimeUtils.formatDate(
-                getString(R.string.history_work_day_label_format),
-                it.workDay.date
-            )
-            viewModel.workTimeData.value?.currentDayDate = formatDate
-
             if (it.events.isNotEmpty()) {
                 val inflater = LayoutInflater.from(this@DashboardActivity)
                 binding.dashboardCurrentDayEventsList.removeAllViews()
@@ -154,34 +126,10 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
                 override fun action(obj: WorkDayEvents) {
                     Log.v(classTag, "onChanged: Update work day")
                     runOnUiThread {
-                        lastWeekObserver.onChanged(viewModel.workTimeData.value?.weekWorkDays?.value)
-                        currentDayObserver.onChanged(viewModel.workTimeData.value?.workDay?.value)
+                        currentDayObserver.onChanged(viewModel.workDay.value)
                     }
                 }
-
             }
         }
-
-    }
-
-    private inner class LastWeekObserver : Observer<List<WorkDayEvents>> {
-
-        override fun onChanged(updatedCollection: List<WorkDayEvents>?) {
-            updatedCollection?.let {
-                fillRemainingWeekWorkDayTime(it)
-            }
-        }
-
-        private fun fillRemainingWeekWorkDayTime(updatedCollection: List<WorkDayEvents>) {
-            val weekWorkDaysTime =
-                updatedCollection.sumOf { mergeComeEventsDuration(it).time }
-            // TODO: 29.08.2021 Zmień sposób realizacji liczenia czasu pracy
-            // TODO: 30.08.2021 Obsługa określenia dni roboczych
-            // TODO: 30.08.2021 Obsługa określenia nierównomiernych dni roboczych
-            val weekWorkDuration = Settings.WorkTime.Duration.value.millis.times(5)
-            val elapsedTime = weekWorkDuration - weekWorkDaysTime
-            viewModel.workTimeData.value?.remainingWeekWorkTime = formatCounterTime(elapsedTime)
-        }
-
     }
 }

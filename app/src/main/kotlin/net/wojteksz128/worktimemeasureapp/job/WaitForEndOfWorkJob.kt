@@ -9,7 +9,6 @@ import net.wojteksz128.worktimemeasureapp.notification.EndOfWorkNotification
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.DateTimeUtils
-import org.joda.time.Duration
 import java.text.MessageFormat
 
 class WaitForEndOfWorkJob : JobService() {
@@ -37,8 +36,8 @@ class WaitForEndOfWorkJob : JobService() {
                 .findByIntervalContains(DateTimeProvider.currentTime)
 
             val interval =
-                Settings.WorkTime.Duration.valueNullable?.standardSeconds?.toInt()
-                    ?: 0 - Duration(DateTimeUtils.mergeComeEventsDuration(currentWorkDay).time).standardSeconds.toInt()
+                Settings.WorkTime.Duration.valueNullable?.seconds?.toInt()
+                    ?: 0 - DateTimeUtils.mergeComeEventsDuration(currentWorkDay).seconds.toInt()
             return if (interval > 0) interval else 0
         }
 

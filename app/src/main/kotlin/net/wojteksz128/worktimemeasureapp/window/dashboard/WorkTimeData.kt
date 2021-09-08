@@ -1,53 +1,63 @@
 package net.wojteksz128.worktimemeasureapp.window.dashboard
 
-import android.app.Application
 import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
-import androidx.lifecycle.LiveData
 import net.wojteksz128.worktimemeasureapp.BR
-import net.wojteksz128.worktimemeasureapp.database.AppDatabase
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents
-import net.wojteksz128.worktimemeasureapp.util.DateTimeProvider
+import net.wojteksz128.worktimemeasureapp.util.datetime.WorkTimeCalculator.calculateCurrentWorkTime
+import org.threeten.bp.Duration
 import java.util.*
 
-class WorkTimeData(start: Date, end: Date, application: Application): BaseObservable() {
+class WorkTimeData(start: Date, end: Date): BaseObservable() {
     @Suppress("unused")
     val weekRange: ClosedRange<Date> = start..end
-    val workDay: LiveData<WorkDayEvents>
-    val weekWorkDays: LiveData<List<WorkDayEvents>>
 
-    var currentDayDate: String? = null
+    var currentDay: WorkDayEvents? = null
+        get
+        set(value) {
+            field = value
+            updateData()
+        }
+    var weekWorkDays: List<WorkDayEvents> = listOf()
+        get
+        set(value) {
+            field = value
+            updateData()
+        }
+
+    var currentDayDate: Date? = null
         @Bindable get
         set(value) {
             field = value
             notifyPropertyChanged(BR.currentDayDate)
         }
 
-    var todayWorkTime: String? = null
+    var todayWorkTime: Duration? = null
         @Bindable get
         set(value) {
             field = value
             notifyPropertyChanged(BR.todayWorkTime)
         }
 
-    var remainingTodayWorkTime: String? = null
+    var remainingTodayWorkTime: Duration? = null
         @Bindable get
         set(value) {
             field = value
             notifyPropertyChanged(BR.remainingTodayWorkTime)
         }
 
-    var remainingWeekWorkTime: String? = null
+    var remainingWeekWorkTime: Duration? = null
         @Bindable get
         set(value) {
             field = value
             notifyPropertyChanged(BR.remainingWeekWorkTime)
         }
 
-    init {
-        // TODO: 06.09.2021 init new work day at start and provide specified data based on current date
-        val workDayDao = AppDatabase.getInstance(application).workDayDao()
-        workDay = workDayDao.findByIntervalContainsInLiveData(DateTimeProvider.currentTime)
-        weekWorkDays = workDayDao.findBetweenDates(start, end)
+    fun updateData() {
+        val result = calculateCurrentWorkTime(currentDay, weekWorkDays, weekRange)
+        currentDayDate = result.currentDay
+        todayWorkTime = result.currentDayWorkTimeDuration
+        remainingTodayWorkTime = result.currentDayRemainingWorkTimeDuration
+        remainingWeekWorkTime = result.weekRemainingWorkTimeDuration
     }
 }
