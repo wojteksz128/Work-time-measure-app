@@ -20,10 +20,10 @@ object WorkTimeCalculator {
             return WorkTimeResult(
                 weekRange,
                 currentDayDate,
-                calculateCurrentWeekWorkTime(weekWorkDays),
-                calculateWeekExpectedWorkTime(),
-                calculateCurrentDayWorkTime(currentDay),
-                calculateCurrentDayExpectedWorkTime()
+                calculateCurrentWeekWorkTime(weekWorkDays).withNanos(0),
+                calculateWeekExpectedWorkTime().withNanos(0),
+                calculateCurrentDayWorkTime(currentDay).withNanos(0),
+                calculateCurrentDayExpectedWorkTime().withNanos(0)
             )
     }
 
