@@ -1,4 +1,4 @@
-package net.wojteksz128.worktimemeasureapp.util
+package net.wojteksz128.worktimemeasureapp.util.datetime
 
 import android.annotation.SuppressLint
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEvent

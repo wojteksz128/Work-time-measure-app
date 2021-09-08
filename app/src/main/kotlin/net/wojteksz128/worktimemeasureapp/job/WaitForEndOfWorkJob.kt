@@ -7,8 +7,8 @@ import com.firebase.jobdispatcher.*
 import net.wojteksz128.worktimemeasureapp.database.AppDatabase
 import net.wojteksz128.worktimemeasureapp.notification.EndOfWorkNotification
 import net.wojteksz128.worktimemeasureapp.settings.Settings
-import net.wojteksz128.worktimemeasureapp.util.DateTimeProvider
-import net.wojteksz128.worktimemeasureapp.util.DateTimeUtils
+import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
+import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import java.text.MessageFormat
 
 class WaitForEndOfWorkJob : JobService() {

@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
 import net.wojteksz128.worktimemeasureapp.R
-import net.wojteksz128.worktimemeasureapp.util.DateTimeProvider
+import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 
 // TODO: 09.08.2018 Dodaj joba, który automatycznie zamknie dzień pracy o godzinie zmiany dnia pracy
 // TODO: 11.08.2018 Jeśli aktualny dzień istnieje - przenieś FABa w to miejsce

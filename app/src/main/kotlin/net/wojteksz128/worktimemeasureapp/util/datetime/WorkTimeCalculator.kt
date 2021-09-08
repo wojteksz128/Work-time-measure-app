@@ -2,7 +2,6 @@ package net.wojteksz128.worktimemeasureapp.util.datetime
 
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents
 import net.wojteksz128.worktimemeasureapp.settings.Settings
-import net.wojteksz128.worktimemeasureapp.util.DateTimeUtils
 import org.threeten.bp.Duration
 import java.util.*
 

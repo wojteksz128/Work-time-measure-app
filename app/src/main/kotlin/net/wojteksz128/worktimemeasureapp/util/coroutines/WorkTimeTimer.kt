@@ -1,4 +1,4 @@
-package net.wojteksz128.worktimemeasureapp.window.dashboard
+package net.wojteksz128.worktimemeasureapp.util.coroutines
 
 import android.util.Log
 import kotlinx.coroutines.*

@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEvent
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents
-import net.wojteksz128.worktimemeasureapp.util.DateTimeUtils
+import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import net.wojteksz128.worktimemeasureapp.util.FunctionWithParameter
 import net.wojteksz128.worktimemeasureapp.util.PeriodicOperationRunner
 

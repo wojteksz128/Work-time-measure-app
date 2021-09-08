@@ -3,7 +3,7 @@ package net.wojteksz128.worktimemeasureapp.database.comeEvent
 import androidx.room.*
 import androidx.room.ForeignKey.CASCADE
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDay
-import net.wojteksz128.worktimemeasureapp.util.DateTimeProvider
+import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import org.threeten.bp.Duration
 import java.util.*
 

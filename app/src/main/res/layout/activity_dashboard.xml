@@ -202,7 +202,7 @@
         <import type="android.view.View" />
         <import type="androidx.lifecycle.LiveData" />
         <import type="net.wojteksz128.worktimemeasureapp.window.dashboard.WorkTimeData" />
-        <import type="net.wojteksz128.worktimemeasureapp.util.DateTimeUtils" />
+        <import type="net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils" />
 
         <variable
             name="viewModel"

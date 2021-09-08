@@ -15,6 +15,8 @@ import net.wojteksz128.worktimemeasureapp.job.WaitForEndOfWorkJob
 import net.wojteksz128.worktimemeasureapp.notification.InWorkNotification
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.*
+import net.wojteksz128.worktimemeasureapp.util.coroutines.WorkTimeTimer
+import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.notification.NotificationUtils
 import net.wojteksz128.worktimemeasureapp.window.BaseActivity
 import net.wojteksz128.worktimemeasureapp.window.history.ComeEventViewHolder

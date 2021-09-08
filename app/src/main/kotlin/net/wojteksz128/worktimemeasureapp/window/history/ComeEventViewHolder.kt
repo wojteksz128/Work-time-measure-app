@@ -5,7 +5,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEvent
-import net.wojteksz128.worktimemeasureapp.util.DateTimeUtils
+import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 
 class ComeEventViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
 
