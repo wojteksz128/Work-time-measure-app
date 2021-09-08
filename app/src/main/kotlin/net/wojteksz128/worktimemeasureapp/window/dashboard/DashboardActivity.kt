@@ -23,6 +23,7 @@ import java.util.*
 class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activity_dashboard),
     ClassTagAware {
     private val viewModel: DashboardViewModel by viewModels()
+    private val workTimeCounter = WorkTimeTimer()
 
     private lateinit var currentDayObserver: CurrentDayObserver
 
@@ -53,7 +54,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
     override fun onPause() {
         super.onPause()
         Log.d(classTag, "onPause: Stop second updater")
-        this.viewModel.secondRunner.stop()
+        viewModel.workTimeCounterRunner?.let { workTimeCounter.cancelTimer(it) }
     }
 
     private fun initFab() {
@@ -83,51 +84,43 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
         }
     }
 
-    // TODO: 07.09.2021 change way of
-    private inner class CurrentDayObserver : Observer<WorkDayEvents>, ClassTagAware {
+    private fun updateData(workDayEvents: WorkDayEvents) {
+        viewModel.workTimeData.value?.updateData()
+        fillTodayEvents(workDayEvents)
+    }
+
+    private fun fillTodayEvents(it: WorkDayEvents) {
+        if (it.events.isNotEmpty()) {
+            val inflater = LayoutInflater.from(this@DashboardActivity)
+            binding.dashboardCurrentDayEventsList.removeAllViews()
+
+            it.events.forEach {
+                val eventViewHolder = ComeEventViewHolder(
+                    inflater.inflate(
+                        R.layout.history_day_event_list_item,
+                        binding.dashboardCurrentDayEventsList,
+                        false
+                    )
+                )
+                eventViewHolder.bind(it)
+                binding.dashboardCurrentDayEventsList.addView(eventViewHolder.view)
+            }
+        }
+    }
+
+
+    private inner class CurrentDayObserver : Observer<WorkDayEvents> {
 
         override fun onChanged(workDayEvents: WorkDayEvents?) {
-            workDayEvents?.let {
-                viewModel.workTimeData.value?.updateData()
-                fillTodayEvents(it)
+            workDayEvents?.let { dayEvents ->
+                updateData(dayEvents)
 
-                if (!it.hasEventsEnded()) {
-                    if (!viewModel.secondRunner.isRunning) {
-                        viewModel.secondRunner.setConsumer(getUpdateAction(it))
-                        Log.v(classTag, "onChanged: start second updater")
-                        viewModel.secondRunner.start()
-                    }
-                }
-            }
-        }
-
-        private fun fillTodayEvents(it: WorkDayEvents) {
-            if (it.events.isNotEmpty()) {
-                val inflater = LayoutInflater.from(this@DashboardActivity)
-                binding.dashboardCurrentDayEventsList.removeAllViews()
-
-                it.events.forEach {
-                    val eventViewHolder = ComeEventViewHolder(
-                        inflater.inflate(
-                            R.layout.history_day_event_list_item,
-                            binding.dashboardCurrentDayEventsList,
-                            false
-                        )
-                    )
-                    eventViewHolder.bind(it)
-                    binding.dashboardCurrentDayEventsList.addView(eventViewHolder.view)
-                }
-            }
-        }
-
-        private fun getUpdateAction(currentDay: WorkDayEvents): FunctionWithParameter<WorkDayEvents> {
-            return object : FunctionWithParameter<WorkDayEvents>(currentDay) {
-
-                override fun action(obj: WorkDayEvents) {
-                    Log.v(classTag, "onChanged: Update work day")
-                    runOnUiThread {
-                        currentDayObserver.onChanged(viewModel.workDay.value)
-                    }
+                if (!dayEvents.hasEventsEnded()) {
+                    val params = WorkTimeTimer.WorkTimeTimerParams(repeatMillis = 1000,
+                        mainThreadAction = { updateData(dayEvents) })
+                    viewModel.workTimeCounterRunner = workTimeCounter.startTimer(params)
+                } else {
+                    viewModel.workTimeCounterRunner?.let { workTimeCounter.cancelTimer(it) }
                 }
             }
         }

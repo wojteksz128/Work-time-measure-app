@@ -12,12 +12,14 @@ class WorkTimeData(start: Date, end: Date): BaseObservable() {
     @Suppress("unused")
     val weekRange: ClosedRange<Date> = start..end
 
+    @Suppress("RedundantGetter")
     var currentDay: WorkDayEvents? = null
         get
         set(value) {
             field = value
             updateData()
         }
+    @Suppress("RedundantGetter")
     var weekWorkDays: List<WorkDayEvents> = listOf()
         get
         set(value) {
