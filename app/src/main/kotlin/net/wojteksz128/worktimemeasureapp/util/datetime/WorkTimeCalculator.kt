@@ -7,7 +7,6 @@ import java.util.*
 
 object WorkTimeCalculator {
 
-    // TODO: 07.09.2021 Change way of realization work time counting
     fun calculateCurrentWorkTime(currentDay: WorkDayEvents?, weekWorkDays: List<WorkDayEvents>, weekRange: ClosedRange<Date>): WorkTimeResult {
         val currentDayDate = prepareWorkDay(currentDay) ?: Date()
         if (weekWorkDays.any { it.workDay.date !in weekRange })

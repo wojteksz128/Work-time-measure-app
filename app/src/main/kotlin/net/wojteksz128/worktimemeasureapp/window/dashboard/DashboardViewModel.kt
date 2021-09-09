@@ -30,14 +30,14 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
         workTimeData.value = workTimeDataInst
 
         // TODO: 06.09.2021 init new work day at start and provide specified data based on current date
-        workDay = workDayDao.findByIntervalContainsInLiveData(DateTimeProvider.currentTime)
-        workDay.observeForever { workDayEvents: WorkDayEvents? ->
-            workTimeDataInst.currentDay = workDayEvents
-        }
-
         weekWorkDays = workDayDao.findBetweenDates(start, end)
         weekWorkDays.observeForever { workDays ->
             if (workDays != null) workTimeDataInst.weekWorkDays = workDays
+        }
+
+        workDay = workDayDao.findByIntervalContainsInLiveData(DateTimeProvider.currentTime)
+        workDay.observeForever { workDayEvents: WorkDayEvents? ->
+            workTimeDataInst.currentDay = workDayEvents
         }
     }
 }

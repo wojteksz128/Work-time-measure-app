@@ -1,6 +1,9 @@
 package net.wojteksz128.worktimemeasureapp.util.datetime
 
 import android.annotation.SuppressLint
+import androidx.annotation.StringRes
+import net.wojteksz128.worktimemeasureapp.R
+import net.wojteksz128.worktimemeasureapp.WorkTimeMeasureApp
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEvent
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents
 import org.threeten.bp.Duration
@@ -29,16 +32,23 @@ object DateTimeUtils {
     fun mergeComeEventsDuration(workDay: WorkDayEvents): Duration = workDay.events.map { it.duration }
         .fold(Duration.ZERO) { sum, element -> sum + element }
 
-    // TODO: 30.08.2021 Zmień typ czasu
-    fun formatCounterTime(duration: Duration?): String {
+    fun formatCounterTime(duration: Duration?): String =
+        formatCounterTime(duration, R.string.empty_time_string)
+
+    @Suppress("MemberVisibilityCanBePrivate")
+    fun formatCounterTime(duration: Duration?, @StringRes defaultValueResId: Int): String =
+        formatCounterTime(duration, WorkTimeMeasureApp.context.getString(defaultValueResId))
+
+    @Suppress("MemberVisibilityCanBePrivate")
+    fun formatCounterTime(duration: Duration?, defaultValue: String): String {
         return duration?.let {
             val hours = abs(it.toHours()).toInt()
             val minutes = abs(it.toMinutesPart())
             val seconds = abs(it.toSecondsPart())
-            val sign = if (it.isNegative && (hours != 0 || minutes != 0 || seconds != 0)) "-" else ""
+            val sign =
+                if (it.isNegative && (hours != 0 || minutes != 0 || seconds != 0)) "-" else ""
 
             "${sign}${hours}:${if (minutes < 10) "0" else ""}${minutes}:${if (seconds < 10) "0" else ""}${seconds}"
-        } ?: "0:00:00" // TODO: 08.09.2021 As default value
+        } ?: defaultValue
     }
-
 }
