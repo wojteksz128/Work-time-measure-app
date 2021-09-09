@@ -1,9 +1,9 @@
 package net.wojteksz128.worktimemeasureapp.settings.item
 
-import org.joda.time.Duration
+import org.threeten.bp.Duration
 
 open class DurationSettingsItem(name: Int) : SettingsItem<Duration>(
     name,
     { sharedPreferences, key ->
-        Duration.standardMinutes(sharedPreferences.getInt(key, 0).toLong())
+        Duration.ofMinutes(sharedPreferences.getInt(key, 0).toLong())
     })

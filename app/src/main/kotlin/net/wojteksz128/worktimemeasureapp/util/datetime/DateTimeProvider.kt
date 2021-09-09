@@ -1,4 +1,4 @@
-package net.wojteksz128.worktimemeasureapp.util
+package net.wojteksz128.worktimemeasureapp.util.datetime
 
 import android.content.Context
 import android.os.AsyncTask

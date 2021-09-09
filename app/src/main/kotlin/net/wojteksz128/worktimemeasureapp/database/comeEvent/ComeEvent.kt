@@ -3,25 +3,34 @@ package net.wojteksz128.worktimemeasureapp.database.comeEvent
 import androidx.room.*
 import androidx.room.ForeignKey.CASCADE
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDay
+import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
+import org.threeten.bp.Duration
 import java.util.*
 
 @Entity(tableName = "come_event"
         , foreignKeys = [ForeignKey(entity = WorkDay::class, parentColumns = ["id"], childColumns = ["workDayId"], onDelete = CASCADE)])
 class ComeEvent(
-        @PrimaryKey(autoGenerate = true)
-        val id: Long?,
-        var startDate: Date,
-        var endDate: Date?,
-        var duration: Date?,
-        @ColumnInfo(index = true)
-        val workDayId: Long
+    @PrimaryKey(autoGenerate = true)
+    val id: Long?,
+    var startDate: Date,
+    var endDate: Date?,
+    @ColumnInfo(name = "duration")
+    var durationLong: Long?,
+    @ColumnInfo(index = true)
+    val workDayId: Long,
 ) : Comparable<ComeEvent> {
 
+    var duration: Duration
+        get() = Duration.ofMillis(durationLong ?: DateTimeProvider.currentTime.time - startDate.time)
+        set(value) {
+            durationLong = value.toMillis()
+        }
+
     val isEnded: Boolean
-        get() = this.endDate != null && this.duration != null
+        get() = this.endDate != null && this.durationLong != null
 
     @Ignore
-    constructor(startDate: Date, endDate: Date?, duration: Date?, workDayId: Long)
+    constructor(startDate: Date, endDate: Date?, duration: Long?, workDayId: Long)
             : this(null, startDate, endDate, duration, workDayId)
 
     @Ignore

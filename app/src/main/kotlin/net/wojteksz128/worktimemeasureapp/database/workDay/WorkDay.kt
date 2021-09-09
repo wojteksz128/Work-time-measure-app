@@ -17,4 +17,28 @@ class WorkDay(
     @Ignore
     constructor(date: Date)
             : this(null, date, WorkDayUtils.calculateBeginSlot(date), WorkDayUtils.calculateEndSlot(date))
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as WorkDay
+
+        if (id != other.id) return false
+        if (date != other.date) return false
+        if (beginSlot != other.beginSlot) return false
+        if (endSlot != other.endSlot) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = id?.hashCode() ?: 0
+        result = 31 * result + date.hashCode()
+        result = 31 * result + beginSlot.hashCode()
+        result = 31 * result + endSlot.hashCode()
+        return result
+    }
+
+
 }
