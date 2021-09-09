@@ -107,7 +107,6 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
                 if (!comeEvent.isEnded)
                     viewModel.notEndedEventsIndex.add(ItemUpdate(index))
                 else {
-                    comeEventsAdapter.notifyItemChanged(index)
                     viewModel.notEndedEventsIndex.forEach { if (it.position == index) it.lastIteration = true }
                 }
             }
@@ -118,6 +117,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
                 val params = WorkTimeTimer.WorkTimeTimerParams(repeatMillis = 1000,
                     mainThreadAction = {
                         viewModel.workTimeData.value?.updateData()
+                        Log.d(classTag, "runUpdaterEverySecond: Notify item changed: ${viewModel.notEndedEventsIndex}")
                         viewModel.notEndedEventsIndex.forEach { index ->
                             comeEventsAdapter.notifyItemChanged(index.position)
                         }
