@@ -8,13 +8,15 @@ import androidx.lifecycle.MutableLiveData
 import net.wojteksz128.worktimemeasureapp.database.AppDatabase
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
-import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.coroutines.WorkTimeTimer
+import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.livedata.ObservableLiveData
+import net.wojteksz128.worktimemeasureapp.util.recyclerView.ItemUpdate
 
 class DashboardViewModel(application: Application) : AndroidViewModel(application), ClassTagAware {
     var workTimeCounterRunner: WorkTimeTimer.WorkTimeTimerRunner? = null
     val workDay: LiveData<WorkDayEvents>
+    val notEndedEventsIndex = mutableListOf<ItemUpdate>()
     val workTimeData = ObservableLiveData<WorkTimeData>()
     val waitingFor = MutableLiveData(false)
     private val weekWorkDays: LiveData<List<WorkDayEvents>>
@@ -29,7 +31,7 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
 
         // TODO: 06.09.2021 init new work day at start and provide specified data based on current date
         workDay = workDayDao.findByIntervalContainsInLiveData(DateTimeProvider.currentTime)
-        workDay.observeForever { workDayEvents: WorkDayEvents ->
+        workDay.observeForever { workDayEvents: WorkDayEvents? ->
             workTimeDataInst.currentDay = workDayEvents
         }
 
@@ -39,3 +41,4 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 }
+

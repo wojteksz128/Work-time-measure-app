@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/dashboard_content"
         style="@style/dashboard"
         android:layout_width="match_parent"
@@ -11,9 +11,14 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:context=".window.dashboard.DashboardActivity">
 
-        <ScrollView
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0">
 
             <LinearLayout
                 style="@style/dashboard_layout"
@@ -142,38 +147,43 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@{DateTimeUtils.INSTANCE.formatDate(@string/history_work_day_label_format, workTimeData.currentDayDate)}"
+                        app:layout_constraintBottom_toTopOf="@id/dashboard_current_day_events_container"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        tools:text="Poniedziałek, 08.07.2019" />
+                        tools:text="@string/dashboard_current_day_date_example" />
 
-                    <LinearLayout
-                        android:id="@+id/dashboard_current_day_events_list"
+                    <FrameLayout
+                        android:id="@+id/dashboard_current_day_events_container"
                         style="@style/dashboard_current_day_events"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:visibility="@{viewModel.workDay.events.empty ? View.INVISIBLE : View.VISIBLE}"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/dashboard_current_day_date"
-                        tools:visibility="visible" />
+                        app:layout_constraintTop_toBottomOf="@id/dashboard_current_day_date">
 
-                    <TextView
-                        android:id="@+id/dashboard_current_day_empty_events_message"
-                        style="@style/dashboard_current_day_no_events_label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/dashboard_current_day_empty_events_message"
-                        android:visibility="@{viewModel.workDay.events.empty ? View.VISIBLE : View.INVISIBLE}"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/dashboard_current_day_date" />
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/dashboard_current_day_events_list"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="top|center_horizontal"
+                            android:visibility="@{(viewModel.workDay == null || viewModel.workDay.events == null || viewModel.workDay.events.empty) ? View.INVISIBLE : View.VISIBLE}"
+                            tools:listitem="@layout/history_day_event_list_item"
+                            tools:visibility="visible" />
+
+                        <TextView
+                            android:id="@+id/dashboard_current_day_empty_events_message"
+                            style="@style/dashboard_current_day_no_events_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="@string/dashboard_current_day_empty_events_message"
+                            android:visibility="@{(viewModel.workDay == null || viewModel.workDay.events == null || viewModel.workDay.events.empty) ? View.VISIBLE : View.INVISIBLE}" />
+                    </FrameLayout>
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </LinearLayout>
-        </ScrollView>
+        </androidx.core.widget.NestedScrollView>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/dashboard_enter_fab"
@@ -185,16 +195,21 @@
             android:contentDescription="@string/dashboard_enter_fab_description"
             app:srcCompat="@drawable/ic_add_black_24dp" />
 
-        <ProgressBar
+        <FrameLayout
             android:id="@+id/dashboard_loading_indicator"
-            style="@style/dashboard_loading_indicator"
+            style="@style/dashboard_loading_indicator_background"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:visibility="@{viewModel.waitingFor ? View.VISIBLE : View.INVISIBLE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:visibility="visible" />
+            tools:visibility="visible">
 
+            <ProgressBar
+                style="@style/dashboard_loading_indicator" />
+        </FrameLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <data>

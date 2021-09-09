@@ -13,7 +13,7 @@ object WorkTimeCalculator {
         if (weekWorkDays.any { it.workDay.date !in weekRange })
             throw IllegalStateException("All week work days must be in week range.")
 
-        if (weekWorkDays.isNotEmpty() && weekWorkDays.let { currentDay !in it })
+        if (currentDay != null && weekWorkDays.isNotEmpty() && weekWorkDays.let { currentDay !in it })
             throw IllegalStateException("All week work days must be in week range.")
         else
             return WorkTimeResult(

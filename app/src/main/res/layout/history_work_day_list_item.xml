@@ -27,7 +27,7 @@
         app:layout_constraintTop_toTopOf="@+id/day_label"
         tools:text="@string/history_work_day_duration_example" />
 
-    <LinearLayout
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/day_events_list"
         style="@style/history_rv_work_day_events"
         android:layout_width="match_parent"
@@ -36,12 +36,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/day_label">
-
-        <include
-            layout="@layout/history_day_event_list_item"
-            android:visibility="gone"
-            tools:visibility="visible" />
-    </LinearLayout>
+        app:layout_constraintTop_toBottomOf="@+id/day_label"
+        tools:listitem="@layout/history_day_event_list_item" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

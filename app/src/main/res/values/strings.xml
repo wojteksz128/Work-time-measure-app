@@ -34,6 +34,7 @@
     <string name="dashboard_today">Today:</string>
     <string name="dashboard_week">In this week:</string>
     <string name="dashboard_today_work_time_label">Today works:</string>
+    <string name="dashboard_current_day_date_example">Mon., 08.07.2019</string>
     <string name="dashboard_current_day_empty_events_message">Empty list of events</string>
 
     <!-- Navigation drawer strings -->
@@ -74,6 +75,7 @@
     <string name="history_day_event_item_type_example">@string/history_come_in_label</string>
     <string name="history_day_event_duration_example" translatable="false">8:30:00</string>
     <string name="history_day_event_time_format" translatable="false">E, HH:mm:ss</string>
+    <string name="history_day_event_end_date_now">Now</string>
     <string name="history_day_event_realization_dates_divider" translatable="false">—</string>
 
     <!-- Work Day list item strings -->

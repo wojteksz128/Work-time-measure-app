@@ -1,45 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <TextView
-        android:id="@+id/history_day_event_start_date"
-        style="@style/history_rv_work_day_events_item_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="@string/history_day_event_start_date_example" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/history_day_event_realization_dates_divider"
-        style="@style/history_rv_work_day_events_item_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/history_day_event_realization_dates_divider"
-        app:layout_constraintBaseline_toBaselineOf="@+id/history_day_event_start_date"
-        app:layout_constraintStart_toEndOf="@+id/history_day_event_start_date" />
+        <TextView
+            android:id="@+id/history_day_event_start_date"
+            style="@style/history_rv_work_day_events_item_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{DateTimeUtils.INSTANCE.formatDate(@string/history_day_event_time_format, comeEvent.startDate)}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@string/history_day_event_start_date_example" />
 
-    <TextView
-        android:id="@+id/history_day_event_end_date"
-        style="@style/history_rv_work_day_events_item_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBaseline_toBaselineOf="@+id/history_day_event_realization_dates_divider"
-        app:layout_constraintStart_toEndOf="@+id/history_day_event_realization_dates_divider"
-        tools:text="@string/history_day_event_start_date_example" />
+        <TextView
+            android:id="@+id/history_day_event_realization_dates_divider"
+            style="@style/history_rv_work_day_events_item_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/history_day_event_realization_dates_divider"
+            app:layout_constraintBaseline_toBaselineOf="@+id/history_day_event_start_date"
+            app:layout_constraintStart_toEndOf="@+id/history_day_event_start_date" />
 
-    <TextView
-        android:id="@+id/history_day_event_duration"
-        style="@style/history_rv_work_day_events_item_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBaseline_toBaselineOf="@+id/history_day_event_end_date"
-        app:layout_constraintEnd_toEndOf="parent"
-        tools:text="@string/history_day_event_duration_example" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/history_day_event_end_date"
+            style="@style/history_rv_work_day_events_item_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{comeEvent.endDate != null ? DateTimeUtils.INSTANCE.formatDate(@string/history_day_event_time_format, comeEvent.endDate) : @string/history_day_event_end_date_now}"
+            app:layout_constraintBaseline_toBaselineOf="@+id/history_day_event_realization_dates_divider"
+            app:layout_constraintStart_toEndOf="@+id/history_day_event_realization_dates_divider"
+            tools:text="@string/history_day_event_start_date_example" />
+
+        <TextView
+            android:id="@+id/history_day_event_duration"
+            style="@style/history_rv_work_day_events_item_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{DateTimeUtils.INSTANCE.formatCounterTime(comeEvent.duration)}"
+            app:layout_constraintBaseline_toBaselineOf="@+id/history_day_event_end_date"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="@string/history_day_event_duration_example" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <data>
+        <import type="net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils" />
+
+        <variable
+            name="comeEvent"
+            type="net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEvent" />
+    </data>
+</layout>

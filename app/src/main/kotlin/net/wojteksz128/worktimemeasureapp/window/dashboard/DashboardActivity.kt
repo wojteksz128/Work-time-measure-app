@@ -2,9 +2,9 @@ package net.wojteksz128.worktimemeasureapp.window.dashboard
 
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import net.wojteksz128.worktimemeasureapp.R
@@ -18,14 +18,16 @@ import net.wojteksz128.worktimemeasureapp.util.*
 import net.wojteksz128.worktimemeasureapp.util.coroutines.WorkTimeTimer
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.notification.NotificationUtils
+import net.wojteksz128.worktimemeasureapp.util.recyclerView.ItemUpdate
 import net.wojteksz128.worktimemeasureapp.window.BaseActivity
-import net.wojteksz128.worktimemeasureapp.window.history.ComeEventViewHolder
+import net.wojteksz128.worktimemeasureapp.window.history.ComeEventsAdapter
 import java.util.*
 
 class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activity_dashboard),
     ClassTagAware {
     private val viewModel: DashboardViewModel by viewModels()
 
+    private val comeEventsAdapter = ComeEventsAdapter()
     private val currentDayObserver = CurrentDayObserver()
 
 
@@ -36,6 +38,10 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
             lifecycleOwner = this@DashboardActivity
             viewModel = this@DashboardActivity.viewModel
             workTimeData = this@DashboardActivity.viewModel.workTimeData
+            dashboardCurrentDayEventsList.adapter = comeEventsAdapter
+            dashboardCurrentDayEventsList.layoutManager = object : LinearLayoutManager(this@DashboardActivity) {
+                override fun canScrollVertically() = false
+            }
         }
 
         initFab()
@@ -46,8 +52,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
     override fun onResume() {
         super.onResume()
         Log.d(classTag, "onResume: Fill days list")
-        // TODO: 07.09.2021 change way of observe
-        viewModel.workDay.observe(this, currentDayObserver)
+        viewModel.workDay.observe(this@DashboardActivity, currentDayObserver)
         DateTimeProvider.updateOffset(this)
     }
 
@@ -84,45 +89,43 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
         }
     }
 
-    private fun updateData(workDayEvents: WorkDayEvents) {
-        viewModel.workTimeData.value?.updateData()
-        fillTodayEvents(workDayEvents)
-    }
-
-    private fun fillTodayEvents(it: WorkDayEvents) {
-        if (it.events.isNotEmpty()) {
-            val inflater = LayoutInflater.from(this@DashboardActivity)
-            binding.dashboardCurrentDayEventsList.removeAllViews()
-
-            it.events.forEach {
-                val eventViewHolder = ComeEventViewHolder(
-                    inflater.inflate(
-                        R.layout.history_day_event_list_item,
-                        binding.dashboardCurrentDayEventsList,
-                        false
-                    )
-                )
-                eventViewHolder.bind(it)
-                binding.dashboardCurrentDayEventsList.addView(eventViewHolder.view)
-            }
-        }
-    }
-
 
     private inner class CurrentDayObserver : Observer<WorkDayEvents> {
 
         override fun onChanged(workDayEvents: WorkDayEvents?) {
-            workDayEvents?.let { dayEvents ->
-                updateData(dayEvents)
+            viewModel.workTimeData.value?.updateData()
 
-                if (!dayEvents.hasEventsEnded()) {
-                    val params = WorkTimeTimer.WorkTimeTimerParams(repeatMillis = 1000,
-                        mainThreadAction = { updateData(dayEvents) })
-                    viewModel.workTimeCounterRunner = WorkTimeTimer.startTimer(params)
-                } else {
-                    viewModel.workTimeCounterRunner?.let { WorkTimeTimer.cancelTimer(it) }
+            workDayEvents?.let { dayEvents ->
+                comeEventsAdapter.submitList(dayEvents.events)
+                fillNotEndedEventsIndexList(dayEvents)
+                runUpdaterEverySecond()
+            }
+        }
+
+        private fun fillNotEndedEventsIndexList(dayEvents: WorkDayEvents) {
+            dayEvents.events.forEachIndexed { index, comeEvent ->
+                if (!comeEvent.isEnded)
+                    viewModel.notEndedEventsIndex.add(ItemUpdate(index))
+                else {
+                    comeEventsAdapter.notifyItemChanged(index)
+                    viewModel.notEndedEventsIndex.forEach { if (it.position == index) it.lastIteration = true }
                 }
             }
         }
+
+        private fun runUpdaterEverySecond() =
+            if (viewModel.notEndedEventsIndex.isNotEmpty()) {
+                val params = WorkTimeTimer.WorkTimeTimerParams(repeatMillis = 1000,
+                    mainThreadAction = {
+                        viewModel.workTimeData.value?.updateData()
+                        viewModel.notEndedEventsIndex.forEach { index ->
+                            comeEventsAdapter.notifyItemChanged(index.position)
+                        }
+                        viewModel.notEndedEventsIndex.removeAll { it.lastIteration }
+                    })
+                viewModel.workTimeCounterRunner = WorkTimeTimer.startTimer(params)
+            } else {
+                viewModel.workTimeCounterRunner?.let { WorkTimeTimer.cancelTimer(it) }
+            }
     }
 }

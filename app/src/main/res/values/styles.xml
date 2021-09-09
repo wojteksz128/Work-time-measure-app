@@ -58,9 +58,14 @@
         <item name="android:layout_margin">@dimen/default_margin</item>
     </style>
 
+    <style name="loading_indicator_background">
+        <item name="android:background">@color/waiting_background</item>
+    </style>
+
     <style name="loading_indicator">
         <item name="android:layout_width">@dimen/loading_indicator_size</item>
         <item name="android:layout_height">@dimen/loading_indicator_size</item>
+        <item name="android:layout_gravity">center</item>
     </style>
 
     <style name="profile_image">
@@ -165,6 +170,8 @@
         <item name="android:layout_margin">@dimen/large_margin</item>
     </style>
 
+    <style name="dashboard_loading_indicator_background" parent="loading_indicator_background" />
+
     <style name="dashboard_loading_indicator" parent="loading_indicator" />
 
     <!--</editor-fold>-->
@@ -199,13 +206,9 @@
     <!--##########################################-->
     <!--<editor-fold desc="######### Image View Preference ##########">-->
 
-    <style name="image_view_preference_loading_indicator_background">
-        <item name="android:background">@color/waiting_background</item>
-    </style>
+    <style name="image_view_preference_loading_indicator_background" parent="loading_indicator_background" />
 
-    <style name="image_view_preference_loading_indicator" parent="loading_indicator">
-        <item name="android:layout_gravity">center</item>
-    </style>
+    <style name="image_view_preference_loading_indicator" parent="loading_indicator" />
 
     <style name="image_view_preference_layout">
         <item name="android:paddingStart">@dimen/large_padding</item>
