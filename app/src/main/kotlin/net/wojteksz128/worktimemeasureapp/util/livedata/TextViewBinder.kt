@@ -1,4 +1,4 @@
-package net.wojteksz128.worktimemeasureapp.window
+package net.wojteksz128.worktimemeasureapp.util.livedata
 
 import android.graphics.Typeface
 import android.widget.TextView
