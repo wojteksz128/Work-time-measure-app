@@ -1,7 +1,9 @@
-package net.wojteksz128.worktimemeasureapp.util
+package net.wojteksz128.worktimemeasureapp.util.comeevent
 
 import android.content.Context
-import android.os.AsyncTask
+import android.util.Log
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import net.wojteksz128.worktimemeasureapp.database.AppDatabase
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEvent
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventDao
@@ -9,38 +11,25 @@ import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventType
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDay
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayDao
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents
+import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import java.util.*
 
-object ComeEventUtils {
+object ComeEventUtils : ClassTagAware {
 
     // TODO: 07.07.2019 Move to separate action object.
-    fun registerNewEvent(context: Context, preFunction: () -> Unit, postFunction: (ComeEventType) -> Unit) {
+    suspend fun registerNewEvent(context: Context): ComeEventType = withContext(Dispatchers.IO) {
         val comeEventDao = AppDatabase.getInstance(context).comeEventDao()
         val registerDate = DateTimeProvider.currentTime
+        val workDay = getCurrentWorkDay(registerDate, context)
+        val comeEvent = workDay.events.lastOrNull { !it.isEnded }
 
-        object : AsyncTask<Unit, Unit, ComeEventType>() {
-
-            override fun onPreExecute() {
-                preFunction()
-            }
-
-            override fun doInBackground(vararg voids: Unit): ComeEventType {
-                val workDay = getCurrentWorkDay(registerDate, context)
-                val comeEvent = workDay.events.lastOrNull { !it.isEnded }
-
-                return if (comeEvent != null) {
-                    assignEndDateIntoCurrentEvent(comeEvent, registerDate, comeEventDao)
-                } else {
-                    createNewEvent(workDay, registerDate, comeEventDao)
-                }
-            }
-
-            override fun onPostExecute(comeEventType: ComeEventType) {
-                postFunction(comeEventType)
-            }
-        }.execute()
+        if (comeEvent != null) {
+            assignEndDateIntoCurrentEvent(comeEvent, registerDate, comeEventDao)
+        } else {
+            createNewEvent(workDay, registerDate, comeEventDao)
+        }
     }
 
     private fun assignEndDateIntoCurrentEvent(comeEvent: ComeEvent, registerDate: Date, comeEventDao: ComeEventDao): ComeEventType {

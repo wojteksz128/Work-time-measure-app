@@ -190,6 +190,7 @@
             style="@style/dashboard_enter_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="@{ () -> newEventRegisterListener.registerNewEvent() }"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:contentDescription="@string/dashboard_enter_fab_description"
@@ -225,5 +226,8 @@
         <variable
             name="workTimeData"
             type="LiveData&lt;WorkTimeData>" />
+        <variable
+            name="newEventRegisterListener"
+            type="net.wojteksz128.worktimemeasureapp.util.comeevent.NewEventRegisterListener" />
     </data>
 </layout>
