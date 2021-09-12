@@ -37,6 +37,9 @@
     <string name="dashboard_current_day_date_example">pn., 08.07.2019</string>
     <string name="dashboard_current_day_empty_events_message">Brak zdarzeń</string>
 
+    <!-- Duration display -->
+    <string name="duration_display_title_example">Tytuł</string>
+
     <!-- Navigation drawer strings -->
     <string name="navigation_drawer_open">Otwórz panel</string>
     <string name="navigation_drawer_close">Zamknij panel</string>

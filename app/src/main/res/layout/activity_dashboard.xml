@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".window.dashboard.DashboardActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/dashboard_content"
         style="@style/dashboard"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:context=".window.dashboard.DashboardActivity">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
@@ -36,59 +36,19 @@
                     android:baselineAligned="false"
                     android:orientation="horizontal">
 
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/dashboard_remaining_day_time_container"
+                    <net.wojteksz128.worktimemeasureapp.util.view.DurationDisplay
+                        android:id="@+id/dashboard_remaining_day_time"
                         style="@style/dashboard_section_subcard_left"
-                        android:layout_width="match_parent"><!-- layout_height defined by style -->
+                        android:layout_width="match_parent"
+                        app:duration="@{workTimeData.remainingTodayWorkTime}"
+                        app:title="@string/dashboard_today" /><!-- layout_height defined by style -->
 
-                        <TextView
-                            android:id="@+id/dashboard_remaining_day_time_label"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/dashboard_today"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <TextView
-                            android:id="@+id/dashboard_remaining_day_time"
-                            style="@style/dashboard_section_time_display"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@{DateTimeUtils.INSTANCE.formatCounterTime(workTimeData.remainingTodayWorkTime)}"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="@id/dashboard_remaining_day_time_label"
-                            tools:text="00:00:00" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/dashboard_remaining_week_time_container"
+                    <net.wojteksz128.worktimemeasureapp.util.view.DurationDisplay
+                        android:id="@+id/dashboard_remaining_week_time"
                         style="@style/dashboard_section_subcard_right"
-                        android:layout_width="match_parent"><!-- layout_height defined by style -->
-
-                        <TextView
-                            android:id="@+id/dashboard_remaining_week_time_label"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/dashboard_week"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <TextView
-                            android:id="@+id/dashboard_remaining_week_time"
-                            style="@style/dashboard_section_time_display"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@{DateTimeUtils.INSTANCE.formatCounterTime(workTimeData.remainingWeekWorkTime)}"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="@id/dashboard_remaining_week_time_label"
-                            tools:text="00:00:00" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
+                        android:layout_width="match_parent"
+                        app:duration="@{workTimeData.remainingWeekWorkTime}"
+                        app:title="@string/dashboard_week" /><!-- layout_height defined by style -->
 
                 </LinearLayout>
 
@@ -109,32 +69,12 @@
                         app:layout_constraintTop_toTopOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/dashboard_today_work_time_container"
+                <net.wojteksz128.worktimemeasureapp.util.view.DurationDisplay
+                    android:id="@+id/dashboard_today_work_time"
                     style="@style/dashboard_section_card"
-                    android:layout_width="match_parent"><!-- layout_height defined by style -->
-
-                    <TextView
-                        android:id="@+id/dashboard_today_work_time_label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/dashboard_today_work_time_label"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/dashboard_today_work_time"
-                        style="@style/dashboard_section_time_display"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@{DateTimeUtils.INSTANCE.formatCounterTime(workTimeData.todayWorkTime)}"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="@id/dashboard_today_work_time_label"
-                        tools:text="00:00:00" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                    android:layout_width="match_parent"
+                    app:duration="@{workTimeData.todayWorkTime}"
+                    app:title="@string/dashboard_today_work_time_label" /><!-- layout_height defined by style -->
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/dashboard_current_day_container"

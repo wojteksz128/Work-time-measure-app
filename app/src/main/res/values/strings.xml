@@ -39,6 +39,10 @@
     <string name="dashboard_current_day_date_example">Mon., 08.07.2019</string>
     <string name="dashboard_current_day_empty_events_message">Empty list of events</string>
 
+    <!-- Duration display -->
+    <string name="duration_display_title_example">Title</string>
+    <string name="duration_display_value_template" translatable="false">00:00:00</string>
+
     <!-- Navigation drawer strings -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
