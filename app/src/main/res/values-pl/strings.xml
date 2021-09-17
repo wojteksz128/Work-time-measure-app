@@ -3,32 +3,42 @@
     <string name="app_name">Pomiar czasu pracy</string>
     <string name="about">Aplikacja stworzona przez Wojciecha Szczepaniaka (227360@edu.p.lodz.pl)</string>
 
-    <!--##########################################-->
-    <!--################ Channels ################-->
-    <!--##########################################-->
+    <!--<string name="empty_time_string" translatable="false">0:00:00</string>-->
 
+    <!--##########################################-->
+    <!--<editor-fold desc="################ Channels ################">-->
+
+    <!-- End of work channel description -->
     <string name="channel_end_of_work_name">Koniec czasu pracy</string>
     <string name="channel_end_of_work_description">Powiadomienia, gdy czas bieżącego dnia pracy zbliża się do końca.</string>
 
+    <!-- In work channel description -->
     <string name="channel_in_work_name">Notyfikacje w trakcie pracy</string>
     <string name="channel_in_work_description">Wyświetlenie postępu pracy pracownika.</string>
 
-    <!--##########################################-->
-    <!--############# Notifications ##############-->
+    <!--</editor-fold>-->
     <!--##########################################-->
 
+    <!--##########################################-->
+    <!--<editor-fold desc="############# Notifications ##############">-->
+
+    <!-- In work notification -->
     <string name="notification_in_work_title">Obecny czas pracy</string>
     <string name="notification_in_work_text">Oczekiwany czas końca pracy: {}</string>
     <string name="notification_in_work_action_come_out">Wychodzę</string>
 
+    <!-- End of work notification -->
     <string name="notification_end_of_work_title">Musisz wyjść!</string>
     <string name="notification_end_of_work_text">Przesiedziałeś już swoje. Czas wrócić do domu ;)</string>
-    <string name="notification_end_of_work_action_ingore">Wycisz</string>
+    <string name="notification_end_of_work_action_ignore">Wycisz</string>
     <string name="notification_end_of_work_action_come_out">Wychodzę</string>
 
+    <!--</editor-fold>-->
     <!--##########################################-->
-    <!--########### Dashboard Activity ###########-->
+
     <!--##########################################-->
+    <!--<editor-fold desc="########### Dashboard Activity ###########">-->
+
     <string name="dashboard_activity_title">@string/app_name</string>
     <string name="dashboard_remaining_working_time">Pozostało do wypracowania</string>
     <string name="dashboard_today">Dzisiaj:</string>
@@ -36,6 +46,10 @@
     <string name="dashboard_today_work_time_label">Dzisiaj przepracowano:</string>
     <string name="dashboard_current_day_date_example">pn., 08.07.2019</string>
     <string name="dashboard_current_day_empty_events_message">Brak zdarzeń</string>
+
+    <!-- Duration display -->
+    <string name="duration_display_title_example">Tytuł</string>
+    <!--<string name="duration_display_value_template" translatable="false">00:00:00</string>-->
 
     <!-- Navigation drawer strings -->
     <string name="navigation_drawer_open">Otwórz panel</string>
@@ -60,9 +74,11 @@
     <!-- Enter fab -->
     <string name="dashboard_enter_fab_description">Start or end work time button</string>
 
+    <!--</editor-fold>-->
     <!--##########################################-->
-    <!--############ History Activity ############-->
+
     <!--##########################################-->
+    <!--<editor-fold desc="############ History Activity ############">-->
 
     <string name="history_activity_title">Historia</string>
 
@@ -73,15 +89,22 @@
     <!-- Day Event list item strings -->
     <string name="history_day_event_start_date_example">01.01.2018 12:00</string>
     <string name="history_day_event_item_type_example">@string/history_come_in_label</string>
+    <!--<string name="history_day_event_duration_example" translatable="false">8:30:00</string>-->
+    <!--<string name="history_day_event_time_format" translatable="false">E, HH:mm:ss</string>-->
     <string name="history_day_event_end_date_now">Teraz</string>
+    <!--<string name="history_day_event_realization_dates_divider" translatable="false">—</string>-->
 
     <!-- Work Day list item strings -->
     <string name="history_work_day_label_example">Pon, 01.01.2018</string>
+    <!--<string name="history_work_day_duration_example" translatable="false">08:30:00</string>-->
     <string name="history_work_day_label_format">E, dd.MM.yyyy</string>
+    <!--<string name="history_work_day_duration_format" translatable="false">H:mm:ss</string>-->
+
+    <!--</editor-fold>-->
+    <!--##########################################-->
 
     <!--##########################################-->
-    <!--############ Settings Activity ###########-->
-    <!--##########################################-->
+    <!--<editor-fold desc="############ Settings Activity ###########">-->
 
     <string name="settings_activity_title">Ustawienia</string>
 
@@ -122,5 +145,23 @@
     <string name="settings_sync_timeSync_enable_summary_off">Obecny czas nie jest synchronizowany z serwerem NTP.</string>
     <string name="settings_sync_timeSync_server_title">Adres serwera NTP</string>
     <string name="settings_sync_timeSync_server_summary">Adres serwera NTP, używany do synchronizacji czasu w aplikacji.</string>
+
+    <!-- Settings keys -->
+    <!--<string name="settings_key_profile" translatable="false">settings_profile</string>-->
+    <!--<string name="settings_key_profile_image" translatable="false">settings_profile_image</string>-->
+    <!--<string name="settings_key_profile_username" translatable="false">settings_profile_username</string>-->
+    <!--<string name="settings_key_profile_email" translatable="false">settings_profile_email</string>-->
+
+    <!--<string name="settings_key_workTime" translatable="false">settings_workTime</string>-->
+    <!--<string name="settings_key_workTime_notify_enable" translatable="false">settings_workTime_notify_enable</string>-->
+    <!--<string name="settings_key_workTime_duration" translatable="false">settings_workTime_duration</string>-->
+    <!--<string name="settings_key_workTime_firstWeekDay" translatable="false">settings_workTime_firstWeekDay</string>-->
+
+    <!--<string name="settings_key_sync" translatable="false">settings_sync</string>-->
+    <!--<string name="settings_key_sync_timeSync_enable" translatable="false">settings_sync_timeSync_enable</string>-->
+    <!--<string name="settings_key_sync_timeSync_server" translatable="false">settings_sync_timeSync_server</string>-->
+
+    <!--</editor-fold>-->
+    <!--##########################################-->
 
 </resources>
