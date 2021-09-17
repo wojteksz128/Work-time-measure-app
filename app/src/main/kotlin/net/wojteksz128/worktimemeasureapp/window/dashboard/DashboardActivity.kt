@@ -77,7 +77,9 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
                         // TODO: 12.07.2019 Store scheduleJob
                         if (Settings.WorkTime.NotifyingEnabled.valueNullable == true) {
                             WaitForEndOfWorkJob.schedule(this@DashboardActivity)
-                            InWorkNotification(this@DashboardActivity).notifyUser()
+                            val expectedEndWorkDayTime =
+                                viewModel.workTimeData.value!!.expectedEndWorkDayTime ?: Date()
+                            InWorkNotification(this@DashboardActivity, expectedEndWorkDayTime).notifyUser()
                         }
                         getString(R.string.dashboard_snackbar_info_income_registered)
                     }

@@ -24,7 +24,7 @@
 
     <!-- In work notification -->
     <string name="notification_in_work_title">Current work day duration</string>
-    <string name="notification_in_work_text">Expected end of work: {}</string>
+    <string name="notification_in_work_text">Expected end of work: %s</string>
     <string name="notification_in_work_action_come_out">I\'m going out</string>
 
     <!-- End of work notification -->
