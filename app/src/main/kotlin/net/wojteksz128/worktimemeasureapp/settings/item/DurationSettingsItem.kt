@@ -6,4 +6,8 @@ open class DurationSettingsItem(name: Int) : SettingsItem<Duration>(
     name,
     { sharedPreferences, key ->
         Duration.ofMinutes(sharedPreferences.getInt(key, 0).toLong())
-    })
+    }, { editor, key, duration ->
+        val durationMinutes = duration.toMinutes().toInt()
+        editor.putInt(key, durationMinutes)
+    }
+)

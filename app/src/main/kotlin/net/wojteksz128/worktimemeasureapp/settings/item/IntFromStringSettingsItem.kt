@@ -7,5 +7,7 @@ open class IntFromStringSettingsItem(name: Int) : SettingsItem<Int>(
             key,
             null
         )?.toInt()
+    }, { editor, key, value ->
+        editor.putString(key, value.toString())
     }
 )

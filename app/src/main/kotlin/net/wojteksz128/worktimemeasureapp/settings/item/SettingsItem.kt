@@ -1,3 +1,5 @@
+@file:Suppress("LeakingThis")
+
 package net.wojteksz128.worktimemeasureapp.settings.item
 
 import android.content.Context
@@ -6,9 +8,10 @@ import androidx.preference.PreferenceManager
 import net.wojteksz128.worktimemeasureapp.WorkTimeMeasureApp
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 
-open class SettingsItem<out R>(
+open class SettingsItem<R>(
     val keyResourceId: Int,
-    private val valueGettingMethod: (SharedPreferences, String) -> R?
+    private val valueGettingMethod: (SharedPreferences, String) -> R?,
+    private val valueSettingMethod: (SharedPreferences.Editor, String, R) -> Unit
 ) {
 
     internal var changed: Boolean = false
@@ -21,21 +24,32 @@ open class SettingsItem<out R>(
     val key: String
         get() = appContext.getString(keyResourceId)
 
-    val value: R
+    var value: R
         get() = valueNullable
             ?: throw NullPointerException("Cannot read '$key' from Settings (maybe it's null)")
+        set(value) {
+            valueNullable = value
+        }
 
-    val valueNullable: R?
+
+    var valueNullable: R?
         get() {
             if (changed || readValue == null) {
-                readValue = valueGettingMethod(
-                    PreferenceManager.getDefaultSharedPreferences(
-                        appContext
-                    ), key
-                )
+                val preferences = PreferenceManager.getDefaultSharedPreferences(appContext)
+                readValue = valueGettingMethod(preferences, key)
                 changed = false
             }
             return readValue
+        }
+        set(value) {
+            val editor = PreferenceManager.getDefaultSharedPreferences(appContext).edit()
+            if (value == null)
+                editor.remove(key)
+            else
+                valueSettingMethod(editor, key, value)
+
+            editor.apply()
+            changed = true
         }
 }
 
