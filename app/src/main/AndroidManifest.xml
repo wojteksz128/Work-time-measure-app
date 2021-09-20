@@ -17,7 +17,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <receiver
-            android:name=".notification.action.WorkTimeNotificationActionReceiver"
+            android:name=".notification.action.NotificationActionReceiver"
             android:enabled="true"
             android:exported="false" />
 

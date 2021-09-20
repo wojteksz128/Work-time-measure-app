@@ -12,7 +12,7 @@ import androidx.core.app.TaskStackBuilder
 import androidx.core.content.ContextCompat
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.notification.action.Action
-import net.wojteksz128.worktimemeasureapp.notification.action.WorkTimeNotificationActionReceiver
+import net.wojteksz128.worktimemeasureapp.notification.action.NotificationActionReceiver
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 
 abstract class AppNotification(
@@ -53,7 +53,7 @@ abstract class AppNotification(
 
     protected fun getAction(context: Context, action: Action): NotificationCompat.Action {
         Log.v(classTag, "getAction: Create action ${action.name} for ${this.javaClass.simpleName}")
-        val intent = Intent(context, WorkTimeNotificationActionReceiver::class.java).apply {
+        val intent = Intent(context, NotificationActionReceiver::class.java).apply {
             this.action = action.name
         }
         val pendingIntent =
