@@ -17,6 +17,10 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <receiver
+            android:name=".TimerExpiredReceiver"
+            android:enabled="true"
+            android:exported="false" />
+        <receiver
             android:name=".notification.action.NotificationActionReceiver"
             android:enabled="true"
             android:exported="false" />
@@ -51,14 +55,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".window.dashboard.DashboardActivity" />
         </activity>
-
-        <service
-            android:name=".job.WaitForEndOfWorkJob"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
-            </intent-filter>
-        </service>
     </application>
 
 </manifest>

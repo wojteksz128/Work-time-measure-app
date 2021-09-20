@@ -14,13 +14,12 @@ import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventType
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents
 import net.wojteksz128.worktimemeasureapp.databinding.ActivityDashboardBinding
-import net.wojteksz128.worktimemeasureapp.job.WaitForEndOfWorkJob
 import net.wojteksz128.worktimemeasureapp.notification.InWorkNotification
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.*
 import net.wojteksz128.worktimemeasureapp.util.comeevent.ComeEventUtils
 import net.wojteksz128.worktimemeasureapp.util.comeevent.NewEventRegisterListener
-import net.wojteksz128.worktimemeasureapp.util.coroutines.WorkTimeTimer
+import net.wojteksz128.worktimemeasureapp.util.coroutines.PeriodicOperation
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.notification.NotificationUtils
 import net.wojteksz128.worktimemeasureapp.util.recyclerView.ItemUpdate
@@ -64,26 +63,39 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
     override fun onPause() {
         super.onPause()
         Log.d(classTag, "onPause: Stop second updater")
-        viewModel.workTimeCounterRunner?.let { WorkTimeTimer.cancelTimer(it) }
+        viewModel.workTimeCounterRunner?.let { PeriodicOperation.cancel(it) }
     }
 
     override fun registerNewEvent() {
         lifecycleScope.launch {
             viewModel.waitingFor.value = true
 
-            val message: String = withContext(Dispatchers.IO) {
-                when (ComeEventUtils.registerNewEvent(this@DashboardActivity)) {
-                    ComeEventType.COME_IN -> {
-                        // TODO: 12.07.2019 Store scheduleJob
-                        if (Settings.WorkTime.NotifyingEnabled.valueNullable == true) {
-                            WaitForEndOfWorkJob.schedule(this@DashboardActivity)
-                            val expectedEndWorkDayTime =
-                                viewModel.workTimeData.value!!.expectedEndWorkDayTime ?: Date()
-                            InWorkNotification(this@DashboardActivity, expectedEndWorkDayTime).notifyUser()
+            val comeEventType: ComeEventType
+
+            withContext(Dispatchers.IO) {
+                comeEventType = ComeEventUtils.registerNewEvent(this@DashboardActivity)
+            }
+
+            val message = when (comeEventType) {
+                ComeEventType.COME_IN -> {
+                    if (Settings.WorkTime.NotifyingEnabled.valueNullable == true) {
+                        val endOfWorkNotificationInvokeTime = DateTimeProvider.currentCalendarWithoutCorrection.apply { // Use system time
+                            val remainingTodayWorkTime =
+                                viewModel.workTimeData.value!!.remainingTodayWorkTime?.toMillis()
+                                    ?: 0L
+                            this.add(Calendar.MILLISECOND, remainingTodayWorkTime.toInt())
                         }
-                        getString(R.string.dashboard_snackbar_info_income_registered)
+
+                        val expectedEndWorkDayTime =
+                            viewModel.workTimeData.value!!.expectedEndWorkDayTime ?: Date()
+                        TimerManager.setAlarm(this@DashboardActivity, endOfWorkNotificationInvokeTime)
+                        InWorkNotification(this@DashboardActivity, expectedEndWorkDayTime).notifyUser()
                     }
-                    ComeEventType.COME_OUT -> getString(R.string.dashboard_snackbar_info_outcome_registered)
+                    getString(R.string.dashboard_snackbar_info_income_registered)
+                }
+                ComeEventType.COME_OUT -> {
+                    TimerManager.removeAlarm(this@DashboardActivity)
+                    getString(R.string.dashboard_snackbar_info_outcome_registered)
                 }
             }
 
@@ -117,8 +129,9 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
         }
 
         private fun runUpdaterEverySecond() =
+            // TODO: 20.09.2021 Periodic operation not stops, when not ended events is empty
             if (viewModel.notEndedEventsIndex.isNotEmpty()) {
-                val params = WorkTimeTimer.WorkTimeTimerParams(repeatMillis = 1000,
+                val params = PeriodicOperation.PeriodicOperationParams(repeatMillis = 1000,
                     mainThreadAction = {
                         viewModel.workTimeData.value?.updateData()
                         Log.d(classTag, "runUpdaterEverySecond: Notify item changed: ${viewModel.notEndedEventsIndex}")
@@ -127,9 +140,9 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
                         }
                         viewModel.notEndedEventsIndex.removeAll { it.lastIteration }
                     })
-                viewModel.workTimeCounterRunner = WorkTimeTimer.startTimer(params)
+                viewModel.workTimeCounterRunner = PeriodicOperation.start(params)
             } else {
-                viewModel.workTimeCounterRunner?.let { WorkTimeTimer.cancelTimer(it) }
+                viewModel.workTimeCounterRunner?.let { PeriodicOperation.cancel(it) }
             }
     }
 }

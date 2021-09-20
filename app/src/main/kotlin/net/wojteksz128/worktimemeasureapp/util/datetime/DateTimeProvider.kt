@@ -5,14 +5,20 @@ import android.os.AsyncTask
 import android.util.Log
 import com.medavox.library.mutime.MuTime
 import net.wojteksz128.worktimemeasureapp.settings.Settings
+import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import java.util.*
 
-object DateTimeProvider {
+object DateTimeProvider : ClassTagAware {
     private var offset: Long = 0
-    private val TAG = DateTimeProvider::class.java.simpleName
 
     val currentTime: Date
         get() = Date(System.currentTimeMillis() + offset)
+
+    val currentCalendar: Calendar
+        get() = currentCalendarWithoutCorrection.apply { time = currentTime }
+
+    val currentCalendarWithoutCorrection: Calendar
+        get() = Calendar.getInstance()
 
     val weekEndDay: Date
         get() {
@@ -51,13 +57,13 @@ object DateTimeProvider {
                         MuTime.requestTimeFromServer(ntpHost)
                         MuTime.now() - System.currentTimeMillis()
                     } catch (e: Throwable) {
-                        Log.e(TAG, "Failed to get the actual time. Take old offset.", e)
+                        Log.e(classTag, "Failed to get the actual time. Take old offset.", e)
                         offset
                     }
                 }
 
                 override fun onPostExecute(result: Long) {
-                    Log.d(TAG, "Change offset from $offset to $result.")
+                    Log.d(classTag, "Change offset from $offset to $result.")
                     offset = result
                     super.onPostExecute(result)
                 }

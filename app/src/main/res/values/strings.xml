@@ -161,6 +161,8 @@
     <string name="settings_key_sync_timeSync_enable" translatable="false">settings_sync_timeSync_enable</string>
     <string name="settings_key_sync_timeSync_server" translatable="false">settings_sync_timeSync_server</string>
 
+    <string name="settings_key_internal_alarmSetTime" translatable="false">settings_internal_alarmSetTime</string>
+
     <!--</editor-fold>-->
     <!--##########################################-->
 

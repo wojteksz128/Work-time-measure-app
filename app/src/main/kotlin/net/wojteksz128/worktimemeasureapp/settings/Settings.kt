@@ -22,5 +22,9 @@ object Settings : SettingsItemsAware() {
             val ServerAddress = StringSettingsItem(R.string.settings_key_sync_timeSync_server)
         }
     }
+
+    object Internal {
+        val AlarmState = AlarmStateSettingsItem(R.string.settings_key_internal_alarmSetTime)
+    }
 }
 
