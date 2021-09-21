@@ -10,7 +10,7 @@ import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import net.wojteksz128.worktimemeasureapp.window.dashboard.DashboardActivity
 import java.util.*
 
-class InWorkNotification(context: Context, endOfWorkTime: Date) : AppNotification(Channel.IN_WORK_CHANNEL, 252, context),
+class WorkTimeInProgressNotification(context: Context, endOfWorkTime: Date) : AppNotification(Channel.IN_WORK_CHANNEL, 252, context),
     ClassTagAware {
 
     init {

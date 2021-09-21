@@ -14,7 +14,6 @@ import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventType
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents
 import net.wojteksz128.worktimemeasureapp.databinding.ActivityDashboardBinding
-import net.wojteksz128.worktimemeasureapp.notification.InWorkNotification
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.*
 import net.wojteksz128.worktimemeasureapp.util.comeevent.ComeEventUtils
@@ -48,9 +47,6 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
                 override fun canScrollVertically() = false
             }
         }
-
-        // TODO: 02.09.2021 move to another place
-        NotificationUtils.initNotifications(this)
     }
 
     override fun onResume() {
@@ -61,6 +57,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
     }
 
     override fun onPause() {
+        // TODO: 20.09.2021 Correct updater
         super.onPause()
         Log.d(classTag, "onPause: Stop second updater")
         viewModel.workTimeCounterRunner?.let { PeriodicOperation.cancel(it) }
@@ -79,17 +76,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
             val message = when (comeEventType) {
                 ComeEventType.COME_IN -> {
                     if (Settings.WorkTime.NotifyingEnabled.valueNullable == true) {
-                        val endOfWorkNotificationInvokeTime = DateTimeProvider.currentCalendarWithoutCorrection.apply { // Use system time
-                            val remainingTodayWorkTime =
-                                viewModel.workTimeData.value!!.remainingTodayWorkTime?.toMillis()
-                                    ?: 0L
-                            this.add(Calendar.MILLISECOND, remainingTodayWorkTime.toInt())
-                        }
-
-                        val expectedEndWorkDayTime =
-                            viewModel.workTimeData.value!!.expectedEndWorkDayTime ?: Date()
-                        TimerManager.setAlarm(this@DashboardActivity, endOfWorkNotificationInvokeTime)
-                        InWorkNotification(this@DashboardActivity, expectedEndWorkDayTime).notifyUser()
+                        NotificationUtils.notifyUserAboutWorkTime(this@DashboardActivity, viewModel.workTimeData.value!!)
                     }
                     getString(R.string.dashboard_snackbar_info_income_registered)
                 }
