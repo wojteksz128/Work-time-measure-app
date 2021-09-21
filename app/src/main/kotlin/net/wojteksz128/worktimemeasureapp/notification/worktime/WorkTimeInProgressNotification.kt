@@ -15,7 +15,7 @@ import java.util.*
 
 class WorkTimeInProgressNotification(context: Context, endOfWorkTime: Date) :
     AppNotification<WorkTimeNotificationActionReceiver>(
-        Channel.WORK_TIME_CHANNEL, 251, context),
+        Channel.WORK_TIME_CHANNEL, notificationId, context),
     ClassTagAware {
 
     init {
@@ -31,5 +31,9 @@ class WorkTimeInProgressNotification(context: Context, endOfWorkTime: Date) :
             .addAction(getAction(context, WorkTimeNotificationAction.END_OF_WORK_ACTION))
 
         notificationBuilder.priority = channel.importance
+    }
+
+    companion object {
+        const val notificationId = 251
     }
 }

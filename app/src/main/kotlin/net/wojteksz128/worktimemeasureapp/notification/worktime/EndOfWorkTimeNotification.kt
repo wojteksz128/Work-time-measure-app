@@ -13,7 +13,7 @@ import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.window.dashboard.DashboardActivity
 
 class EndOfWorkTimeNotification(context: Context) :
-    AppNotification<WorkTimeNotificationActionReceiver>(Channel.WORK_TIME_CHANNEL, 251, context), ClassTagAware {
+    AppNotification<WorkTimeNotificationActionReceiver>(Channel.WORK_TIME_CHANNEL, notificationId, context), ClassTagAware {
 
     init {
         Log.d(classTag, "init: Init notificationBuilder")
@@ -27,5 +27,9 @@ class EndOfWorkTimeNotification(context: Context) :
             .addAction(getAction(context, WorkTimeNotificationAction.IGNORE_REMINDER_ACTION))
 
         notificationBuilder.priority = channel.importance
+    }
+
+    companion object {
+        const val notificationId = 251
     }
 }
