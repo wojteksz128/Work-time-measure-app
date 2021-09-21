@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.annotation.StringRes
 
 import net.wojteksz128.worktimemeasureapp.R
 
@@ -12,18 +13,15 @@ import net.wojteksz128.worktimemeasureapp.R
 @Suppress("MemberVisibilityCanBePrivate")
 enum class Channel(
     val id: String,
-    val channelName: Int,
-    val description: Int,
+    @StringRes val channelName: Int,
+    @StringRes val description: Int,
     val importance: Int,
 ) {
-    END_OF_WORK_CHANNEL("end-of-work-channel",
-        R.string.channel_end_of_work_name,
-        R.string.channel_end_of_work_description,
-        4/*NotificationManager.IMPORTANCE_HIGH*/),
-    IN_WORK_CHANNEL("in-work-channel",
-        R.string.channel_end_of_work_name,
-        R.string.channel_end_of_work_description,
-        3/*NotificationManager.IMPORTANCE_DEFAULT*/);
+    WORK_TIME_CHANNEL("work-time-channel",
+        R.string.channel_work_time_name,
+        R.string.channel_work_time_description,
+        4/*NotificationManager.IMPORTANCE_HIGH*/
+    );
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     fun getNotificationChannel(context: Context): NotificationChannel {

@@ -8,13 +8,9 @@
     <!--##########################################-->
     <!--<editor-fold desc="################ Channels ################">-->
 
-    <!-- End of work channel description -->
-    <string name="channel_end_of_work_name">Koniec czasu pracy</string>
-    <string name="channel_end_of_work_description">Powiadomienia, gdy czas bieżącego dnia pracy zbliża się do końca.</string>
-
-    <!-- In work channel description -->
-    <string name="channel_in_work_name">Notyfikacje w trakcie pracy</string>
-    <string name="channel_in_work_description">Wyświetlenie postępu pracy pracownika.</string>
+    <!-- Work time channel description -->
+    <string name="channel_work_time_name">Powiadomienia o czasie pracy</string>
+    <string name="channel_work_time_description">Powiadomienia o czasie pracy, wyświetlają informacje o czasie trwania aktualnego dnia pracy.</string>
 
     <!--</editor-fold>-->
     <!--##########################################-->

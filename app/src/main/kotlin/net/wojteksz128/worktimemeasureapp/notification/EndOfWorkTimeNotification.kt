@@ -10,7 +10,7 @@ import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.window.dashboard.DashboardActivity
 
 class EndOfWorkTimeNotification(context: Context) :
-    AppNotification(Channel.END_OF_WORK_CHANNEL, 251, context), ClassTagAware {
+    AppNotification(Channel.WORK_TIME_CHANNEL, 251, context), ClassTagAware {
 
     init {
         Log.d(classTag, "init: Init notificationBuilder")
