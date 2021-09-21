@@ -4,10 +4,10 @@ import android.util.Log
 import kotlinx.coroutines.*
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 
-object WorkTimeTimer : ClassTagAware {
+object PeriodicOperation : ClassTagAware {
 
-    fun startTimer(params: WorkTimeTimerParams): WorkTimeTimerRunner {
-        val workTimeTimerRunner = WorkTimeTimerRunner(params)
+    fun start(params: PeriodicOperationParams): PeriodicOperationRunner {
+        val workTimeTimerRunner = PeriodicOperationRunner(params)
 
         if (!workTimeTimerRunner.timer.isActive) {
             Log.d(classTag, "startTimer: start work time counter")
@@ -17,15 +17,15 @@ object WorkTimeTimer : ClassTagAware {
         return workTimeTimerRunner
     }
 
-    fun cancelTimer(workTimeTimerRunner: WorkTimeTimerRunner) {
-        if (workTimeTimerRunner.timer.isActive) {
+    fun cancel(periodicOperationRunner: PeriodicOperationRunner) {
+        if (periodicOperationRunner.timer.isActive) {
             Log.d(classTag, "cancelTimer: end work time counter")
-            workTimeTimerRunner.timer.cancel()
+            periodicOperationRunner.timer.cancel()
         }
     }
 
 
-    data class WorkTimeTimerRunner(val params: WorkTimeTimerParams) : ClassTagAware {
+    data class PeriodicOperationRunner(val params: PeriodicOperationParams) : ClassTagAware {
         // TODO: 27.08.2021 change way of calling another scope
         private val job = Job()
         private val scopeForSaving = CoroutineScope(job + Dispatchers.Main)
@@ -49,7 +49,7 @@ object WorkTimeTimer : ClassTagAware {
             }
     }
 
-    data class WorkTimeTimerParams(
+    data class PeriodicOperationParams(
         val delayMillis: Long = 0,
         val repeatMillis: Long = 0,
         val backgroundAction: () -> Unit = {},

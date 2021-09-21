@@ -8,13 +8,9 @@
     <!--##########################################-->
     <!--<editor-fold desc="################ Channels ################">-->
 
-    <!-- End of work channel description -->
-    <string name="channel_end_of_work_name">End of work notifications</string>
-    <string name="channel_end_of_work_description">Notifications, when time of current work day approach to the end.</string>
-
-    <!-- In work channel description -->
-    <string name="channel_in_work_name">In work notifications</string>
-    <string name="channel_in_work_description">Shows progress employee working.</string>
+    <!-- Work time channel description -->
+    <string name="channel_work_time_name">Working time notifications</string>
+    <string name="channel_work_time_description">Working time notifications display information about the duration of the current working day.</string>
 
     <!--</editor-fold>-->
     <!--##########################################-->
@@ -24,7 +20,7 @@
 
     <!-- In work notification -->
     <string name="notification_in_work_title">Current work day duration</string>
-    <string name="notification_in_work_text">Expected end of work: {}</string>
+    <string name="notification_in_work_text">Expected end of work: %s</string>
     <string name="notification_in_work_action_come_out">I\'m going out</string>
 
     <!-- End of work notification -->
@@ -160,6 +156,8 @@
     <string name="settings_key_sync" translatable="false">settings_sync</string>
     <string name="settings_key_sync_timeSync_enable" translatable="false">settings_sync_timeSync_enable</string>
     <string name="settings_key_sync_timeSync_server" translatable="false">settings_sync_timeSync_server</string>
+
+    <string name="settings_key_internal_alarmSetTime" translatable="false">settings_internal_alarmSetTime</string>
 
     <!--</editor-fold>-->
     <!--##########################################-->

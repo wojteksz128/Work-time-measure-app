@@ -48,6 +48,13 @@ class WorkTimeData(start: Date, end: Date): BaseObservable() {
             notifyPropertyChanged(BR.remainingTodayWorkTime)
         }
 
+    var expectedEndWorkDayTime: Date? = null
+        @Bindable get
+        set(value) {
+            field = value
+//            notifyPropertyChanged(BR.expectedEndWorkDayTime)
+        }
+
     var remainingWeekWorkTime: Duration? = null
         @Bindable get
         set(value) {
@@ -60,6 +67,10 @@ class WorkTimeData(start: Date, end: Date): BaseObservable() {
         currentDayDate = result.currentDay
         todayWorkTime = result.currentDayWorkTimeDuration
         remainingTodayWorkTime = result.currentDayRemainingWorkTimeDuration
+        expectedEndWorkDayTime = Calendar.getInstance().apply {
+            add(Calendar.MILLISECOND,
+                remainingTodayWorkTime?.toMillis()?.toInt() ?: 0)
+        }.time
         remainingWeekWorkTime = result.weekRemainingWorkTimeDuration
     }
 }

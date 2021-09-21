@@ -8,13 +8,13 @@ import androidx.lifecycle.MutableLiveData
 import net.wojteksz128.worktimemeasureapp.database.AppDatabase
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
-import net.wojteksz128.worktimemeasureapp.util.coroutines.WorkTimeTimer
+import net.wojteksz128.worktimemeasureapp.util.coroutines.PeriodicOperation
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.livedata.ObservableLiveData
 import net.wojteksz128.worktimemeasureapp.util.recyclerView.ItemUpdate
 
 class DashboardViewModel(application: Application) : AndroidViewModel(application), ClassTagAware {
-    var workTimeCounterRunner: WorkTimeTimer.WorkTimeTimerRunner? = null
+    var workTimeCounterRunner: PeriodicOperation.PeriodicOperationRunner? = null
     val workDay: LiveData<WorkDayEvents>
     val notEndedEventsIndex = mutableListOf<ItemUpdate>()
     val workTimeData = ObservableLiveData<WorkTimeData>()
