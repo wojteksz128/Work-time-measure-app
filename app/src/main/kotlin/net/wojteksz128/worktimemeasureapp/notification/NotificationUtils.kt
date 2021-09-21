@@ -36,8 +36,9 @@ object NotificationUtils : ClassTagAware {
         val expectedEndWorkDayTime = workTimeData.expectedEndWorkDayTime ?: Date()
 
         scheduleEndOfWorkTimeNotification(context, endOfWorkTimeExpired)
-        WorkTimeNotificationFactory.createWorkTimeInProgressNotification(context,
-            expectedEndWorkDayTime).notifyUser()
+        if (DateTimeProvider.currentTime.before(endOfWorkTimeExpired.time))
+            WorkTimeNotificationFactory.createWorkTimeInProgressNotification(context,
+                expectedEndWorkDayTime).notifyUser()
     }
 
     private fun scheduleEndOfWorkTimeNotification(context: Context, endOfWorkTimeExpired: Calendar) {
