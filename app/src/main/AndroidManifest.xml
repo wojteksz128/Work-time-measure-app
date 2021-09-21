@@ -17,11 +17,11 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <receiver
-            android:name=".TimerExpiredReceiver"
+            android:name=".notification.TimerExpiredReceiver"
             android:enabled="true"
             android:exported="false" />
         <receiver
-            android:name=".notification.action.NotificationActionReceiver"
+            android:name=".notification.worktime.action.WorkTimeNotificationActionReceiver"
             android:enabled="true"
             android:exported="false" />
 

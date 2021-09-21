@@ -1,6 +1,7 @@
 package net.wojteksz128.worktimemeasureapp.notification
 
 import android.app.PendingIntent
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -11,15 +12,13 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.TaskStackBuilder
 import androidx.core.content.ContextCompat
 import net.wojteksz128.worktimemeasureapp.R
-import net.wojteksz128.worktimemeasureapp.notification.action.Action
-import net.wojteksz128.worktimemeasureapp.notification.action.NotificationActionReceiver
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 
-abstract class AppNotification(
+abstract class AppNotification<T>(
     val channel: Channel,
     private val notificationId: Int,
     private val context: Context,
-) : ClassTagAware {
+) : ClassTagAware where T : BroadcastReceiver {
     protected val notificationBuilder: NotificationCompat.Builder
 
     init {
@@ -51,9 +50,12 @@ abstract class AppNotification(
         return stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)!!
     }
 
-    protected fun getAction(context: Context, action: Action): NotificationCompat.Action {
+    protected inline fun <reified T : BroadcastReceiver> getAction(
+        context: Context,
+        action: NotificationAction<T>,
+    ): NotificationCompat.Action {
         Log.v(classTag, "getAction: Create action ${action.name} for ${this.javaClass.simpleName}")
-        val intent = Intent(context, NotificationActionReceiver::class.java).apply {
+        val intent = Intent(context, T::class.java).apply {
             this.action = action.name
         }
         val pendingIntent =

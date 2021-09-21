@@ -20,7 +20,7 @@ import net.wojteksz128.worktimemeasureapp.util.comeevent.ComeEventUtils
 import net.wojteksz128.worktimemeasureapp.util.comeevent.NewEventRegisterListener
 import net.wojteksz128.worktimemeasureapp.util.coroutines.PeriodicOperation
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
-import net.wojteksz128.worktimemeasureapp.util.notification.NotificationUtils
+import net.wojteksz128.worktimemeasureapp.notification.NotificationUtils
 import net.wojteksz128.worktimemeasureapp.util.recyclerView.ItemUpdate
 import net.wojteksz128.worktimemeasureapp.window.BaseActivity
 import net.wojteksz128.worktimemeasureapp.window.history.ComeEventsAdapter

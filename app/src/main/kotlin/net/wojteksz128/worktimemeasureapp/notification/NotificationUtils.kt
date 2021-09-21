@@ -1,21 +1,20 @@
-package net.wojteksz128.worktimemeasureapp.util.notification
+package net.wojteksz128.worktimemeasureapp.notification
 
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import android.util.Log
 
-import net.wojteksz128.worktimemeasureapp.notification.Channel
-import net.wojteksz128.worktimemeasureapp.notification.WorkTimeNotificationFactory
+import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeNotificationFactory
+import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.window.dashboard.WorkTimeData
 import java.util.*
 
-object NotificationUtils {
-    private val LOG = NotificationUtils::class.java.simpleName
+object NotificationUtils : ClassTagAware {
 
     fun initNotifications(context: Context) {
-        Log.v(LOG, "initNotifications: Initialize all notifications")
+        Log.v(classTag, "initNotifications: Initialize all notifications")
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationManager = context.getSystemService(NotificationManager::class.java)
@@ -41,9 +40,9 @@ object NotificationUtils {
     }
 
     fun clearAllNotifications(context: Context) {
-        Log.d(LOG, "clearAllNotifications: Clearing notifications started.")
+        Log.d(classTag, "clearAllNotifications: Clearing notifications started.")
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.cancelAll()
-        Log.i(LOG, "clearAllNotifications: All notifications cleared.")
+        Log.i(classTag, "clearAllNotifications: All notifications cleared.")
     }
 }

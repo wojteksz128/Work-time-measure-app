@@ -9,7 +9,6 @@ import androidx.annotation.StringRes
 
 import net.wojteksz128.worktimemeasureapp.R
 
-// TODO: 17.09.2021 Czy na pewno wszystkie te kanały są potrzebne?
 @Suppress("MemberVisibilityCanBePrivate")
 enum class Channel(
     val id: String,

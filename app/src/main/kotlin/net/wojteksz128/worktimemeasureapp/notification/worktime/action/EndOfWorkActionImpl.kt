@@ -1,4 +1,4 @@
-package net.wojteksz128.worktimemeasureapp.notification.action
+package net.wojteksz128.worktimemeasureapp.notification.worktime.action
 
 import android.content.Context
 import android.os.Handler
@@ -7,14 +7,14 @@ import android.util.Log
 import android.widget.Toast
 
 import net.wojteksz128.worktimemeasureapp.R
-import net.wojteksz128.worktimemeasureapp.util.notification.NotificationUtils
+import net.wojteksz128.worktimemeasureapp.notification.NotificationActionImpl
+import net.wojteksz128.worktimemeasureapp.notification.NotificationUtils
+import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 
-internal object EndOfWorkAction : NotificationAction {
-
-    private val LOG = EndOfWorkAction::class.java.simpleName
+internal object EndOfWorkActionImpl : NotificationActionImpl, ClassTagAware {
 
     override operator fun invoke(context: Context) {
-        Log.d(LOG, "invoke: Ignore notification clicked")
+        Log.d(classTag, "invoke: Ignore notification clicked")
         // TODO: 03.11.2018 implement this
         NotificationUtils.clearAllNotifications(context)
 

@@ -5,7 +5,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import net.wojteksz128.worktimemeasureapp.TimerExpiredReceiver
+import net.wojteksz128.worktimemeasureapp.notification.TimerExpiredReceiver
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import java.util.*
 

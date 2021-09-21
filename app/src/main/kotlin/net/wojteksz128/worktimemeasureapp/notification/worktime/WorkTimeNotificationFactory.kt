@@ -1,4 +1,4 @@
-package net.wojteksz128.worktimemeasureapp.notification
+package net.wojteksz128.worktimemeasureapp.notification.worktime
 
 import android.content.Context
 import net.wojteksz128.worktimemeasureapp.util.TimerManager
