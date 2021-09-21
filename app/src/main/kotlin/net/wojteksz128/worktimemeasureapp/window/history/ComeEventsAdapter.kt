@@ -34,11 +34,14 @@ class ComeEventsAdapter :
 
     object DiffCallback : DiffUtil.ItemCallback<ComeEvent>() {
         override fun areItemsTheSame(oldItem: ComeEvent, newItem: ComeEvent): Boolean {
-            return oldItem == newItem
+            return oldItem.id == newItem.id
         }
 
         override fun areContentsTheSame(oldItem: ComeEvent, newItem: ComeEvent): Boolean {
-            return oldItem.id == newItem.id
+            return oldItem.startDate == newItem.startDate &&
+                    oldItem.endDate == newItem.endDate &&
+                    oldItem.durationLong == newItem.durationLong &&
+                    oldItem.workDayId == newItem.workDayId
         }
 
     }
