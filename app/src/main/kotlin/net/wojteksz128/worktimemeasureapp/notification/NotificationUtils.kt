@@ -7,6 +7,7 @@ import android.util.Log
 
 import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeNotificationFactory
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
+import net.wojteksz128.worktimemeasureapp.util.TimerManager
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.window.dashboard.WorkTimeData
 import java.util.*
@@ -34,9 +35,13 @@ object NotificationUtils : ClassTagAware {
         }
         val expectedEndWorkDayTime = workTimeData.expectedEndWorkDayTime ?: Date()
 
-        WorkTimeNotificationFactory.scheduleEndOfWorkTimeNotification(context, endOfWorkTimeExpired)
-        WorkTimeNotificationFactory.showWorkTimeInProgressNotification(context,
-            expectedEndWorkDayTime)
+        scheduleEndOfWorkTimeNotification(context, endOfWorkTimeExpired)
+        WorkTimeNotificationFactory.createWorkTimeInProgressNotification(context,
+            expectedEndWorkDayTime).notifyUser()
+    }
+
+    private fun scheduleEndOfWorkTimeNotification(context: Context, endOfWorkTimeExpired: Calendar) {
+        TimerManager.setAlarm(context, endOfWorkTimeExpired)
     }
 
     fun clearAllNotifications(context: Context) {

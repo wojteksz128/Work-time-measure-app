@@ -9,6 +9,6 @@ class TimerExpiredReceiver : BroadcastReceiver() {
 
     // TODO: 21.09.2021 Register expired recipients
     override fun onReceive(context: Context, intent: Intent) {
-        WorkTimeNotificationFactory.showEndOfWorkTimeNotification(context)
+        WorkTimeNotificationFactory.createEndOfWorkTimeNotification(context).notifyUser()
     }
 }
