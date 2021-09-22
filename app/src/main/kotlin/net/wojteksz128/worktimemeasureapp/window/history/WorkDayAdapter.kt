@@ -41,7 +41,7 @@ class WorkDayAdapter :
     }
 
 
-    inner class WorkDayViewHolder(val binding: HistoryWorkDayListItemBinding) :
+    class WorkDayViewHolder(val binding: HistoryWorkDayListItemBinding) :
         RecyclerView.ViewHolder(binding.root), ClassTagAware {
 
         private val comeEventsAdapter = ComeEventsAdapter()

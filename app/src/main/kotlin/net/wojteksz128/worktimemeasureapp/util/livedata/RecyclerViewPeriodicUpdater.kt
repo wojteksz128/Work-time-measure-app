@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.RecyclerView
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.coroutines.PeriodicOperation
 
+// TODO: 22.09.2021 synchronizacja z dashboard oraz WorkDayAdapter
 class RecyclerViewPeriodicUpdater(private val repeatMillis: Long = 1000) : ClassTagAware {
     private var workTimeCounterRunner: PeriodicOperation.PeriodicOperationRunner? = null
     private val updatedItemsPosition = mutableSetOf<Int>()
@@ -16,7 +17,7 @@ class RecyclerViewPeriodicUpdater(private val repeatMillis: Long = 1000) : Class
     }
 
     fun removeItem(position: Int, adapter: RecyclerView.Adapter<*>) {
-        Log.d(classTag, "removeItem: Item at position $position added to updated in adapter ${adapter.javaClass.simpleName}")
+        Log.d(classTag, "removeItem: Item at position $position removed to updated in adapter ${adapter.javaClass.simpleName}")
         updatedItemsPosition.remove(position)
         if (updatedItemsPosition.isEmpty())
             stopTimer(adapter)

@@ -14,14 +14,13 @@ import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventType
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents
 import net.wojteksz128.worktimemeasureapp.databinding.ActivityDashboardBinding
+import net.wojteksz128.worktimemeasureapp.notification.NotificationUtils
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.*
 import net.wojteksz128.worktimemeasureapp.util.comeevent.ComeEventUtils
 import net.wojteksz128.worktimemeasureapp.util.comeevent.NewEventRegisterListener
 import net.wojteksz128.worktimemeasureapp.util.coroutines.PeriodicOperation
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
-import net.wojteksz128.worktimemeasureapp.notification.NotificationUtils
-import net.wojteksz128.worktimemeasureapp.util.recyclerView.ItemUpdate
 import net.wojteksz128.worktimemeasureapp.window.BaseActivity
 import net.wojteksz128.worktimemeasureapp.window.history.ComeEventsAdapter
 import java.util.*
@@ -60,11 +59,6 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
 
     private fun runTimerIfRequiredFor(workDayEvents: WorkDayEvents) {
         if (workDayEvents.events.any { !it.isEnded }) {
-            viewModel.notEndedEventsIndex.clear()
-            viewModel.notEndedEventsIndex.addAll(workDayEvents.events
-                .mapIndexed { index, comeEvent -> Pair(index, comeEvent) }
-                .filter { !it.second.isEnded }.map { ItemUpdate(it.first) })
-
             startTimer()
         } else {
             stopTimer()
@@ -75,12 +69,8 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
         if (viewModel.workTimeCounterRunner?.timer?.isActive != true) {
             val params = PeriodicOperation.PeriodicOperationParams(repeatMillis = 1000,
                 mainThreadAction = {
+                    Log.d(classTag, "startTimer: Update workTimeData")
                     viewModel.workTimeData.value?.updateData()
-                    Log.d(classTag,
-                        "runUpdaterEverySecond: Notify item changed: ${viewModel.notEndedEventsIndex}")
-                    viewModel.notEndedEventsIndex.forEach { index ->
-                        comeEventsAdapter.notifyItemChanged(index.position)
-                    }
                 })
             viewModel.workTimeCounterRunner = PeriodicOperation.start(params)
         }
