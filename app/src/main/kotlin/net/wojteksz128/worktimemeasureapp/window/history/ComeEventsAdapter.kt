@@ -9,7 +9,7 @@ import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEvent
 import net.wojteksz128.worktimemeasureapp.databinding.HistoryDayEventListItemBinding
 
 class ComeEventsAdapter :
-    ListAdapter<ComeEvent, ComeEventsAdapter.ComeEventViewHolder>(DiffCallback) {
+    ListAdapter<ComeEvent, ComeEventsAdapter.ComeEventViewHolder>(ComeEventDiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ComeEventViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -32,7 +32,7 @@ class ComeEventsAdapter :
     }
 
 
-    object DiffCallback : DiffUtil.ItemCallback<ComeEvent>() {
+    object ComeEventDiffCallback : DiffUtil.ItemCallback<ComeEvent>() {
         override fun areItemsTheSame(oldItem: ComeEvent, newItem: ComeEvent): Boolean {
             return oldItem.id == newItem.id
         }
@@ -41,7 +41,8 @@ class ComeEventsAdapter :
             return oldItem.startDate == newItem.startDate &&
                     oldItem.endDate == newItem.endDate &&
                     oldItem.durationLong == newItem.durationLong &&
-                    oldItem.workDayId == newItem.workDayId
+                    oldItem.workDayId == newItem.workDayId &&
+                    oldItem.endDate != null
         }
 
     }

@@ -38,17 +38,12 @@ class HistoryActivity : BaseActivity<ActivityHistoryBinding>(R.layout.activity_h
         Log.v(classTag, "onResume: Fill days list")
         viewModel.workDaysPager.liveData.observe(this,
             { workDayAdapter.submitData(this.lifecycle, it) })
+        // TODO: 21.09.2021 Przenieś do innego miesca (niezależnego od HistoryActivity)
         DateTimeProvider.updateOffset(this)
     }
 
-    override fun onPause() {
-        super.onPause()
-        Log.v(classTag, "onPause: Stop second updater")
-        this.viewModel.secondRunner.stop()
-    }
-
     private fun initWorkDaysRecyclerView() {
-        workDayAdapter = WorkDayAdapter { action: Runnable -> runOnUiThread(action) }
+        workDayAdapter = WorkDayAdapter()
 
         binding.historyRvDays.adapter = workDayAdapter
         (binding.historyRvDays.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false

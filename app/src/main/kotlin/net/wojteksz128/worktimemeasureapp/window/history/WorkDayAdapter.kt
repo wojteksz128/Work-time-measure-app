@@ -1,6 +1,5 @@
 package net.wojteksz128.worktimemeasureapp.window.history
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
@@ -11,11 +10,11 @@ import net.wojteksz128.worktimemeasureapp.WorkTimeMeasureApp.Companion.context
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents
 import net.wojteksz128.worktimemeasureapp.databinding.HistoryWorkDayListItemBinding
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
-import net.wojteksz128.worktimemeasureapp.util.FunctionWithParameter
-import net.wojteksz128.worktimemeasureapp.util.PeriodicOperationRunner
+import net.wojteksz128.worktimemeasureapp.util.livedata.RecyclerViewPeriodicUpdater
 
-class WorkDayAdapter(private val uiThreadRunner: (Runnable) -> Unit) :
-    PagingDataAdapter<WorkDayEvents, WorkDayAdapter.WorkDayViewHolder>(DiffCallback) {
+class WorkDayAdapter :
+    PagingDataAdapter<WorkDayEvents, WorkDayAdapter.WorkDayViewHolder>(WorkDayEventsDiffCallback) {
+    private val periodicUpdater = RecyclerViewPeriodicUpdater()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WorkDayViewHolder {
         val inflater = LayoutInflater.from(context)
@@ -25,26 +24,26 @@ class WorkDayAdapter(private val uiThreadRunner: (Runnable) -> Unit) :
 
     override fun onBindViewHolder(holder: WorkDayViewHolder, position: Int) {
         getItem(position)?.let {
-            holder.bind(it, getUpdateAction(it, position))
+            holder.bind(it)
         }
     }
 
-    private fun getUpdateAction(
-        currentDayEvents: WorkDayEvents,
-        position: Int
-    ): FunctionWithParameter<WorkDayEvents> {
-        return object : FunctionWithParameter<WorkDayEvents>(currentDayEvents) {
-            override fun action(obj: WorkDayEvents) {
-                uiThreadRunner { notifyItemChanged(position) }
-            }
+    override fun onViewAttachedToWindow(holder: WorkDayViewHolder) {
+        super.onViewAttachedToWindow(holder)
+        if (holder.binding.workDay?.hasEventsEnded() != true) {
+            periodicUpdater.addItem(holder.absoluteAdapterPosition, this)
         }
     }
 
+    override fun onViewDetachedFromWindow(holder: WorkDayViewHolder) {
+        periodicUpdater.removeItem(holder.absoluteAdapterPosition, this)
+        super.onViewDetachedFromWindow(holder)
+    }
 
-    class WorkDayViewHolder(private val binding: HistoryWorkDayListItemBinding) :
+
+    inner class WorkDayViewHolder(val binding: HistoryWorkDayListItemBinding) :
         RecyclerView.ViewHolder(binding.root), ClassTagAware {
 
-        private val secondRunner = PeriodicOperationRunner<WorkDayEvents>()
         private val comeEventsAdapter = ComeEventsAdapter()
 
         init {
@@ -54,34 +53,15 @@ class WorkDayAdapter(private val uiThreadRunner: (Runnable) -> Unit) :
             }
         }
 
-        fun bind(workDay: WorkDayEvents, updateAction: FunctionWithParameter<WorkDayEvents>) {
+        fun bind(workDay: WorkDayEvents) {
             binding.workDay = workDay
 
             comeEventsAdapter.submitList(workDay.events)
-            prepareCountingIfAnyEventNotFinished(workDay, updateAction)
-        }
-
-        private fun prepareCountingIfAnyEventNotFinished(
-            workDay: WorkDayEvents,
-            updateAction: FunctionWithParameter<WorkDayEvents>
-        ) {
-            if (!workDay.hasEventsEnded()) {
-                if (!secondRunner.isRunning) {
-                    secondRunner.setConsumer(updateAction)
-                    Log.v(
-                        classTag,
-                        "prepareCountingIfAnyEventNotFinished: start second updater for day ${workDay.workDay.date}"
-                    )
-                    secondRunner.start()
-                }
-            } else {
-                secondRunner.stop()
-            }
         }
     }
 
 
-    object DiffCallback : DiffUtil.ItemCallback<WorkDayEvents>() {
+    object WorkDayEventsDiffCallback : DiffUtil.ItemCallback<WorkDayEvents>() {
 
         override fun areItemsTheSame(oldItem: WorkDayEvents, newItem: WorkDayEvents): Boolean {
             return oldItem.workDay.id!! == newItem.workDay.id!!

@@ -92,7 +92,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
 
     override fun onPause() {
         Log.d(classTag, "onPause: Stop second updater")
-        viewModel.workTimeCounterRunner?.let { PeriodicOperation.cancel(it) }
+        stopTimer()
         super.onPause()
     }
 
