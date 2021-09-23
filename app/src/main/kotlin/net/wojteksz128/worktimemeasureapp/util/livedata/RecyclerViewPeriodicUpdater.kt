@@ -24,7 +24,7 @@ class RecyclerViewPeriodicUpdater(private val repeatMillis: Long = 1000) : Class
     }
 
     private fun startTimer(adapter: RecyclerView.Adapter<*>) {
-        if (workTimeCounterRunner?.timer?.isActive != true) {
+        if (workTimeCounterRunner?.isActive != true) {
             Log.d(classTag, "startTimer: Updater starts for adapter ${adapter.javaClass.simpleName}")
             val params = PeriodicOperation.PeriodicOperationParams(repeatMillis = repeatMillis,
                 mainThreadAction = {

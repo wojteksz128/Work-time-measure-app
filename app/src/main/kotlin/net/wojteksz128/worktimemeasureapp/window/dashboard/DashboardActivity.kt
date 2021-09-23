@@ -66,7 +66,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
     }
 
     private fun startTimer() {
-        if (viewModel.workTimeCounterRunner?.timer?.isActive != true) {
+        if (viewModel.workTimeCounterRunner?.isActive != true) {
             val params = PeriodicOperation.PeriodicOperationParams(repeatMillis = 1000,
                 mainThreadAction = {
                     Log.d(classTag, "startTimer: Update workTimeData")
