@@ -14,14 +14,13 @@ import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventType
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents
 import net.wojteksz128.worktimemeasureapp.databinding.ActivityDashboardBinding
+import net.wojteksz128.worktimemeasureapp.notification.NotificationUtils
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.*
 import net.wojteksz128.worktimemeasureapp.util.comeevent.ComeEventUtils
 import net.wojteksz128.worktimemeasureapp.util.comeevent.NewEventRegisterListener
 import net.wojteksz128.worktimemeasureapp.util.coroutines.PeriodicOperation
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
-import net.wojteksz128.worktimemeasureapp.notification.NotificationUtils
-import net.wojteksz128.worktimemeasureapp.util.recyclerView.ItemUpdate
 import net.wojteksz128.worktimemeasureapp.window.BaseActivity
 import net.wojteksz128.worktimemeasureapp.window.history.ComeEventsAdapter
 import java.util.*
@@ -53,14 +52,39 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
         super.onResume()
         Log.d(classTag, "onResume: Fill days list")
         viewModel.workDay.observe(this@DashboardActivity, currentDayObserver)
+        viewModel.workDay.value?.let { runTimerIfRequiredFor(it) }
+        // TODO: 21.09.2021 Przenieś do innego miesca (niezależnego od DashboardActivity)
         DateTimeProvider.updateOffset(this)
     }
 
-    override fun onPause() {
-        // TODO: 20.09.2021 Correct updater
-        super.onPause()
-        Log.d(classTag, "onPause: Stop second updater")
+    private fun runTimerIfRequiredFor(workDayEvents: WorkDayEvents) {
+        if (workDayEvents.events.any { !it.isEnded }) {
+            startTimer()
+        } else {
+            stopTimer()
+        }
+    }
+
+    private fun startTimer() {
+        if (viewModel.workTimeCounterRunner?.isActive != true) {
+            val params = PeriodicOperation.PeriodicOperationParams(repeatMillis = 1000,
+                mainThreadAction = {
+                    Log.d(classTag, "startTimer: Update workTimeData")
+                    viewModel.workTimeData.value?.updateData()
+                })
+            viewModel.workTimeCounterRunner = PeriodicOperation.start(params)
+            comeEventsAdapter.syncUpdaterWith(viewModel.workTimeCounterRunner!!)
+        }
+    }
+
+    private fun stopTimer() {
         viewModel.workTimeCounterRunner?.let { PeriodicOperation.cancel(it) }
+    }
+
+    override fun onPause() {
+        Log.d(classTag, "onPause: Stop second updater")
+        stopTimer()
+        super.onPause()
     }
 
     override fun registerNewEvent() {
@@ -100,36 +124,9 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
 
             workDayEvents?.let { dayEvents ->
                 comeEventsAdapter.submitList(dayEvents.events)
-                fillNotEndedEventsIndexList(dayEvents)
-                runUpdaterEverySecond()
+                runTimerIfRequiredFor(dayEvents)
             }
         }
 
-        private fun fillNotEndedEventsIndexList(dayEvents: WorkDayEvents) {
-            dayEvents.events.forEachIndexed { index, comeEvent ->
-                if (!comeEvent.isEnded)
-                    viewModel.notEndedEventsIndex.add(ItemUpdate(index))
-                else {
-                    viewModel.notEndedEventsIndex.forEach { if (it.position == index) it.lastIteration = true }
-                }
-            }
-        }
-
-        private fun runUpdaterEverySecond() =
-            // TODO: 20.09.2021 Periodic operation not stops, when not ended events is empty
-            if (viewModel.notEndedEventsIndex.isNotEmpty()) {
-                val params = PeriodicOperation.PeriodicOperationParams(repeatMillis = 1000,
-                    mainThreadAction = {
-                        viewModel.workTimeData.value?.updateData()
-                        Log.d(classTag, "runUpdaterEverySecond: Notify item changed: ${viewModel.notEndedEventsIndex}")
-                        viewModel.notEndedEventsIndex.forEach { index ->
-                            comeEventsAdapter.notifyItemChanged(index.position)
-                        }
-                        viewModel.notEndedEventsIndex.removeAll { it.lastIteration }
-                    })
-                viewModel.workTimeCounterRunner = PeriodicOperation.start(params)
-            } else {
-                viewModel.workTimeCounterRunner?.let { PeriodicOperation.cancel(it) }
-            }
     }
 }
