@@ -45,22 +45,77 @@ object PeriodicOperation : ClassTagAware {
 
         fun start() {
             if (!isActive) timer = startCoroutineTimer {
-                Log.d(classTag, "timer: Background - tick")
-                params.backgroundAction()
-                scopeForSaving.launch {
-                    Log.d(classTag, "timer: Main thread - tick")
-                    params.mainThreadAction()
+                synchronized(params) {
+                    Log.d(classTag, "timer: Background - tick runs ${params.backgroundActions.size} actions")
+                    params.backgroundActions.forEachIndexed { index, it ->
+                        Log.d(classTag, "timer: Background - launch action $index")
+                        it()
+                    }
+                    scopeForSaving.launch {
+                        Log.d(classTag, "timer: Main thread - tick runs ${params.mainThreadActions.size} actions")
+                        params.mainThreadActions.forEachIndexed { index, it ->
+                            Log.d(classTag, "timer: Main thread - launch action $index")
+                            it()
+                        }
+                    }
                 }
             }
         }
 
         fun stop() = timer?.cancel()
+
+        fun syncWith(anotherRunner: PeriodicOperationRunner) {
+            if(anotherRunner != this) {
+                stop()
+                anotherRunner.params.merge(params)
+            }
+        }
+
+        fun attach(anotherParams: PeriodicOperationParams) {
+            params.merge(anotherParams)
+        }
+
+        fun attach(anotherParamsCollection: Collection<PeriodicOperationParams>) {
+            anotherParamsCollection.forEach { attach(it) }
+        }
+
+        fun detach(anotherParams: PeriodicOperationParams) {
+            params.remove(anotherParams)
+            if (params.backgroundActions.isEmpty() && params.mainThreadActions.isEmpty()) {
+                Log.d(classTag, "detach: background and main thread actions empty - stop timer")
+                stop()
+            }
+        }
     }
 
-    data class PeriodicOperationParams(
+    class PeriodicOperationParams(
         val delayMillis: Long = 0,
         val repeatMillis: Long = 0,
-        val backgroundAction: () -> Unit = {},
-        val mainThreadAction: () -> Unit = {},
-    )
+        backgroundAction: () -> Unit = {},
+        mainThreadAction: () -> Unit = {},
+    ) {
+        val backgroundActions: Set<() -> Unit>
+            get() = mBackgroundActions
+
+        val mainThreadActions: Set<() -> Unit>
+            get() = mMainThreadActions
+
+        private val mMainThreadActions = mutableSetOf(mainThreadAction)
+        private val mBackgroundActions = mutableSetOf(backgroundAction)
+
+        fun merge(anotherParams: PeriodicOperationParams) {
+            if (anotherParams.delayMillis != delayMillis || anotherParams.repeatMillis != repeatMillis) {
+                throw IllegalStateException("Try to sync params with not the same delay or repeat time")
+            }
+            synchronized(anotherParams) {
+                mBackgroundActions += anotherParams.mBackgroundActions
+                mMainThreadActions += anotherParams.mMainThreadActions
+            }
+        }
+
+        fun remove(anotherParams: PeriodicOperationParams) {
+            mBackgroundActions -= anotherParams.mBackgroundActions
+            mMainThreadActions -= anotherParams.mMainThreadActions
+        }
+    }
 }

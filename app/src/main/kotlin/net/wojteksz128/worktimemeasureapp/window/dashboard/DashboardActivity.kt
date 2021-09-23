@@ -73,6 +73,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
                     viewModel.workTimeData.value?.updateData()
                 })
             viewModel.workTimeCounterRunner = PeriodicOperation.start(params)
+            comeEventsAdapter.syncUpdaterWith(viewModel.workTimeCounterRunner!!)
         }
     }
 

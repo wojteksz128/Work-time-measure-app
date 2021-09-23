@@ -7,11 +7,12 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEvent
 import net.wojteksz128.worktimemeasureapp.databinding.HistoryDayEventListItemBinding
+import net.wojteksz128.worktimemeasureapp.util.coroutines.PeriodicOperation
 import net.wojteksz128.worktimemeasureapp.util.livedata.RecyclerViewPeriodicUpdater
 
 class ComeEventsAdapter :
     ListAdapter<ComeEvent, ComeEventsAdapter.ComeEventViewHolder>(ComeEventDiffCallback) {
-    private val periodicUpdater = RecyclerViewPeriodicUpdater()
+    private val periodicUpdater = RecyclerViewPeriodicUpdater(this)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ComeEventViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -27,14 +28,22 @@ class ComeEventsAdapter :
     override fun onViewAttachedToWindow(holder: ComeEventViewHolder) {
         super.onViewAttachedToWindow(holder)
         if (holder.binding.comeEvent?.isEnded != true) {
-            periodicUpdater.addItem(holder.absoluteAdapterPosition, this)
+            periodicUpdater.addItem(holder.absoluteAdapterPosition)
         }
     }
 
     override fun onViewDetachedFromWindow(holder: ComeEventViewHolder) {
         // TODO: 22.09.2021 Jak to rozwiązać na dashboard 
-//        periodicUpdater.removeItem(holder.absoluteAdapterPosition, this)
+//        periodicUpdater.removeItem(holder.absoluteAdapterPosition)
         super.onViewDetachedFromWindow(holder)
+    }
+
+    fun syncUpdaterWith(anotherRunner: PeriodicOperation.PeriodicOperationRunner) {
+        periodicUpdater.syncWith(anotherRunner)
+    }
+
+    fun syncUpdaterWith(anotherUpdater: RecyclerViewPeriodicUpdater) {
+        periodicUpdater.syncWith(anotherUpdater)
     }
 
 

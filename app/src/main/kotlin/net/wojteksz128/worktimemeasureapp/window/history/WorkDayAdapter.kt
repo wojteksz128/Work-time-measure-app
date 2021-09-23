@@ -14,7 +14,7 @@ import net.wojteksz128.worktimemeasureapp.util.livedata.RecyclerViewPeriodicUpda
 
 class WorkDayAdapter :
     PagingDataAdapter<WorkDayEvents, WorkDayAdapter.WorkDayViewHolder>(WorkDayEventsDiffCallback) {
-    private val periodicUpdater = RecyclerViewPeriodicUpdater()
+    private val periodicUpdater = RecyclerViewPeriodicUpdater(this)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WorkDayViewHolder {
         val inflater = LayoutInflater.from(context)
@@ -31,12 +31,13 @@ class WorkDayAdapter :
     override fun onViewAttachedToWindow(holder: WorkDayViewHolder) {
         super.onViewAttachedToWindow(holder)
         if (holder.binding.workDay?.hasEventsEnded() != true) {
-            periodicUpdater.addItem(holder.absoluteAdapterPosition, this)
+            periodicUpdater.addItem(holder.absoluteAdapterPosition)
+            holder.syncUpdaterWith(periodicUpdater)
         }
     }
 
     override fun onViewDetachedFromWindow(holder: WorkDayViewHolder) {
-        periodicUpdater.removeItem(holder.absoluteAdapterPosition, this)
+        periodicUpdater.removeItem(holder.absoluteAdapterPosition)
         super.onViewDetachedFromWindow(holder)
     }
 
@@ -57,6 +58,10 @@ class WorkDayAdapter :
             binding.workDay = workDay
 
             comeEventsAdapter.submitList(workDay.events)
+        }
+
+        fun syncUpdaterWith(anotherUpdater: RecyclerViewPeriodicUpdater) {
+            comeEventsAdapter.syncUpdaterWith(anotherUpdater)
         }
     }
 
