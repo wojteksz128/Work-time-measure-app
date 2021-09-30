@@ -27,9 +27,10 @@ abstract class AppDatabase : RoomDatabase() {
     companion object : ClassTagAware {
 
         private val LOCK = Any()
-        private const val DATABASE_FILENAME = "work-time-measure.db"
+        const val DATABASE_FILENAME = "work-time-measure.db"
         private var sInstance: AppDatabase? = null
 
+        // TODO: 30.09.2021 use hilt
         fun getInstance(context: Context): AppDatabase {
             if (sInstance == null) {
                 synchronized(LOCK) {

@@ -3,8 +3,9 @@ package net.wojteksz128.worktimemeasureapp.database.migration
 import android.util.Log
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import javax.inject.Inject
 
-class MigrateFrom6To7 : Migration(6, 7) {
+class MigrateFrom6To7 @Inject constructor() : Migration(6, 7) {
 
     override fun migrate(database: SupportSQLiteDatabase) {
         Log.d(MigrateFrom6To7::class.java.simpleName, "Begin migrate data from 6 to 7 db version")

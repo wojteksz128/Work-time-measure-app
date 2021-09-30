@@ -5,6 +5,7 @@ import androidx.room.*
 
 @Dao
 @Suppress("unused")
+// TODO: 30.09.2021 Make all suspended
 interface ComeEventDao {
 
     @Query("SELECT * FROM come_event ORDER BY startDate DESC")

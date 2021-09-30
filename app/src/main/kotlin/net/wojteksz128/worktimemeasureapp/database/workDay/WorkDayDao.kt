@@ -7,6 +7,7 @@ import java.util.*
 
 @Dao
 @Suppress("unused")
+// TODO: 30.09.2021 Make all suspended
 interface WorkDayDao {
 
     @Transaction

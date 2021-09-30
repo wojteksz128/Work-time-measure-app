@@ -2,9 +2,10 @@ package net.wojteksz128.worktimemeasureapp.database.migration
 
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import javax.inject.Inject
 
 
-class MigrateFrom3To4 : Migration(3, 4) {
+class MigrateFrom3To4 @Inject constructor() : Migration(3, 4) {
 
     override fun migrate(database: SupportSQLiteDatabase) {
         database.execSQL("CREATE TABLE IF NOT EXISTS come_event_tmp (" +

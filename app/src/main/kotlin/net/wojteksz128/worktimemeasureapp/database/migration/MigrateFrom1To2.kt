@@ -2,9 +2,10 @@ package net.wojteksz128.worktimemeasureapp.database.migration
 
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import javax.inject.Inject
 
 
-class MigrateFrom1To2 : Migration(1, 2) {
+class MigrateFrom1To2 @Inject constructor() : Migration(1, 2) {
 
     override fun migrate(database: SupportSQLiteDatabase) {
         database.execSQL("DROP TABLE come_event")
