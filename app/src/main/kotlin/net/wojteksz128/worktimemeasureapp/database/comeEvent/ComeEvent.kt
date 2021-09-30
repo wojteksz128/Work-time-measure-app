@@ -7,19 +7,39 @@ import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import org.threeten.bp.Duration
 import java.util.*
 
-@Entity(tableName = "come_event"
-        , foreignKeys = [ForeignKey(entity = WorkDay::class, parentColumns = ["id"], childColumns = ["workDayId"], onDelete = CASCADE)])
+@Entity(
+    tableName = "come_event",
+    foreignKeys = [
+        ForeignKey(
+            entity = WorkDay::class,
+            parentColumns = ["id"],
+            childColumns = ["workDayId"],
+            onDelete = CASCADE
+        )
+    ]
+)
 class ComeEvent(
     @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")
     val id: Long?,
+
+    @ColumnInfo(name = "startDate")
     var startDate: Date,
+
+    @ColumnInfo(name = "endDate")
     var endDate: Date?,
+
     @ColumnInfo(name = "duration")
     var durationLong: Long?,
-    @ColumnInfo(index = true)
+
+    @ColumnInfo(
+        name = "workDayId",
+        index = true
+    )
     val workDayId: Long,
 ) : Comparable<ComeEvent> {
 
+    // TODO: 30.09.2021 Remove after implement mapper
     var duration: Duration
         get() = Duration.ofMillis(durationLong ?: DateTimeProvider.currentTime.time - startDate.time)
         set(value) {
