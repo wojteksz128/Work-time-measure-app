@@ -9,23 +9,23 @@ import androidx.room.*
 interface ComeEventDao {
 
     @Query("SELECT * FROM come_event ORDER BY startDate DESC")
-    fun findAllInLiveData(): LiveData<List<ComeEvent>>
+    fun findAllInLiveData(): LiveData<List<ComeEventDto>>
 
     @Query("SELECT * FROM come_event ORDER BY startDate DESC")
-    fun findAll(): List<ComeEvent>
+    fun findAll(): List<ComeEventDto>
 
     @Query("SELECT * FROM come_event WHERE id = :id")
-    fun findByIdInLiveData(id: Int): LiveData<ComeEvent>
+    fun findByIdInLiveData(id: Int): LiveData<ComeEventDto>
 
     @Query("SELECT * FROM come_event WHERE id = :id")
-    fun findById(id: Int): ComeEvent
+    fun findById(id: Int): ComeEventDto
 
     @Insert
-    fun insert(comeEvent: ComeEvent)
+    fun insert(comeEvent: ComeEventDto)
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    fun update(comeEvent: ComeEvent)
+    fun update(comeEvent: ComeEventDto)
 
     @Delete
-    fun delete(comeEvent: ComeEvent)
+    fun delete(comeEvent: ComeEventDto)
 }

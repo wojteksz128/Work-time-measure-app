@@ -6,7 +6,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import net.wojteksz128.worktimemeasureapp.database.AppDatabase
-import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents
+import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayWithEventsDto
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.coroutines.PeriodicOperation
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
@@ -14,10 +14,10 @@ import net.wojteksz128.worktimemeasureapp.util.livedata.ObservableLiveData
 
 class DashboardViewModel(application: Application) : AndroidViewModel(application), ClassTagAware {
     var workTimeCounterRunner: PeriodicOperation.PeriodicOperationRunner? = null
-    val workDay: LiveData<WorkDayEvents>
+    val workDay: LiveData<WorkDayWithEventsDto>
     val workTimeData = ObservableLiveData<WorkTimeData>()
     val waitingFor = MutableLiveData(false)
-    private val weekWorkDays: LiveData<List<WorkDayEvents>>
+    private val weekWorkDays: LiveData<List<WorkDayWithEventsDto>>
 
     init {
         Log.d(classTag, "ctor: Retrieve current work day with events")
@@ -34,7 +34,7 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
         }
 
         workDay = workDayDao.findByIntervalContainsInLiveData(DateTimeProvider.currentTime)
-        workDay.observeForever { workDayEvents: WorkDayEvents? ->
+        workDay.observeForever { workDayEvents: WorkDayWithEventsDto? ->
             workTimeDataInst.currentDay = workDayEvents
         }
     }

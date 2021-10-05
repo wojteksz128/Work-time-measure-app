@@ -2,17 +2,17 @@ package net.wojteksz128.worktimemeasureapp.database.workDay
 
 import androidx.room.Embedded
 import androidx.room.Relation
-import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEvent
+import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventDto
 
-class WorkDayEvents(
-    @Embedded val workDay: WorkDay,
+class WorkDayWithEventsDto(
+    @Embedded val workDay: WorkDayDto,
 
     @Relation(
         parentColumn = "id",
         entityColumn = "workDayId",
-        entity = ComeEvent::class
+        entity = ComeEventDto::class
     )
-    val events: List<ComeEvent> = listOf() // TODO: 30.09.2021 Remove default value after implement mapper
+    val events: List<ComeEventDto> = listOf() // TODO: 30.09.2021 Remove default value after implement mapper
 ) {
 
     // TODO: 30.09.2021 Remove after implement mapper
@@ -21,7 +21,7 @@ class WorkDayEvents(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as WorkDayEvents
+        other as WorkDayWithEventsDto
 
         if (workDay != other.workDay) return false
 

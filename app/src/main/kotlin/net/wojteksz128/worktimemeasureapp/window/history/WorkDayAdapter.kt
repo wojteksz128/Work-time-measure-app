@@ -7,13 +7,13 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import net.wojteksz128.worktimemeasureapp.WorkTimeMeasureApp.Companion.context
-import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents
+import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayWithEventsDto
 import net.wojteksz128.worktimemeasureapp.databinding.HistoryWorkDayListItemBinding
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.livedata.RecyclerViewPeriodicUpdater
 
 class WorkDayAdapter :
-    PagingDataAdapter<WorkDayEvents, WorkDayAdapter.WorkDayViewHolder>(WorkDayEventsDiffCallback) {
+    PagingDataAdapter<WorkDayWithEventsDto, WorkDayAdapter.WorkDayViewHolder>(WorkDayEventsDiffCallback) {
     private val periodicUpdater = RecyclerViewPeriodicUpdater(this)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WorkDayViewHolder {
@@ -54,7 +54,7 @@ class WorkDayAdapter :
             }
         }
 
-        fun bind(workDay: WorkDayEvents) {
+        fun bind(workDay: WorkDayWithEventsDto) {
             binding.workDay = workDay
 
             comeEventsAdapter.submitList(workDay.events)
@@ -66,13 +66,13 @@ class WorkDayAdapter :
     }
 
 
-    object WorkDayEventsDiffCallback : DiffUtil.ItemCallback<WorkDayEvents>() {
+    object WorkDayEventsDiffCallback : DiffUtil.ItemCallback<WorkDayWithEventsDto>() {
 
-        override fun areItemsTheSame(oldItem: WorkDayEvents, newItem: WorkDayEvents): Boolean {
+        override fun areItemsTheSame(oldItem: WorkDayWithEventsDto, newItem: WorkDayWithEventsDto): Boolean {
             return oldItem.workDay.id!! == newItem.workDay.id!!
         }
 
-        override fun areContentsTheSame(oldItem: WorkDayEvents, newItem: WorkDayEvents) =
+        override fun areContentsTheSame(oldItem: WorkDayWithEventsDto, newItem: WorkDayWithEventsDto) =
             oldItem == newItem
     }
 }

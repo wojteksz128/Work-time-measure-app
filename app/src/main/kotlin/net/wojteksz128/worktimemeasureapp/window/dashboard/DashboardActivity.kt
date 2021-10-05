@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventType
-import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents
+import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayWithEventsDto
 import net.wojteksz128.worktimemeasureapp.databinding.ActivityDashboardBinding
 import net.wojteksz128.worktimemeasureapp.notification.NotificationUtils
 import net.wojteksz128.worktimemeasureapp.settings.Settings
@@ -57,7 +57,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
         DateTimeProvider.updateOffset(this)
     }
 
-    private fun runTimerIfRequiredFor(workDayEvents: WorkDayEvents) {
+    private fun runTimerIfRequiredFor(workDayEvents: WorkDayWithEventsDto) {
         if (workDayEvents.events.any { !it.isEnded }) {
             startTimer()
         } else {
@@ -117,9 +117,9 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
     }
 
 
-    private inner class CurrentDayObserver : Observer<WorkDayEvents> {
+    private inner class CurrentDayObserver : Observer<WorkDayWithEventsDto> {
 
-        override fun onChanged(workDayEvents: WorkDayEvents?) {
+        override fun onChanged(workDayEvents: WorkDayWithEventsDto?) {
             viewModel.workTimeData.value?.updateData()
 
             workDayEvents?.let { dayEvents ->

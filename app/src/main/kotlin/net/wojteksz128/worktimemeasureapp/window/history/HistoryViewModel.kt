@@ -7,12 +7,12 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import kotlinx.coroutines.Dispatchers
 import net.wojteksz128.worktimemeasureapp.database.AppDatabase
-import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents
+import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayWithEventsDto
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 
 class HistoryViewModel(application: Application) : AndroidViewModel(application), ClassTagAware {
 
-    val workDaysPager: Pager<Int, WorkDayEvents>
+    val workDaysPager: Pager<Int, WorkDayWithEventsDto>
 
     init {
         Log.d(classTag, "ctor: Retrieve work days with events")

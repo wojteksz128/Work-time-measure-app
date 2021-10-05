@@ -2,7 +2,7 @@ package net.wojteksz128.worktimemeasureapp.database.comeEvent
 
 import androidx.room.*
 import androidx.room.ForeignKey.CASCADE
-import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDay
+import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayDto
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import org.threeten.bp.Duration
 import java.util.*
@@ -11,14 +11,14 @@ import java.util.*
     tableName = "come_event",
     foreignKeys = [
         ForeignKey(
-            entity = WorkDay::class,
+            entity = WorkDayDto::class,
             parentColumns = ["id"],
             childColumns = ["workDayId"],
             onDelete = CASCADE
         )
     ]
 )
-class ComeEvent(
+class ComeEventDto(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     val id: Long?,
@@ -37,7 +37,7 @@ class ComeEvent(
         index = true
     )
     val workDayId: Long,
-) : Comparable<ComeEvent> {
+) : Comparable<ComeEventDto> {
 
     // TODO: 30.09.2021 Remove after implement mapper
     var duration: Duration
@@ -54,14 +54,14 @@ class ComeEvent(
             : this(null, startDate, endDate, duration, workDayId)
 
     @Ignore
-    constructor(startDate: Date, workDay: WorkDay)
+    constructor(startDate: Date, workDay: WorkDayDto)
             : this(startDate, null, null, workDay.id!!)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || javaClass != other.javaClass) return false
 
-        val event = other as ComeEvent?
+        val event = other as ComeEventDto?
 
         if (workDayId != event!!.workDayId) return false
         return if (if (id != null) id != event.id else event.id != null) false else startDate == event.startDate
@@ -74,7 +74,7 @@ class ComeEvent(
         return result
     }
 
-    override fun compareTo(other: ComeEvent): Int {
+    override fun compareTo(other: ComeEventDto): Int {
         return (this.startDate.time - other.startDate.time).toInt()
     }
 }

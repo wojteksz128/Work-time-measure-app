@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 import java.util.*
 
 @Entity(tableName = "work_day")
-class WorkDay(
+class WorkDayDto(
         @PrimaryKey(autoGenerate = true)
         @ColumnInfo(name = "id")
         val id: Long?,
@@ -31,7 +31,7 @@ class WorkDay(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as WorkDay
+        other as WorkDayDto
 
         if (id != other.id) return false
         if (date != other.date) return false

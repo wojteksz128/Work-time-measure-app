@@ -8,16 +8,16 @@ import javax.inject.Inject
 class WorkDayWithEventsMapper @Inject constructor(
     private val workDayMapper: WorkDayMapper,
     private val comeEventMapper: ComeEventMapper
-) : DomainModelMapper<WorkDay, WorkDayEvents> {
+) : DomainModelMapper<WorkDay, WorkDayWithEventsDto> {
 
-    override fun mapFromDomainModel(domainModel: WorkDay): WorkDayEvents {
-        return WorkDayEvents(
+    override fun mapFromDomainModel(domainModel: WorkDay): WorkDayWithEventsDto {
+        return WorkDayWithEventsDto(
             workDayMapper.mapFromDomainModel(domainModel),
             comeEventMapper.mapFromDomainModelList(domainModel.events)
         )
     }
 
-    override fun mapToDomainModel(entity: WorkDayEvents): WorkDay {
+    override fun mapToDomainModel(entity: WorkDayWithEventsDto): WorkDay {
         return WorkDay(
             id = entity.workDay.id,
             date = entity.workDay.date,
@@ -27,11 +27,11 @@ class WorkDayWithEventsMapper @Inject constructor(
         )
     }
 
-    fun mapFromDomainModelList(domainModels: List<WorkDay>): List<WorkDayEvents> {
+    fun mapFromDomainModelList(domainModels: List<WorkDay>): List<WorkDayWithEventsDto> {
         return domainModels.map { mapFromDomainModel(it) }
     }
 
-    fun mapToDomainModelList(entities: List<WorkDayEvents>): List<WorkDay> {
+    fun mapToDomainModelList(entities: List<WorkDayWithEventsDto>): List<WorkDay> {
         return entities.map { mapToDomainModel(it) }
     }
 }

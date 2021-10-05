@@ -4,8 +4,8 @@ import android.annotation.SuppressLint
 import androidx.annotation.StringRes
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.WorkTimeMeasureApp
-import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEvent
-import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents
+import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventDto
+import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayWithEventsDto
 import org.threeten.bp.Duration
 import org.threeten.bp.Instant
 import java.text.SimpleDateFormat
@@ -22,14 +22,14 @@ object DateTimeUtils {
         return formatter.format(date)
     }
 
-    fun calculateDuration(comeEvent: ComeEvent): Duration {
+    fun calculateDuration(comeEvent: ComeEventDto): Duration {
         val startTime = comeEvent.startDate.time
         val endTime =
             if (comeEvent.endDate != null) comeEvent.endDate!!.time else DateTimeProvider.currentTime.time
         return Duration.between(Instant.ofEpochMilli(startTime), Instant.ofEpochMilli(endTime + 1)) // +1, but exclusive duration
     }
 
-    fun mergeComeEventsDuration(workDay: WorkDayEvents): Duration = workDay.events.map { it.duration }
+    fun mergeComeEventsDuration(workDay: WorkDayWithEventsDto): Duration = workDay.events.map { it.duration }
         .fold(Duration.ZERO) { sum, element -> sum + element }
 
     fun formatCounterTime(duration: Duration?): String =

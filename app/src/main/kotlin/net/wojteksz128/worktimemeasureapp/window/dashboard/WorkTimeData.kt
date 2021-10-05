@@ -3,7 +3,7 @@ package net.wojteksz128.worktimemeasureapp.window.dashboard
 import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
 import net.wojteksz128.worktimemeasureapp.BR
-import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents
+import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayWithEventsDto
 import net.wojteksz128.worktimemeasureapp.util.datetime.WorkTimeCalculator.calculateCurrentWorkTime
 import org.threeten.bp.Duration
 import java.util.*
@@ -13,14 +13,14 @@ class WorkTimeData(start: Date, end: Date): BaseObservable() {
     val weekRange: ClosedRange<Date> = start..end
 
     @Suppress("RedundantGetter")
-    var currentDay: WorkDayEvents? = null
+    var currentDay: WorkDayWithEventsDto? = null
         get
         set(value) {
             field = value
             updateData()
         }
     @Suppress("RedundantGetter")
-    var weekWorkDays: List<WorkDayEvents> = listOf()
+    var weekWorkDays: List<WorkDayWithEventsDto> = listOf()
         get
         set(value) {
             field = value

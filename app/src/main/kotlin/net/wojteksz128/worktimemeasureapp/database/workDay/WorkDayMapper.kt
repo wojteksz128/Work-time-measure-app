@@ -3,7 +3,6 @@ package net.wojteksz128.worktimemeasureapp.database.workDay
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import net.wojteksz128.worktimemeasureapp.util.DomainModelMapper
 import javax.inject.Inject
-import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDay as WorkDayDto
 
 class WorkDayMapper @Inject constructor() : DomainModelMapper<WorkDay, WorkDayDto> {
 
