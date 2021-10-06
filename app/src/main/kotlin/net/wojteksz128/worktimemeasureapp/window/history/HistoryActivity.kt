@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.activity.viewModels
 import androidx.paging.liveData
 import androidx.recyclerview.widget.SimpleItemAnimator
+import dagger.hilt.android.AndroidEntryPoint
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.databinding.ActivityHistoryBinding
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
@@ -21,6 +22,8 @@ import net.wojteksz128.worktimemeasureapp.window.BaseActivity
 // TODO: 11.08.2018 popraw liczenie czasu pracy (może nie brać pod uwagę ms?)
 // TODO: 07.07.2019 Uwzględniaj strefę czasową
 // TODO: 09.06.2021 Uwzględnij przejścia poza jeden dzień oraz możliwość zamknięcia
+
+@AndroidEntryPoint
 class HistoryActivity : BaseActivity<ActivityHistoryBinding>(R.layout.activity_history), ClassTagAware {
     private val viewModel: HistoryViewModel by viewModels()
 

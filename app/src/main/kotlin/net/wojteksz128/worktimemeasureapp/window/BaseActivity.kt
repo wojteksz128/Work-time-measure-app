@@ -24,7 +24,7 @@ import net.wojteksz128.worktimemeasureapp.window.dashboard.DashboardActivity
 import net.wojteksz128.worktimemeasureapp.window.history.HistoryActivity
 import net.wojteksz128.worktimemeasureapp.window.settings.SettingsActivity
 
-abstract class BaseActivity<VDB>(@LayoutRes val layoutResId: Int? = null) :
+abstract class BaseActivity<VDB>(@LayoutRes val layoutResId: Int?) :
     AppCompatActivity() where VDB : ViewDataBinding {
 
     private val viewModel: BaseViewModel by viewModels()

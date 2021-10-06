@@ -7,13 +7,14 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.wojteksz128.worktimemeasureapp.R
-import net.wojteksz128.worktimemeasureapp.model.ComeEventType
-import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayWithEventsDto
 import net.wojteksz128.worktimemeasureapp.databinding.ActivityDashboardBinding
+import net.wojteksz128.worktimemeasureapp.model.ComeEventType
+import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import net.wojteksz128.worktimemeasureapp.notification.NotificationUtils
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.*
@@ -24,10 +25,15 @@ import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.window.BaseActivity
 import net.wojteksz128.worktimemeasureapp.window.history.ComeEventsAdapter
 import java.util.*
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activity_dashboard),
     NewEventRegisterListener, ClassTagAware {
     private val viewModel: DashboardViewModel by viewModels()
+
+    @Inject
+    lateinit var comeEventUtils: ComeEventUtils
 
     private val comeEventsAdapter = ComeEventsAdapter()
     private val currentDayObserver = CurrentDayObserver()
@@ -57,8 +63,8 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
         DateTimeProvider.updateOffset(this)
     }
 
-    private fun runTimerIfRequiredFor(workDayEvents: WorkDayWithEventsDto) {
-        if (workDayEvents.events.any { !it.isEnded }) {
+    private fun runTimerIfRequiredFor(workDay: WorkDay) {
+        if (workDay.events.any { !it.isEnded }) {
             startTimer()
         } else {
             stopTimer()
@@ -94,7 +100,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
             val comeEventType: ComeEventType
 
             withContext(Dispatchers.IO) {
-                comeEventType = ComeEventUtils.registerNewEvent(this@DashboardActivity)
+                comeEventType = comeEventUtils.registerNewEvent(this@DashboardActivity)
             }
 
             val message = when (comeEventType) {
@@ -117,9 +123,9 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
     }
 
 
-    private inner class CurrentDayObserver : Observer<WorkDayWithEventsDto> {
+    private inner class CurrentDayObserver : Observer<WorkDay> {
 
-        override fun onChanged(workDayEvents: WorkDayWithEventsDto?) {
+        override fun onChanged(workDayEvents: WorkDay?) {
             viewModel.workTimeData.value?.updateData()
 
             workDayEvents?.let { dayEvents ->

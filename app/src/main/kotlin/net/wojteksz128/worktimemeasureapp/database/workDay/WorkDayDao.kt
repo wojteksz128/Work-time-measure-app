@@ -28,7 +28,7 @@ interface WorkDayDao {
 
     @Transaction
     @Query("SELECT * FROM work_day WHERE :date BETWEEN beginSlot AND endSlot")
-    fun findByIntervalContains(date: Date): WorkDayWithEventsDto
+    fun findByIntervalContains(date: Date): WorkDayWithEventsDto?
 
     @Transaction
     @Query("SELECT * FROM work_day WHERE :date BETWEEN beginSlot AND endSlot")

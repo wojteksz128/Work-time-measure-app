@@ -54,6 +54,6 @@
 
         <variable
             name="comeEvent"
-            type="net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventDto" />
+            type="net.wojteksz128.worktimemeasureapp.model.ComeEvent" />
     </data>
 </layout>

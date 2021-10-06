@@ -7,13 +7,13 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import net.wojteksz128.worktimemeasureapp.WorkTimeMeasureApp.Companion.context
-import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayWithEventsDto
 import net.wojteksz128.worktimemeasureapp.databinding.HistoryWorkDayListItemBinding
+import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.livedata.RecyclerViewPeriodicUpdater
 
 class WorkDayAdapter :
-    PagingDataAdapter<WorkDayWithEventsDto, WorkDayAdapter.WorkDayViewHolder>(WorkDayEventsDiffCallback) {
+    PagingDataAdapter<WorkDay, WorkDayAdapter.WorkDayViewHolder>(WorkDayEventsDiffCallback) {
     private val periodicUpdater = RecyclerViewPeriodicUpdater(this)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WorkDayViewHolder {
@@ -30,7 +30,7 @@ class WorkDayAdapter :
 
     override fun onViewAttachedToWindow(holder: WorkDayViewHolder) {
         super.onViewAttachedToWindow(holder)
-        if (holder.binding.workDay?.hasEventsEnded() != true) {
+        if (holder.binding.workDay?.isAllEventsEnded() != true) {
             periodicUpdater.addItem(holder.absoluteAdapterPosition)
             holder.syncUpdaterWith(periodicUpdater)
         }
@@ -54,7 +54,7 @@ class WorkDayAdapter :
             }
         }
 
-        fun bind(workDay: WorkDayWithEventsDto) {
+        fun bind(workDay: WorkDay) {
             binding.workDay = workDay
 
             comeEventsAdapter.submitList(workDay.events)
@@ -66,13 +66,13 @@ class WorkDayAdapter :
     }
 
 
-    object WorkDayEventsDiffCallback : DiffUtil.ItemCallback<WorkDayWithEventsDto>() {
+    object WorkDayEventsDiffCallback : DiffUtil.ItemCallback<WorkDay>() {
 
-        override fun areItemsTheSame(oldItem: WorkDayWithEventsDto, newItem: WorkDayWithEventsDto): Boolean {
-            return oldItem.workDay.id!! == newItem.workDay.id!!
+        override fun areItemsTheSame(oldItem: WorkDay, newItem: WorkDay): Boolean {
+            return oldItem.id!! == newItem.id!!
         }
 
-        override fun areContentsTheSame(oldItem: WorkDayWithEventsDto, newItem: WorkDayWithEventsDto) =
+        override fun areContentsTheSame(oldItem: WorkDay, newItem: WorkDay) =
             oldItem == newItem
     }
 }

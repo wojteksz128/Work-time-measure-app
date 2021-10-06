@@ -4,18 +4,25 @@ import android.content.Context
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import net.wojteksz128.worktimemeasureapp.database.AppDatabase
-import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventDto
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventDao
-import net.wojteksz128.worktimemeasureapp.model.ComeEventType
-import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayDto
+import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventMapper
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayDao
-import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayWithEventsDto
+import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayMapper
+import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayWithEventsMapper
+import net.wojteksz128.worktimemeasureapp.model.ComeEvent
+import net.wojteksz128.worktimemeasureapp.model.ComeEventType
+import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import java.util.*
+import javax.inject.Inject
 
-object ComeEventUtils : ClassTagAware {
+class ComeEventUtils @Inject constructor(
+    private val workDayMapper: WorkDayMapper,
+    private val workDayWithEventsMapper: WorkDayWithEventsMapper,
+    private val comeEventMapper: ComeEventMapper
+): ClassTagAware {
 
     // TODO: 07.07.2019 Move to separate action object.
     suspend fun registerNewEvent(context: Context): ComeEventType = withContext(Dispatchers.IO) {
@@ -31,32 +38,36 @@ object ComeEventUtils : ClassTagAware {
         }
     }
 
-    private fun assignEndDateIntoCurrentEvent(comeEvent: ComeEventDto, registerDate: Date, comeEventDao: ComeEventDao): ComeEventType {
+    private fun assignEndDateIntoCurrentEvent(comeEvent: ComeEvent, registerDate: Date, comeEventDao: ComeEventDao): ComeEventType {
         comeEvent.endDate = registerDate
-        comeEvent.duration = DateTimeUtils.calculateDuration(comeEvent)
-        comeEventDao.update(comeEvent)
+        comeEvent.durationMillis = DateTimeUtils.calculateDuration(comeEvent).toMillis()
+        comeEventDao.update(comeEventMapper.mapFromDomainModel(comeEvent))
         return ComeEventType.COME_OUT
     }
 
-    private fun createNewEvent(workDay: WorkDayWithEventsDto, registerDate: Date, comeEventDao: ComeEventDao): ComeEventType {
-        comeEventDao.insert(ComeEventDto(registerDate, workDay.workDay))
+    private fun createNewEvent(workDay: WorkDay, registerDate: Date, comeEventDao: ComeEventDao): ComeEventType {
+        val comeEvent = ComeEvent(registerDate, workDay)
+        comeEventDao.insert(comeEventMapper.mapFromDomainModel(comeEvent))
         return ComeEventType.COME_IN
     }
 
-    private fun getCurrentWorkDay(registerDate: Date, context: Context): WorkDayWithEventsDto {
+    // TODO: 05.10.2021 move to repository
+    private fun getCurrentWorkDay(registerDate: Date, context: Context): WorkDay {
         val workDayDao = AppDatabase.getInstance(context).workDayDao()
-        var workDay: WorkDayWithEventsDto? = workDayDao.findByIntervalContains(registerDate)
+        val entity = workDayDao.findByIntervalContains(registerDate)
+        var workDay: WorkDay? = entity?.let { workDayWithEventsMapper.mapToDomainModel(it) }
 
         if (workDay == null) {
             createNewWorkDay(registerDate, workDayDao)
-            workDay = workDayDao.findByIntervalContains(registerDate)
+            workDay = workDayWithEventsMapper.mapToDomainModel(workDayDao.findByIntervalContains(registerDate)!!)
         }
         return workDay
     }
 
+    // TODO: 05.10.2021 move to repository
     private fun createNewWorkDay(registerDate: Date, workDayDao: WorkDayDao) {
-        val workDay = WorkDayDto(registerDate)
+        val workDay = WorkDay(registerDate)
 
-        workDayDao.insert(workDay)
+        workDayDao.insert(workDayMapper.mapFromDomainModel(workDay))
     }
 }
