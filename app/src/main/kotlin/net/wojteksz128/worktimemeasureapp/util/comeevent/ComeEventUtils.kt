@@ -6,7 +6,7 @@ import kotlinx.coroutines.withContext
 import net.wojteksz128.worktimemeasureapp.database.AppDatabase
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventDto
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventDao
-import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventType
+import net.wojteksz128.worktimemeasureapp.model.ComeEventType
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayDto
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayDao
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayWithEventsDto

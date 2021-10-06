@@ -1,4 +1,4 @@
-package net.wojteksz128.worktimemeasureapp.database.comeEvent
+package net.wojteksz128.worktimemeasureapp.model
 
 import net.wojteksz128.worktimemeasureapp.R
 
