@@ -10,7 +10,7 @@ import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayWithEventsMapp
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import java.util.*
 
-class WorkDayRepository constructor(
+class WorkDayRepository (
     private val workDayDao: WorkDayDao,
     private val workDayMapper: WorkDayMapper,
     private val workDayWithEventsMapper: WorkDayWithEventsMapper
@@ -49,8 +49,12 @@ class WorkDayRepository constructor(
             .map { workDayWithEventsMapper.mapToDomainModelList(it) }
 
     @Suppress("MemberVisibilityCanBePrivate")
-    fun save(newWorkDay: WorkDay) {
-        val workDayDto = workDayMapper.mapFromDomainModel(newWorkDay)
-        workDayDao.insert(workDayDto)
+    fun save(workDay: WorkDay) {
+        val workDayDto = workDayMapper.mapFromDomainModel(workDay)
+        if (workDay.id == null)
+            workDayDao.insert(workDayDto)
+        else
+            workDayDao.update(workDayDto)
+
     }
 }
