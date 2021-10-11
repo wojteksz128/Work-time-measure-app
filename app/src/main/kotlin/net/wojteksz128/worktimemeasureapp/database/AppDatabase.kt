@@ -23,7 +23,14 @@ abstract class AppDatabase : RoomDatabase() {
     companion object : ClassTagAware {
         const val DATABASE_FILENAME = "work-time-measure.db"
 
-        private val databaseMigrations: Array<Migration>
-            get() = arrayOf(MigrateFrom1To2(), MigrateFrom2To3(), MigrateFrom3To4(), MigrateFrom4To5(), MigrateFrom5To6(), MigrateFrom6To7())
+        internal val databaseMigrations: Array<Migration>
+            get() = arrayOf(
+                MigrateFrom1To2(),
+                MigrateFrom2To3(),
+                MigrateFrom3To4(),
+                MigrateFrom4To5(),
+                MigrateFrom5To6(),
+                MigrateFrom6To7()
+            )
     }
 }

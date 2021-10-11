@@ -24,7 +24,6 @@ object DatabaseModule : ClassTagAware {
     @Provides
     fun provideAppDatabase(
         @ApplicationContext context: Context,
-        vararg databaseMigrations: Migration,
     ): AppDatabase {
         Log.d(classTag, "getInstance: Creating new database instance")
 
@@ -33,7 +32,7 @@ object DatabaseModule : ClassTagAware {
 
         return Room.databaseBuilder(context.applicationContext,
             AppDatabase::class.java, filePath)
-            .addMigrations(*databaseMigrations)
+            .addMigrations(*AppDatabase.databaseMigrations)
             .build()
     }
 
@@ -47,23 +46,5 @@ object DatabaseModule : ClassTagAware {
     @Provides
     fun provideComeEventDao(database: AppDatabase): ComeEventDao {
         return database.comeEventDao()
-    }
-
-    @Singleton
-    @Provides
-    fun provideDatabaseMigrations(
-        migrateFrom1To2: MigrateFrom1To2,
-        migrateFrom2To3: MigrateFrom2To3,
-        migrateFrom3To4: MigrateFrom3To4,
-        migrateFrom4To5: MigrateFrom4To5,
-        migrateFrom5To6: MigrateFrom5To6,
-        migrateFrom6To7: MigrateFrom6To7
-    ): Array<Migration> {
-        return arrayOf(migrateFrom1To2,
-                migrateFrom2To3,
-                migrateFrom3To4,
-                migrateFrom4To5,
-                migrateFrom5To6,
-                migrateFrom6To7)
     }
 }

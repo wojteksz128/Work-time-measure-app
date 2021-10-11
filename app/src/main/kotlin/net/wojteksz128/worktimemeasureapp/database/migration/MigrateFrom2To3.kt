@@ -2,10 +2,9 @@ package net.wojteksz128.worktimemeasureapp.database.migration
 
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import javax.inject.Inject
 
 
-class MigrateFrom2To3 @Inject constructor() : Migration(2, 3) {
+class MigrateFrom2To3 : Migration(2, 3) {
 
     override fun migrate(database: SupportSQLiteDatabase) {
         database.execSQL("DELETE FROM work_day")
