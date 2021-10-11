@@ -1,0 +1,3 @@
+package net.wojteksz128.worktimemeasureapp.model
+
+interface DomainModel

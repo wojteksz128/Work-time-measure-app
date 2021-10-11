@@ -1,8 +1,11 @@
 package net.wojteksz128.worktimemeasureapp.util
 
-interface DomainModelMapper<DomainModel, Entity> {
+import net.wojteksz128.worktimemeasureapp.model.DomainModel
 
-    fun mapFromDomainModel(domainModel: DomainModel): Entity
+interface DomainModelMapper<DM, Entity>
+where DM : DomainModel {
 
-    fun mapToDomainModel(entity: Entity): DomainModel
+    fun mapFromDomainModel(domainModel: DM): Entity
+
+    fun mapToDomainModel(entity: Entity): DM
 }

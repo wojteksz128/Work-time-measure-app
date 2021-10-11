@@ -10,7 +10,7 @@ data class WorkDay(
     var beginSlot: Date,
     var endSlot: Date,
     val events: MutableList<ComeEvent> = mutableListOf(), // TODO: 30.09.2021 Change to set?!
-) {
+) : DomainModel {
 
     constructor(date: Date)
             : this(null, date, calculateBeginSlot(date), calculateEndSlot(date))

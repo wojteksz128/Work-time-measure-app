@@ -10,7 +10,7 @@ data class ComeEvent(
     var endDate: Date?,
     var durationMillis: Long?,
     val workDayId: Long,
-) : Comparable<ComeEvent> {
+) : DomainModel, Comparable<ComeEvent> {
     val isEnded: Boolean
         get() = endDate != null
 

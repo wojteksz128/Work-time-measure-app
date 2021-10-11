@@ -2,11 +2,12 @@ package net.wojteksz128.worktimemeasureapp.database.comeEvent
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import net.wojteksz128.worktimemeasureapp.database.EntityDao
 
 @Dao
 @Suppress("unused")
 // TODO: 30.09.2021 Make all suspended
-interface ComeEventDao {
+interface ComeEventDao : EntityDao<ComeEventDto> {
 
     @Query("SELECT * FROM come_event ORDER BY startDate DESC")
     fun findAllInLiveData(): LiveData<List<ComeEventDto>>
@@ -21,11 +22,11 @@ interface ComeEventDao {
     fun findById(id: Int): ComeEventDto
 
     @Insert
-    fun insert(comeEvent: ComeEventDto)
+    override fun insert(comeEvent: ComeEventDto)
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    fun update(comeEvent: ComeEventDto)
+    override fun update(comeEvent: ComeEventDto)
 
     @Delete
-    fun delete(comeEvent: ComeEventDto)
+    override fun delete(comeEvent: ComeEventDto)
 }

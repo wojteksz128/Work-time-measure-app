@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.ForeignKey.CASCADE
 import androidx.room.PrimaryKey
+import net.wojteksz128.worktimemeasureapp.database.EntityDto
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayDto
 import java.util.*
 
@@ -22,7 +23,7 @@ import java.util.*
 data class ComeEventDto(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
-    val id: Long?,
+    override val id: Long?,
 
     @ColumnInfo(name = "startDate")
     var startDate: Date,
@@ -38,4 +39,4 @@ data class ComeEventDto(
         index = true
     )
     val workDayId: Long,
-)
+) : EntityDto

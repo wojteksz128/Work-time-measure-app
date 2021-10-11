@@ -5,6 +5,7 @@ import androidx.lifecycle.map
 import androidx.paging.PagingSource
 import kotlinx.coroutines.Dispatchers
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayDao
+import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayDto
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayMapper
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayWithEventsMapper
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
@@ -12,9 +13,9 @@ import java.util.*
 
 class WorkDayRepository (
     private val workDayDao: WorkDayDao,
-    private val workDayMapper: WorkDayMapper,
+    workDayMapper: WorkDayMapper,
     private val workDayWithEventsMapper: WorkDayWithEventsMapper
-) {
+) : Repository<WorkDay, WorkDayDto>(workDayDao, workDayMapper) {
 
     // TODO: 09.10.2021 Key z Int do Long
     fun getAllPaged(): () -> PagingSource<Int, WorkDay> =
@@ -47,14 +48,4 @@ class WorkDayRepository (
     fun getCurrentWeekWorkDaysInLiveData(start: Date, end: Date): LiveData<List<WorkDay>> =
         workDayDao.findBetweenDates(start, end)
             .map { workDayWithEventsMapper.mapToDomainModelList(it) }
-
-    @Suppress("MemberVisibilityCanBePrivate")
-    fun save(workDay: WorkDay) {
-        val workDayDto = workDayMapper.mapFromDomainModel(workDay)
-        if (workDay.id == null)
-            workDayDao.insert(workDayDto)
-        else
-            workDayDao.update(workDayDto)
-
-    }
 }

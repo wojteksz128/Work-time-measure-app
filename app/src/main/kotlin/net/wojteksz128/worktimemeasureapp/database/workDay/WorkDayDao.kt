@@ -3,12 +3,13 @@ package net.wojteksz128.worktimemeasureapp.database.workDay
 import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
 import androidx.room.*
+import net.wojteksz128.worktimemeasureapp.database.EntityDao
 import java.util.*
 
 @Dao
 @Suppress("unused")
 // TODO: 30.09.2021 Make all suspended
-interface WorkDayDao {
+interface WorkDayDao : EntityDao<WorkDayDto> {
 
     @Transaction
     @Query("SELECT * FROM work_day ORDER BY date DESC")
@@ -39,11 +40,11 @@ interface WorkDayDao {
     fun findBetweenDates(beginDate: Date, endDate: Date): LiveData<List<WorkDayWithEventsDto>>
 
     @Insert
-    fun insert(workDay: WorkDayDto): Long?
+    override fun insert(workDay: WorkDayDto)
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    fun update(workDay: WorkDayDto)
+    override fun update(workDay: WorkDayDto)
 
     @Delete
-    fun delete(workDay: WorkDayDto)
+    override fun delete(workDay: WorkDayDto)
 }

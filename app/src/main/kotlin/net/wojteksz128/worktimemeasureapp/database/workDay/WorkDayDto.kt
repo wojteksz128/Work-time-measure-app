@@ -3,13 +3,14 @@ package net.wojteksz128.worktimemeasureapp.database.workDay
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import net.wojteksz128.worktimemeasureapp.database.EntityDto
 import java.util.*
 
 @Entity(tableName = "work_day")
 data class WorkDayDto(
         @PrimaryKey(autoGenerate = true)
         @ColumnInfo(name = "id")
-        val id: Long?,
+        override val id: Long?,
 
         @ColumnInfo(name = "date")
         var date: Date,
@@ -19,4 +20,4 @@ data class WorkDayDto(
 
         @ColumnInfo(name = "endSlot")
         var endSlot: Date
-)
+) : EntityDto
