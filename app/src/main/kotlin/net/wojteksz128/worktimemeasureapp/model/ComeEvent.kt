@@ -10,7 +10,7 @@ data class ComeEvent(
     var endDate: Date?,
     var durationMillis: Long?,
     val workDayId: Long,
-) : DomainModel, Comparable<ComeEvent> {
+) : DomainModel {
     val isEnded: Boolean
         get() = endDate != null
 
@@ -22,11 +22,6 @@ data class ComeEvent(
 
     constructor(startDate: Date, workDay: WorkDay)
             : this(startDate, null, workDay.id!!)
-
-    // TODO: 30.09.2021 Verify it is necessary
-    override fun compareTo(other: ComeEvent): Int {
-        return (startDate - other.startDate).time.toInt()
-    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
