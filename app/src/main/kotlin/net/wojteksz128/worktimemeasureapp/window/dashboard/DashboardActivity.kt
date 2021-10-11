@@ -6,6 +6,7 @@ import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -45,9 +46,12 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
             viewModel = this@DashboardActivity.viewModel
             workTimeData = this@DashboardActivity.viewModel.workTimeData
             newEventRegisterListener = this@DashboardActivity
-            dashboardCurrentDayEventsList.adapter = comeEventsAdapter
-            dashboardCurrentDayEventsList.layoutManager = object : LinearLayoutManager(this@DashboardActivity) {
-                override fun canScrollVertically() = false
+            dashboardCurrentDayEventsList.apply {
+                adapter = comeEventsAdapter
+                layoutManager = object : LinearLayoutManager(this@DashboardActivity) {
+                    override fun canScrollVertically() = false
+                }
+                (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
             }
         }
     }
@@ -98,7 +102,8 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
             val message = when (comeEventUtils.registerNewEvent()) {
                 ComeEventType.COME_IN -> {
                     if (Settings.WorkTime.NotifyingEnabled.valueNullable == true) {
-                        NotificationUtils.notifyUserAboutWorkTime(this@DashboardActivity, viewModel.workTimeData.value!!)
+                        NotificationUtils.notifyUserAboutWorkTime(this@DashboardActivity,
+                            viewModel.workTimeData.value!!)
                     }
                     getString(R.string.dashboard_snackbar_info_income_registered)
                 }
