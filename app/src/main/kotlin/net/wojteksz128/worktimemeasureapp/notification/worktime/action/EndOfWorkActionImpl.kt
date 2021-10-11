@@ -1,22 +1,24 @@
 package net.wojteksz128.worktimemeasureapp.notification.worktime.action
 
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationManagerCompat
-import kotlinx.coroutines.*
-
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.notification.NotificationActionImpl
-import net.wojteksz128.worktimemeasureapp.notification.NotificationUtils
 import net.wojteksz128.worktimemeasureapp.notification.worktime.EndOfWorkTimeNotification
 import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeInProgressNotification
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.comeevent.ComeEventUtils
+import javax.inject.Inject
 
-internal object EndOfWorkActionImpl : NotificationActionImpl, ClassTagAware {
+internal class EndOfWorkActionImpl @Inject constructor(
+    private val comeEventUtils: ComeEventUtils
+) : NotificationActionImpl, ClassTagAware {
 
     // TODO: 27.08.2021 change way of calling another scope
     private val job = Job()
@@ -27,7 +29,7 @@ internal object EndOfWorkActionImpl : NotificationActionImpl, ClassTagAware {
         scopeForSaving.launch {
             Log.d(classTag, "invoke: End Work Day action clicked")
 
-            ComeEventUtils.registerNewEvent(context)
+            comeEventUtils.registerNewEvent()
             NotificationManagerCompat.from(context).cancel(WorkTimeInProgressNotification.notificationId)
             NotificationManagerCompat.from(context).cancel(EndOfWorkTimeNotification.notificationId)
 

@@ -5,8 +5,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEvent
 import net.wojteksz128.worktimemeasureapp.databinding.HistoryDayEventListItemBinding
+import net.wojteksz128.worktimemeasureapp.model.ComeEvent
 import net.wojteksz128.worktimemeasureapp.util.coroutines.PeriodicOperation
 import net.wojteksz128.worktimemeasureapp.util.livedata.RecyclerViewPeriodicUpdater
 
@@ -32,11 +32,11 @@ class ComeEventsAdapter :
         }
     }
 
-    override fun onViewDetachedFromWindow(holder: ComeEventViewHolder) {
+//    override fun onViewDetachedFromWindow(holder: ComeEventViewHolder) {
         // TODO: 22.09.2021 Jak to rozwiązać na dashboard 
 //        periodicUpdater.removeItem(holder.absoluteAdapterPosition)
-        super.onViewDetachedFromWindow(holder)
-    }
+//        super.onViewDetachedFromWindow(holder)
+//    }
 
     fun syncUpdaterWith(anotherRunner: PeriodicOperation.PeriodicOperationRunner) {
         periodicUpdater.syncWith(anotherRunner)
@@ -64,7 +64,7 @@ class ComeEventsAdapter :
         override fun areContentsTheSame(oldItem: ComeEvent, newItem: ComeEvent): Boolean {
             return oldItem.startDate == newItem.startDate &&
                     oldItem.endDate == newItem.endDate &&
-                    oldItem.durationLong == newItem.durationLong &&
+                    oldItem.durationMillis == newItem.durationMillis &&
                     oldItem.workDayId == newItem.workDayId &&
                     oldItem.endDate != null
         }

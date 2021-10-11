@@ -1,22 +1,21 @@
-package net.wojteksz128.worktimemeasureapp.database.workDay
+package net.wojteksz128.worktimemeasureapp.model
 
-import androidx.room.Entity
-import androidx.room.Ignore
-import androidx.room.PrimaryKey
+import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayUtils.calculateBeginSlot
+import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayUtils.calculateEndSlot
 import java.util.*
 
-@Entity(tableName = "work_day")
-class WorkDay(
-        @PrimaryKey(autoGenerate = true)
-        val id: Long?,
-        var date: Date,
-        var beginSlot: Date,
-        var endSlot: Date
-) {
+data class WorkDay(
+    val id: Long?,
+    var date: Date,
+    var beginSlot: Date,
+    var endSlot: Date,
+    val events: MutableList<ComeEvent> = mutableListOf(), // TODO: 30.09.2021 Change to set?!
+) : DomainModel {
 
-    @Ignore
     constructor(date: Date)
-            : this(null, date, WorkDayUtils.calculateBeginSlot(date), WorkDayUtils.calculateEndSlot(date))
+            : this(null, date, calculateBeginSlot(date), calculateEndSlot(date))
+
+    fun isAllEventsEnded() = events.all { it.isEnded }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -39,6 +38,4 @@ class WorkDay(
         result = 31 * result + endSlot.hashCode()
         return result
     }
-
-
 }

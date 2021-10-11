@@ -1,15 +1,15 @@
 package net.wojteksz128.worktimemeasureapp.util.datetime
 
-import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents
+import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import org.threeten.bp.Duration
 import java.util.*
 
 object WorkTimeCalculator {
 
-    fun calculateCurrentWorkTime(currentDay: WorkDayEvents?, weekWorkDays: List<WorkDayEvents>, weekRange: ClosedRange<Date>): WorkTimeResult {
+    fun calculateCurrentWorkTime(currentDay: WorkDay?, weekWorkDays: List<WorkDay>, weekRange: ClosedRange<Date>): WorkTimeResult {
         val currentDayDate = prepareWorkDay(currentDay) ?: Date()
-        if (weekWorkDays.any { it.workDay.date !in weekRange })
+        if (weekWorkDays.any { it.date !in weekRange })
             throw IllegalStateException("All week work days must be in week range.")
 
         if (currentDay != null && weekWorkDays.isNotEmpty() && weekWorkDays.let { currentDay !in it })
@@ -25,9 +25,9 @@ object WorkTimeCalculator {
             )
     }
 
-    private fun prepareWorkDay(workDay: WorkDayEvents?): Date? = workDay?.workDay?.date
+    private fun prepareWorkDay(workDay: WorkDay?): Date? = workDay?.date
 
-    private fun calculateCurrentWeekWorkTime(weekWorkDays: Collection<WorkDayEvents>) =
+    private fun calculateCurrentWeekWorkTime(weekWorkDays: Collection<WorkDay>) =
         weekWorkDays.map { DateTimeUtils.mergeComeEventsDuration(it) }
             .fold(Duration.ZERO) { sum, element -> sum + element }
 
@@ -37,7 +37,7 @@ object WorkTimeCalculator {
         return Settings.WorkTime.Duration.value.multipliedBy(5)
     }
 
-    private fun calculateCurrentDayWorkTime(currentDay: WorkDayEvents?): Duration {
+    private fun calculateCurrentDayWorkTime(currentDay: WorkDay?): Duration {
         return currentDay?.let { DateTimeUtils.mergeComeEventsDuration(it) } ?: Duration.ZERO
     }
 

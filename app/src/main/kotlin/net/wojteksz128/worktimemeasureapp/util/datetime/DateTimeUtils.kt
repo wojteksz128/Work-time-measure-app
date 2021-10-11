@@ -4,8 +4,8 @@ import android.annotation.SuppressLint
 import androidx.annotation.StringRes
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.WorkTimeMeasureApp
-import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEvent
-import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents
+import net.wojteksz128.worktimemeasureapp.model.ComeEvent
+import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import org.threeten.bp.Duration
 import org.threeten.bp.Instant
 import java.text.SimpleDateFormat
@@ -29,7 +29,7 @@ object DateTimeUtils {
         return Duration.between(Instant.ofEpochMilli(startTime), Instant.ofEpochMilli(endTime + 1)) // +1, but exclusive duration
     }
 
-    fun mergeComeEventsDuration(workDay: WorkDayEvents): Duration = workDay.events.map { it.duration }
+    fun mergeComeEventsDuration(workDay: WorkDay): Duration = workDay.events.map { it.duration }
         .fold(Duration.ZERO) { sum, element -> sum + element }
 
     fun formatCounterTime(duration: Duration?): String =

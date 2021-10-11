@@ -1,63 +1,46 @@
 package net.wojteksz128.worktimemeasureapp.util.comeevent
 
-import android.content.Context
-import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import net.wojteksz128.worktimemeasureapp.database.AppDatabase
-import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEvent
-import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventDao
-import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventType
-import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDay
-import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayDao
-import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayEvents
+import net.wojteksz128.worktimemeasureapp.model.ComeEvent
+import net.wojteksz128.worktimemeasureapp.model.ComeEventType
+import net.wojteksz128.worktimemeasureapp.model.WorkDay
+import net.wojteksz128.worktimemeasureapp.repository.ComeEventRepository
+import net.wojteksz128.worktimemeasureapp.repository.WorkDayRepository
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import java.util.*
+import javax.inject.Inject
 
-object ComeEventUtils : ClassTagAware {
+class ComeEventUtils @Inject constructor(
+    private val comeEventRepository: ComeEventRepository,
+    private val workDayRepository: WorkDayRepository
+): ClassTagAware {
 
     // TODO: 07.07.2019 Move to separate action object.
-    suspend fun registerNewEvent(context: Context): ComeEventType = withContext(Dispatchers.IO) {
-        val comeEventDao = AppDatabase.getInstance(context).comeEventDao()
+    suspend fun registerNewEvent(): ComeEventType = withContext(Dispatchers.IO) {
         val registerDate = DateTimeProvider.currentTime
-        val workDay = getCurrentWorkDay(registerDate, context)
+        val workDay = workDayRepository.getCurrentWorkDay(registerDate)
         val comeEvent = workDay.events.lastOrNull { !it.isEnded }
 
         if (comeEvent != null) {
-            assignEndDateIntoCurrentEvent(comeEvent, registerDate, comeEventDao)
+            assignEndDateIntoCurrentEvent(comeEvent, registerDate)
         } else {
-            createNewEvent(workDay, registerDate, comeEventDao)
+            createNewEvent(workDay, registerDate)
         }
     }
 
-    private fun assignEndDateIntoCurrentEvent(comeEvent: ComeEvent, registerDate: Date, comeEventDao: ComeEventDao): ComeEventType {
+    private fun assignEndDateIntoCurrentEvent(comeEvent: ComeEvent, registerDate: Date): ComeEventType {
         comeEvent.endDate = registerDate
-        comeEvent.duration = DateTimeUtils.calculateDuration(comeEvent)
-        comeEventDao.update(comeEvent)
+        comeEvent.durationMillis = DateTimeUtils.calculateDuration(comeEvent).toMillis()
+        comeEventRepository.save(comeEvent)
         return ComeEventType.COME_OUT
     }
 
-    private fun createNewEvent(workDay: WorkDayEvents, registerDate: Date, comeEventDao: ComeEventDao): ComeEventType {
-        comeEventDao.insert(ComeEvent(registerDate, workDay.workDay))
+    private fun createNewEvent(workDay: WorkDay, registerDate: Date): ComeEventType {
+        val comeEvent = ComeEvent(registerDate, workDay)
+        comeEventRepository.save(comeEvent)
         return ComeEventType.COME_IN
-    }
-
-    private fun getCurrentWorkDay(registerDate: Date, context: Context): WorkDayEvents {
-        val workDayDao = AppDatabase.getInstance(context).workDayDao()
-        var workDay: WorkDayEvents? = workDayDao.findByIntervalContains(registerDate)
-
-        if (workDay == null) {
-            createNewWorkDay(registerDate, workDayDao)
-            workDay = workDayDao.findByIntervalContains(registerDate)
-        }
-        return workDay
-    }
-
-    private fun createNewWorkDay(registerDate: Date, workDayDao: WorkDayDao) {
-        val workDay = WorkDay(registerDate)
-
-        workDayDao.insert(workDay)
     }
 }
