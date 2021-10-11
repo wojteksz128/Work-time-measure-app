@@ -46,7 +46,7 @@ class HistoryActivity : BaseActivity<ActivityHistoryBinding>(R.layout.activity_h
     }
 
     private fun initWorkDaysRecyclerView() {
-        workDayAdapter = WorkDayAdapter()
+        workDayAdapter = WorkDayAdapter(this)
 
         binding.historyRvDays.adapter = workDayAdapter
         (binding.historyRvDays.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false

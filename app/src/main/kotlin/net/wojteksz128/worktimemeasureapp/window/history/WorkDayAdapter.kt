@@ -1,25 +1,26 @@
 package net.wojteksz128.worktimemeasureapp.window.history
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import net.wojteksz128.worktimemeasureapp.WorkTimeMeasureApp.Companion.context
 import net.wojteksz128.worktimemeasureapp.databinding.HistoryWorkDayListItemBinding
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.livedata.RecyclerViewPeriodicUpdater
 
-class WorkDayAdapter :
-    PagingDataAdapter<WorkDay, WorkDayAdapter.WorkDayViewHolder>(WorkDayEventsDiffCallback) {
+class WorkDayAdapter(
+    private val context: Context
+) : PagingDataAdapter<WorkDay, WorkDayAdapter.WorkDayViewHolder>(WorkDayEventsDiffCallback) {
     private val periodicUpdater = RecyclerViewPeriodicUpdater(this)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WorkDayViewHolder {
         val inflater = LayoutInflater.from(context)
         val binding = HistoryWorkDayListItemBinding.inflate(inflater, parent, false)
-        return WorkDayViewHolder(binding)
+        return WorkDayViewHolder(binding, context)
     }
 
     override fun onBindViewHolder(holder: WorkDayViewHolder, position: Int) {
@@ -42,7 +43,7 @@ class WorkDayAdapter :
     }
 
 
-    class WorkDayViewHolder(val binding: HistoryWorkDayListItemBinding) :
+    class WorkDayViewHolder(val binding: HistoryWorkDayListItemBinding, context: Context) :
         RecyclerView.ViewHolder(binding.root), ClassTagAware {
 
         private val comeEventsAdapter = ComeEventsAdapter()
