@@ -8,9 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.databinding.ActivityDashboardBinding
 import net.wojteksz128.worktimemeasureapp.model.ComeEventType
@@ -97,13 +95,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
         lifecycleScope.launch {
             viewModel.waitingFor.value = true
 
-            val comeEventType: ComeEventType
-
-            withContext(Dispatchers.IO) {
-                comeEventType = comeEventUtils.registerNewEvent(this@DashboardActivity)
-            }
-
-            val message = when (comeEventType) {
+            val message = when (comeEventUtils.registerNewEvent()) {
                 ComeEventType.COME_IN -> {
                     if (Settings.WorkTime.NotifyingEnabled.valueNullable == true) {
                         NotificationUtils.notifyUserAboutWorkTime(this@DashboardActivity, viewModel.workTimeData.value!!)

@@ -29,7 +29,7 @@ internal class EndOfWorkActionImpl @Inject constructor(
         scopeForSaving.launch {
             Log.d(classTag, "invoke: End Work Day action clicked")
 
-            comeEventUtils.registerNewEvent(context)
+            comeEventUtils.registerNewEvent()
             NotificationManagerCompat.from(context).cancel(WorkTimeInProgressNotification.notificationId)
             NotificationManagerCompat.from(context).cancel(EndOfWorkTimeNotification.notificationId)
 
