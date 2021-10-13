@@ -2,6 +2,7 @@ package net.wojteksz128.worktimemeasureapp.window.history
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
@@ -12,11 +13,14 @@ import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import net.wojteksz128.worktimemeasureapp.util.livedata.RecyclerViewPeriodicUpdater
+import net.wojteksz128.worktimemeasureapp.util.recyclerView.RecyclerViewItemClick
 
 class WorkDayAdapter(
     private val context: Context,
-    private val dateTimeUtils: DateTimeUtils
-) : PagingDataAdapter<WorkDay, WorkDayAdapter.WorkDayViewHolder>(WorkDayEventsDiffCallback) {
+    private val dateTimeUtils: DateTimeUtils,
+    override var onItemClickListenerProvider: (WorkDay) -> (View) -> Unit = { {} },
+) : PagingDataAdapter<WorkDay, WorkDayAdapter.WorkDayViewHolder>(WorkDayEventsDiffCallback),
+    RecyclerViewItemClick<WorkDay> {
     private val periodicUpdater = RecyclerViewPeriodicUpdater(this)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WorkDayViewHolder {
@@ -27,6 +31,7 @@ class WorkDayAdapter(
 
     override fun onBindViewHolder(holder: WorkDayViewHolder, position: Int) {
         getItem(position)?.let {
+            holder.setOnClickListener(onItemClickListenerProvider(it))
             holder.bind(it)
         }
     }
@@ -48,9 +53,8 @@ class WorkDayAdapter(
     class WorkDayViewHolder(
         val binding: HistoryWorkDayListItemBinding,
         context: Context,
-        dateTimeUtils: DateTimeUtils
-    ) :
-        RecyclerView.ViewHolder(binding.root), ClassTagAware {
+        dateTimeUtils: DateTimeUtils,
+    ) : RecyclerView.ViewHolder(binding.root), ClassTagAware {
 
         private val comeEventsAdapter = ComeEventsAdapter(dateTimeUtils)
 
@@ -70,6 +74,12 @@ class WorkDayAdapter(
 
         fun syncUpdaterWith(anotherUpdater: RecyclerViewPeriodicUpdater) {
             comeEventsAdapter.syncUpdaterWith(anotherUpdater)
+        }
+
+        fun setOnClickListener(onItemClickListener: (View) -> Unit) {
+            itemView.setOnClickListener(onItemClickListener)
+            binding.dayEventsList.setOnClickListener(onItemClickListener)
+            comeEventsAdapter.onItemClickListenerProvider = { onItemClickListener }
         }
     }
 

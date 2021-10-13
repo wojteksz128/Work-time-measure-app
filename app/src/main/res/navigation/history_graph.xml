@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/history_graph"
+    app:startDestination="@id/workDaysHistoryFragment">
+
+    <fragment
+        android:id="@+id/workDaysHistoryFragment"
+        android:name="net.wojteksz128.worktimemeasureapp.window.history.WorkDaysHistoryFragment"
+        android:label="WorkDaysHistoryFragment" >
+        <action
+            android:id="@+id/viewWorkDayDetails"
+            app:destination="@id/workDayDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/workDayDetailsFragment"
+        android:name="net.wojteksz128.worktimemeasureapp.window.history.WorkDayDetailsFragment"
+        android:label="WorkDayDetailsFragment" />
+</navigation>

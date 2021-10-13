@@ -83,6 +83,10 @@ dependencies {
     def hilt_viewmodels = "1.0.0-alpha03"
     implementation "androidx.hilt:hilt-lifecycle-viewmodel:$hilt_viewmodels"
     kapt "androidx.hilt:hilt-compiler:$hilt_viewmodels"
+
+    def nav_version = "2.3.5"
+    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 }
 repositories {
     mavenCentral()

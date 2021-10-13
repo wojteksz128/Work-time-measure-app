@@ -7,19 +7,22 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.paging.liveData
 import androidx.recyclerview.widget.SimpleItemAnimator
 import dagger.hilt.android.AndroidEntryPoint
+import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.databinding.FragmentWorkDaysHistoryBinding
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class WorkDaysHistoryFragment @Inject constructor(
-    private val dateTimeUtils: DateTimeUtils
-) : Fragment(), ClassTagAware {
+class WorkDaysHistoryFragment : Fragment(), ClassTagAware {
     private val viewModel: WorkDaysHistoryViewModel by viewModels()
+
+    @Inject
+    lateinit var dateTimeUtils: DateTimeUtils
 
     private lateinit var binding: FragmentWorkDaysHistoryBinding
     private lateinit var workDayAdapter: WorkDayAdapter
@@ -32,7 +35,10 @@ class WorkDaysHistoryFragment @Inject constructor(
         binding = FragmentWorkDaysHistoryBinding.inflate(layoutInflater, container, false)
 
         binding.workDaysHistoryRv.apply {
-            adapter = WorkDayAdapter(requireContext(), dateTimeUtils).also { workDayAdapter = it }
+            val workDayAdapter = WorkDayAdapter(requireContext(), dateTimeUtils) {
+                { findNavController().navigate(R.id.viewWorkDayDetails) }
+            }
+            adapter = workDayAdapter.also { this@WorkDaysHistoryFragment.workDayAdapter = it }
             (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         }
 

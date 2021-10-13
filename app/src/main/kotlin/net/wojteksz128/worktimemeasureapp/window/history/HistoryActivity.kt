@@ -27,14 +27,6 @@ class HistoryActivity : BaseActivity<ActivityHistoryBinding>(R.layout.activity_h
     @Inject
     lateinit var dateTimeUtils: DateTimeUtils
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        supportFragmentManager.beginTransaction()
-            .replace(binding.historyFragmentMainContainer.id, WorkDaysHistoryFragment(dateTimeUtils))
-            .commit()
-    }
-
     override fun onResume() {
         super.onResume()
 

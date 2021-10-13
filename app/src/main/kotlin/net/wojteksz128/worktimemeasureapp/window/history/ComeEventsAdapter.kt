@@ -1,6 +1,7 @@
 package net.wojteksz128.worktimemeasureapp.window.history
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -10,11 +11,13 @@ import net.wojteksz128.worktimemeasureapp.model.ComeEvent
 import net.wojteksz128.worktimemeasureapp.util.coroutines.PeriodicOperation
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import net.wojteksz128.worktimemeasureapp.util.livedata.RecyclerViewPeriodicUpdater
+import net.wojteksz128.worktimemeasureapp.util.recyclerView.RecyclerViewItemClick
 
 class ComeEventsAdapter(
-    private val dateTimeUtils: DateTimeUtils
-) :
-    ListAdapter<ComeEvent, ComeEventsAdapter.ComeEventViewHolder>(ComeEventDiffCallback) {
+    private val dateTimeUtils: DateTimeUtils,
+    override var onItemClickListenerProvider: (ComeEvent) -> (View) -> Unit = { {} }
+) : ListAdapter<ComeEvent, ComeEventsAdapter.ComeEventViewHolder>(ComeEventDiffCallback),
+    RecyclerViewItemClick<ComeEvent> {
     private val periodicUpdater = RecyclerViewPeriodicUpdater(this)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ComeEventViewHolder {
@@ -27,8 +30,10 @@ class ComeEventsAdapter(
     }
 
     override fun onBindViewHolder(holder: ComeEventViewHolder, position: Int) {
-        val item = getItem(position)
-        holder.bind(item)
+        getItem(position)?.let {
+            holder.bind(it)
+            holder.setOnClickListener(onItemClickListenerProvider(it))
+        }
     }
 
     override fun onViewAttachedToWindow(holder: ComeEventViewHolder) {
@@ -58,6 +63,10 @@ class ComeEventsAdapter(
 
         fun bind(comeEvent: ComeEvent) {
             binding.comeEvent = comeEvent
+        }
+
+        fun setOnClickListener(onItemClickListener: (View) -> Unit) {
+            itemView.setOnClickListener(onItemClickListener)
         }
     }
 
