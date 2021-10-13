@@ -13,7 +13,7 @@
             style="@style/history_rv_work_day_header"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{DateTimeUtils.INSTANCE.formatDate(@string/history_work_day_label_format, workDay.date)}"
+            android:text="@{dateTimeUtils.formatDate(@string/history_work_day_label_format, workDay.date)}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="@string/history_work_day_label_example" />
@@ -23,7 +23,7 @@
             style="@style/history_rv_work_day_duration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{DateTimeUtils.INSTANCE.formatCounterTime(DateTimeUtils.INSTANCE.mergeComeEventsDuration(workDay))}"
+            android:text="@{dateTimeUtils.formatCounterTime(dateTimeUtils.mergeComeEventsDuration(workDay))}"
             app:layout_constraintBottom_toBottomOf="@id/day_label"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
@@ -45,7 +45,9 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <data>
-        <import type="net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils" />
+        <variable
+            name="dateTimeUtils"
+            type="net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils" />
 
         <variable
             name="workDay"

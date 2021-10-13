@@ -9,13 +9,16 @@ import net.wojteksz128.worktimemeasureapp.notification.TimerExpiredReceiver
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import java.util.*
 
-object TimerManager {
+class TimerManager(
+    private val context: Context,
+    private val Settings: Settings
+) {
 
     enum class AlarmState {
         NotSet, Set
     }
 
-    fun setAlarm(context: Context, wakeUpTime: Calendar): Long {
+    fun setAlarm(wakeUpTime: Calendar): Long {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val pendingIntent = getTimerExpiredReceiverPendingIntent(context)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -27,7 +30,7 @@ object TimerManager {
         return wakeUpTime.timeInMillis
     }
 
-    fun removeAlarm(context: Context) {
+    fun removeAlarm() {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val pendingIntent = getTimerExpiredReceiverPendingIntent(context)
         alarmManager.cancel(pendingIntent)

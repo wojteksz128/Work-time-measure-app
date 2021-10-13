@@ -10,17 +10,19 @@ import androidx.recyclerview.widget.RecyclerView
 import net.wojteksz128.worktimemeasureapp.databinding.HistoryWorkDayListItemBinding
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
+import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import net.wojteksz128.worktimemeasureapp.util.livedata.RecyclerViewPeriodicUpdater
 
 class WorkDayAdapter(
-    private val context: Context
+    private val context: Context,
+    private val dateTimeUtils: DateTimeUtils
 ) : PagingDataAdapter<WorkDay, WorkDayAdapter.WorkDayViewHolder>(WorkDayEventsDiffCallback) {
     private val periodicUpdater = RecyclerViewPeriodicUpdater(this)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WorkDayViewHolder {
         val inflater = LayoutInflater.from(context)
         val binding = HistoryWorkDayListItemBinding.inflate(inflater, parent, false)
-        return WorkDayViewHolder(binding, context)
+        return WorkDayViewHolder(binding, context, dateTimeUtils)
     }
 
     override fun onBindViewHolder(holder: WorkDayViewHolder, position: Int) {
@@ -43,12 +45,17 @@ class WorkDayAdapter(
     }
 
 
-    class WorkDayViewHolder(val binding: HistoryWorkDayListItemBinding, context: Context) :
+    class WorkDayViewHolder(
+        val binding: HistoryWorkDayListItemBinding,
+        context: Context,
+        dateTimeUtils: DateTimeUtils
+    ) :
         RecyclerView.ViewHolder(binding.root), ClassTagAware {
 
-        private val comeEventsAdapter = ComeEventsAdapter()
+        private val comeEventsAdapter = ComeEventsAdapter(dateTimeUtils)
 
         init {
+            binding.dateTimeUtils = dateTimeUtils
             binding.dayEventsList.adapter = comeEventsAdapter
             binding.dayEventsList.layoutManager = object : LinearLayoutManager(context) {
                 override fun canScrollVertically() = false

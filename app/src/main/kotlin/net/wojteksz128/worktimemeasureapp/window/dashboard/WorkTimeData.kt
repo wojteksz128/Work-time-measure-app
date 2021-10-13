@@ -4,11 +4,12 @@ import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
 import net.wojteksz128.worktimemeasureapp.BR
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
-import net.wojteksz128.worktimemeasureapp.util.datetime.WorkTimeCalculator.calculateCurrentWorkTime
+import net.wojteksz128.worktimemeasureapp.util.datetime.WorkTimeCalculator
 import org.threeten.bp.Duration
 import java.util.*
 
-class WorkTimeData(start: Date, end: Date): BaseObservable() {
+class WorkTimeData(start: Date, end: Date, private val workTimeCalculator: WorkTimeCalculator) :
+    BaseObservable() {
     @Suppress("unused")
     val weekRange: ClosedRange<Date> = start..end
 
@@ -63,7 +64,7 @@ class WorkTimeData(start: Date, end: Date): BaseObservable() {
         }
 
     fun updateData() {
-        val result = calculateCurrentWorkTime(currentDay, weekWorkDays, weekRange)
+        val result = workTimeCalculator.calculateCurrentWorkTime(currentDay, weekWorkDays, weekRange)
         currentDayDate = result.currentDay
         todayWorkTime = result.currentDayWorkTimeDuration
         remainingTodayWorkTime = result.currentDayRemainingWorkTimeDuration

@@ -11,16 +11,17 @@ import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import java.util.*
-import javax.inject.Inject
 
-class ComeEventUtils @Inject constructor(
+class ComeEventUtils(
     private val comeEventRepository: ComeEventRepository,
-    private val workDayRepository: WorkDayRepository
+    private val workDayRepository: WorkDayRepository,
+    private val dateTimeUtils: DateTimeUtils,
+    private val dateTimeProvider: DateTimeProvider
 ): ClassTagAware {
 
     // TODO: 07.07.2019 Move to separate action object.
     suspend fun registerNewEvent(): ComeEventType = withContext(Dispatchers.IO) {
-        val registerDate = DateTimeProvider.currentTime
+        val registerDate = dateTimeProvider.currentTime
         val workDay = workDayRepository.getCurrentWorkDay(registerDate)
         val comeEvent = workDay.events.lastOrNull { !it.isEnded }
 
@@ -33,7 +34,7 @@ class ComeEventUtils @Inject constructor(
 
     private fun assignEndDateIntoCurrentEvent(comeEvent: ComeEvent, registerDate: Date): ComeEventType {
         comeEvent.endDate = registerDate
-        comeEvent.durationMillis = DateTimeUtils.calculateDuration(comeEvent).toMillis()
+        comeEvent.durationMillis = dateTimeUtils.calculateDuration(comeEvent).toMillis()
         comeEventRepository.save(comeEvent)
         return ComeEventType.COME_OUT
     }

@@ -12,7 +12,7 @@
             style="@style/history_rv_work_day_events_item_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{DateTimeUtils.INSTANCE.formatDate(@string/history_day_event_time_format, comeEvent.startDate)}"
+            android:text="@{dateTimeUtils.formatDate(@string/history_day_event_time_format, comeEvent.startDate)}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -33,7 +33,7 @@
             style="@style/history_rv_work_day_events_item_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{comeEvent.endDate != null ? DateTimeUtils.INSTANCE.formatDate(@string/history_day_event_time_format, comeEvent.endDate) : @string/history_day_event_end_date_now}"
+            android:text="@{comeEvent.endDate != null ? dateTimeUtils.formatDate(@string/history_day_event_time_format, comeEvent.endDate) : @string/history_day_event_end_date_now}"
             app:layout_constraintBaseline_toBaselineOf="@+id/history_day_event_realization_dates_divider"
             app:layout_constraintStart_toEndOf="@+id/history_day_event_realization_dates_divider"
             tools:text="@string/history_day_event_start_date_example" />
@@ -43,14 +43,18 @@
             style="@style/history_rv_work_day_events_item_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{DateTimeUtils.INSTANCE.formatCounterTime(comeEvent.duration)}"
+            android:text="@{dateTimeUtils.formatCounterTime(dateTimeUtils.getDuration(comeEvent))}"
             app:layout_constraintBaseline_toBaselineOf="@+id/history_day_event_end_date"
             app:layout_constraintEnd_toEndOf="parent"
             tools:text="@string/history_day_event_duration_example" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <data>
-        <import type="net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils" />
+
+
+        <variable
+            name="dateTimeUtils"
+            type="net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils" />
 
         <variable
             name="comeEvent"

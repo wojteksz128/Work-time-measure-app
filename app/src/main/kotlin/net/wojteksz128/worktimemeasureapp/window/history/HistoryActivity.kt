@@ -10,7 +10,9 @@ import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.databinding.ActivityHistoryBinding
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
+import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import net.wojteksz128.worktimemeasureapp.window.BaseActivity
+import javax.inject.Inject
 
 // TODO: 09.08.2018 Dodaj joba, który automatycznie zamknie dzień pracy o godzinie zmiany dnia pracy
 // TODO: 11.08.2018 Jeśli aktualny dzień istnieje - przenieś FABa w to miejsce
@@ -27,6 +29,11 @@ import net.wojteksz128.worktimemeasureapp.window.BaseActivity
 class HistoryActivity : BaseActivity<ActivityHistoryBinding>(R.layout.activity_history), ClassTagAware {
     private val viewModel: HistoryViewModel by viewModels()
 
+    @Inject
+    lateinit var dateTimeProvider: DateTimeProvider
+    @Inject
+    lateinit var dateTimeUtils: DateTimeUtils
+
     private lateinit var workDayAdapter: WorkDayAdapter
 
 
@@ -42,11 +49,11 @@ class HistoryActivity : BaseActivity<ActivityHistoryBinding>(R.layout.activity_h
         viewModel.workDaysPager.liveData.observe(this,
             { workDayAdapter.submitData(this.lifecycle, it) })
         // TODO: 21.09.2021 Przenieś do innego miesca (niezależnego od HistoryActivity)
-        DateTimeProvider.updateOffset(this)
+        dateTimeProvider.updateOffset(this)
     }
 
     private fun initWorkDaysRecyclerView() {
-        workDayAdapter = WorkDayAdapter(this)
+        workDayAdapter = WorkDayAdapter(this, dateTimeUtils)
 
         binding.historyRvDays.adapter = workDayAdapter
         (binding.historyRvDays.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false

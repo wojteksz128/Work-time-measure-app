@@ -1,9 +1,9 @@
 package net.wojteksz128.worktimemeasureapp.util.datetime
 
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.annotation.StringRes
 import net.wojteksz128.worktimemeasureapp.R
-import net.wojteksz128.worktimemeasureapp.WorkTimeMeasureApp
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import org.threeten.bp.Duration
@@ -12,9 +12,13 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.abs
 
-object DateTimeUtils {
+class DateTimeUtils (
+    private val context: Context,
+    private val dateTimeProvider: DateTimeProvider,
+) {
 
-    fun formatDate(format: String, date: Date?) = date?.let { formatDate(format, date, TimeZone.getDefault()) } ?: ""
+    fun formatDate(format: String, date: Date?) =
+        date?.let { formatDate(format, date, TimeZone.getDefault()) } ?: ""
 
     fun formatDate(format: String, date: Date, timeZone: TimeZone = TimeZone.getDefault()): String {
         @SuppressLint("SimpleDateFormat") val formatter = SimpleDateFormat(format)
@@ -25,8 +29,9 @@ object DateTimeUtils {
     fun calculateDuration(comeEvent: ComeEvent): Duration {
         val startTime = comeEvent.startDate.time
         val endTime =
-            if (comeEvent.endDate != null) comeEvent.endDate!!.time else DateTimeProvider.currentTime.time
-        return Duration.between(Instant.ofEpochMilli(startTime), Instant.ofEpochMilli(endTime + 1)) // +1, but exclusive duration
+            if (comeEvent.endDate != null) comeEvent.endDate!!.time else dateTimeProvider.currentTime.time
+        return Duration.between(Instant.ofEpochMilli(startTime),
+            Instant.ofEpochMilli(endTime + 1)) // +1, but exclusive duration
     }
 
     fun mergeComeEventsDuration(workDay: WorkDay): Duration = workDay.events.map { it.duration }
@@ -37,7 +42,7 @@ object DateTimeUtils {
 
     @Suppress("MemberVisibilityCanBePrivate")
     fun formatCounterTime(duration: Duration?, @StringRes defaultValueResId: Int): String =
-        formatCounterTime(duration, WorkTimeMeasureApp.context.getString(defaultValueResId))
+        formatCounterTime(duration, context.getString(defaultValueResId))
 
     @Suppress("MemberVisibilityCanBePrivate")
     fun formatCounterTime(duration: Duration?, defaultValue: String): String {
@@ -51,4 +56,11 @@ object DateTimeUtils {
             "${sign}${hours}:${if (minutes < 10) "0" else ""}${minutes}:${if (seconds < 10) "0" else ""}${seconds}"
         } ?: defaultValue
     }
+
+    val ComeEvent.duration: Duration
+        get() = Duration.ofMillis(((endDate ?: dateTimeProvider.currentTime) - startDate).time)
+
 }
+
+operator fun Date.minus(other: Date): Date =
+    Date(this.time - other.time)

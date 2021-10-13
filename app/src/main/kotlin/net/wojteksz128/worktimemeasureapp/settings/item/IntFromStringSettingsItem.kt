@@ -1,7 +1,10 @@
 package net.wojteksz128.worktimemeasureapp.settings.item
 
-open class IntFromStringSettingsItem(name: Int) : SettingsItem<Int>(
+import android.content.Context
+
+open class IntFromStringSettingsItem(name: Int, context: Context) : SettingsItem<Int>(
     name,
+    context,
     { sharedPreferences, key ->
         sharedPreferences.getString(
             key,

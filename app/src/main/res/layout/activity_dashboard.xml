@@ -86,7 +86,7 @@
                         style="@style/dashboard_current_day_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@{DateTimeUtils.INSTANCE.formatDate(@string/history_work_day_label_format, workTimeData.currentDayDate)}"
+                        android:text="@{dateTimeUtils.formatDate(@string/history_work_day_label_format, workTimeData.currentDayDate)}"
                         app:layout_constraintBottom_toTopOf="@id/dashboard_current_day_events_container"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -158,8 +158,10 @@
         <import type="android.view.View" />
         <import type="androidx.lifecycle.LiveData" />
         <import type="net.wojteksz128.worktimemeasureapp.window.dashboard.WorkTimeData" />
-        <import type="net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils" />
 
+        <variable
+            name="dateTimeUtils"
+            type="net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils" />
         <variable
             name="viewModel"
             type="net.wojteksz128.worktimemeasureapp.window.dashboard.DashboardViewModel" />

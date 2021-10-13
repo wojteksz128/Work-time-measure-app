@@ -9,11 +9,11 @@ import androidx.preference.PreferenceFragmentCompat
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.settings.item.SettingsItemsNotifier
 import net.wojteksz128.worktimemeasureapp.window.settings.property.ImageViewPreference
+import javax.inject.Inject
 
-class ProfileFragment : PreferenceFragmentCompat() {
-
-    private val settingsItemsNotifier = SettingsItemsNotifier { context }
-
+class ProfileFragment @Inject constructor(
+    private val settingsItemsNotifier: SettingsItemsNotifier
+) : PreferenceFragmentCompat() {
     private lateinit var imageViewPreference: ImageViewPreference
     private lateinit var mailPreference: EditTextPreference
 

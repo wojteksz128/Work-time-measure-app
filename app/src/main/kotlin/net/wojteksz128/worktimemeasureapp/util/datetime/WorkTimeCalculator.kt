@@ -4,8 +4,12 @@ import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import org.threeten.bp.Duration
 import java.util.*
+import javax.inject.Inject
 
-object WorkTimeCalculator {
+class WorkTimeCalculator @Inject constructor(
+    private val dateTimeUtils: DateTimeUtils,
+    private val Settings: Settings
+){
 
     fun calculateCurrentWorkTime(currentDay: WorkDay?, weekWorkDays: List<WorkDay>, weekRange: ClosedRange<Date>): WorkTimeResult {
         val currentDayDate = prepareWorkDay(currentDay) ?: Date()
@@ -28,7 +32,7 @@ object WorkTimeCalculator {
     private fun prepareWorkDay(workDay: WorkDay?): Date? = workDay?.date
 
     private fun calculateCurrentWeekWorkTime(weekWorkDays: Collection<WorkDay>) =
-        weekWorkDays.map { DateTimeUtils.mergeComeEventsDuration(it) }
+        weekWorkDays.map { dateTimeUtils.mergeComeEventsDuration(it) }
             .fold(Duration.ZERO) { sum, element -> sum + element }
 
     // TODO: 30.08.2021 Obsługa określenia dni roboczych
@@ -38,7 +42,7 @@ object WorkTimeCalculator {
     }
 
     private fun calculateCurrentDayWorkTime(currentDay: WorkDay?): Duration {
-        return currentDay?.let { DateTimeUtils.mergeComeEventsDuration(it) } ?: Duration.ZERO
+        return currentDay?.let { dateTimeUtils.mergeComeEventsDuration(it) } ?: Duration.ZERO
     }
 
     // TODO: 30.08.2021 Obsługa określenia nierównomiernych dni roboczych

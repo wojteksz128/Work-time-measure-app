@@ -1,25 +1,20 @@
-@file:Suppress("LeakingThis")
-
 package net.wojteksz128.worktimemeasureapp.settings.item
 
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
-import net.wojteksz128.worktimemeasureapp.WorkTimeMeasureApp
-import net.wojteksz128.worktimemeasureapp.settings.Settings
 
 open class SettingsItem<R>(
     val keyResourceId: Int,
+    private val appContext: Context,
     private val valueGettingMethod: (SharedPreferences, String) -> R?,
     private val valueSettingMethod: (SharedPreferences.Editor, String, R) -> Unit
-) {
+) : SettingsNode {
+    override val childNodes: Set<SettingsItem<*>>
+        get() = setOf(this)
 
     internal var changed: Boolean = false
     private var readValue: R? = null
-
-    init {
-        Settings.registerItem(this)
-    }
 
     val key: String
         get() = appContext.getString(keyResourceId)
@@ -52,6 +47,3 @@ open class SettingsItem<R>(
             changed = true
         }
 }
-
-private val appContext: Context
-    get() = WorkTimeMeasureApp.context

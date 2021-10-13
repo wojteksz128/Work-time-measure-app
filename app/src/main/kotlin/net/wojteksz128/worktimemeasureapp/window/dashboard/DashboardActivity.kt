@@ -21,6 +21,7 @@ import net.wojteksz128.worktimemeasureapp.util.comeevent.ComeEventUtils
 import net.wojteksz128.worktimemeasureapp.util.comeevent.NewEventRegisterListener
 import net.wojteksz128.worktimemeasureapp.util.coroutines.PeriodicOperation
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
+import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import net.wojteksz128.worktimemeasureapp.window.BaseActivity
 import net.wojteksz128.worktimemeasureapp.window.history.ComeEventsAdapter
 import java.util.*
@@ -33,16 +34,30 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
 
     @Inject
     lateinit var comeEventUtils: ComeEventUtils
+    @Inject
+    lateinit var dateTimeProvider: DateTimeProvider
+    @Inject
+    lateinit var dateTimeUtils: DateTimeUtils
+    @Inject
+    lateinit var notificationUtils: NotificationUtils
+    @Suppress("PropertyName")
+    @Inject
+    lateinit var Settings: Settings
+    @Inject
+    lateinit var timerManager: TimerManager
 
-    private val comeEventsAdapter = ComeEventsAdapter()
+    private lateinit var comeEventsAdapter: ComeEventsAdapter
     private val currentDayObserver = CurrentDayObserver()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        comeEventsAdapter = ComeEventsAdapter(dateTimeUtils)
+
         binding.apply {
             lifecycleOwner = this@DashboardActivity
+            dateTimeUtils = this@DashboardActivity.dateTimeUtils
             viewModel = this@DashboardActivity.viewModel
             workTimeData = this@DashboardActivity.viewModel.workTimeData
             newEventRegisterListener = this@DashboardActivity
@@ -62,7 +77,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
         viewModel.workDay.observe(this@DashboardActivity, currentDayObserver)
         viewModel.workDay.value?.let { runTimerIfRequiredFor(it) }
         // TODO: 21.09.2021 Przenieś do innego miesca (niezależnego od DashboardActivity)
-        DateTimeProvider.updateOffset(this)
+        dateTimeProvider.updateOffset(this)
     }
 
     private fun runTimerIfRequiredFor(workDay: WorkDay) {
@@ -102,13 +117,12 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
             val message = when (comeEventUtils.registerNewEvent()) {
                 ComeEventType.COME_IN -> {
                     if (Settings.WorkTime.NotifyingEnabled.valueNullable == true) {
-                        NotificationUtils.notifyUserAboutWorkTime(this@DashboardActivity,
-                            viewModel.workTimeData.value!!)
+                        notificationUtils.notifyUserAboutWorkTime(viewModel.workTimeData.value!!)
                     }
                     getString(R.string.dashboard_snackbar_info_income_registered)
                 }
                 ComeEventType.COME_OUT -> {
-                    TimerManager.removeAlarm(this@DashboardActivity)
+                    timerManager.removeAlarm()
                     getString(R.string.dashboard_snackbar_info_outcome_registered)
                 }
             }

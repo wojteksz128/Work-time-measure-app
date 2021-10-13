@@ -7,6 +7,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -14,9 +15,14 @@ import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.WorkTimeMeasureApp
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.settings.item.StringSettingsItem
+import javax.inject.Inject
 import kotlin.reflect.KFunction1
 
-open class BaseViewModel(application: Application) : AndroidViewModel(application) {
+@HiltViewModel
+open class BaseViewModel @Inject constructor(
+    application: Application,
+    private val Settings: Settings
+) : AndroidViewModel(application) {
     val profileImageBitmap: LiveData<Bitmap>
         get() = _profileImageBitmap
     val profileUsername: LiveData<String>
@@ -63,7 +69,8 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
             imageBitmap = if (imagePath != null) {
                 BitmapFactory.decodeFile(imagePath)
             } else {
-                BitmapFactory.decodeResource(WorkTimeMeasureApp.context.resources, R.mipmap.ic_launcher_round)
+                BitmapFactory.decodeResource(getApplication<WorkTimeMeasureApp>().applicationContext.resources,
+                    R.mipmap.ic_launcher_round)
             }
         }
         imageBitmap?.let {

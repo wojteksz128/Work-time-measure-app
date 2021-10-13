@@ -16,7 +16,7 @@ import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.comeevent.ComeEventUtils
 import javax.inject.Inject
 
-internal class EndOfWorkActionImpl @Inject constructor(
+internal class EndOfWorkActionImpl (
     private val comeEventUtils: ComeEventUtils
 ) : NotificationActionImpl, ClassTagAware {
 
