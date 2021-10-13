@@ -184,6 +184,7 @@
 
     <style name="history" parent="window" />
 
+<!--    todo do usunięcia-->
     <style name="history_rv" parent="recycler_view" />
 
     <style name="history_rv_work_day" parent="recycler_view_item" />
@@ -201,6 +202,14 @@
     <style name="history_rv_work_day_events_item_label">
         <item name="android:layout_margin">@dimen/default_margin</item>
     </style>
+
+    <!--</editor-fold>-->
+    <!--##########################################-->
+
+    <!--##########################################-->
+    <!--<editor-fold desc="############ Work days history ###########">-->
+
+    <style name="work_days_history_rv" parent="recycler_view" />
 
     <!--</editor-fold>-->
     <!--##########################################-->

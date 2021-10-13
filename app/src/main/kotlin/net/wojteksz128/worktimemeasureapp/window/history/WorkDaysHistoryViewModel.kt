@@ -12,7 +12,7 @@ import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import javax.inject.Inject
 
 @HiltViewModel
-class HistoryViewModel @Inject constructor(
+class WorkDaysHistoryViewModel @Inject constructor(
     application: Application,
     workDayRepository: WorkDayRepository
 ) : AndroidViewModel(application), ClassTagAware {
