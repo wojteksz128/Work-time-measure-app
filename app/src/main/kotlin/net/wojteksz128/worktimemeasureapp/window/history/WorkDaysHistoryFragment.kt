@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.paging.liveData
 import androidx.recyclerview.widget.SimpleItemAnimator
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.databinding.FragmentWorkDaysHistoryBinding
@@ -35,8 +36,21 @@ class WorkDaysHistoryFragment : Fragment(), ClassTagAware {
         binding = FragmentWorkDaysHistoryBinding.inflate(layoutInflater, container, false)
 
         binding.workDaysHistoryRv.apply {
-            val workDayAdapter = WorkDayAdapter(requireContext(), dateTimeUtils) {
-                { findNavController().navigate(R.id.viewWorkDayDetails) }
+            val workDayAdapter = WorkDayAdapter(requireContext(), dateTimeUtils) { workDay ->
+                val workDayId = workDay.id
+                {
+                    if (workDayId != null) {
+                        val bundle = Bundle()
+                        bundle.putLong("workDayId", workDayId)
+                        findNavController().navigate(R.id.viewWorkDayDetails, bundle)
+                    } else {
+                        Snackbar.make(
+                            binding.root,
+                            "Id cannot be null.",// TODO: 13.10.2021 Zamień na poprawny ciąg z zasobu
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                    }
+                }
             }
             adapter = workDayAdapter.also { this@WorkDaysHistoryFragment.workDayAdapter = it }
             (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false

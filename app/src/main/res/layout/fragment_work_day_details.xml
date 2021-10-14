@@ -1,18 +1,168 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
-        <TextView
+        <androidx.constraintlayout.widget.ConstraintLayout
+            style="@style/work_day_details"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Szczegóły"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                style="@style/calendar_page"
+                android:id="@+id/work_day_details_card"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <LinearLayout
+                    style="@style/calendar_page_header"
+                    android:layout_width="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/calendar_page_header_text"
+                        android:id="@+id/work_day_details_card_year"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text='@{dateTimeUtils.formatDate("LLLL yyyy", viewModel.workDay.date)}'
+                        tools:text="@string/work_day_details_header_text_example" />
+                </LinearLayout>
+
+                <TextView
+                    style="@style/calendar_page_content_day"
+                    android:id="@+id/work_day_details_card_day"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text='@{dateTimeUtils.formatDate("d", viewModel.workDay.date)}'
+                    tools:text="@string/work_day_details_card_day_example" />
+
+                <TextView
+                    style="@style/calendar_page_content_weekday"
+                    android:id="@+id/work_day_details_card_weekDay"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text='@{dateTimeUtils.formatDate("EEEE", viewModel.workDay.date)}'
+                    tools:text="@string/work_day_details_card_weekDay_example" />
+
+            </LinearLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                style="@style/work_day_details_summary"
+                android:id="@+id/constraintLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/work_day_details_card">
+
+                <TextView
+                    style="@style/work_day_details_summary_label"
+                    android:id="@+id/work_day_details_summary_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/work_day_details_summary_label"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <LinearLayout
+                    style="@style/work_day_details_summary_group"
+                    android:id="@+id/work_day_details_summary_group"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/work_day_details_summary_label">
+
+                    <TextView
+                        style="@style/work_day_details_summary_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@{dateTimeUtils.formatCounterTime(viewModel.workDay != null ? dateTimeUtils.mergeComeEventsDuration(viewModel.workDay) : null)}"
+                        tools:text="@string/work_day_details_summary_value_example" />
+
+                    <TextView
+                        style="@style/work_day_details_summary_value_divider"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/work_day_details_summary_values_divider" />
+
+                    <TextView
+                        style="@style/work_day_details_summary_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@{dateTimeUtils.formatCounterTime(Settings.WorkTime.Duration.value)}"
+                        tools:text="@string/work_day_details_summary_value_example" />
+
+                </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                style="@style/work_day_details_summary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
+
+                <TextView
+                    style="@style/work_day_details_summary_label"
+                    android:id="@+id/work_day_details_come_events_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/work_day_details_come_events_label"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <FrameLayout
+                    style="@style/work_day_details_come_event_list_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/work_day_details_come_events_label">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        style="@style/work_day_details_come_event_list_recyclerView"
+                        android:id="@+id/work_day_details_come_events"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="top|center_horizontal"
+                        android:visibility="@{(viewModel.workDay == null || viewModel.workDay.events == null || viewModel.workDay.events.empty) ? View.INVISIBLE : View.VISIBLE}"
+                        tools:listitem="@layout/history_day_event_list_item"
+                        tools:visibility="visible" />
+
+                    <TextView
+                        style="@style/dashboard_current_day_no_events_label"
+                        android:id="@+id/dashboard_current_day_empty_events_message"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/dashboard_current_day_empty_events_message"
+                        android:visibility="@{(viewModel.workDay == null || viewModel.workDay.events == null || viewModel.workDay.events.empty) ? View.VISIBLE : View.INVISIBLE}" />
+
+                </FrameLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+    <data>
+        <import type="android.view.View" />
+
+        <variable
+            name="Settings"
+            type="net.wojteksz128.worktimemeasureapp.settings.Settings" />
+        <variable
+            name="dateTimeUtils"
+            type="net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils" />
+        <variable
+            name="viewModel"
+            type="net.wojteksz128.worktimemeasureapp.window.history.WorkDayDetailsViewModel" />
+    </data>
 </layout>

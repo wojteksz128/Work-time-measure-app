@@ -97,7 +97,23 @@
     <string name="history_work_day_duration_format" translatable="false">H:mm:ss</string>
 
     <!--</editor-fold>-->
-    <!--">##########################################-->
+    <!--##########################################-->
+
+    <!--##########################################-->
+    <!--<editor-fold desc="############ Work day details ############">-->
+
+    <string name="work_day_details_header_text_example">January 2021</string>
+    <string name="work_day_details_card_day_example" translatable="false">1</string>
+    <string name="work_day_details_card_weekDay_example">Friday</string>
+
+    <string name="work_day_details_summary_label">Total working time:</string>
+    <string name="work_day_details_summary_value_example" translatable="false">00:00:00</string>
+    <string name="work_day_details_summary_values_divider" translatable="false">/</string>
+
+    <string name="work_day_details_come_events_label">Work time entries:</string>
+
+    <!--</editor-fold>-->
+    <!--##########################################-->
 
     <!--##########################################-->
     <!--<editor-fold desc="############ Settings Activity ###########">-->
