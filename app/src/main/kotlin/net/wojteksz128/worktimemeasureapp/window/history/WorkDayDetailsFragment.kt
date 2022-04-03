@@ -8,8 +8,6 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.ItemTouchHelper.LEFT
-import androidx.recyclerview.widget.ItemTouchHelper.RIGHT
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
@@ -18,6 +16,8 @@ import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.databinding.FragmentWorkDayDetailsBinding
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
+import net.wojteksz128.worktimemeasureapp.util.recyclerView.RecyclerLeftSwipeActionParam
+import net.wojteksz128.worktimemeasureapp.util.recyclerView.RecyclerRightSwipeActionParam
 import net.wojteksz128.worktimemeasureapp.util.recyclerView.RecyclerSwipeHelper
 import javax.inject.Inject
 
@@ -71,25 +71,21 @@ class WorkDayDetailsFragment : Fragment() {
     }
 
     private fun initializeLogic(workDayDetailsComeEvents: RecyclerView) {
-        val recyclerSwipeHelper = object : RecyclerSwipeHelper(
+        val swipeLeft = RecyclerLeftSwipeActionParam(
             R.color.teal_200,
             R.drawable.ic_baseline_edit_24,
+            requireContext()
+        ) {
+            Toast.makeText(requireContext(), "Edit", Toast.LENGTH_SHORT).show()
+        }
+        val swipeRight = RecyclerRightSwipeActionParam(
             R.color.colorAlert,
             R.drawable.ic_baseline_delete_24,
             requireContext()
         ) {
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                comeEventsAdapter.notifyItemChanged(viewHolder.bindingAdapterPosition)
-                when (direction) {
-                    LEFT -> {
-                        Toast.makeText(requireContext(), "Edit", Toast.LENGTH_SHORT).show()
-                    }
-                    RIGHT -> {
-                        Toast.makeText(requireContext(), "Delete", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
+            Toast.makeText(requireContext(), "Delete", Toast.LENGTH_SHORT).show()
         }
+        val recyclerSwipeHelper = RecyclerSwipeHelper(comeEventsAdapter, swipeLeft, swipeRight)
         val itemTouchHelper = ItemTouchHelper(recyclerSwipeHelper)
         itemTouchHelper.attachToRecyclerView(workDayDetailsComeEvents)
     }
