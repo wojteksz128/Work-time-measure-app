@@ -8,11 +8,11 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 
-abstract class RecyclerSwipeActionParam(
+abstract class RecyclerSwipeActionParam<Entity>(
     @ColorRes backgroundColorResId: Int,
     @DrawableRes iconResId: Int,
     context: Context,
-    val action: () -> Unit
+    val action: (Entity, Int) -> Unit
 ) {
     val backgroundColor = ContextCompat.getColor(context, backgroundColorResId)
     val icon = ContextCompat.getDrawable(context, iconResId)

@@ -112,6 +112,13 @@
 
     <string name="work_day_details_come_events_label">Work time entries:</string>
 
+    <string name="work_day_details_come_events_action_cancel">Cancel</string>
+    <string name="work_day_details_come_events_action_delete">Delete</string>
+    <string name="work_day_datails_come_events_action_edit">Edit</string>
+
+    <string name="work_day_details_come_events_action_delete_title">Delete workday entry</string>
+    <string name="work_day_details_come_events_action_delete_message">Are you sure you want to delete the workday entry: %s - %s?</string>
+
     <!--</editor-fold>-->
     <!--##########################################-->
 

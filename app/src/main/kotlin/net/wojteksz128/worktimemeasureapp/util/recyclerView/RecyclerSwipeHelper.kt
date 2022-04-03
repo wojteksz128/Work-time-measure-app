@@ -11,10 +11,10 @@ import androidx.recyclerview.widget.ItemTouchHelper.LEFT
 import androidx.recyclerview.widget.ItemTouchHelper.RIGHT
 import androidx.recyclerview.widget.RecyclerView
 
-class RecyclerSwipeHelper(
-    private val adapter: RecyclerView.Adapter<*>,
-    private val swipeLeft: RecyclerLeftSwipeActionParam,
-    private val swipeRight: RecyclerRightSwipeActionParam
+class RecyclerSwipeHelper<Entity>(
+    private val swipeLeft: RecyclerLeftSwipeActionParam<Entity>,
+    private val swipeRight: RecyclerRightSwipeActionParam<Entity>,
+    private val entityExtractor: (RecyclerView.ViewHolder) -> Entity
 ) : ItemTouchHelper.SimpleCallback(0, LEFT or RIGHT) {
 
     private val clearPaint = Paint().apply {
@@ -63,7 +63,7 @@ class RecyclerSwipeHelper(
     }
 
     private fun drawActionSlide(
-        swipeActionParam: RecyclerSwipeActionParam,
+        swipeActionParam: RecyclerSwipeActionParam<Entity>,
         itemView: View,
         dX: Float,
         c: Canvas
@@ -86,10 +86,12 @@ class RecyclerSwipeHelper(
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-        adapter.notifyItemChanged(viewHolder.bindingAdapterPosition)
+        val bindingAdapterPosition = viewHolder.bindingAdapterPosition
+        val entity = entityExtractor(viewHolder)
+
         when (direction) {
-            LEFT -> swipeLeft.action()
-            RIGHT -> swipeRight.action()
+            LEFT -> swipeLeft.action(entity, bindingAdapterPosition)
+            RIGHT -> swipeRight.action(entity, bindingAdapterPosition)
         }
     }
 }

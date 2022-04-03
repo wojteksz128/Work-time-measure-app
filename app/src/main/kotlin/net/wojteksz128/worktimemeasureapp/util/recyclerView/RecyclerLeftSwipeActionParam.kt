@@ -6,12 +6,12 @@ import android.view.View
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 
-class RecyclerLeftSwipeActionParam(
+class RecyclerLeftSwipeActionParam<Entity>(
     @ColorRes backgroundColorResId: Int,
     @DrawableRes iconResId: Int,
     context: Context,
-    action: () -> Unit
-) : RecyclerSwipeActionParam(backgroundColorResId, iconResId, context, action) {
+    action: (Entity, Int) -> Unit
+) : RecyclerSwipeActionParam<Entity>(backgroundColorResId, iconResId, context, action) {
 
     override fun calculateBackgroundRect(itemView: View, dX: Float) =
         Rect(itemView.right + dX.toInt(), itemView.top, itemView.right, itemView.bottom)
