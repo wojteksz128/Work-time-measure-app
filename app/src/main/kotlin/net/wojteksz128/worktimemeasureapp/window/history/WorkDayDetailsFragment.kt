@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -26,6 +27,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class WorkDayDetailsFragment : Fragment() {
     private val viewModel: WorkDayDetailsViewModel by viewModels()
+    private val selectedWorkDayViewModel: SelectedWorkDayViewModel by activityViewModels()
 
     @Inject
     lateinit var dateTimeUtils: DateTimeUtils
@@ -39,10 +41,6 @@ class WorkDayDetailsFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        arguments?.getLong("workDayId")?.let { workDayId ->
-            viewModel.workDayId = workDayId
-        }
 
         comeEventsAdapter = ComeEventsAdapter(dateTimeUtils)
 
@@ -65,20 +63,9 @@ class WorkDayDetailsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentWorkDayDetailsBinding.inflate(layoutInflater, container, false)
-        binding.apply {
-            dateTimeUtils = this@WorkDayDetailsFragment.dateTimeUtils
-            settings = this@WorkDayDetailsFragment.settings
-            viewModel = this@WorkDayDetailsFragment.viewModel
-            workDayDetailsComeEvents.apply {
-                adapter = comeEventsAdapter
-                layoutManager = object : LinearLayoutManager(requireContext()) {
-                    override fun canScrollVertically() = false
-                }
-                (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
-            }
-            initializeSwipeLogic(workDayDetailsComeEvents)
-        }
+        initializeLayoutData()
         viewModel.apply {
+            fillWorkDayUsingLocal(selectedWorkDayViewModel.selected)
             workDay.observe(viewLifecycleOwner) {
                 comeEventsAdapter.submitList(it.events)
             }
@@ -98,8 +85,32 @@ class WorkDayDetailsFragment : Fragment() {
                 deleteComeEventDialog.setMessage(message)
             }
         }
+        selectedWorkDayViewModel.selected.observe(viewLifecycleOwner) { workDay ->
+            workDay.id?.let { workDayId ->
+                viewModel.replaceWorkDayUsingRepository(
+                    workDayId,
+                    selectedWorkDayViewModel.selected
+                )
+            }
+        }
 
         return binding.root
+    }
+
+    private fun initializeLayoutData() {
+        binding.apply {
+            dateTimeUtils = this@WorkDayDetailsFragment.dateTimeUtils
+            settings = this@WorkDayDetailsFragment.settings
+            viewModel = this@WorkDayDetailsFragment.viewModel
+            workDayDetailsComeEvents.apply {
+                adapter = comeEventsAdapter
+                layoutManager = object : LinearLayoutManager(requireContext()) {
+                    override fun canScrollVertically() = false
+                }
+                (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
+            }
+            initializeSwipeLogic(workDayDetailsComeEvents)
+        }
     }
 
     private fun initializeSwipeLogic(workDayDetailsComeEvents: RecyclerView) {

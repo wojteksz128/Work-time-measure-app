@@ -18,36 +18,30 @@ import javax.inject.Inject
 @HiltViewModel
 class WorkDayDetailsViewModel @Inject constructor(
     application: Application,
-    workDayRepository: WorkDayRepository,
-    private val comeEventRepository: ComeEventRepository
+    private val comeEventRepository: ComeEventRepository,
+    private val workDayRepository: WorkDayRepository
 ) : AndroidViewModel(application), ClassTagAware {
-    private val _workDayId: MutableLiveData<Long> = MutableLiveData()
-    private val _workDay: MutableLiveData<WorkDay> = MutableLiveData()
-    private val _repositoryWorkDayResultObserver = Observer<WorkDay> {
-        _workDay.value = it
-    }
-    private var _repositoryWorkDay: LiveData<WorkDay>? = null
-
-    val workDay: LiveData<WorkDay>
-        get() = _workDay
-
-    var workDayId: Long?
-        get() = _workDayId.value
-        set(value) {
-            Log.d(classTag, "setWorkDayId: Old workDayId = $workDayId, new workDayId = $value")
-            _workDayId.value = value
-        }
+    val workDay = MediatorLiveData<WorkDay>()
 
     val comeEventToDelete = MutableLiveData<ComeEvent>()
     val comeEventPosition = MutableLiveData<Int>()
 
-    init {
-        // TODO: 14.10.2021 Probably on this place is problem, change to MVI DataState
-        _workDayId.observeForever { workDayId ->
-            Log.d(classTag, "observeForever: Replace _repositoryWorkDay")
-            _repositoryWorkDay?.removeObserver(_repositoryWorkDayResultObserver)
-            _repositoryWorkDay = workDayRepository.getWorkDayByIdInLiveData(workDayId)
-            _repositoryWorkDay?.observeForever(_repositoryWorkDayResultObserver)
+    fun fillWorkDayUsingLocal(workDaySource: LiveData<WorkDay>) {
+        workDay.addSource(workDaySource) {
+            Log.d(classTag, "fillWorkDataFromLocalSource: Use variable source")
+            workDay.value = it
+        }
+    }
+
+    fun replaceWorkDayUsingRepository(
+        workDayId: Long,
+        previousWorkDaySourceSource: LiveData<WorkDay>
+    ) {
+        val workDayFromDB = workDayRepository.getWorkDayByIdInLiveData(workDayId)
+        workDay.addSource(workDayFromDB) {
+            Log.d(classTag, "fillUsingRepositoryWorkDay: Use database source")
+            workDay.value = it
+            workDay.removeSource(previousWorkDaySourceSource)
         }
     }
 
