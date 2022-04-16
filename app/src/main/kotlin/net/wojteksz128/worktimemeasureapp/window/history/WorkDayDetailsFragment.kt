@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -13,6 +12,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.databinding.FragmentWorkDayDetailsBinding
@@ -52,6 +52,11 @@ class WorkDayDetailsFragment : Fragment() {
         setPositiveButton(R.string.work_day_details_come_events_action_delete) { _, _ ->
             viewModel.onComeEventDelete()
             viewModel.comeEventPosition.value?.let { comeEventsAdapter.notifyItemRemoved(it) }
+            Snackbar.make(
+                binding.root,
+                R.string.work_day_details_come_events_message_deleted,
+                Snackbar.LENGTH_LONG
+            ).show()
         }
         setNegativeButton(R.string.work_day_details_come_events_action_cancel) { _, _ ->
             viewModel.comeEventPosition.value?.let { comeEventsAdapter.notifyItemRemoved(it) }
@@ -71,18 +76,7 @@ class WorkDayDetailsFragment : Fragment() {
                 comeEventsAdapter.submitList(it.events)
             }
             comeEventToDelete.observe(viewLifecycleOwner) {
-                val message =
-                    getString(
-                        R.string.work_day_details_come_events_action_delete_message,
-                        dateTimeUtils.formatDate(
-                            getString(R.string.history_day_event_time_format),
-                            it.startDate
-                        ),
-                        dateTimeUtils.formatDate(
-                            getString(R.string.history_day_event_time_format),
-                            it.endDate
-                        )
-                    )
+                val message = viewModel.prepareDeleteMessage(it)
                 deleteComeEventDialog.setMessage(message)
             }
         }
@@ -138,7 +132,12 @@ class WorkDayDetailsFragment : Fragment() {
 
     @Suppress("UNUSED_PARAMETER")
     private fun processEditComeEvent(comeEvent: ComeEvent, position: Int) {
-        Toast.makeText(requireContext(), "Edit", Toast.LENGTH_SHORT).show()
+        comeEventsAdapter.notifyItemRemoved(position)
+        Snackbar.make(
+            binding.root,
+            R.string.work_day_details_come_events_message_edited,
+            Snackbar.LENGTH_LONG
+        ).show()
     }
 
     private fun processDeleteComeEvent(comeEvent: ComeEvent, position: Int) {

@@ -119,6 +119,9 @@
     <string name="work_day_details_come_events_action_delete_title">Delete workday entry</string>
     <string name="work_day_details_come_events_action_delete_message">Are you sure you want to delete the workday entry: %s - %s?</string>
 
+    <string name="work_day_details_come_events_message_deleted">Entry has been deleted.</string>
+    <string name="work_day_details_come_events_message_edited">Entry has been modified.</string>
+
     <!--</editor-fold>-->
     <!--##########################################-->
 

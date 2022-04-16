@@ -119,6 +119,9 @@
     <string name="work_day_details_come_events_action_delete_title">Usuwanie wpisu dnia pracy</string>
     <string name="work_day_details_come_events_action_delete_message">Czy na pewno chcesz usunąć wpis dnia pracy: %s - %s?</string>
 
+    <string name="work_day_details_come_events_message_deleted">Wpis został usunięty.</string>
+    <string name="work_day_details_come_events_message_edited">Wpis został zmodyfikowany.</string>
+
     <!--</editor-fold>-->
     <!--##########################################-->
 
