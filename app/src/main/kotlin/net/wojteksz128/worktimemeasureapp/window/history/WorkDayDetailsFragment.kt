@@ -99,6 +99,7 @@ class WorkDayDetailsFragment : Fragment() {
 
     private fun initializeLayoutData() {
         binding.apply {
+            lifecycleOwner = this@WorkDayDetailsFragment
             dateTimeUtils = this@WorkDayDetailsFragment.dateTimeUtils
             settings = this@WorkDayDetailsFragment.settings
             viewModel = this@WorkDayDetailsFragment.viewModel

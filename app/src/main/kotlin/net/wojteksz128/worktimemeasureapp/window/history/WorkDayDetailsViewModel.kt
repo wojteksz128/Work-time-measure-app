@@ -28,7 +28,7 @@ class WorkDayDetailsViewModel @Inject constructor(
 
     fun fillWorkDayUsingLocal(workDaySource: LiveData<WorkDay>) {
         workDay.addSource(workDaySource) {
-            Log.d(classTag, "fillWorkDataFromLocalSource: Use variable source")
+            Log.d(classTag, "fillWorkDayUsingLocal: Use variable source")
             workDay.value = it
         }
     }
@@ -39,7 +39,7 @@ class WorkDayDetailsViewModel @Inject constructor(
     ) {
         val workDayFromDB = workDayRepository.getWorkDayByIdInLiveData(workDayId)
         workDay.addSource(workDayFromDB) {
-            Log.d(classTag, "fillUsingRepositoryWorkDay: Use database source")
+            Log.d(classTag, "replaceWorkDayUsingRepository: Use database source")
             workDay.value = it
             workDay.removeSource(previousWorkDaySourceSource)
         }
