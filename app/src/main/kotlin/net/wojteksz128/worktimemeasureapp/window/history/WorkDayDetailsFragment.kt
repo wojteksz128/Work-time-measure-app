@@ -54,6 +54,7 @@ class WorkDayDetailsFragment : Fragment() {
             viewModel.comeEventPosition.value?.let { comeEventsAdapter.notifyItemRemoved(it) }
         }
         setNegativeButton(R.string.work_day_details_come_events_action_cancel) { _, _ ->
+            viewModel.comeEventPosition.value?.let { comeEventsAdapter.notifyItemRemoved(it) }
         }
     }.create()
 
