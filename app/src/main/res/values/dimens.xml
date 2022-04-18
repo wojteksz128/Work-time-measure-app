@@ -47,4 +47,7 @@
     <!-- Loading indicator -->
     <dimen name="loading_indicator_size">42dp</dimen>
 
+    <!-- Button -->
+    <dimen name="small_button">48dp</dimen>
+
 </resources>

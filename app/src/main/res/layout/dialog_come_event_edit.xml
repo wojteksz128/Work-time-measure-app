@@ -16,205 +16,315 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
-            <ImageButton
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/selector_edit"
-                android:background="@android:color/transparent"
-                android:contentDescription="@string/work_day_details_come_events_action_edit_set_time_desc"
-                app:tint="@android:color/background_dark" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <ImageButton
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/selector_delete"
-                android:background="@android:color/transparent"
-                android:contentDescription="@string/work_day_details_come_events_action_edit_set_time_desc"
-                app:tint="@android:color/background_dark" />
+                <ImageButton
+                    android:id="@+id/dialog_come_event_edit_start_time_edit"
+                    android:layout_width="@dimen/small_button"
+                    android:layout_height="@dimen/small_button"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/work_day_details_come_events_action_edit_set_time_desc"
+                    android:src="@drawable/selector_edit"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/dialog_come_event_edit_start_time_delete"
+                    app:layout_constraintRight_toLeftOf="@id/dialog_come_event_edit_start_time_delete"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@android:color/background_dark" />
 
-            <ImageButton
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/selector_accept"
-                android:background="@android:color/transparent"
-                android:contentDescription="@string/work_day_details_come_events_action_edit_accept_desc"
-                app:tint="@android:color/background_dark" />
+                <ImageButton
+                    android:id="@+id/dialog_come_event_edit_start_time_delete"
+                    android:layout_width="@dimen/small_button"
+                    android:layout_height="@dimen/small_button"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/work_day_details_come_events_action_edit_set_time_desc"
+                    android:src="@drawable/selector_delete"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/dialog_come_event_edit_start_time_accept"
+                    app:layout_constraintRight_toLeftOf="@id/dialog_come_event_edit_start_time_accept"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@android:color/background_dark" />
 
-            <ImageButton
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/selector_dismiss"
-                android:background="@android:color/transparent"
-                android:contentDescription="@string/work_day_details_come_events_action_edit_dismiss_desc"
-                app:tint="@android:color/background_dark" />
+                <ImageButton
+                    android:id="@+id/dialog_come_event_edit_start_time_accept"
+                    android:layout_width="@dimen/small_button"
+                    android:layout_height="@dimen/small_button"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/work_day_details_come_events_action_edit_accept_desc"
+                    android:src="@drawable/selector_accept"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/dialog_come_event_edit_start_time_dismiss"
+                    app:layout_constraintRight_toLeftOf="@id/dialog_come_event_edit_start_time_dismiss"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@android:color/background_dark" />
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="1"
-                android:text="@string/work_day_details_come_events_action_edit_start_time_label" />
+                <ImageButton
+                    android:id="@+id/dialog_come_event_edit_start_time_dismiss"
+                    android:layout_width="@dimen/small_button"
+                    android:layout_height="@dimen/small_button"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/work_day_details_come_events_action_edit_dismiss_desc"
+                    android:src="@drawable/selector_dismiss"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@android:color/background_dark" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginHorizontal="@dimen/small_margin"
-                tools:text="@string/work_day_details_come_events_action_edit_time_example" />
-        </LinearLayout>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/work_day_details_come_events_action_edit_start_time_label"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:orientation="horizontal">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:orientation="vertical">
-
-                <ToggleButton
+                <TextView
+                    android:id="@+id/dialog_come_event_edit_start_time_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/small_margin"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/dialog_come_event_edit_start_time_edit"
+                    app:layout_constraintRight_toLeftOf="@id/dialog_come_event_edit_start_time_edit"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="@string/work_day_details_come_events_action_edit_time_example" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <NumberPicker
+                    android:id="@+id/dialog_come_event_edit_start_time_hour"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/dialog_come_event_edit_start_time_minute"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toLeftOf="@id/dialog_come_event_edit_start_time_minute"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:maxValue="23"
+                    tools:minValue="0" />
+
+                <NumberPicker
+                    android:id="@+id/dialog_come_event_edit_start_time_minute"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/dialog_come_event_edit_start_time_second"
+                    app:layout_constraintLeft_toRightOf="@id/dialog_come_event_edit_start_time_hour"
+                    app:layout_constraintRight_toLeftOf="@id/dialog_come_event_edit_start_time_second"
+                    app:layout_constraintStart_toEndOf="@id/dialog_come_event_edit_start_time_hour"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:maxValue="59"
+                    tools:minValue="0" />
+
+                <NumberPicker
+                    android:id="@+id/dialog_come_event_edit_start_time_second"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/dialog_come_event_edit_start_time_am"
+                    app:layout_constraintLeft_toRightOf="@id/dialog_come_event_edit_start_time_minute"
+                    app:layout_constraintRight_toLeftOf="@id/dialog_come_event_edit_start_time_am"
+                    app:layout_constraintStart_toEndOf="@id/dialog_come_event_edit_start_time_minute"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:maxValue="59"
+                    tools:minValue="0" />
+
+                <ToggleButton
+                    android:id="@+id/dialog_come_event_edit_start_time_am"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/default_margin"
                     android:textOn="@string/work_day_details_come_events_action_edit_am_label"
                     android:textOff="@string/work_day_details_come_events_action_edit_am_label"
+                    app:layout_constraintBottom_toTopOf="@id/dialog_come_event_edit_start_time_pm"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintLeft_toRightOf="@id/dialog_come_event_edit_start_time_second"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/dialog_come_event_edit_start_time_second"
+                    app:layout_constraintTop_toTopOf="parent"
                     tools:checked="true" />
 
                 <ToggleButton
+                    android:id="@+id/dialog_come_event_edit_start_time_pm"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/default_margin"
                     android:textOn="@string/work_day_details_come_events_action_edit_pm_label"
                     android:textOff="@string/work_day_details_come_events_action_edit_pm_label"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintLeft_toRightOf="@id/dialog_come_event_edit_start_time_second"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/dialog_come_event_edit_start_time_second"
+                    app:layout_constraintTop_toBottomOf="@id/dialog_come_event_edit_start_time_am"
                     tools:checked="false" />
-            </LinearLayout>
-
-            <NumberPicker
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:maxValue="59"
-                tools:minValue="0" />
-
-            <NumberPicker
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:maxValue="59"
-                tools:minValue="0" />
-
-            <NumberPicker
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:maxValue="23"
-                tools:minValue="0" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
-            <ImageButton
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/selector_edit"
-                android:background="@android:color/transparent"
-                android:contentDescription="@string/work_day_details_come_events_action_edit_set_time_desc"
-                app:tint="@android:color/background_dark" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <ImageButton
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/selector_delete"
-                android:background="@android:color/transparent"
-                android:contentDescription="@string/work_day_details_come_events_action_edit_clear_time_desc"
-                app:tint="@android:color/background_dark" />
+                <ImageButton
+                    android:id="@+id/dialog_come_event_edit_finish_time_edit"
+                    android:layout_width="@dimen/small_button"
+                    android:layout_height="@dimen/small_button"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/work_day_details_come_events_action_edit_set_time_desc"
+                    android:src="@drawable/selector_edit"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/dialog_come_event_edit_finish_time_delete"
+                    app:layout_constraintRight_toLeftOf="@id/dialog_come_event_edit_finish_time_delete"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@android:color/background_dark" />
 
-            <ImageButton
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center_vertical"
-                android:contentDescription="@string/work_day_details_come_events_action_edit_accept_desc"
-                android:background="@android:color/transparent"
-                android:src="@drawable/selector_accept"
-                app:tint="@android:color/background_dark" />
+                <ImageButton
+                    android:id="@+id/dialog_come_event_edit_finish_time_delete"
+                    android:layout_width="@dimen/small_button"
+                    android:layout_height="@dimen/small_button"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/work_day_details_come_events_action_edit_clear_time_desc"
+                    android:src="@drawable/selector_delete"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/dialog_come_event_edit_finish_time_accept"
+                    app:layout_constraintRight_toLeftOf="@id/dialog_come_event_edit_finish_time_accept"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@android:color/background_dark" />
 
-            <ImageButton
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center_vertical"
-                android:contentDescription="@string/work_day_details_come_events_action_edit_dismiss_desc"
-                android:background="@android:color/transparent"
-                android:src="@drawable/selector_dismiss"
-                app:tint="@android:color/background_dark" />
+                <ImageButton
+                    android:id="@+id/dialog_come_event_edit_finish_time_accept"
+                    android:layout_width="@dimen/small_button"
+                    android:layout_height="@dimen/small_button"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/work_day_details_come_events_action_edit_accept_desc"
+                    android:src="@drawable/selector_accept"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/dialog_come_event_edit_finish_time_dismiss"
+                    app:layout_constraintRight_toLeftOf="@id/dialog_come_event_edit_finish_time_dismiss"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@android:color/background_dark" />
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="1"
-                android:text="@string/work_day_details_come_events_action_edit_finish_time_label" />
+                <ImageButton
+                    android:id="@+id/dialog_come_event_edit_finish_time_dismiss"
+                    android:layout_width="@dimen/small_button"
+                    android:layout_height="@dimen/small_button"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/work_day_details_come_events_action_edit_dismiss_desc"
+                    android:src="@drawable/selector_dismiss"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@android:color/background_dark" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginHorizontal="@dimen/small_margin"
-                tools:text="@string/work_day_details_come_events_action_edit_time_example" />
-        </LinearLayout>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/work_day_details_come_events_action_edit_finish_time_label"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:orientation="horizontal">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:orientation="vertical">
-
-                <ToggleButton
+                <TextView
+                    android:id="@+id/dialog_come_event_edit_finish_time_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/small_margin"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/dialog_come_event_edit_finish_time_edit"
+                    app:layout_constraintRight_toLeftOf="@id/dialog_come_event_edit_finish_time_edit"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="@string/work_day_details_come_events_action_edit_time_example" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <NumberPicker
+                    android:id="@+id/dialog_come_event_edit_finish_time_hour"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/dialog_come_event_edit_finish_time_minute"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toLeftOf="@id/dialog_come_event_edit_finish_time_minute"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:maxValue="23"
+                    tools:minValue="0" />
+
+                <NumberPicker
+                    android:id="@+id/dialog_come_event_edit_finish_time_minute"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/dialog_come_event_edit_finish_time_second"
+                    app:layout_constraintLeft_toRightOf="@id/dialog_come_event_edit_finish_time_hour"
+                    app:layout_constraintRight_toLeftOf="@id/dialog_come_event_edit_finish_time_second"
+                    app:layout_constraintStart_toEndOf="@id/dialog_come_event_edit_finish_time_hour"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:maxValue="59"
+                    tools:minValue="0" />
+
+                <NumberPicker
+                    android:id="@+id/dialog_come_event_edit_finish_time_second"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/dialog_come_event_edit_finish_time_am"
+                    app:layout_constraintLeft_toRightOf="@id/dialog_come_event_edit_finish_time_minute"
+                    app:layout_constraintRight_toLeftOf="@id/dialog_come_event_edit_finish_time_am"
+                    app:layout_constraintStart_toEndOf="@id/dialog_come_event_edit_finish_time_minute"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:maxValue="59"
+                    tools:minValue="0" />
+
+                <ToggleButton
+                    android:id="@+id/dialog_come_event_edit_finish_time_am"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/default_margin"
                     android:textOn="@string/work_day_details_come_events_action_edit_am_label"
                     android:textOff="@string/work_day_details_come_events_action_edit_am_label"
+                    app:layout_constraintBottom_toTopOf="@id/dialog_come_event_edit_finish_time_pm"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintLeft_toRightOf="@id/dialog_come_event_edit_finish_time_second"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/dialog_come_event_edit_finish_time_second"
+                    app:layout_constraintTop_toTopOf="parent"
                     tools:checked="true" />
 
                 <ToggleButton
+                    android:id="@+id/dialog_come_event_edit_finish_time_pm"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/default_margin"
                     android:textOn="@string/work_day_details_come_events_action_edit_pm_label"
                     android:textOff="@string/work_day_details_come_events_action_edit_pm_label"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintLeft_toRightOf="@id/dialog_come_event_edit_finish_time_second"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/dialog_come_event_edit_finish_time_second"
+                    app:layout_constraintTop_toBottomOf="@id/dialog_come_event_edit_finish_time_am"
                     tools:checked="false" />
-            </LinearLayout>
-
-            <NumberPicker
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:maxValue="59"
-                tools:minValue="0" />
-
-            <NumberPicker
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:maxValue="59"
-                tools:minValue="0" />
-
-            <NumberPicker
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:maxValue="23"
-                tools:minValue="0" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
     </LinearLayout>
 </ScrollView>
