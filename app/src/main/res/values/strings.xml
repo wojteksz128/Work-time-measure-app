@@ -118,9 +118,19 @@
 
     <string name="work_day_details_come_events_action_delete_title">Delete workday entry</string>
     <string name="work_day_details_come_events_action_delete_message">Are you sure you want to delete the workday entry: %s - %s?</string>
+    <string name="work_day_details_come_events_action_edit_title">Edit workday entry</string>
+    <string name="work_day_details_come_events_action_edit_start_time_label">Start time:</string>
+    <string name="work_day_details_come_events_action_edit_finish_time_label">Finish time:</string>
+    <string name="work_day_details_come_events_action_edit_time_example" translatable="false">00:00:00</string>
+    <string name="work_day_details_come_events_action_edit_set_time_desc">Set time</string>
+    <string name="work_day_details_come_events_action_edit_clear_time_desc">Clear time</string>
+    <string name="work_day_details_come_events_action_edit_accept_desc">Accept changes</string>
+    <string name="work_day_details_come_events_action_edit_dismiss_desc">Dismiss changes</string>
+    <string name="work_day_details_come_events_action_edit_am_label" translatable="false">AM</string>
+    <string name="work_day_details_come_events_action_edit_pm_label" translatable="false">PM</string>
 
-    <string name="work_day_details_come_events_message_deleted">Entry has been deleted.</string>
-    <string name="work_day_details_come_events_message_edited">Entry has been modified.</string>
+    <string name="work_day_details_come_events_deleted_message">Entry has been deleted.</string>
+    <string name="work_day_details_come_events_edited_message">Entry has been modified.</string>
 
     <!--</editor-fold>-->
     <!--##########################################-->

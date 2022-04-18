@@ -38,6 +38,7 @@ class WorkDayDetailsFragment : Fragment() {
     private lateinit var binding: FragmentWorkDayDetailsBinding
     private lateinit var comeEventsAdapter: ComeEventsAdapter
     private lateinit var deleteComeEventDialog: AlertDialog
+    private lateinit var editComeEventDialog: AlertDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +46,7 @@ class WorkDayDetailsFragment : Fragment() {
         comeEventsAdapter = ComeEventsAdapter(dateTimeUtils)
 
         deleteComeEventDialog = prepareDeleteComeEventDialog()
+        editComeEventDialog = prepareEditComeEventDialog()
     }
 
     private fun prepareDeleteComeEventDialog() = AlertDialog.Builder(requireContext()).apply {
@@ -54,7 +56,23 @@ class WorkDayDetailsFragment : Fragment() {
             viewModel.comeEventPosition.value?.let { comeEventsAdapter.notifyItemRemoved(it) }
             Snackbar.make(
                 binding.root,
-                R.string.work_day_details_come_events_message_deleted,
+                R.string.work_day_details_come_events_deleted_message,
+                Snackbar.LENGTH_LONG
+            ).show()
+        }
+        setNegativeButton(R.string.work_day_details_come_events_action_cancel) { _, _ ->
+            viewModel.comeEventPosition.value?.let { comeEventsAdapter.notifyItemRemoved(it) }
+        }
+    }.create()
+
+    private fun prepareEditComeEventDialog() = AlertDialog.Builder(requireContext()).apply {
+        setView(R.layout.dialog_come_event_edit)
+        setTitle(R.string.work_day_details_come_events_action_edit_title)
+        setPositiveButton(R.string.work_day_datails_come_events_action_edit) { _, _ ->
+            viewModel.comeEventPosition.value?.let { comeEventsAdapter.notifyItemRemoved(it) }
+            Snackbar.make(
+                binding.root,
+                R.string.work_day_details_come_events_edited_message,
                 Snackbar.LENGTH_LONG
             ).show()
         }
@@ -132,12 +150,9 @@ class WorkDayDetailsFragment : Fragment() {
 
     @Suppress("UNUSED_PARAMETER")
     private fun processEditComeEvent(comeEvent: ComeEvent, position: Int) {
-        comeEventsAdapter.notifyItemRemoved(position)
-        Snackbar.make(
-            binding.root,
-            R.string.work_day_details_come_events_message_edited,
-            Snackbar.LENGTH_LONG
-        ).show()
+        viewModel.comeEventToDelete.value = comeEvent
+        viewModel.comeEventPosition.value = position
+        editComeEventDialog.show()
     }
 
     private fun processDeleteComeEvent(comeEvent: ComeEvent, position: Int) {
