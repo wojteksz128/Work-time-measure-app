@@ -122,6 +122,8 @@
     <string name="work_day_details_come_events_action_edit_title">Edycja wpisu dnia pracy</string>
     <string name="work_day_details_come_events_action_edit_start_time_label">Czas rozpoczęcia:</string>
     <string name="work_day_details_come_events_action_edit_finish_time_label">Czas zakończenia:</string>
+    <!--<string name="work_day_details_come_events_action_edit_time_format" translatable="false">H:mm:ss</string>-->
+    <string name="work_day_details_come_events_action_edit_time_not_set">Nie ustawiono</string>
     <!--<string name="work_day_details_come_events_action_edit_time_example" translatable="false">00:00:00</string>-->
     <string name="work_day_details_come_events_action_edit_set_time_desc">Ustaw czas</string>
     <string name="work_day_details_come_events_action_edit_clear_time_desc">Wyczyść czas</string>

@@ -15,10 +15,12 @@ import androidx.recyclerview.widget.SimpleItemAnimator
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import net.wojteksz128.worktimemeasureapp.R
+import net.wojteksz128.worktimemeasureapp.databinding.DialogComeEventEditBinding
 import net.wojteksz128.worktimemeasureapp.databinding.FragmentWorkDayDetailsBinding
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
+import net.wojteksz128.worktimemeasureapp.util.dialog.DialogComeEventEditViewModel
 import net.wojteksz128.worktimemeasureapp.util.recyclerView.RecyclerLeftSwipeActionParam
 import net.wojteksz128.worktimemeasureapp.util.recyclerView.RecyclerRightSwipeActionParam
 import net.wojteksz128.worktimemeasureapp.util.recyclerView.RecyclerSwipeHelper
@@ -28,6 +30,7 @@ import javax.inject.Inject
 class WorkDayDetailsFragment : Fragment() {
     private val viewModel: WorkDayDetailsViewModel by viewModels()
     private val selectedWorkDayViewModel: SelectedWorkDayViewModel by activityViewModels()
+    private val editDialogViewModel: DialogComeEventEditViewModel by viewModels()
 
     @Inject
     lateinit var dateTimeUtils: DateTimeUtils
@@ -66,7 +69,13 @@ class WorkDayDetailsFragment : Fragment() {
     }.create()
 
     private fun prepareEditComeEventDialog() = AlertDialog.Builder(requireContext()).apply {
-        setView(R.layout.dialog_come_event_edit)
+        val dialogBinding = DialogComeEventEditBinding.inflate(layoutInflater, null, false)
+            .apply {
+                this.lifecycleOwner = this@WorkDayDetailsFragment
+                this.dateTimeUtils = this@WorkDayDetailsFragment.dateTimeUtils
+                this.viewModel = this@WorkDayDetailsFragment.editDialogViewModel
+            }
+        setView(dialogBinding.root)
         setTitle(R.string.work_day_details_come_events_action_edit_title)
         setPositiveButton(R.string.work_day_datails_come_events_action_edit) { _, _ ->
             viewModel.comeEventPosition.value?.let { comeEventsAdapter.notifyItemRemoved(it) }
@@ -150,7 +159,7 @@ class WorkDayDetailsFragment : Fragment() {
 
     @Suppress("UNUSED_PARAMETER")
     private fun processEditComeEvent(comeEvent: ComeEvent, position: Int) {
-        viewModel.comeEventToDelete.value = comeEvent
+        editDialogViewModel.fill(comeEvent)
         viewModel.comeEventPosition.value = position
         editComeEventDialog.show()
     }
