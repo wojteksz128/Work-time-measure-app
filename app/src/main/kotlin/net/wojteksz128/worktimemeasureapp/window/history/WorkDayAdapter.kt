@@ -8,7 +8,7 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import net.wojteksz128.worktimemeasureapp.databinding.HistoryWorkDayListItemBinding
+import net.wojteksz128.worktimemeasureapp.databinding.ListItemHistoryWorkDayBinding
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
@@ -25,7 +25,7 @@ class WorkDayAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WorkDayViewHolder {
         val inflater = LayoutInflater.from(context)
-        val binding = HistoryWorkDayListItemBinding.inflate(inflater, parent, false)
+        val binding = ListItemHistoryWorkDayBinding.inflate(inflater, parent, false)
         return WorkDayViewHolder(binding, context, dateTimeUtils)
     }
 
@@ -51,7 +51,7 @@ class WorkDayAdapter(
 
 
     class WorkDayViewHolder(
-        val binding: HistoryWorkDayListItemBinding,
+        val binding: ListItemHistoryWorkDayBinding,
         context: Context,
         dateTimeUtils: DateTimeUtils,
     ) : RecyclerView.ViewHolder(binding.root), ClassTagAware {

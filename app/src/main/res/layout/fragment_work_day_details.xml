@@ -135,7 +135,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="top|center_horizontal"
                         android:visibility="@{(viewModel.workDay == null || viewModel.workDay.events == null || viewModel.workDay.events.empty) ? View.INVISIBLE : View.VISIBLE}"
-                        tools:listitem="@layout/history_day_event_list_item"
+                        tools:listitem="@layout/list_item_history_day_event"
                         tools:visibility="visible" />
 
                     <TextView

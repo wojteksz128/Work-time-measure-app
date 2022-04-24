@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import net.wojteksz128.worktimemeasureapp.databinding.HistoryDayEventListItemBinding
+import net.wojteksz128.worktimemeasureapp.databinding.ListItemHistoryDayEventBinding
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
 import net.wojteksz128.worktimemeasureapp.util.coroutines.PeriodicOperation
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
@@ -22,7 +22,7 @@ class ComeEventsAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ComeEventViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        val binding = HistoryDayEventListItemBinding.inflate(inflater, parent, false)
+        val binding = ListItemHistoryDayEventBinding.inflate(inflater, parent, false)
             .apply {
                 dateTimeUtils = this@ComeEventsAdapter.dateTimeUtils
             }
@@ -58,7 +58,7 @@ class ComeEventsAdapter(
     }
 
 
-    class ComeEventViewHolder(val binding: HistoryDayEventListItemBinding) :
+    class ComeEventViewHolder(val binding: ListItemHistoryDayEventBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(comeEvent: ComeEvent) {

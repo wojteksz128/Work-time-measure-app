@@ -8,7 +8,7 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import dagger.hilt.android.AndroidEntryPoint
 import net.wojteksz128.worktimemeasureapp.R
-import net.wojteksz128.worktimemeasureapp.databinding.DurationDisplayBinding
+import net.wojteksz128.worktimemeasureapp.databinding.ComponentDurationDisplayBinding
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import org.threeten.bp.Duration
 import javax.inject.Inject
@@ -19,7 +19,7 @@ class DurationDisplay(context: Context, attrs: AttributeSet?) :
     @Inject
     lateinit var dateTimeUtils: DateTimeUtils
 
-    lateinit var binding: DurationDisplayBinding
+    lateinit var binding: ComponentDurationDisplayBinding
 
     init {
         val layoutInflater =
@@ -28,10 +28,10 @@ class DurationDisplay(context: Context, attrs: AttributeSet?) :
             context.theme.obtainStyledAttributes(attrs, R.styleable.DurationDisplay, 0, 0)
 
         if (isInEditMode) {
-            this.addView(layoutInflater.inflate(R.layout.duration_display, null))
+            this.addView(layoutInflater.inflate(R.layout.component_duration_display, null))
             findViewById<TextView>(R.id.duration_display_title).text = readTitle(typedArray, context)
         } else {
-            binding = DurationDisplayBinding.inflate(layoutInflater)
+            binding = ComponentDurationDisplayBinding.inflate(layoutInflater)
             this.addView(binding.root)
 
             binding.title = readTitle(typedArray, context)

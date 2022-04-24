@@ -37,7 +37,7 @@ class ImageViewPreference(context: Context, attrs: AttributeSet) : Preference(co
     private lateinit var imageLoader: ActivityResultLauncher<String>
 
     init {
-        layoutResource = R.layout.image_view_preference
+        layoutResource = R.layout.preference_image_view
     }
 
     fun attachImageSelector(activityResultCaller: ActivityResultCaller) {
