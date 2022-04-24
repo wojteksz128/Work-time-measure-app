@@ -3,15 +3,18 @@ package net.wojteksz128.worktimemeasureapp.window.settings
 import android.os.Bundle
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import dagger.hilt.android.AndroidEntryPoint
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.settings.item.SettingsItemsNotifier
 import net.wojteksz128.worktimemeasureapp.window.settings.property.TimePickerPreference
 import net.wojteksz128.worktimemeasureapp.window.settings.property.TimePickerPreferenceDialog
 import javax.inject.Inject
 
-class WorkTimeFragment @Inject constructor(
-    private val settingsItemsNotifier: SettingsItemsNotifier
-) : PreferenceFragmentCompat() {
+@AndroidEntryPoint
+class WorkTimeFragment : PreferenceFragmentCompat() {
+
+    @Inject
+    lateinit var settingsItemsNotifier: SettingsItemsNotifier
 
     private val DIALOG_FRAGMENT_TAG = "TimePickerDialog"
 
