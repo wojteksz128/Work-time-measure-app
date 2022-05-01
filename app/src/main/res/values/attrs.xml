@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     
-    <declare-styleable name="DurationDisplay">
+    <declare-styleable name="ContainsTitle">
         <attr name="title" format="reference|string" />
-        <attr name="duration" /><!-- org.threeten.bp.Duration -->
     </declare-styleable>
 </resources>

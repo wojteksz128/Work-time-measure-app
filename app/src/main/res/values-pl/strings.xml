@@ -122,18 +122,26 @@
     <string name="work_day_details_come_events_action_edit_title">Edycja wpisu dnia pracy</string>
     <string name="work_day_details_come_events_action_edit_start_time_label">Czas rozpoczęcia:</string>
     <string name="work_day_details_come_events_action_edit_finish_time_label">Czas zakończenia:</string>
-    <!--<string name="work_day_details_come_events_action_edit_time_format" translatable="false">H:mm:ss</string>-->
-    <string name="work_day_details_come_events_action_edit_time_not_set">Nie ustawiono</string>
-    <!--<string name="work_day_details_come_events_action_edit_time_example" translatable="false">00:00:00</string>-->
-    <string name="work_day_details_come_events_action_edit_set_time_desc">Ustaw czas</string>
-    <string name="work_day_details_come_events_action_edit_clear_time_desc">Wyczyść czas</string>
-    <string name="work_day_details_come_events_action_edit_accept_desc">Zatwierdź zmiany</string>
-    <string name="work_day_details_come_events_action_edit_dismiss_desc">Odrzuć zmiany</string>
     <!--<string name="work_day_details_come_events_action_edit_am_label" translatable="false">AM</string>-->
     <!--<string name="work_day_details_come_events_action_edit_pm_label" translatable="false">PM</string>-->
 
     <string name="work_day_details_come_events_deleted_message">Wpis został usunięty.</string>
     <string name="work_day_details_come_events_edited_message">Wpis został zmodyfikowany.</string>
+
+    <!--</editor-fold>-->
+    <!--##########################################-->
+
+    <!--##########################################-->
+    <!--<editor-fold desc="######### Time Editor Component ##########">-->
+
+    <string name="time_editor_title_example">Tytuł:</string>
+    <!--<string name="time_editor_value_format" translatable="false">H:mm:ss</string>-->
+    <string name="time_editor_value_not_set">Nie ustawiono</string>
+    <!--<string name="time_editor_value_example" translatable="false">00:00:00</string>-->
+    <string name="time_editor_set_time_desc">Ustaw czas</string>
+    <string name="time_editor_clear_time_desc">Wyczyść czas</string>
+    <string name="time_editor_accept_desc">Zatwierdź zmiany</string>
+    <string name="time_editor_dismiss_desc">Odrzuć zmiany</string>
 
     <!--</editor-fold>-->
     <!--##########################################-->

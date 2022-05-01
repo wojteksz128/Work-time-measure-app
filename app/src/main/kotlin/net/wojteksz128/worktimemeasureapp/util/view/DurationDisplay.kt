@@ -25,7 +25,7 @@ class DurationDisplay(context: Context, attrs: AttributeSet?) :
         val layoutInflater =
             context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val typedArray =
-            context.theme.obtainStyledAttributes(attrs, R.styleable.DurationDisplay, 0, 0)
+            context.theme.obtainStyledAttributes(attrs, R.styleable.ContainsTitle, 0, 0)
 
         if (isInEditMode) {
             this.addView(layoutInflater.inflate(R.layout.component_duration_display, null))
@@ -41,9 +41,9 @@ class DurationDisplay(context: Context, attrs: AttributeSet?) :
 
     private fun readTitle(typedArray: TypedArray, context: Context): String? {
         val titleResId =
-            typedArray.getResourceId(R.styleable.DurationDisplay_title, RESOURCE_NOT_FOUND)
+            typedArray.getResourceId(R.styleable.ContainsTitle_title, RESOURCE_NOT_FOUND)
         return if (titleResId == RESOURCE_NOT_FOUND)
-            typedArray.getString(R.styleable.DurationDisplay_title)
+            typedArray.getString(R.styleable.ContainsTitle_title)
         else context.getString(titleResId)
     }
 
