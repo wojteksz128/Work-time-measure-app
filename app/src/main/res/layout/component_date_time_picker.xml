@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="model"
+            type="net.wojteksz128.worktimemeasureapp.util.view.DateTimePicker.ObservableModel" />
+    </data>
+
+    <merge
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:layout_height="wrap_content">
+
+            <!-- TODO: Sprawdź z ustawieniami czasu lokalnego -->
+
+            <NumberPicker
+                android:id="@+id/date_time_picker_hour"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/date_time_picker_minute"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/date_time_picker_minute"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:maxValue="@{23}"
+                app:minValue="@{0}"
+                app:value="@{model.hour}"
+                tools:maxValue="23"
+                tools:minValue="0"
+                tools:value="0" />
+
+            <NumberPicker
+                android:id="@+id/date_time_picker_minute"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/date_time_picker_second"
+                app:layout_constraintLeft_toRightOf="@id/date_time_picker_hour"
+                app:layout_constraintRight_toLeftOf="@id/date_time_picker_second"
+                app:layout_constraintStart_toEndOf="@id/date_time_picker_hour"
+                app:layout_constraintTop_toTopOf="parent"
+                app:maxValue="@{59}"
+                app:minValue="@{0}"
+                app:value="@{model.minute}"
+                tools:maxValue="59"
+                tools:minValue="0"
+                tools:value="0" />
+
+            <NumberPicker
+                android:id="@+id/date_time_picker_second"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/date_time_picker_am"
+                app:layout_constraintLeft_toRightOf="@id/date_time_picker_minute"
+                app:layout_constraintRight_toLeftOf="@id/date_time_picker_am"
+                app:layout_constraintStart_toEndOf="@id/date_time_picker_minute"
+                app:layout_constraintTop_toTopOf="parent"
+                app:maxValue="@{59}"
+                app:minValue="@{0}"
+                app:value="@{model.second}"
+                tools:maxValue="59"
+                tools:minValue="0"
+                tools:value="0" />
+
+            <ToggleButton
+                android:id="@+id/date_time_picker_am"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/default_margin"
+                android:checked="@{model.isAm}"
+                android:onClick="@{() -> model.onAmClick()}"
+                android:textOff="@string/work_day_details_come_events_action_edit_am_label"
+                android:textOn="@string/work_day_details_come_events_action_edit_am_label"
+                app:layout_constraintBottom_toTopOf="@id/date_time_picker_pm"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/date_time_picker_second"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintStart_toEndOf="@id/date_time_picker_second"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:checked="true" />
+
+            <ToggleButton
+                android:id="@+id/date_time_picker_pm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/default_margin"
+                android:checked="@{model.isPm}"
+                android:onClick="@{() -> model.onPmClick()}"
+                android:textOff="@string/work_day_details_come_events_action_edit_pm_label"
+                android:textOn="@string/work_day_details_come_events_action_edit_pm_label"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/date_time_picker_second"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintStart_toEndOf="@id/date_time_picker_second"
+                app:layout_constraintTop_toBottomOf="@id/date_time_picker_am"
+                tools:checked="false" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </merge>
+</layout>

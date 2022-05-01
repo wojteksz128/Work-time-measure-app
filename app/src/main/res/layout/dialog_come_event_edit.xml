@@ -107,95 +107,11 @@
                         tools:text="@string/work_day_details_come_events_action_edit_time_example" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <net.wojteksz128.worktimemeasureapp.util.view.DateTimePicker
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="@{viewModel.startTimeEditForm.visible}">
-
-                    <!-- TODO: Sprawdź z ustawieniami czasu lokalnego -->
-
-                    <NumberPicker
-                        android:id="@+id/dialog_come_event_edit_start_time_hour"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@id/dialog_come_event_edit_start_time_minute"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintRight_toLeftOf="@id/dialog_come_event_edit_start_time_minute"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:maxValue="@{23}"
-                        app:minValue="@{0}"
-                        app:value="@{viewModel.startTimeHour}"
-                        tools:maxValue="23"
-                        tools:minValue="0" />
-
-                    <NumberPicker
-                        android:id="@+id/dialog_come_event_edit_start_time_minute"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@id/dialog_come_event_edit_start_time_second"
-                        app:layout_constraintLeft_toRightOf="@id/dialog_come_event_edit_start_time_hour"
-                        app:layout_constraintRight_toLeftOf="@id/dialog_come_event_edit_start_time_second"
-                        app:layout_constraintStart_toEndOf="@id/dialog_come_event_edit_start_time_hour"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:maxValue="@{59}"
-                        app:minValue="@{0}"
-                        app:value="@{viewModel.startTimeMinute}"
-                        tools:maxValue="59"
-                        tools:minValue="0" />
-
-                    <NumberPicker
-                        android:id="@+id/dialog_come_event_edit_start_time_second"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@id/dialog_come_event_edit_start_time_am"
-                        app:layout_constraintLeft_toRightOf="@id/dialog_come_event_edit_start_time_minute"
-                        app:layout_constraintRight_toLeftOf="@id/dialog_come_event_edit_start_time_am"
-                        app:layout_constraintStart_toEndOf="@id/dialog_come_event_edit_start_time_minute"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:maxValue="@{59}"
-                        app:minValue="@{0}"
-                        app:value="@{viewModel.startTimeSecond}"
-                        tools:maxValue="59"
-                        tools:minValue="0" />
-
-                    <ToggleButton
-                        android:id="@+id/dialog_come_event_edit_start_time_am"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/default_margin"
-                        android:checked="@{viewModel.startTimeIsAm}"
-                        android:onClick="@{() -> viewModel.setStartTimeIsAm(true)}"
-                        android:textOff="@string/work_day_details_come_events_action_edit_am_label"
-                        android:textOn="@string/work_day_details_come_events_action_edit_am_label"
-                        app:layout_constraintBottom_toTopOf="@id/dialog_come_event_edit_start_time_pm"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintLeft_toRightOf="@id/dialog_come_event_edit_start_time_second"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/dialog_come_event_edit_start_time_second"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:checked="true" />
-
-                    <ToggleButton
-                        android:id="@+id/dialog_come_event_edit_start_time_pm"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/default_margin"
-                        android:checked="@{viewModel.startTimeIsAm != true}"
-                        android:onClick="@{() -> viewModel.setStartTimeIsAm(false)}"
-                        android:textOff="@string/work_day_details_come_events_action_edit_pm_label"
-                        android:textOn="@string/work_day_details_come_events_action_edit_pm_label"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintLeft_toRightOf="@id/dialog_come_event_edit_start_time_second"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/dialog_come_event_edit_start_time_second"
-                        app:layout_constraintTop_toBottomOf="@id/dialog_come_event_edit_start_time_am"
-                        tools:checked="false" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                    android:visibility="@{viewModel.startTimeEditForm.visible}"
+                    app:time="@{viewModel.startTime}" />
             </LinearLayout>
 
             <LinearLayout
@@ -289,93 +205,11 @@
                         tools:text="@string/work_day_details_come_events_action_edit_time_example" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <net.wojteksz128.worktimemeasureapp.util.view.DateTimePicker
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="@{viewModel.finishTimeEditForm.visible}">
-
-                    <NumberPicker
-                        android:id="@+id/dialog_come_event_edit_finish_time_hour"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@id/dialog_come_event_edit_finish_time_minute"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintRight_toLeftOf="@id/dialog_come_event_edit_finish_time_minute"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:maxValue="@{23}"
-                        app:minValue="@{0}"
-                        app:value="@{viewModel.finishTimeHour}"
-                        tools:maxValue="23"
-                        tools:minValue="0" />
-
-                    <NumberPicker
-                        android:id="@+id/dialog_come_event_edit_finish_time_minute"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@id/dialog_come_event_edit_finish_time_second"
-                        app:layout_constraintLeft_toRightOf="@id/dialog_come_event_edit_finish_time_hour"
-                        app:layout_constraintRight_toLeftOf="@id/dialog_come_event_edit_finish_time_second"
-                        app:layout_constraintStart_toEndOf="@id/dialog_come_event_edit_finish_time_hour"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:maxValue="@{59}"
-                        app:minValue="@{0}"
-                        app:value="@{viewModel.finishTimeMinute}"
-                        tools:maxValue="59"
-                        tools:minValue="0" />
-
-                    <NumberPicker
-                        android:id="@+id/dialog_come_event_edit_finish_time_second"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@id/dialog_come_event_edit_finish_time_am"
-                        app:layout_constraintLeft_toRightOf="@id/dialog_come_event_edit_finish_time_minute"
-                        app:layout_constraintRight_toLeftOf="@id/dialog_come_event_edit_finish_time_am"
-                        app:layout_constraintStart_toEndOf="@id/dialog_come_event_edit_finish_time_minute"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:maxValue="@{59}"
-                        app:minValue="@{0}"
-                        app:value="@{viewModel.finishTimeSecond}"
-                        tools:maxValue="59"
-                        tools:minValue="0" />
-
-                    <ToggleButton
-                        android:id="@+id/dialog_come_event_edit_finish_time_am"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/default_margin"
-                        android:checked="@{viewModel.finishTimeIsAm}"
-                        android:onClick="@{() -> viewModel.setFinishTimeIsAm(true)}"
-                        android:textOff="@string/work_day_details_come_events_action_edit_am_label"
-                        android:textOn="@string/work_day_details_come_events_action_edit_am_label"
-                        app:layout_constraintBottom_toTopOf="@id/dialog_come_event_edit_finish_time_pm"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintLeft_toRightOf="@id/dialog_come_event_edit_finish_time_second"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/dialog_come_event_edit_finish_time_second"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:checked="true" />
-
-                    <ToggleButton
-                        android:id="@+id/dialog_come_event_edit_finish_time_pm"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/default_margin"
-                        android:checked="@{viewModel.startTimeIsAm != true}"
-                        android:onClick="@{() -> viewModel.setFinishTimeIsAm(false)}"
-                        android:textOff="@string/work_day_details_come_events_action_edit_pm_label"
-                        android:textOn="@string/work_day_details_come_events_action_edit_pm_label"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintLeft_toRightOf="@id/dialog_come_event_edit_finish_time_second"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/dialog_come_event_edit_finish_time_second"
-                        app:layout_constraintTop_toBottomOf="@id/dialog_come_event_edit_finish_time_am"
-                        tools:checked="false" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                    android:visibility="@{viewModel.finishTimeEditForm.visible}"
+                    app:time="@{viewModel.finishTime}" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

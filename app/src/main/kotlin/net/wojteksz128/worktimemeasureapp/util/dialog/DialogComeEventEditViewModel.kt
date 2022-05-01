@@ -17,17 +17,9 @@ class DialogComeEventEditViewModel @Inject constructor(
 ) : AndroidViewModel(application), ClassTagAware {
     val startTime = MutableLiveData<Date?>()
     val startTimeEditForm = ViewVisibility(false)
-    val startTimeHour = MutableLiveData<Int>()
-    val startTimeMinute = MutableLiveData<Int>()
-    val startTimeSecond = MutableLiveData<Int>()
-    val startTimeIsAm = MutableLiveData<Boolean>()
 
     val finishTime = MutableLiveData<Date?>()
     val finishTimeEditForm = ViewVisibility(false)
-    val finishTimeHour = MutableLiveData<Int>()
-    val finishTimeMinute = MutableLiveData<Int>()
-    val finishTimeSecond = MutableLiveData<Int>()
-    val finishTimeIsAm = MutableLiveData<Boolean>()
 
     fun fill(comeEvent: ComeEvent) {
         Log.d(
@@ -41,23 +33,12 @@ class DialogComeEventEditViewModel @Inject constructor(
     }
 
     fun fillStartTimeChange() {
-        val calendar = Calendar.getInstance()
-        startTime.value?.let { calendar.time = it }
-
-        startTimeHour.value = calendar.get(Calendar.HOUR_OF_DAY)
-        startTimeMinute.value = calendar.get(Calendar.MINUTE)
-        startTimeSecond.value = calendar.get(Calendar.SECOND)
-        startTimeIsAm.value = calendar.get(Calendar.AM_PM) == Calendar.AM
         startTimeEditForm.show()
     }
 
     // TODO: Sprawdź z ustawieniami czasu lokalnego
     fun acceptStartTimeChange() {
-        startTime.value?.let {
-            it.hours = startTimeHour.value!!
-            it.minutes = startTimeMinute.value!!
-            it.seconds = startTimeSecond.value!!
-        }
+        // TODO: Zmień
         startTimeEditForm.hide()
     }
 
@@ -65,37 +46,17 @@ class DialogComeEventEditViewModel @Inject constructor(
         startTime.value = null
     }
 
-    fun setStartTimeIsAm(value: Boolean) {
-        startTimeIsAm.value = value
-    }
-
     fun fillFinishTimeChange() {
-        val calendar = Calendar.getInstance()
-        finishTime.value?.let { calendar.time = it }
-
-        finishTimeHour.value = calendar.get(Calendar.HOUR_OF_DAY)
-        finishTimeMinute.value = calendar.get(Calendar.MINUTE)
-        finishTimeSecond.value = calendar.get(Calendar.SECOND)
-        finishTimeIsAm.value = calendar.get(Calendar.AM_PM) == Calendar.AM
         finishTimeEditForm.show()
     }
 
     // TODO: Sprawdź z ustawieniami czasu lokalnego
     fun acceptFinishTimeChange() {
-        finishTime.value?.let {
-            it.hours = finishTimeHour.value!!
-            it.minutes = finishTimeMinute.value!!
-            it.seconds = finishTimeSecond.value!!
-        }
         finishTimeEditForm.hide()
     }
 
     fun clearFinishTime() {
         finishTime.value = null
-    }
-
-    fun setFinishTimeIsAm(value: Boolean) {
-        startTimeIsAm.value = value
     }
 }
 
