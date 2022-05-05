@@ -4,8 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
-import androidx.databinding.BaseObservable
-import androidx.databinding.Bindable
+import androidx.databinding.*
 import net.wojteksz128.worktimemeasureapp.BR
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.databinding.ComponentDateTimePickerBinding
@@ -28,29 +27,85 @@ class DateTimePicker(context: Context, attrs: AttributeSet?) : FrameLayout(conte
         }
     }
 
-    var time: Date?
-        get() = model.time
-        set(value) {
-            model.time = value ?: Date(0)
+    companion object {
+        @InverseBindingAdapter(attribute = "time")
+        @JvmStatic
+        fun getTime(obj: DateTimePicker) = obj.model.time
+
+        @BindingAdapter("time")
+        @JvmStatic
+        fun setTime(obj: DateTimePicker, time: Date?) {
+            val insertedTime = time ?: Date(0)
+            if (insertedTime != obj.model.time)
+                obj.model.time = insertedTime
         }
+
+        @BindingAdapter("app:timeAttrChanged")
+        @JvmStatic
+        fun setListeners(obj: DateTimePicker, attrChange: InverseBindingListener) {
+            val model = obj.model
+            obj.binding.apply {
+                dateTimePickerHour.setOnValueChangedListener { _, _, newValue ->
+                    model.hour = newValue
+                    attrChange.onChange()
+                }
+                dateTimePickerMinute.setOnValueChangedListener { _, _, newValue ->
+                    model.minute = newValue
+                    attrChange.onChange()
+                }
+                dateTimePickerSecond.setOnValueChangedListener { _, _, newValue ->
+                    model.second = newValue
+                    attrChange.onChange()
+                }
+                dateTimePickerAm.setOnCheckedChangeListener { _, isChecked ->
+                    model.isAm = isChecked
+                    model.isPm = !isChecked
+                    if (isChecked)
+                        attrChange.onChange()
+                }
+                dateTimePickerPm.setOnCheckedChangeListener { _, isChecked ->
+                    model.isAm = !isChecked
+                    model.isPm = isChecked
+                    if (isChecked)
+                        attrChange.onChange()
+                }
+            }
+        }
+    }
 
     class ObservableModel : BaseObservable() {
         private var mCalendar = Calendar.getInstance()
 
         @get:Bindable
-        var hour by ObservableDelegate(BR.hour, 0)
+        var hour by ObservableDelegate(BR.hour, 0) {
+            mCalendar.set(Calendar.HOUR_OF_DAY, it)
+        }
 
         @get:Bindable
-        var minute by ObservableDelegate(BR.minute, 0)
+        var minute by ObservableDelegate(BR.minute, 0) {
+            mCalendar.set(Calendar.MINUTE, it)
+        }
 
         @get:Bindable
-        var second by ObservableDelegate(BR.second, 0)
+        var second by ObservableDelegate(BR.second, 0) {
+            mCalendar.set(Calendar.SECOND, it)
+        }
 
         @get:Bindable
-        var isAm by ObservableDelegate(BR.am, true)
+        var isAm by ObservableDelegate(BR.am, true) {
+            if (it) {
+                mCalendar.set(Calendar.AM_PM, Calendar.AM)
+                hour = mCalendar.get(Calendar.HOUR_OF_DAY)
+            }
+        }
 
         @get:Bindable
-        var isPm by ObservableDelegate(BR.pm, false)
+        var isPm by ObservableDelegate(BR.pm, false) {
+            if (it) {
+                mCalendar.set(Calendar.AM_PM, Calendar.PM)
+                hour = mCalendar.get(Calendar.HOUR_OF_DAY)
+            }
+        }
 
         internal var time: Date
             get() = mCalendar.time
@@ -62,15 +117,5 @@ class DateTimePicker(context: Context, attrs: AttributeSet?) : FrameLayout(conte
                 isAm = mCalendar.get(Calendar.AM_PM) == Calendar.AM
                 isPm = mCalendar.get(Calendar.AM_PM) == Calendar.PM
             }
-
-        fun onAmClick() {
-            isAm = true
-            isPm = false
-        }
-
-        fun onPmClick() {
-            isAm = false
-            isPm = true
-        }
     }
 }
