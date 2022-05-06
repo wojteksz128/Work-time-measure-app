@@ -78,6 +78,9 @@ class WorkDayDetailsFragment : Fragment() {
         setView(dialogBinding.root)
         setTitle(R.string.work_day_details_come_events_action_edit_title)
         setPositiveButton(R.string.work_day_datails_come_events_action_edit) { _, _ ->
+            val modifiedComeEvent =
+                editDialogViewModel.prepareModified()
+            viewModel.onComeEventModified(modifiedComeEvent)
             viewModel.comeEventPosition.value?.let { comeEventsAdapter.notifyItemRemoved(it) }
             Snackbar.make(
                 binding.root,

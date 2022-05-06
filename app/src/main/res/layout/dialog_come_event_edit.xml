@@ -19,13 +19,13 @@
             <net.wojteksz128.worktimemeasureapp.util.view.TimeEditor
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:time="@{viewModel.startTime}"
+                app:time="@={viewModel.startTime}"
                 app:title="@string/work_day_details_come_events_action_edit_start_time_label" />
 
             <net.wojteksz128.worktimemeasureapp.util.view.TimeEditor
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:time="@{viewModel.finishTime}"
+                app:time="@={viewModel.finishTime}"
                 app:title="@string/work_day_details_come_events_action_edit_finish_time_label" />
         </LinearLayout>
     </ScrollView>

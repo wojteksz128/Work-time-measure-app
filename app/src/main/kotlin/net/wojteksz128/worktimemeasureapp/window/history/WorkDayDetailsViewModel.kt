@@ -67,4 +67,10 @@ class WorkDayDetailsViewModel @Inject constructor(
             comeEventToDelete.value?.let { comeEventRepository.delete(it) }
         }
     }
+
+    fun onComeEventModified(modifiedComeEvent: ComeEvent) = viewModelScope.launch {
+        withContext(Dispatchers.IO) {
+            comeEventRepository.save(modifiedComeEvent)
+        }
+    }
 }

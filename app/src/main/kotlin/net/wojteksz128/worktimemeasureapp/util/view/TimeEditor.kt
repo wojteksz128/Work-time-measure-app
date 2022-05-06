@@ -5,8 +5,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import android.widget.TextView
-import androidx.databinding.BaseObservable
-import androidx.databinding.Bindable
+import androidx.databinding.*
 import dagger.hilt.android.AndroidEntryPoint
 import net.wojteksz128.worktimemeasureapp.BR
 import net.wojteksz128.worktimemeasureapp.R
@@ -17,9 +16,20 @@ import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
+@BindingMethods(
+    BindingMethod(type = TimeEditor::class, attribute = "time", method = "setTime"),
+    BindingMethod(
+        type = TimeEditor::class,
+        attribute = "timeAttrChanged",
+        method = "setTimeChangeListener"
+    )
+)
+@InverseBindingMethods(
+    InverseBindingMethod(type = TimeEditor::class, attribute = "time", method = "getTime")
+)
 class TimeEditor(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs) {
     private lateinit var binding: ComponentTimeEditorBinding
-    private val model = ObservableModel()
+    private val model = ObservableModel(this::timeChangeListener)
 
     @Inject
     lateinit var dateTimeUtils: DateTimeUtils
@@ -50,12 +60,17 @@ class TimeEditor(context: Context, attrs: AttributeSet?) : FrameLayout(context, 
             model.time = value
         }
 
-    class ObservableModel : BaseObservable() {
+    var timeChangeListener: InverseBindingListener? = null
+
+    class ObservableModel(timeChangeListenerProvider: () -> InverseBindingListener?) :
+        BaseObservable() {
         @get:Bindable
         var title by ObservableDelegate(BR.title, "")
 
         @get:Bindable
-        var time by ObservableDelegate<Date?>(BR.time, null)
+        var time by ObservableDelegate<Date?>(BR.time, null) {
+            timeChangeListenerProvider()?.onChange()
+        }
 
         @get:Bindable
         var editedTime by ObservableDelegate<Date?>(BR.editedTime, null)
