@@ -11,9 +11,20 @@ import net.wojteksz128.worktimemeasureapp.databinding.ComponentDateTimePickerBin
 import net.wojteksz128.worktimemeasureapp.util.view.util.ObservableDelegate
 import java.util.*
 
+@BindingMethods(
+    BindingMethod(type = DateTimePicker::class, attribute = "time", method = "setTime"),
+    BindingMethod(
+        type = DateTimePicker::class,
+        attribute = "timeAttrChanged",
+        method = "setTimeChangeListener"
+    )
+)
+@InverseBindingMethods(
+    InverseBindingMethod(type = DateTimePicker::class, attribute = "time", method = "getTime")
+)
 class DateTimePicker(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs) {
     private lateinit var binding: ComponentDateTimePickerBinding
-    private val model = ObservableModel()
+    private val model = ObservableModel(this::timeChangeListener)
 
     init {
         if (isInEditMode) {
@@ -27,68 +38,34 @@ class DateTimePicker(context: Context, attrs: AttributeSet?) : FrameLayout(conte
         }
     }
 
-    companion object {
-        @InverseBindingAdapter(attribute = "time")
-        @JvmStatic
-        fun getTime(obj: DateTimePicker) = obj.model.time
-
-        @BindingAdapter("time")
-        @JvmStatic
-        fun setTime(obj: DateTimePicker, time: Date?) {
-            val insertedTime = time ?: Date(0)
-            if (insertedTime != obj.model.time)
-                obj.model.time = insertedTime
+    var time: Date?
+        get() = model.time
+        set(value) {
+            model.time = value ?: Date(0)
         }
 
-        @BindingAdapter("app:timeAttrChanged")
-        @JvmStatic
-        fun setListeners(obj: DateTimePicker, attrChange: InverseBindingListener) {
-            val model = obj.model
-            obj.binding.apply {
-                dateTimePickerHour.setOnValueChangedListener { _, _, newValue ->
-                    model.hour = newValue
-                    attrChange.onChange()
-                }
-                dateTimePickerMinute.setOnValueChangedListener { _, _, newValue ->
-                    model.minute = newValue
-                    attrChange.onChange()
-                }
-                dateTimePickerSecond.setOnValueChangedListener { _, _, newValue ->
-                    model.second = newValue
-                    attrChange.onChange()
-                }
-                dateTimePickerAm.setOnCheckedChangeListener { _, isChecked ->
-                    model.isAm = isChecked
-                    model.isPm = !isChecked
-                    if (isChecked)
-                        attrChange.onChange()
-                }
-                dateTimePickerPm.setOnCheckedChangeListener { _, isChecked ->
-                    model.isAm = !isChecked
-                    model.isPm = isChecked
-                    if (isChecked)
-                        attrChange.onChange()
-                }
-            }
-        }
-    }
+    var timeChangeListener: InverseBindingListener? = null
 
-    class ObservableModel : BaseObservable() {
+    class ObservableModel(timeChangeListenerProvider: () -> InverseBindingListener?) :
+        BaseObservable() {
         private var mCalendar = Calendar.getInstance()
 
         @get:Bindable
         var hour by ObservableDelegate(BR.hour, 0) {
             mCalendar.set(Calendar.HOUR_OF_DAY, it)
+            timeChangeListenerProvider()?.onChange()
         }
 
         @get:Bindable
         var minute by ObservableDelegate(BR.minute, 0) {
             mCalendar.set(Calendar.MINUTE, it)
+            timeChangeListenerProvider()?.onChange()
         }
 
         @get:Bindable
         var second by ObservableDelegate(BR.second, 0) {
             mCalendar.set(Calendar.SECOND, it)
+            timeChangeListenerProvider()?.onChange()
         }
 
         @get:Bindable
@@ -97,6 +74,7 @@ class DateTimePicker(context: Context, attrs: AttributeSet?) : FrameLayout(conte
                 mCalendar.set(Calendar.AM_PM, Calendar.AM)
                 hour = mCalendar.get(Calendar.HOUR_OF_DAY)
             }
+            timeChangeListenerProvider()?.onChange()
         }
 
         @get:Bindable
@@ -105,6 +83,17 @@ class DateTimePicker(context: Context, attrs: AttributeSet?) : FrameLayout(conte
                 mCalendar.set(Calendar.AM_PM, Calendar.PM)
                 hour = mCalendar.get(Calendar.HOUR_OF_DAY)
             }
+            timeChangeListenerProvider()?.onChange()
+        }
+
+        fun onAmClick() {
+            isAm = true
+            isPm = false
+        }
+
+        fun onPmClick() {
+            isAm = false
+            isPm = true
         }
 
         internal var time: Date
