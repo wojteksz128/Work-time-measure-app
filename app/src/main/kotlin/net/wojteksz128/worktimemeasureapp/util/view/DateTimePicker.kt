@@ -51,39 +51,49 @@ class DateTimePicker(context: Context, attrs: AttributeSet?) : FrameLayout(conte
         private var mCalendar = Calendar.getInstance()
 
         @get:Bindable
-        var hour by ObservableDelegate(BR.hour, 0) {
-            mCalendar.set(Calendar.HOUR_OF_DAY, it)
-            timeChangeListenerProvider()?.onChange()
-        }
-
-        @get:Bindable
-        var minute by ObservableDelegate(BR.minute, 0) {
-            mCalendar.set(Calendar.MINUTE, it)
-            timeChangeListenerProvider()?.onChange()
-        }
-
-        @get:Bindable
-        var second by ObservableDelegate(BR.second, 0) {
-            mCalendar.set(Calendar.SECOND, it)
-            timeChangeListenerProvider()?.onChange()
-        }
-
-        @get:Bindable
-        var isAm by ObservableDelegate(BR.am, true) {
-            if (it) {
-                mCalendar.set(Calendar.AM_PM, Calendar.AM)
-                hour = mCalendar.get(Calendar.HOUR_OF_DAY)
+        var hour by ObservableDelegate(BR.hour, 0) { oldValue, newValue ->
+            if (oldValue != newValue) {
+                mCalendar.set(Calendar.HOUR_OF_DAY, newValue)
+                timeChangeListenerProvider()?.onChange()
             }
-            timeChangeListenerProvider()?.onChange()
         }
 
         @get:Bindable
-        var isPm by ObservableDelegate(BR.pm, false) {
-            if (it) {
-                mCalendar.set(Calendar.AM_PM, Calendar.PM)
-                hour = mCalendar.get(Calendar.HOUR_OF_DAY)
+        var minute by ObservableDelegate(BR.minute, 0) { oldValue, newValue ->
+            if (oldValue != newValue) {
+                mCalendar.set(Calendar.MINUTE, newValue)
+                timeChangeListenerProvider()?.onChange()
             }
-            timeChangeListenerProvider()?.onChange()
+        }
+
+        @get:Bindable
+        var second by ObservableDelegate(BR.second, 0) { oldValue, newValue ->
+            if (oldValue != newValue) {
+                mCalendar.set(Calendar.SECOND, newValue)
+                timeChangeListenerProvider()?.onChange()
+            }
+        }
+
+        @get:Bindable
+        var isAm by ObservableDelegate(BR.am, true) { oldValue, newValue ->
+            if (oldValue != newValue) {
+                if (newValue) {
+                    mCalendar.set(Calendar.AM_PM, Calendar.AM)
+                    hour = mCalendar.get(Calendar.HOUR_OF_DAY)
+                }
+                timeChangeListenerProvider()?.onChange()
+            }
+        }
+
+        @get:Bindable
+        var isPm by ObservableDelegate(BR.pm, false) { oldValue, newValue ->
+            if (oldValue != newValue) {
+                if (newValue) {
+                    mCalendar.set(Calendar.AM_PM, Calendar.PM)
+                    hour = mCalendar.get(Calendar.HOUR_OF_DAY)
+                }
+                timeChangeListenerProvider()?.onChange()
+            }
         }
 
         fun onAmClick() {

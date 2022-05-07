@@ -8,7 +8,7 @@ import kotlin.reflect.KProperty
 open class ObservableDelegate<T>(
     val id: Int,
     initialValue: T,
-    private val onChanged: (T) -> Unit = {}
+    private val onChanged: (T, T) -> Unit = { _, _ -> }
 ) : ClassTagAware {
 
     var value = initialValue
@@ -19,8 +19,9 @@ open class ObservableDelegate<T>(
     }
 
     operator fun setValue(self: BaseObservable, prop: KProperty<*>, value: T) {
+        val oldValue = this.value
         this.value = value
-        onChanged.invoke(value)
+        onChanged.invoke(oldValue, value)
         self.notifyPropertyChanged(id)
     }
 }

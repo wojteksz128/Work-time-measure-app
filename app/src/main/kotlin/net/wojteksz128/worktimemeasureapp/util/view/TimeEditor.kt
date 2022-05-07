@@ -68,8 +68,9 @@ class TimeEditor(context: Context, attrs: AttributeSet?) : FrameLayout(context, 
         var title by ObservableDelegate(BR.title, "")
 
         @get:Bindable
-        var time by ObservableDelegate<Date?>(BR.time, null) {
-            timeChangeListenerProvider()?.onChange()
+        var time by ObservableDelegate<Date?>(BR.time, null) { oldValue, newValue ->
+            if (oldValue != newValue)
+                timeChangeListenerProvider()?.onChange()
         }
 
         @get:Bindable
