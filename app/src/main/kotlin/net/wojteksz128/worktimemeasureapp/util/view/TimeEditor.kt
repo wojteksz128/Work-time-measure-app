@@ -22,14 +22,30 @@ import javax.inject.Inject
         type = TimeEditor::class,
         attribute = "timeAttrChanged",
         method = "setTimeChangeListener"
+    ),
+    BindingMethod(
+        type = TimeEditor::class,
+        attribute = "inTimeEditMode",
+        method = "setInTimeEditMode"
+    ),
+    BindingMethod(
+        type = TimeEditor::class,
+        attribute = "inTimeEditModeAttrChanged",
+        method = "setInTimeEditModeChangeListener"
     )
 )
 @InverseBindingMethods(
-    InverseBindingMethod(type = TimeEditor::class, attribute = "time", method = "getTime")
+    InverseBindingMethod(type = TimeEditor::class, attribute = "time", method = "getTime"),
+    InverseBindingMethod(
+        type = TimeEditor::class,
+        attribute = "inTimeEditMode",
+        method = "getInTimeEditMode"
+    )
 )
 class TimeEditor(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs) {
     private lateinit var binding: ComponentTimeEditorBinding
-    private val model = ObservableModel(this::timeChangeListener)
+    private val model =
+        ObservableModel(this::timeChangeListener, this::inTimeEditModeChangeListener)
 
     @Inject
     lateinit var dateTimeUtils: DateTimeUtils
@@ -62,7 +78,18 @@ class TimeEditor(context: Context, attrs: AttributeSet?) : FrameLayout(context, 
 
     var timeChangeListener: InverseBindingListener? = null
 
-    class ObservableModel(timeChangeListenerProvider: () -> InverseBindingListener?) :
+    var inTimeEditMode: Boolean
+        get() = model.editMode
+        set(value) {
+            model.editMode = value
+        }
+
+    var inTimeEditModeChangeListener: InverseBindingListener? = null
+
+    class ObservableModel(
+        timeChangeListenerProvider: () -> InverseBindingListener?,
+        inEditModeChangeListenerProvider: () -> InverseBindingListener?
+    ) :
         BaseObservable() {
         @get:Bindable
         var title by ObservableDelegate(BR.title, "")
@@ -77,7 +104,11 @@ class TimeEditor(context: Context, attrs: AttributeSet?) : FrameLayout(context, 
         var editedTime by ObservableDelegate<Date?>(BR.editedTime, null)
 
         @get:Bindable
-        var editMode by ObservableDelegate(BR.editMode, false)
+        var editMode by ObservableDelegate(BR.editMode, false) { oldValue, newValue ->
+            if (oldValue != newValue) {
+                inEditModeChangeListenerProvider()?.onChange()
+            }
+        }
 
         fun onSetTimeClick() {
             editedTime = time

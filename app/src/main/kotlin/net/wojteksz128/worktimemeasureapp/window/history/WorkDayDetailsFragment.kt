@@ -56,14 +56,14 @@ class WorkDayDetailsFragment : Fragment() {
         setTitle(R.string.work_day_details_come_events_action_delete_title)
         setPositiveButton(R.string.work_day_details_come_events_action_delete) { _, _ ->
             viewModel.onComeEventDelete()
-            viewModel.comeEventPosition.value?.let { comeEventsAdapter.notifyItemRemoved(it) }
             Snackbar.make(
                 binding.root,
                 R.string.work_day_details_come_events_deleted_message,
                 Snackbar.LENGTH_LONG
             ).show()
         }
-        setNegativeButton(R.string.work_day_details_come_events_action_cancel) { _, _ ->
+        setNegativeButton(R.string.work_day_details_come_events_action_cancel) { _, _ -> }
+        setOnDismissListener {
             viewModel.comeEventPosition.value?.let { comeEventsAdapter.notifyItemRemoved(it) }
         }
     }.create()
@@ -81,14 +81,14 @@ class WorkDayDetailsFragment : Fragment() {
             val modifiedComeEvent =
                 editDialogViewModel.prepareModified()
             viewModel.onComeEventModified(modifiedComeEvent)
-            viewModel.comeEventPosition.value?.let { comeEventsAdapter.notifyItemRemoved(it) }
             Snackbar.make(
                 binding.root,
                 R.string.work_day_details_come_events_edited_message,
                 Snackbar.LENGTH_LONG
             ).show()
         }
-        setNegativeButton(R.string.work_day_details_come_events_action_cancel) { _, _ ->
+        setNegativeButton(R.string.work_day_details_come_events_action_cancel) { _, _ -> }
+        setOnDismissListener {
             viewModel.comeEventPosition.value?.let { comeEventsAdapter.notifyItemRemoved(it) }
         }
     }.create()
@@ -116,6 +116,13 @@ class WorkDayDetailsFragment : Fragment() {
                     workDayId,
                     selectedWorkDayViewModel.selected
                 )
+            }
+        }
+        editComeEventDialog.apply {
+            editDialogViewModel.positiveButtonEnabled.observe(viewLifecycleOwner) { buttonEnabled ->
+                getButton(AlertDialog.BUTTON_POSITIVE)?.let {
+                    it.isEnabled = buttonEnabled
+                }
             }
         }
 
