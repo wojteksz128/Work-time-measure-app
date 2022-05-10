@@ -113,11 +113,7 @@
     <string name="work_day_details_come_events_label">Wpisy czasu pracy:</string>
 
     <string name="work_day_details_come_events_action_cancel">Anuluj</string>
-    <string name="work_day_details_come_events_action_delete">Usuń</string>
     <string name="work_day_datails_come_events_action_edit">Edytuj</string>
-
-    <string name="work_day_details_come_events_action_delete_title">Usuwanie wpisu dnia pracy</string>
-    <string name="work_day_details_come_events_action_delete_message">Czy na pewno chcesz usunąć wpis dnia pracy: %s - %s?</string>
 
     <string name="work_day_details_come_events_action_edit_title">Edycja wpisu dnia pracy</string>
     <string name="work_day_details_come_events_action_edit_start_time_label">Czas rozpoczęcia:</string>
@@ -127,6 +123,18 @@
 
     <string name="work_day_details_come_events_deleted_message">Wpis został usunięty.</string>
     <string name="work_day_details_come_events_edited_message">Wpis został zmodyfikowany.</string>
+
+    <!--</editor-fold>-->
+    <!--##########################################-->
+
+    <!--##########################################-->
+    <!--<editor-fold desc="######## Delete Come Event Dialog ########">-->
+
+    <string name="delete_come_event_dialog_title">Usuwanie wpisu dnia pracy</string>
+    <string name="delete_come_event_dialog_delete_message">Czy na pewno chcesz usunąć wpis dnia pracy: %s - %s?</string>
+
+    <string name="delete_come_event_dialog_action_cancel">Anuluj</string>
+    <string name="delete_come_event_dialog_action_delete">Usuń</string>
 
     <!--</editor-fold>-->
     <!--##########################################-->

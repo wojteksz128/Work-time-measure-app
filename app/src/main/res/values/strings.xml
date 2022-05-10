@@ -113,11 +113,7 @@
     <string name="work_day_details_come_events_label">Work time entries:</string>
 
     <string name="work_day_details_come_events_action_cancel">Cancel</string>
-    <string name="work_day_details_come_events_action_delete">Delete</string>
     <string name="work_day_datails_come_events_action_edit">Edit</string>
-
-    <string name="work_day_details_come_events_action_delete_title">Delete workday entry</string>
-    <string name="work_day_details_come_events_action_delete_message">Are you sure you want to delete the workday entry: %s - %s?</string>
 
     <string name="work_day_details_come_events_action_edit_title">Edit workday entry</string>
     <string name="work_day_details_come_events_action_edit_start_time_label">Start time:</string>
@@ -127,6 +123,18 @@
 
     <string name="work_day_details_come_events_deleted_message">Entry has been deleted.</string>
     <string name="work_day_details_come_events_edited_message">Entry has been modified.</string>
+
+    <!--</editor-fold>-->
+    <!--##########################################-->
+
+    <!--##########################################-->
+    <!--<editor-fold desc="######## Delete Come Event Dialog ########">-->
+
+    <string name="delete_come_event_dialog_title">Delete workday entry</string>
+    <string name="delete_come_event_dialog_delete_message">Are you sure you want to delete the workday entry: %s - %s?</string>
+
+    <string name="delete_come_event_dialog_action_cancel">Cancel</string>
+    <string name="delete_come_event_dialog_action_delete">Delete</string>
 
     <!--</editor-fold>-->
     <!--##########################################-->

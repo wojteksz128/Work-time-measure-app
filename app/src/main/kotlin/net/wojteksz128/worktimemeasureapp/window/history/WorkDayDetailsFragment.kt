@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -24,11 +25,15 @@ import net.wojteksz128.worktimemeasureapp.util.dialog.DialogComeEventEditViewMod
 import net.wojteksz128.worktimemeasureapp.util.recyclerView.RecyclerLeftSwipeActionParam
 import net.wojteksz128.worktimemeasureapp.util.recyclerView.RecyclerRightSwipeActionParam
 import net.wojteksz128.worktimemeasureapp.util.recyclerView.RecyclerSwipeHelper
+import net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.DeleteComeEventDialogFragment
+import net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.DeleteComeEventDialogFragment.DeleteComeEventDialogListener
+import net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.SelectedComeEventViewModel
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class WorkDayDetailsFragment : Fragment() {
+class WorkDayDetailsFragment : Fragment(), DeleteComeEventDialogListener {
     private val viewModel: WorkDayDetailsViewModel by viewModels()
+    private val selectedComeEventViewModel: SelectedComeEventViewModel by activityViewModels()
     private val selectedWorkDayViewModel: SelectedWorkDayViewModel by activityViewModels()
     private val editDialogViewModel: DialogComeEventEditViewModel by viewModels()
 
@@ -40,7 +45,6 @@ class WorkDayDetailsFragment : Fragment() {
 
     private lateinit var binding: FragmentWorkDayDetailsBinding
     private lateinit var comeEventsAdapter: ComeEventsAdapter
-    private lateinit var deleteComeEventDialog: AlertDialog
     private lateinit var editComeEventDialog: AlertDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,25 +52,8 @@ class WorkDayDetailsFragment : Fragment() {
 
         comeEventsAdapter = ComeEventsAdapter(dateTimeUtils)
 
-        deleteComeEventDialog = prepareDeleteComeEventDialog()
         editComeEventDialog = prepareEditComeEventDialog()
     }
-
-    private fun prepareDeleteComeEventDialog() = AlertDialog.Builder(requireContext()).apply {
-        setTitle(R.string.work_day_details_come_events_action_delete_title)
-        setPositiveButton(R.string.work_day_details_come_events_action_delete) { _, _ ->
-            viewModel.onComeEventDelete()
-            Snackbar.make(
-                binding.root,
-                R.string.work_day_details_come_events_deleted_message,
-                Snackbar.LENGTH_LONG
-            ).show()
-        }
-        setNegativeButton(R.string.work_day_details_come_events_action_cancel) { _, _ -> }
-        setOnDismissListener {
-            viewModel.comeEventPosition.value?.let { comeEventsAdapter.notifyItemRemoved(it) }
-        }
-    }.create()
 
     private fun prepareEditComeEventDialog() = AlertDialog.Builder(requireContext()).apply {
         val dialogBinding = DialogComeEventEditBinding.inflate(layoutInflater, null, false)
@@ -89,7 +76,7 @@ class WorkDayDetailsFragment : Fragment() {
         }
         setNegativeButton(R.string.work_day_details_come_events_action_cancel) { _, _ -> }
         setOnDismissListener {
-            viewModel.comeEventPosition.value?.let { comeEventsAdapter.notifyItemRemoved(it) }
+            viewModel.modifiedComeEventPosition.value?.let { comeEventsAdapter.notifyItemRemoved(it) }
         }
     }.create()
 
@@ -104,10 +91,6 @@ class WorkDayDetailsFragment : Fragment() {
             fillWorkDayUsingLocal(selectedWorkDayViewModel.selected)
             workDay.observe(viewLifecycleOwner) {
                 comeEventsAdapter.submitList(it.events)
-            }
-            comeEventToDelete.observe(viewLifecycleOwner) {
-                val message = viewModel.prepareDeleteMessage(it)
-                deleteComeEventDialog.setMessage(message)
             }
         }
         selectedWorkDayViewModel.selected.observe(viewLifecycleOwner) { workDay ->
@@ -167,16 +150,32 @@ class WorkDayDetailsFragment : Fragment() {
         itemTouchHelper.attachToRecyclerView(workDayDetailsComeEvents)
     }
 
-    @Suppress("UNUSED_PARAMETER")
     private fun processEditComeEvent(comeEvent: ComeEvent, position: Int) {
         editDialogViewModel.fill(comeEvent)
-        viewModel.comeEventPosition.value = position
+        viewModel.modifiedComeEventPosition.value = position
         editComeEventDialog.show()
     }
 
     private fun processDeleteComeEvent(comeEvent: ComeEvent, position: Int) {
-        viewModel.comeEventToDelete.value = comeEvent
-        viewModel.comeEventPosition.value = position
-        deleteComeEventDialog.show()
+        selectedComeEventViewModel.selected.value = comeEvent
+        viewModel.modifiedComeEventPosition.value = position
+        DeleteComeEventDialogFragment().show(childFragmentManager, "DeleteComeEventDialog")
+    }
+
+    override fun onAcceptDeletionComeEventClick(dialog: DialogFragment) {
+        viewModel.onComeEventDelete(selectedComeEventViewModel.selected.value)
+        Snackbar.make(
+            binding.root,
+            R.string.work_day_details_come_events_deleted_message,
+            Snackbar.LENGTH_LONG
+        ).show()
+    }
+
+    override fun onRejectDeletionComeEventClick(dialog: DialogFragment) {
+        // Nothing to do
+    }
+
+    override fun onDeleteComeEventDialogDismiss(dialog: DialogFragment) {
+        viewModel.modifiedComeEventPosition.value?.let { comeEventsAdapter.notifyItemRemoved(it) }
     }
 }
