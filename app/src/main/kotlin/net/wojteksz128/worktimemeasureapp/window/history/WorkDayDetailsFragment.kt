@@ -107,7 +107,7 @@ class WorkDayDetailsFragment : Fragment(), DeleteComeEventDialogListener,
     }
 
     override fun onDeleteComeEventDialogDismiss(dialog: DialogFragment) {
-        viewModel.modifiedComeEventPosition.value?.let { comeEventsAdapter.notifyItemRemoved(it) }
+        comeEventsAdapter.notifyDataSetChanged()
     }
 
     override fun onModifyComeEventClick(dialog: DialogFragment, modifiedComeEvent: ComeEvent) {
@@ -124,6 +124,6 @@ class WorkDayDetailsFragment : Fragment(), DeleteComeEventDialogListener,
     }
 
     override fun onEditComeEventDialogDismiss(dialog: DialogFragment) {
-        viewModel.modifiedComeEventPosition.value?.let { comeEventsAdapter.notifyItemRemoved(it) }
+        comeEventsAdapter.notifyDataSetChanged()
     }
 }
