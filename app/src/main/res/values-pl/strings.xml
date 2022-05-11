@@ -112,12 +112,6 @@
 
     <string name="work_day_details_come_events_label">Wpisy czasu pracy:</string>
 
-    <string name="work_day_details_come_events_action_cancel">Anuluj</string>
-    <string name="work_day_datails_come_events_action_edit">Edytuj</string>
-
-    <string name="work_day_details_come_events_action_edit_title">Edycja wpisu dnia pracy</string>
-    <string name="work_day_details_come_events_action_edit_start_time_label">Czas rozpoczęcia:</string>
-    <string name="work_day_details_come_events_action_edit_finish_time_label">Czas zakończenia:</string>
     <!--<string name="work_day_details_come_events_action_edit_am_label" translatable="false">AM</string>-->
     <!--<string name="work_day_details_come_events_action_edit_pm_label" translatable="false">PM</string>-->
 
@@ -135,6 +129,19 @@
 
     <string name="delete_come_event_dialog_action_cancel">Anuluj</string>
     <string name="delete_come_event_dialog_action_delete">Usuń</string>
+
+    <!--</editor-fold>-->
+    <!--##########################################-->
+
+    <!--##########################################-->
+    <!--<editor-fold desc="######### Edit Come Event Dialog #########">-->
+
+    <string name="edit_come_event_dialog_title">Edycja wpisu dnia pracy</string>
+    <string name="edit_come_event_dialog_start_time_label">Czas rozpoczęcia:</string>
+    <string name="edit_come_event_dialog_finish_time_label">Czas zakończenia:</string>
+
+    <string name="edit_come_event_dialog_action_cancel">Anuluj</string>
+    <string name="edit_come_event_dialog_action_edit">Edytuj</string>
 
     <!--</editor-fold>-->
     <!--##########################################-->

@@ -21,14 +21,14 @@
                 android:layout_height="wrap_content"
                 app:time="@={viewModel.startTime}"
                 app:inTimeEditMode="@={viewModel.startTimeInEditMode}"
-                app:title="@string/work_day_details_come_events_action_edit_start_time_label" />
+                app:title="@string/edit_come_event_dialog_start_time_label" />
 
             <net.wojteksz128.worktimemeasureapp.util.view.TimeEditor
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:time="@={viewModel.finishTime}"
                 app:inTimeEditMode="@={viewModel.finishTimeInEditMode}"
-                app:title="@string/work_day_details_come_events_action_edit_finish_time_label" />
+                app:title="@string/edit_come_event_dialog_finish_time_label" />
         </LinearLayout>
     </ScrollView>
 
@@ -40,6 +40,6 @@
 
         <variable
             name="viewModel"
-            type="net.wojteksz128.worktimemeasureapp.util.dialog.DialogComeEventEditViewModel" />
+            type="net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.EditComeEventDialogViewModel" />
     </data>
 </layout>

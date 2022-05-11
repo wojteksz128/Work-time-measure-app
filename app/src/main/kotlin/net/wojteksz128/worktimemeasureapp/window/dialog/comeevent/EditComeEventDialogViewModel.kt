@@ -1,4 +1,4 @@
-package net.wojteksz128.worktimemeasureapp.util.dialog
+package net.wojteksz128.worktimemeasureapp.window.dialog.comeevent
 
 import android.app.Application
 import android.util.Log
@@ -12,7 +12,7 @@ import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
-class DialogComeEventEditViewModel @Inject constructor(
+class EditComeEventDialogViewModel @Inject constructor(
     application: Application
 ) : AndroidViewModel(application), ClassTagAware {
     private lateinit var comeEventToModify: ComeEvent
