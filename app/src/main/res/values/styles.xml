@@ -37,7 +37,7 @@
     </style>
 
     <style name="card_items">
-        <item name="android:layout_margin">@dimen/large_margin</item>
+        <item name="android:layout_margin">@dimen/no_margin</item>
     </style>
 
     <style name="recycler_view">
@@ -157,6 +157,7 @@
 
     <style name="dashboard_current_day" parent="dashboard_section_card">
         <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@android:color/transparent</item>
     </style>
 
     <style name="dashboard_current_day_date" parent="header_label" />

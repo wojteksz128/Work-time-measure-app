@@ -76,6 +76,31 @@
                     app:duration="@{workTimeData.todayWorkTime}"
                     app:title="@string/dashboard_today_work_time_label" /><!-- layout_height defined by style -->
 
+                <FrameLayout
+                    android:id="@+id/dashboard_current_day_events_container"
+                    style="@style/dashboard_current_day_events"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/dashboard_current_day_events_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="top|center_horizontal"
+                        android:visibility="@{(viewModel.workDay == null || viewModel.workDay.events == null || viewModel.workDay.events.empty) ? View.INVISIBLE : View.VISIBLE}"
+                        tools:listitem="@layout/list_item_history_day_event"
+                        tools:visibility="visible" />
+
+                    <TextView
+                        android:id="@+id/dashboard_current_day_empty_events_message"
+                        style="@style/dashboard_current_day_no_events_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/dashboard_current_day_empty_events_message"
+                        android:visibility="@{(viewModel.workDay == null || viewModel.workDay.events == null || viewModel.workDay.events.empty) ? View.VISIBLE : View.INVISIBLE}" />
+                </FrameLayout>
+
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/dashboard_current_day_container"
                     style="@style/dashboard_current_day"
@@ -87,40 +112,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@{dateTimeUtils.formatDate(@string/history_work_day_label_format, workTimeData.currentDayDate)}"
-                        app:layout_constraintBottom_toTopOf="@id/dashboard_current_day_events_container"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         tools:text="@string/dashboard_current_day_date_example" />
-
-                    <FrameLayout
-                        android:id="@+id/dashboard_current_day_events_container"
-                        style="@style/dashboard_current_day_events"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/dashboard_current_day_date">
-
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/dashboard_current_day_events_list"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="top|center_horizontal"
-                            android:visibility="@{(viewModel.workDay == null || viewModel.workDay.events == null || viewModel.workDay.events.empty) ? View.INVISIBLE : View.VISIBLE}"
-                            tools:listitem="@layout/list_item_history_day_event"
-                            tools:visibility="visible" />
-
-                        <TextView
-                            android:id="@+id/dashboard_current_day_empty_events_message"
-                            style="@style/dashboard_current_day_no_events_label"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:text="@string/dashboard_current_day_empty_events_message"
-                            android:visibility="@{(viewModel.workDay == null || viewModel.workDay.events == null || viewModel.workDay.events.empty) ? View.VISIBLE : View.INVISIBLE}" />
-                    </FrameLayout>
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
