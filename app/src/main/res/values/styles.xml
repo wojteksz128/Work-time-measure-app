@@ -71,6 +71,18 @@
         <item name="android:layout_height">@dimen/image_view_preference_image_preview_height</item>
     </style>
 
+    <style name="Widget.Button.Toggle" parent="android:Widget">
+        <item name="android:background">@drawable/ic_expand_bg</item>
+        <item name="android:disabledAlpha">?android:attr/disabledAlpha</item>
+    </style>
+
+    <style name="expand_button" parent="@android:style/Theme.Black">
+        <item name="android:background">@drawable/ic_expand_bg</item>
+        <item name="android:buttonStyleToggle">@style/Widget.Button.Toggle</item>
+        <item name="android:textOn" />
+        <item name="android:textOff" />
+    </style>
+
     <style name="duration_display_value">
         <item name="android:textSize">@dimen/dashboard_time_display_text</item>
     </style>

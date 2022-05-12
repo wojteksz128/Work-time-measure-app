@@ -8,12 +8,32 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <FrameLayout
+            android:id="@+id/day_events_list_container"
+            android:layout_width="match_parent"
+            android:layout_height="@{expandViewModel.comeEventsExpanded, default = @dimen/no_margin}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/day_label_container"
+            tools:layout_height="wrap_content">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/day_events_list"
+                style="@style/history_rv_work_day_events"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                tools:listitem="@layout/list_item_history_day_event"
+                tools:visibility="visible" />
+        </FrameLayout>
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/day_label_container"
             style="@style/history_rv_work_day_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@id/day_events_list"
+            app:layout_constraintBottom_toTopOf="@id/day_events_list_container"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -39,28 +59,29 @@
                 android:layout_height="wrap_content"
                 android:text="@{dateTimeUtils.formatCounterTime(dateTimeUtils.mergeComeEventsDuration(workDay))}"
                 app:layout_constraintBottom_toBottomOf="@id/day_label"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/day_expand"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toEndOf="@+id/day_label"
                 app:layout_constraintTop_toTopOf="@+id/day_label"
                 tools:text="@string/history_work_day_duration_example" />
+
+            <ToggleButton
+                android:id="@+id/day_expand"
+                style="@style/expand_button"
+                android:layout_width="@dimen/small_button"
+                android:layout_height="@dimen/small_button"
+                android:checked="@{expandViewModel.comeEventsExpanded}"
+                android:onClick="@{() -> expandViewModel.switchExpansion()}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/day_events_list"
-            style="@style/history_rv_work_day_events"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/day_label_container"
-            tools:listitem="@layout/list_item_history_day_event" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <data>
+
+        <import type="android.view.ViewGroup.LayoutParams" />
+
         <variable
             name="dateTimeUtils"
             type="net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils" />
@@ -68,5 +89,9 @@
         <variable
             name="workDay"
             type="net.wojteksz128.worktimemeasureapp.model.WorkDay" />
+
+        <variable
+            name="expandViewModel"
+            type="net.wojteksz128.worktimemeasureapp.window.util.button.ExpandViewModel" />
     </data>
 </layout>

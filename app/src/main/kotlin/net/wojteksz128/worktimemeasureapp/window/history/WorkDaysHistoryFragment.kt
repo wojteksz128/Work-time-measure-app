@@ -38,12 +38,13 @@ class WorkDaysHistoryFragment : Fragment(), ClassTagAware {
         binding = FragmentWorkDaysHistoryBinding.inflate(layoutInflater, container, false)
 
         binding.workDaysHistoryRv.apply {
-            val workDayAdapter = WorkDayAdapter(requireContext(), dateTimeUtils) { workDay ->
-                return@WorkDayAdapter {
-                    selectedWorkDayViewModel.select(workDay)
-                    findNavController().navigate(R.id.viewWorkDayDetails, bundleOf())
+            val workDayAdapter =
+                WorkDayAdapter(requireContext(), dateTimeUtils, viewLifecycleOwner) { workDay ->
+                    return@WorkDayAdapter {
+                        selectedWorkDayViewModel.select(workDay)
+                        findNavController().navigate(R.id.viewWorkDayDetails, bundleOf())
+                    }
                 }
-            }
             adapter = workDayAdapter.also { this@WorkDaysHistoryFragment.workDayAdapter = it }
             (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         }

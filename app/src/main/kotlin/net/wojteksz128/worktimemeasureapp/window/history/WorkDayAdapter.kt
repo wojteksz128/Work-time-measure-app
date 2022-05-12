@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.LifecycleOwner
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -15,10 +16,12 @@ import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import net.wojteksz128.worktimemeasureapp.util.livedata.RecyclerViewPeriodicUpdater
 import net.wojteksz128.worktimemeasureapp.util.recyclerView.RecyclerViewItemClick
+import net.wojteksz128.worktimemeasureapp.window.util.button.ExpandViewModel
 
 class WorkDayAdapter(
     private val context: Context,
     private val dateTimeUtils: DateTimeUtils,
+    private val lifecycleOwner: LifecycleOwner,
     override var onItemClickListenerProvider: (WorkDay) -> (View) -> Unit = { {} },
 ) : PagingDataAdapter<WorkDay, WorkDayAdapter.WorkDayViewHolder>(WorkDayEventsDiffCallback),
     RecyclerViewItemClick<WorkDay> {
@@ -27,7 +30,7 @@ class WorkDayAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WorkDayViewHolder {
         val inflater = LayoutInflater.from(context)
         val binding = ListItemHistoryWorkDayBinding.inflate(inflater, parent, false)
-        return WorkDayViewHolder(binding, context, dateTimeUtils)
+        return WorkDayViewHolder(binding, context, lifecycleOwner, dateTimeUtils)
     }
 
     override fun onBindViewHolder(holder: WorkDayViewHolder, position: Int) {
@@ -54,24 +57,30 @@ class WorkDayAdapter(
     class WorkDayViewHolder(
         val binding: ListItemHistoryWorkDayBinding,
         context: Context,
+        lifecycleOwner: LifecycleOwner,
         dateTimeUtils: DateTimeUtils,
     ) : RecyclerView.ViewHolder(binding.root), ClassTagAware {
+        private val expandViewModel = ExpandViewModel()
 
         private val comeEventsAdapter = ComeEventsAdapter(dateTimeUtils)
 
         init {
+            binding.lifecycleOwner = lifecycleOwner
             binding.dateTimeUtils = dateTimeUtils
             binding.dayEventsList.apply {
+
                 adapter = comeEventsAdapter
                 layoutManager = object : LinearLayoutManager(context) {
                     override fun canScrollVertically() = false
                 }
                 addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
             }
+            binding.expandViewModel = expandViewModel
         }
 
         fun bind(workDay: WorkDay) {
             binding.workDay = workDay
+
 
             comeEventsAdapter.submitList(workDay.events)
         }
@@ -98,3 +107,4 @@ class WorkDayAdapter(
             oldItem == newItem
     }
 }
+
