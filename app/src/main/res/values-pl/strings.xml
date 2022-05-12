@@ -96,6 +96,8 @@
     <string name="history_work_day_label_format">E, dd.MM.yyyy</string>
     <!--<string name="history_work_day_duration_format" translatable="false">H:mm:ss</string>-->
 
+    <!--<string name="history_work_day_empty_events_message" translatable="false">@string/dashboard_current_day_empty_events_message</string>-->
+
     <!--</editor-fold>-->
     <!--##########################################-->
 

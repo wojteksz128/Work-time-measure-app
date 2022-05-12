@@ -11,18 +11,29 @@
         <FrameLayout
             android:id="@+id/day_events_list_container"
             android:layout_width="match_parent"
-            android:layout_height="@{expandViewModel.comeEventsExpanded, default = @dimen/no_margin}"
+            android:layout_height="@{expandViewModel.comeEventsExpanded, default = @dimen/collapsed}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/day_label_container"
             tools:layout_height="wrap_content">
 
+            <TextView
+                android:id="@+id/day_no_events_label"
+                style="@style/dashboard_current_day_no_events_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/history_work_day_empty_events_message"
+                android:visibility="@{(workDay == null || workDay.events == null || workDay.events.empty) ? View.VISIBLE : View.INVISIBLE}" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/day_events_list"
                 style="@style/history_rv_work_day_events"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="top|center_horizontal"
+                android:visibility="@{(workDay == null || workDay.events == null || workDay.events.empty) ? View.INVISIBLE : View.VISIBLE}"
                 android:orientation="vertical"
                 tools:listitem="@layout/list_item_history_day_event"
                 tools:visibility="visible" />
@@ -80,7 +91,7 @@
 
     <data>
 
-        <import type="android.view.ViewGroup.LayoutParams" />
+        <import type="android.view.View" />
 
         <variable
             name="dateTimeUtils"
