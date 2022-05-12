@@ -6,6 +6,7 @@ import androidx.activity.viewModels
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.google.android.material.snackbar.Snackbar
@@ -80,6 +81,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
                     override fun canScrollVertically() = false
                 }
                 (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
+                addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
             }
             this@DashboardActivity.baseContext?.let {
                 ComeEventsRecyclerViewSwipeLogic(
