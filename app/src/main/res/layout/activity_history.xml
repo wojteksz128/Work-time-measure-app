@@ -10,17 +10,17 @@
         android:layout_height="match_parent"
         tools:context=".window.history.HistoryActivity">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/history_rv_days"
-            style="@style/history_rv"
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/history_nav_host_fragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:name="androidx.navigation.fragment.NavHostFragment"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:listitem="@layout/history_work_day_list_item" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:defaultNavHost="true"
+            app:navGraph="@navigation/history_graph" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

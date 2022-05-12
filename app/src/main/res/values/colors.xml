@@ -14,7 +14,10 @@
     <color name="dashboard_background">@color/background</color>
 
     <!--##########################################-->
-    <!--############ History Activity ############-->
+    <!--####### Work Day Details Fragments #######-->
     <!--##########################################-->
+
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="colorAlert">#F44336</color>
 
 </resources>

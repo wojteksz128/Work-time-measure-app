@@ -13,15 +13,18 @@ import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import net.wojteksz128.worktimemeasureapp.window.dashboard.DashboardActivity
 import java.util.*
 
-class WorkTimeInProgressNotification(context: Context, endOfWorkTime: Date) :
-    AppNotification<WorkTimeNotificationActionReceiver>(
+class WorkTimeInProgressNotification(
+    context: Context,
+    endOfWorkTime: Date,
+    dateTimeUtils: DateTimeUtils
+) : AppNotification<WorkTimeNotificationActionReceiver>(
         Channel.WORK_TIME_CHANNEL, notificationId, context),
     ClassTagAware {
 
     init {
         Log.d(classTag, "init: Init notification builder")
         val contextText = context.getString(R.string.notification_in_work_text,
-            DateTimeUtils.formatDate("HH:mm", endOfWorkTime))
+            dateTimeUtils.formatDate("HH:mm", endOfWorkTime))
         notificationBuilder.setContentTitle(context.getString(R.string.notification_in_work_title))
             .setContentText(contextText)
             .setStyle(NotificationCompat.BigTextStyle()

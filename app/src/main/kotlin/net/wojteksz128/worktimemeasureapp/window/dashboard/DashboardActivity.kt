@@ -3,6 +3,7 @@ package net.wojteksz128.worktimemeasureapp.window.dashboard
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,37 +13,64 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.databinding.ActivityDashboardBinding
+import net.wojteksz128.worktimemeasureapp.model.ComeEvent
 import net.wojteksz128.worktimemeasureapp.model.ComeEventType
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import net.wojteksz128.worktimemeasureapp.notification.NotificationUtils
 import net.wojteksz128.worktimemeasureapp.settings.Settings
-import net.wojteksz128.worktimemeasureapp.util.*
+import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
+import net.wojteksz128.worktimemeasureapp.util.TimerManager
 import net.wojteksz128.worktimemeasureapp.util.comeevent.ComeEventUtils
 import net.wojteksz128.worktimemeasureapp.util.comeevent.NewEventRegisterListener
 import net.wojteksz128.worktimemeasureapp.util.coroutines.PeriodicOperation
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
+import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import net.wojteksz128.worktimemeasureapp.window.BaseActivity
+import net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.DeleteComeEventDialogFragment.DeleteComeEventDialogListener
+import net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.EditComeEventDialogFragment.EditComeEventDialogListener
+import net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.SelectedComeEventViewModel
 import net.wojteksz128.worktimemeasureapp.window.history.ComeEventsAdapter
-import java.util.*
+import net.wojteksz128.worktimemeasureapp.window.util.recyclerView.ComeEventsRecyclerViewSwipeLogic
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activity_dashboard),
-    NewEventRegisterListener, ClassTagAware {
+    NewEventRegisterListener, DeleteComeEventDialogListener, EditComeEventDialogListener,
+    ClassTagAware {
     private val viewModel: DashboardViewModel by viewModels()
+    private val selectedComeEventViewModel: SelectedComeEventViewModel by viewModels()
 
     @Inject
     lateinit var comeEventUtils: ComeEventUtils
 
-    private val comeEventsAdapter = ComeEventsAdapter()
+    @Inject
+    lateinit var dateTimeProvider: DateTimeProvider
+
+    @Inject
+    lateinit var dateTimeUtils: DateTimeUtils
+
+    @Inject
+    lateinit var notificationUtils: NotificationUtils
+
+    @Suppress("PropertyName")
+    @Inject
+    lateinit var Settings: Settings
+
+    @Inject
+    lateinit var timerManager: TimerManager
+
+    private lateinit var comeEventsAdapter: ComeEventsAdapter
     private val currentDayObserver = CurrentDayObserver()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        comeEventsAdapter = ComeEventsAdapter(dateTimeUtils)
+
         binding.apply {
             lifecycleOwner = this@DashboardActivity
+            dateTimeUtils = this@DashboardActivity.dateTimeUtils
             viewModel = this@DashboardActivity.viewModel
             workTimeData = this@DashboardActivity.viewModel.workTimeData
             newEventRegisterListener = this@DashboardActivity
@@ -53,6 +81,13 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
                 }
                 (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
             }
+            this@DashboardActivity.baseContext?.let {
+                ComeEventsRecyclerViewSwipeLogic(
+                    it,
+                    selectedComeEventViewModel.selected,
+                    null
+                ).attach(dashboardCurrentDayEventsList, supportFragmentManager)
+            }
         }
     }
 
@@ -62,7 +97,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
         viewModel.workDay.observe(this@DashboardActivity, currentDayObserver)
         viewModel.workDay.value?.let { runTimerIfRequiredFor(it) }
         // TODO: 21.09.2021 Przenieś do innego miesca (niezależnego od DashboardActivity)
-        DateTimeProvider.updateOffset(this)
+        dateTimeProvider.updateOffset(this)
     }
 
     private fun runTimerIfRequiredFor(workDay: WorkDay) {
@@ -102,13 +137,12 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
             val message = when (comeEventUtils.registerNewEvent()) {
                 ComeEventType.COME_IN -> {
                     if (Settings.WorkTime.NotifyingEnabled.valueNullable == true) {
-                        NotificationUtils.notifyUserAboutWorkTime(this@DashboardActivity,
-                            viewModel.workTimeData.value!!)
+                        notificationUtils.notifyUserAboutWorkTime(viewModel.workTimeData.value!!)
                     }
                     getString(R.string.dashboard_snackbar_info_income_registered)
                 }
                 ComeEventType.COME_OUT -> {
-                    TimerManager.removeAlarm(this@DashboardActivity)
+                    timerManager.removeAlarm()
                     getString(R.string.dashboard_snackbar_info_outcome_registered)
                 }
             }
@@ -131,5 +165,39 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
             }
         }
 
+    }
+
+    override fun onAcceptDeletionComeEventClick(dialog: DialogFragment) {
+        viewModel.onComeEventDelete(selectedComeEventViewModel.selected.value)
+        Snackbar.make(
+            binding.root,
+            R.string.work_day_details_come_events_deleted_message,
+            Snackbar.LENGTH_LONG
+        ).show()
+    }
+
+    override fun onRejectDeletionComeEventClick(dialog: DialogFragment) {
+        // Nothing to do
+    }
+
+    override fun onDeleteComeEventDialogDismiss(dialog: DialogFragment) {
+        comeEventsAdapter.notifyDataSetChanged()
+    }
+
+    override fun onModifyComeEventClick(dialog: DialogFragment, modifiedComeEvent: ComeEvent) {
+        viewModel.onComeEventModified(modifiedComeEvent)
+        Snackbar.make(
+            binding.root,
+            R.string.work_day_details_come_events_edited_message,
+            Snackbar.LENGTH_LONG
+        ).show()
+    }
+
+    override fun onRejectModificationComeEventClick(dialog: DialogFragment) {
+        // Nothing to do
+    }
+
+    override fun onEditComeEventDialogDismiss(dialog: DialogFragment) {
+        comeEventsAdapter.notifyDataSetChanged()
     }
 }

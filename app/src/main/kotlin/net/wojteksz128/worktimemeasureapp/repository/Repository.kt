@@ -17,4 +17,9 @@ abstract class Repository<DM, E>(
         else
             dao.update(entity)
     }
+
+    open fun delete(domainModel: DM) {
+        val entity = mapper.mapFromDomainModel(domainModel)
+        dao.delete(entity)
+    }
 }

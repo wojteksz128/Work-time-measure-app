@@ -9,12 +9,18 @@ import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeNotifica
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.TimerManager
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
+import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import net.wojteksz128.worktimemeasureapp.window.dashboard.WorkTimeData
 import java.util.*
 
-object NotificationUtils : ClassTagAware {
+class NotificationUtils(
+    private val context: Context,
+    private val dateTimeProvider: DateTimeProvider,
+    private val timerManager: TimerManager,
+    private val dateTimeUtils: DateTimeUtils
+) : ClassTagAware {
 
-    fun initNotifications(context: Context) {
+    fun initNotifications() {
         Log.v(classTag, "initNotifications: Initialize all notifications")
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -28,24 +34,27 @@ object NotificationUtils : ClassTagAware {
         }
     }
 
-    fun notifyUserAboutWorkTime(context: Context, workTimeData: WorkTimeData) {
-        val endOfWorkTimeExpired = DateTimeProvider.currentCalendarWithoutCorrection.apply {
+    fun notifyUserAboutWorkTime(workTimeData: WorkTimeData) {
+        val endOfWorkTimeExpired = dateTimeProvider.currentCalendarWithoutCorrection.apply {
             val remainingTodayWorkTimeMillis = workTimeData.remainingTodayWorkTime?.toMillis() ?: 0L
             add(Calendar.MILLISECOND, remainingTodayWorkTimeMillis.toInt())
         }
         val expectedEndWorkDayTime = workTimeData.expectedEndWorkDayTime ?: Date()
 
-        scheduleEndOfWorkTimeNotification(context, endOfWorkTimeExpired)
-        if (DateTimeProvider.currentTime.before(endOfWorkTimeExpired.time))
-            WorkTimeNotificationFactory.createWorkTimeInProgressNotification(context,
-                expectedEndWorkDayTime).notifyUser()
+        scheduleEndOfWorkTimeNotification(endOfWorkTimeExpired)
+        if (dateTimeProvider.currentTime.before(endOfWorkTimeExpired.time))
+            WorkTimeNotificationFactory.createWorkTimeInProgressNotification(
+                context,
+                expectedEndWorkDayTime,
+                dateTimeUtils
+            ).notifyUser()
     }
 
-    private fun scheduleEndOfWorkTimeNotification(context: Context, endOfWorkTimeExpired: Calendar) {
-        TimerManager.setAlarm(context, endOfWorkTimeExpired)
+    private fun scheduleEndOfWorkTimeNotification(endOfWorkTimeExpired: Calendar) {
+        timerManager.setAlarm(endOfWorkTimeExpired)
     }
 
-    fun clearAllNotifications(context: Context) {
+    fun clearAllNotifications() {
         Log.d(classTag, "clearAllNotifications: Clearing notifications started.")
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.cancelAll()

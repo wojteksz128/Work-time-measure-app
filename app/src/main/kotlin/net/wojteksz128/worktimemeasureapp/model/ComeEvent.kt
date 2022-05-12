@@ -1,7 +1,6 @@
 package net.wojteksz128.worktimemeasureapp.model
 
-import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
-import org.threeten.bp.Duration
+import net.wojteksz128.worktimemeasureapp.util.datetime.minus
 import java.util.*
 
 data class ComeEvent(
@@ -13,9 +12,6 @@ data class ComeEvent(
 ) : DomainModel {
     val isEnded: Boolean
         get() = endDate != null
-
-    val duration: Duration
-        get() = Duration.ofMillis(((endDate ?: DateTimeProvider.currentTime) - startDate).time)
 
     constructor(startDate: Date, endDate: Date?, workDayId: Long)
             : this(null, startDate, endDate, endDate?.let { (it - startDate).time }, workDayId)
@@ -44,6 +40,3 @@ data class ComeEvent(
     }
 
 }
-
-private operator fun Date.minus(other: Date): Date =
-    Date(this.time - other.time)

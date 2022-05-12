@@ -3,15 +3,20 @@ package net.wojteksz128.worktimemeasureapp.window.settings
 import android.os.Bundle
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import dagger.hilt.android.AndroidEntryPoint
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.settings.item.SettingsItemsNotifier
 import net.wojteksz128.worktimemeasureapp.window.settings.property.TimePickerPreference
 import net.wojteksz128.worktimemeasureapp.window.settings.property.TimePickerPreferenceDialog
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class WorkTimeFragment : PreferenceFragmentCompat() {
 
+    @Inject
+    lateinit var settingsItemsNotifier: SettingsItemsNotifier
+
     private val DIALOG_FRAGMENT_TAG = "TimePickerDialog"
-    private val settingsItemsNotifier = SettingsItemsNotifier { context }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.work_time_preferences, rootKey)

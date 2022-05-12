@@ -2,29 +2,36 @@ package net.wojteksz128.worktimemeasureapp.window.history
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import net.wojteksz128.worktimemeasureapp.databinding.HistoryWorkDayListItemBinding
+import net.wojteksz128.worktimemeasureapp.databinding.ListItemHistoryWorkDayBinding
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
+import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import net.wojteksz128.worktimemeasureapp.util.livedata.RecyclerViewPeriodicUpdater
+import net.wojteksz128.worktimemeasureapp.util.recyclerView.RecyclerViewItemClick
 
 class WorkDayAdapter(
-    private val context: Context
-) : PagingDataAdapter<WorkDay, WorkDayAdapter.WorkDayViewHolder>(WorkDayEventsDiffCallback) {
+    private val context: Context,
+    private val dateTimeUtils: DateTimeUtils,
+    override var onItemClickListenerProvider: (WorkDay) -> (View) -> Unit = { {} },
+) : PagingDataAdapter<WorkDay, WorkDayAdapter.WorkDayViewHolder>(WorkDayEventsDiffCallback),
+    RecyclerViewItemClick<WorkDay> {
     private val periodicUpdater = RecyclerViewPeriodicUpdater(this)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WorkDayViewHolder {
         val inflater = LayoutInflater.from(context)
-        val binding = HistoryWorkDayListItemBinding.inflate(inflater, parent, false)
-        return WorkDayViewHolder(binding, context)
+        val binding = ListItemHistoryWorkDayBinding.inflate(inflater, parent, false)
+        return WorkDayViewHolder(binding, context, dateTimeUtils)
     }
 
     override fun onBindViewHolder(holder: WorkDayViewHolder, position: Int) {
         getItem(position)?.let {
+            holder.setOnClickListener(onItemClickListenerProvider(it))
             holder.bind(it)
         }
     }
@@ -43,12 +50,16 @@ class WorkDayAdapter(
     }
 
 
-    class WorkDayViewHolder(val binding: HistoryWorkDayListItemBinding, context: Context) :
-        RecyclerView.ViewHolder(binding.root), ClassTagAware {
+    class WorkDayViewHolder(
+        val binding: ListItemHistoryWorkDayBinding,
+        context: Context,
+        dateTimeUtils: DateTimeUtils,
+    ) : RecyclerView.ViewHolder(binding.root), ClassTagAware {
 
-        private val comeEventsAdapter = ComeEventsAdapter()
+        private val comeEventsAdapter = ComeEventsAdapter(dateTimeUtils)
 
         init {
+            binding.dateTimeUtils = dateTimeUtils
             binding.dayEventsList.adapter = comeEventsAdapter
             binding.dayEventsList.layoutManager = object : LinearLayoutManager(context) {
                 override fun canScrollVertically() = false
@@ -63,6 +74,12 @@ class WorkDayAdapter(
 
         fun syncUpdaterWith(anotherUpdater: RecyclerViewPeriodicUpdater) {
             comeEventsAdapter.syncUpdaterWith(anotherUpdater)
+        }
+
+        fun setOnClickListener(onItemClickListener: (View) -> Unit) {
+            itemView.setOnClickListener(onItemClickListener)
+            binding.dayEventsList.setOnClickListener(onItemClickListener)
+            comeEventsAdapter.onItemClickListenerProvider = { onItemClickListener }
         }
     }
 

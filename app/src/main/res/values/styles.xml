@@ -184,6 +184,7 @@
 
     <style name="history" parent="window" />
 
+<!--    todo do usunięcia-->
     <style name="history_rv" parent="recycler_view" />
 
     <style name="history_rv_work_day" parent="recycler_view_item" />
@@ -200,6 +201,83 @@
 
     <style name="history_rv_work_day_events_item_label">
         <item name="android:layout_margin">@dimen/default_margin</item>
+    </style>
+
+    <!--</editor-fold>-->
+    <!--##########################################-->
+
+    <!--##########################################-->
+    <!--<editor-fold desc="############ Work days history ###########">-->
+
+    <style name="work_days_history_rv" parent="recycler_view" />
+
+    <!--</editor-fold>-->
+    <!--##########################################-->
+
+    <!--##########################################-->
+    <!--<editor-fold desc="############ Work day details ############">-->
+    
+    <style name="work_day_details" parent="window" />
+
+    <style name="calendar_page" parent="card">
+        <item name="android:layout_width">250dp</item>
+        <item name="android:layout_height">200dp</item>
+        <item name="android:padding">@dimen/no_padding</item>
+        <item name="android:layout_margin">@dimen/default_margin</item>
+    </style>
+
+    <style name="calendar_page_header">
+        <item name="android:layout_height">50dp</item>
+        <item name="android:background">@color/colorAccent</item>
+    </style>
+
+    <style name="calendar_page_header_text">
+        <item name="android:textSize">25sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="calendar_page_content_day">
+        <item name="android:textSize">90sp</item>
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+
+    <style name="calendar_page_content_weekday">
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+
+    <style name="work_day_details_summary" parent="card">
+        <item name="android:layout_margin">@dimen/default_margin</item>
+        <item name="android:layout_marginBottom">@dimen/extra_small_margin</item>
+    </style>
+
+    <style name="work_day_details_summary_label">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="work_day_details_summary_group">
+        <item name="android:padding">@dimen/small_padding</item>
+    </style>
+
+    <style name="work_day_details_summary_value">
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="work_day_details_summary_value_divider" parent="work_day_details_summary_value">
+        <item name="android:paddingStart">@dimen/default_padding</item>
+        <item name="android:paddingLeft">@dimen/default_padding</item>
+        <item name="android:paddingEnd">@dimen/default_padding</item>
+        <item name="android:paddingRight">@dimen/default_padding</item>
+    </style>
+
+    <style name="work_day_details_come_event_list_group">
+        <item name="android:layout_marginTop">@dimen/default_margin</item>
+    </style>
+
+    <style name="work_day_details_come_event_list_recyclerView">
+        <item name="android:layout_marginStart">@dimen/default_margin</item>
+        <item name="android:layout_marginLeft">@dimen/default_margin</item>
     </style>
 
     <!--</editor-fold>-->

@@ -4,16 +4,18 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import dagger.hilt.android.AndroidEntryPoint
 import net.wojteksz128.worktimemeasureapp.R
 
 private const val TITLE_TAG = "settingsActivityTitle"
 
+@AndroidEntryPoint
 class SettingsActivity : AppCompatActivity(),
     PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.settings_activity)
+        setContentView(R.layout.activity_settings)
         initView(savedInstanceState)
         addOnBackClickTitleCorrector()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)

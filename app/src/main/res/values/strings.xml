@@ -97,7 +97,69 @@
     <string name="history_work_day_duration_format" translatable="false">H:mm:ss</string>
 
     <!--</editor-fold>-->
-    <!--">##########################################-->
+    <!--##########################################-->
+
+    <!--##########################################-->
+    <!--<editor-fold desc="############ Work day details ############">-->
+
+    <string name="work_day_details_header_text_example">January 2021</string>
+    <string name="work_day_details_card_day_example" translatable="false">1</string>
+    <string name="work_day_details_card_weekDay_example">Friday</string>
+
+    <string name="work_day_details_summary_label">Total working time:</string>
+    <string name="work_day_details_summary_value_example" translatable="false">00:00:00</string>
+    <string name="work_day_details_summary_values_divider" translatable="false">/</string>
+
+    <string name="work_day_details_come_events_label">Work time entries:</string>
+
+    <string name="work_day_details_come_events_action_edit_am_label" translatable="false">AM</string>
+    <string name="work_day_details_come_events_action_edit_pm_label" translatable="false">PM</string>
+
+    <string name="work_day_details_come_events_deleted_message">Entry has been deleted.</string>
+    <string name="work_day_details_come_events_edited_message">Entry has been modified.</string>
+
+    <!--</editor-fold>-->
+    <!--##########################################-->
+
+    <!--##########################################-->
+    <!--<editor-fold desc="######## Delete Come Event Dialog ########">-->
+
+    <string name="delete_come_event_dialog_title">Delete workday entry</string>
+    <string name="delete_come_event_dialog_delete_message">Are you sure you want to delete the workday entry: %s - %s?</string>
+
+    <string name="delete_come_event_dialog_action_cancel">Cancel</string>
+    <string name="delete_come_event_dialog_action_delete">Delete</string>
+
+    <!--</editor-fold>-->
+    <!--##########################################-->
+
+    <!--##########################################-->
+    <!--<editor-fold desc="######### Edit Come Event Dialog #########">-->
+
+    <string name="edit_come_event_dialog_title">Edit workday entry</string>
+    <string name="edit_come_event_dialog_start_time_label">Start time:</string>
+    <string name="edit_come_event_dialog_finish_time_label">Finish time:</string>
+
+    <string name="edit_come_event_dialog_action_cancel">Cancel</string>
+    <string name="edit_come_event_dialog_action_edit">Edit</string>
+
+    <!--</editor-fold>-->
+    <!--##########################################-->
+
+    <!--##########################################-->
+    <!--<editor-fold desc="######### Time Editor Component ##########">-->
+
+    <string name="time_editor_title_example">Title:</string>
+    <string name="time_editor_value_format" translatable="false">H:mm:ss</string>
+    <string name="time_editor_value_not_set">Not set</string>
+    <string name="time_editor_value_example" translatable="false">00:00:00</string>
+    <string name="time_editor_set_time_desc">Set time</string>
+    <string name="time_editor_clear_time_desc">Clear time</string>
+    <string name="time_editor_accept_desc">Accept changes</string>
+    <string name="time_editor_dismiss_desc">Dismiss changes</string>
+
+    <!--</editor-fold>-->
+    <!--##########################################-->
 
     <!--##########################################-->
     <!--<editor-fold desc="############ Settings Activity ###########">-->

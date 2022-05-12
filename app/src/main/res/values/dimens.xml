@@ -34,6 +34,7 @@
     <dimen name="small_padding">4dp</dimen>
     <dimen name="default_padding">8dp</dimen>
     <dimen name="large_padding">16dp</dimen>
+    <dimen name="extra_large_padding">24dp</dimen>
 
     <!-- Elevation -->
     <dimen name="primary_elevation">4dp</dimen>
@@ -46,5 +47,8 @@
 
     <!-- Loading indicator -->
     <dimen name="loading_indicator_size">42dp</dimen>
+
+    <!-- Button -->
+    <dimen name="small_button">48dp</dimen>
 
 </resources>

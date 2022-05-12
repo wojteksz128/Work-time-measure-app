@@ -7,8 +7,11 @@ import com.medavox.library.mutime.MuTime
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import java.util.*
+import javax.inject.Inject
 
-object DateTimeProvider : ClassTagAware {
+class DateTimeProvider @Inject constructor(
+    private val Settings: Settings
+) : ClassTagAware {
     private var offset: Long = 0
 
     val currentTime: Date

@@ -28,7 +28,7 @@
                 style="@style/duration_display_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{DateTimeUtils.INSTANCE.formatCounterTime(duration)}"
+                android:text="@{dateTimeUtils.formatCounterTime(duration)}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -38,8 +38,9 @@
     </FrameLayout>
 
     <data>
-        <import type="net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils" />
-
+        <variable
+            name="dateTimeUtils"
+            type="net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils" />
         <variable
             name="title"
             type="String" />

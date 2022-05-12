@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="dateTimeUtils"
+            type="net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils" />
+
+        <variable
+            name="model"
+            type="net.wojteksz128.worktimemeasureapp.util.view.TimeEditor.ObservableModel" />
+    </data>
+
+    <merge
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageButton
+                    android:id="@+id/time_editor_set_time"
+                    android:layout_width="@dimen/small_button"
+                    android:layout_height="@dimen/small_button"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/time_editor_set_time_desc"
+                    android:onClick="@{() -> model.onSetTimeClick()}"
+                    android:src="@drawable/selector_edit"
+                    android:visibility="@{model.editMode ? View.GONE : View.VISIBLE}"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/time_editor_clear_time"
+                    app:layout_constraintRight_toLeftOf="@id/time_editor_clear_time"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@android:color/background_dark" />
+
+                <ImageButton
+                    android:id="@+id/time_editor_clear_time"
+                    android:layout_width="@dimen/small_button"
+                    android:layout_height="@dimen/small_button"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/time_editor_set_time_desc"
+                    android:onClick="@{() -> model.onClearTimeClick()}"
+                    android:src="@drawable/selector_delete"
+                    android:visibility="@{model.editMode ? View.GONE : View.VISIBLE}"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/time_editor_accept"
+                    app:layout_constraintRight_toLeftOf="@id/time_editor_accept"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@android:color/background_dark" />
+
+                <ImageButton
+                    android:id="@+id/time_editor_accept"
+                    android:layout_width="@dimen/small_button"
+                    android:layout_height="@dimen/small_button"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/time_editor_accept_desc"
+                    android:onClick="@{() -> model.onAcceptClick()}"
+                    android:src="@drawable/selector_accept"
+                    android:visibility="@{model.editMode ? View.VISIBLE : View.GONE}"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/time_editor_dismiss"
+                    app:layout_constraintRight_toLeftOf="@id/time_editor_dismiss"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@android:color/background_dark" />
+
+                <ImageButton
+                    android:id="@+id/time_editor_dismiss"
+                    android:layout_width="@dimen/small_button"
+                    android:layout_height="@dimen/small_button"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/time_editor_dismiss_desc"
+                    android:onClick="@{() -> model.onDismissClick()}"
+                    android:src="@drawable/selector_dismiss"
+                    android:visibility="@{model.editMode ? View.VISIBLE : View.GONE}"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@android:color/background_dark" />
+
+                <TextView
+                    android:id="@+id/time_editor_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@{model.title}"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="@string/time_editor_title_example" />
+
+                <TextView
+                    android:id="@+id/time_editor_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/small_margin"
+                    android:text="@{(model.time == null) ? @string/time_editor_value_not_set : dateTimeUtils.formatDate(@string/time_editor_value_format, model.time)}"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/time_editor_set_time"
+                    app:layout_constraintRight_toLeftOf="@id/time_editor_set_time"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="@string/time_editor_value_example" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <net.wojteksz128.worktimemeasureapp.util.view.DateTimePicker
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="@{model.editMode ? View.VISIBLE : View.GONE}"
+                app:time="@={model.editedTime}" />
+        </LinearLayout>
+    </merge>
+</layout>

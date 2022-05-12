@@ -45,6 +45,13 @@ class WorkDayRepository (
                 }
             }
 
+    fun getWorkDayByIdInLiveData(workDayId: Long): LiveData<WorkDay> =
+        workDayDao.findByIdInLiveData(workDayId.toInt()).map { workDayWithEventsDto ->
+            workDayWithEventsDto?.let {
+                workDayWithEventsMapper.mapToDomainModel(it)
+            }
+        }
+
     fun getCurrentWeekWorkDaysInLiveData(start: Date, end: Date): LiveData<List<WorkDay>> =
         workDayDao.findBetweenDates(start, end)
             .map { workDayWithEventsMapper.mapToDomainModelList(it) }

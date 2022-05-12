@@ -2,12 +2,16 @@ package net.wojteksz128.worktimemeasureapp.window.settings
 
 import android.os.Bundle
 import androidx.preference.PreferenceFragmentCompat
+import dagger.hilt.android.AndroidEntryPoint
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.settings.item.SettingsItemsNotifier
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class SyncFragment : PreferenceFragmentCompat() {
 
-    private val settingsItemsNotifier = SettingsItemsNotifier { context }
+    @Inject
+    lateinit var settingsItemsNotifier: SettingsItemsNotifier
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.sync_preferences, rootKey)
