@@ -41,20 +41,18 @@
     </style>
 
     <style name="recycler_view">
-        <item name="android:layout_marginLeft">@dimen/no_margin</item>
-        <item name="android:layout_marginTop">@dimen/small_margin</item>
-        <item name="android:layout_marginRight">@dimen/no_margin</item>
-        <item name="android:layout_marginBottom">@dimen/small_margin</item>
-    </style>
-
-    <style name="recycler_view_item" parent="card">
         <item name="android:layout_marginLeft">@dimen/default_margin</item>
         <item name="android:layout_marginTop">@dimen/small_margin</item>
         <item name="android:layout_marginRight">@dimen/default_margin</item>
         <item name="android:layout_marginBottom">@dimen/small_margin</item>
     </style>
 
-    <style name="recycler_view_item_header" parent="header_label">
+    <style name="recycler_view_item">
+        <item name="android:layout_marginTop">@dimen/small_margin</item>
+        <item name="android:layout_marginBottom">@dimen/small_margin</item>
+    </style>
+
+    <style name="recycler_view_item_header_label" parent="header_label">
         <item name="android:layout_margin">@dimen/default_margin</item>
     </style>
 
@@ -185,20 +183,24 @@
 
     <style name="history" parent="window" />
 
-<!--    todo do usunięcia-->
-    <style name="history_rv" parent="recycler_view" />
-
     <style name="history_rv_work_day" parent="recycler_view_item" />
 
-    <style name="history_rv_work_day_header" parent="recycler_view_item_header" />
+    <style name="history_rv_work_day_header" parent="card">
+        <item name="android:layout_marginBottom">@dimen/small_margin</item>
+    </style>
+
+    <style name="history_rv_work_day_header_label" parent="recycler_view_item_header_label" />
 
     <style name="history_rv_work_day_duration">
-        <item name="android:layout_margin">@dimen/extra_large_margin</item>
+        <item name="android:layout_marginRight">@dimen/default_margin</item>
         <item name="android:textSize">@dimen/large_text</item>
         <item name="android:textStyle">italic</item>
     </style>
 
-    <style name="history_rv_work_day_events" parent="card_items" />
+    <style name="history_rv_work_day_events" parent="card_items">
+        <item name="android:paddingLeft">@dimen/default_margin</item>
+        <item name="android:paddingStart">@dimen/default_margin</item>
+    </style>
 
     <style name="history_rv_work_day_events_item_label">
         <item name="android:layout_margin">@dimen/default_margin</item>

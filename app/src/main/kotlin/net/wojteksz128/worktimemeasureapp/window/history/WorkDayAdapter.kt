@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import net.wojteksz128.worktimemeasureapp.databinding.ListItemHistoryWorkDayBinding
@@ -60,9 +61,12 @@ class WorkDayAdapter(
 
         init {
             binding.dateTimeUtils = dateTimeUtils
-            binding.dayEventsList.adapter = comeEventsAdapter
-            binding.dayEventsList.layoutManager = object : LinearLayoutManager(context) {
-                override fun canScrollVertically() = false
+            binding.dayEventsList.apply {
+                adapter = comeEventsAdapter
+                layoutManager = object : LinearLayoutManager(context) {
+                    override fun canScrollVertically() = false
+                }
+                addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
             }
         }
 
