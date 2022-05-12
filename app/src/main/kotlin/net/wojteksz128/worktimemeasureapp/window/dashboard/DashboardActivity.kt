@@ -85,10 +85,10 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
             }
             this@DashboardActivity.baseContext?.let {
                 ComeEventsRecyclerViewSwipeLogic(
-                    it,
-                    selectedComeEventViewModel.selected,
-                    null
-                ).attach(dashboardCurrentDayEventsList, supportFragmentManager)
+                    it
+                ) { comeEvent, _ ->
+                    selectedComeEventViewModel.select(comeEvent)
+                }.attach(dashboardCurrentDayEventsList, supportFragmentManager)
             }
         }
     }

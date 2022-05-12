@@ -85,10 +85,11 @@ class WorkDayDetailsFragment : Fragment(), DeleteComeEventDialogListener,
             }
             context?.let {
                 ComeEventsRecyclerViewSwipeLogic(
-                    it,
-                    selectedComeEventViewModel.selected,
-                    this@WorkDayDetailsFragment.viewModel.modifiedComeEventPosition
-                ).attach(workDayDetailsComeEvents, childFragmentManager)
+                    it
+                ) { comeEvent, position ->
+                    selectedComeEventViewModel.select(comeEvent)
+                    this@WorkDayDetailsFragment.viewModel.modifiedComeEventPosition.value = position
+                }.attach(workDayDetailsComeEvents, childFragmentManager)
             }
         }
     }

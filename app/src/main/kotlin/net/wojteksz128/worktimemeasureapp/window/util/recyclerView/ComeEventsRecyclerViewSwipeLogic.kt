@@ -2,7 +2,6 @@ package net.wojteksz128.worktimemeasureapp.window.util.recyclerView
 
 import android.content.Context
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
@@ -14,13 +13,11 @@ import net.wojteksz128.worktimemeasureapp.window.history.ComeEventsAdapter
 
 class ComeEventsRecyclerViewSwipeLogic(
     context: Context,
-    selectedComeEvent: MutableLiveData<ComeEvent>,
-    selectedComeEventPosition: MutableLiveData<Int>?
+    selectionUpdater: (ComeEvent, Int) -> Unit
 ) :
     RecyclerViewSwipeLogic<ComeEvent, EditComeEventDialogFragment, DeleteComeEventDialogFragment>(
         context,
-        selectedComeEvent,
-        selectedComeEventPosition,
+        selectionUpdater,
         EditComeEventDialogFragment::class.java,
         DeleteComeEventDialogFragment::class.java
     ) {
