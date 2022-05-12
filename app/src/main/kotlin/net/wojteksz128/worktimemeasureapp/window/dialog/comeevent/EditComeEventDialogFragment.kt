@@ -58,11 +58,18 @@ class EditComeEventDialogFragment : DialogFragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        try {
-            listener = parentFragment as EditComeEventDialogListener
-        } catch (e: ClassCastException) {
-            throw ClassCastException("${parentFragment.toString()} must implement EditComeEventDialogListener")
-        }
+        listener = if (parentFragment != null)
+            try {
+                parentFragment as EditComeEventDialogListener
+            } catch (e: ClassCastException) {
+                throw ClassCastException("Fragment ${parentFragment.toString()} must implement EditComeEventDialogListener")
+            }
+        else
+            try {
+                context as EditComeEventDialogListener
+            } catch (e: ClassCastException) {
+                throw ClassCastException("Activity $context must implement EditComeEventDialogListener")
+            }
     }
 
     override fun onDismiss(dialog: DialogInterface) {

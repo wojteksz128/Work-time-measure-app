@@ -52,11 +52,18 @@ class DeleteComeEventDialogFragment : DialogFragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        try {
-            listener = parentFragment as DeleteComeEventDialogListener
-        } catch (e: ClassCastException) {
-            throw ClassCastException("${parentFragment.toString()} must implement DeleteComeEventDialogListener")
-        }
+        listener = if (parentFragment != null)
+            try {
+                parentFragment as DeleteComeEventDialogListener
+            } catch (e: ClassCastException) {
+                throw ClassCastException("Fragment ${parentFragment.toString()} must implement DeleteComeEventDialogListener")
+            }
+        else
+            try {
+                context as DeleteComeEventDialogListener
+            } catch (e: ClassCastException) {
+                throw ClassCastException("Activity $context must implement DeleteComeEventDialogListener")
+            }
     }
 
     override fun onDismiss(dialog: DialogInterface) {

@@ -15,7 +15,7 @@ import net.wojteksz128.worktimemeasureapp.window.history.ComeEventsAdapter
 class ComeEventsRecyclerViewSwipeLogic(
     context: Context,
     selectedComeEvent: MutableLiveData<ComeEvent>,
-    selectedComeEventPosition: MutableLiveData<Int>
+    selectedComeEventPosition: MutableLiveData<Int>?
 ) :
     RecyclerViewSwipeLogic<ComeEvent, EditComeEventDialogFragment, DeleteComeEventDialogFragment>(
         context,

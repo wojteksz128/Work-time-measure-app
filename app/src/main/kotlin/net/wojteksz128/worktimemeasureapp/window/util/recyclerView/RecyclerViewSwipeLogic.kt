@@ -14,7 +14,7 @@ import net.wojteksz128.worktimemeasureapp.util.recyclerView.RecyclerSwipeHelper
 abstract class RecyclerViewSwipeLogic<Model, EntityLeftDialogFragment, EntityRightDialogFragment>(
     protected val context: Context,
     private val selectedModel: MutableLiveData<Model>,
-    private val selectedModelPosition: MutableLiveData<Int>,
+    private val selectedModelPosition: MutableLiveData<Int>?,
     private val swipeLeftDialogFragmentClass: Class<EntityLeftDialogFragment>,
     private val swipeRightDialogFragmentClass: Class<EntityRightDialogFragment>
 ) where Model : DomainModel, EntityLeftDialogFragment : DialogFragment, EntityRightDialogFragment : DialogFragment {
@@ -46,7 +46,7 @@ abstract class RecyclerViewSwipeLogic<Model, EntityLeftDialogFragment, EntityRig
 
     private fun fillSelectionProperties(entity: Model, position: Int) {
         selectedModel.value = entity
-        selectedModelPosition.value = position
+        selectedModelPosition?.value = position
     }
 
     protected abstract fun extractEntity(viewHolder: RecyclerView.ViewHolder): Model
