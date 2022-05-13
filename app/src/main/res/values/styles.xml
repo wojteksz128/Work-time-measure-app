@@ -286,14 +286,17 @@
         <item name="android:paddingRight">@dimen/default_padding</item>
     </style>
 
-    <style name="work_day_details_come_event_list_group">
-        <item name="android:layout_marginTop">@dimen/default_margin</item>
+    <style name="work_day_details_come_events_label_container" parent="work_day_details_summary">
+        <item name="android:background">@android:color/transparent</item>
+
     </style>
 
-    <style name="work_day_details_come_event_list_recyclerView">
-        <item name="android:layout_marginStart">@dimen/default_margin</item>
-        <item name="android:layout_marginLeft">@dimen/default_margin</item>
+    <style name="work_day_details_come_event_list_group" parent="work_day_details_summary">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:layout_margin">@dimen/no_margin</item>
     </style>
+
+    <style name="work_day_details_come_event_list_recyclerView" />
 
     <!--</editor-fold>-->
     <!--##########################################-->
