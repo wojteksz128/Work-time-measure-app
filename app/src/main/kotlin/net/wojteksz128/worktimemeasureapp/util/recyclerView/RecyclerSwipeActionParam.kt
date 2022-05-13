@@ -7,12 +7,15 @@ import android.view.View
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView.Adapter
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import net.wojteksz128.worktimemeasureapp.model.DomainModel
 
-abstract class RecyclerSwipeActionParam<Entity>(
+abstract class RecyclerSwipeActionParam<Entity : DomainModel, VH : ViewHolder>(
     @ColorRes backgroundColorResId: Int,
     @DrawableRes iconResId: Int,
     context: Context,
-    val action: (Entity, Int) -> Unit
+    val action: (Entity, ViewHolderInformation<VH>) -> Unit
 ) {
     val backgroundColor = ContextCompat.getColor(context, backgroundColorResId)
     val icon = ContextCompat.getDrawable(context, iconResId)
@@ -22,3 +25,9 @@ abstract class RecyclerSwipeActionParam<Entity>(
     abstract fun calculateAlpha(itemView: View): Int
     abstract fun calculateIconRect(itemView: View): Rect
 }
+
+data class ViewHolderInformation<VH : ViewHolder>(
+    val viewHolder: VH,
+    val position: Int,
+    val adapter: Adapter<VH>
+)
