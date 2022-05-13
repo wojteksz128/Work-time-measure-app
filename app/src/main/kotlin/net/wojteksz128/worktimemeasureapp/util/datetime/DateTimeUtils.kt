@@ -30,12 +30,14 @@ class DateTimeUtils (
         val startTime = comeEvent.startDate.time
         val endTime =
             if (comeEvent.endDate != null) comeEvent.endDate!!.time else dateTimeProvider.currentTime.time
-        return Duration.between(Instant.ofEpochMilli(startTime),
-            Instant.ofEpochMilli(endTime + 1)) // +1, but exclusive duration
+        return Duration.between(
+            Instant.ofEpochMilli(startTime),
+            Instant.ofEpochMilli(endTime + 1)
+        ) // +1, but exclusive duration
     }
 
-    fun mergeComeEventsDuration(workDay: WorkDay): Duration = workDay.events.map { it.duration }
-        .fold(Duration.ZERO) { sum, element -> sum + element }
+    fun mergeComeEventsDuration(workDay: WorkDay?): Duration = workDay?.events?.map { it.duration }
+        ?.fold(Duration.ZERO) { sum, element -> sum + element } ?: Duration.ZERO
 
     fun formatCounterTime(duration: Duration?): String =
         formatCounterTime(duration, R.string.empty_time_string)

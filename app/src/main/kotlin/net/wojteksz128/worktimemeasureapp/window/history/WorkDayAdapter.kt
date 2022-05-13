@@ -7,10 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.LifecycleOwner
 import androidx.paging.PagingDataAdapter
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.*
 import net.wojteksz128.worktimemeasureapp.databinding.ListItemHistoryWorkDayBinding
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
@@ -52,9 +49,9 @@ class WorkDayAdapter(
     }
 
     override fun onBindViewHolder(holder: WorkDayViewHolder, position: Int) {
-        getItem(position)?.let {
-            holder.setOnClickListener(onItemClickListenerProvider(it))
-            holder.bind(it)
+        getItem(position)?.let { workDay ->
+            holder.setOnClickListener(onItemClickListenerProvider(workDay))
+            holder.bind(workDay, workDayItemListener.onWorkDayItemViewModelRequires(workDay))
         }
     }
 
@@ -80,8 +77,6 @@ class WorkDayAdapter(
         private val dateTimeUtils: DateTimeUtils,
         private val selectionUpdater: (ComeEvent, ViewHolderInformation<ComeEventViewHolder>) -> Unit,
     ) : RecyclerView.ViewHolder(binding.root), ClassTagAware {
-        private val expandViewModel = ExpandViewModel()
-
         private val comeEventsAdapter = ComeEventsAdapter(dateTimeUtils)
 
         init {
@@ -93,6 +88,7 @@ class WorkDayAdapter(
                     layoutManager = object : LinearLayoutManager(context) {
                         override fun canScrollVertically() = false
                     }
+                    (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
                     addItemDecoration(
                         DividerItemDecoration(
                             context,
@@ -102,12 +98,12 @@ class WorkDayAdapter(
                 }
                 ComeEventsRecyclerViewSwipeLogic(context, selectionUpdater)
                     .attach(dayEventsList, fragmentManager)
-                expandViewModel = this@WorkDayViewHolder.expandViewModel
             }
         }
 
-        fun bind(workDay: WorkDay) {
+        fun bind(workDay: WorkDay, itemViewModel: WorkDayItemViewModel) {
             binding.workDay = workDay
+            binding.expandViewModel = itemViewModel
 
             comeEventsAdapter.submitList(workDay.events)
         }
@@ -133,6 +129,8 @@ class WorkDayAdapter(
     }
 
     interface WorkDayItemListener {
+        fun onWorkDayItemViewModelRequires(workDay: WorkDay): WorkDayItemViewModel
+
         fun onWorkDayEventSelected(
             comeEvent: ComeEvent,
             viewHolderInformation: ViewHolderInformation<ComeEventViewHolder>
@@ -140,5 +138,7 @@ class WorkDayAdapter(
 
         fun onWorkDayClicked(workDay: WorkDay): (View) -> Unit = {}
     }
+
+    class WorkDayItemViewModel : ExpandViewModel()
 }
 

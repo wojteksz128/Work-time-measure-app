@@ -2,7 +2,7 @@ package net.wojteksz128.worktimemeasureapp.window.util.button
 
 import androidx.lifecycle.MutableLiveData
 
-class ExpandViewModel {
+open class ExpandViewModel {
     val comeEventsExpanded = MutableLiveData(false)
 
     fun switchExpansion() {
