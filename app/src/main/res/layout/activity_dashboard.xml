@@ -69,17 +69,11 @@
                         app:layout_constraintTop_toTopOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <net.wojteksz128.worktimemeasureapp.util.view.DurationDisplay
-                    android:id="@+id/dashboard_today_work_time"
-                    style="@style/dashboard_section_card"
-                    android:layout_width="match_parent"
-                    app:duration="@{workTimeData.todayWorkTime}"
-                    app:title="@string/dashboard_today_work_time_label" /><!-- layout_height defined by style -->
-
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/dashboard_current_day_container"
-                    style="@style/dashboard_current_day"
-                    android:layout_width="match_parent">
+                    android:id="@+id/dashboard_current_day_date_container"
+                    style="@style/dashboard_current_day_date_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
                     <TextView
                         android:id="@+id/dashboard_current_day_date"
@@ -92,7 +86,14 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         tools:text="@string/dashboard_current_day_date_example" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout><!-- layout_height defined by style -->
+
+                <net.wojteksz128.worktimemeasureapp.util.view.DurationDisplay
+                    android:id="@+id/dashboard_today_work_time"
+                    style="@style/dashboard_today_work_time"
+                    android:layout_width="match_parent"
+                    app:duration="@{workTimeData.todayWorkTime}"
+                    app:title="@string/dashboard_today_work_time_label" />
 
                 <FrameLayout
                     android:id="@+id/dashboard_current_day_events_container"

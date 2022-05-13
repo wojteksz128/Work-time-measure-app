@@ -165,9 +165,11 @@
 
     <style name="dashboard_section_time_display" parent="duration_display_value" />
 
-    <style name="dashboard_current_day" parent="dashboard_section_card">
-        <item name="android:layout_height">wrap_content</item>
+    <style name="dashboard_today_work_time" parent="dashboard_section_card" />
+
+    <style name="dashboard_current_day_date_container" parent="card">
         <item name="android:background">@android:color/transparent</item>
+        <item name="android:layout_marginTop">@dimen/default_margin</item>
     </style>
 
     <style name="dashboard_current_day_date" parent="header_label" />
@@ -231,14 +233,15 @@
 
     <!--##########################################-->
     <!--<editor-fold desc="############ Work day details ############">-->
-    
-    <style name="work_day_details" parent="window" />
+
+    <style name="work_day_details" parent="window">
+        <item name="android:padding">@dimen/default_padding</item>
+    </style>
 
     <style name="calendar_page" parent="card">
         <item name="android:layout_width">250dp</item>
         <item name="android:layout_height">200dp</item>
         <item name="android:padding">@dimen/no_padding</item>
-        <item name="android:layout_margin">@dimen/default_margin</item>
     </style>
 
     <style name="calendar_page_header">
@@ -262,12 +265,11 @@
     </style>
 
     <style name="work_day_details_summary" parent="card">
-        <item name="android:layout_margin">@dimen/default_margin</item>
-        <item name="android:layout_marginBottom">@dimen/extra_small_margin</item>
+        <item name="android:layout_marginTop">@dimen/default_margin</item>
     </style>
 
     <style name="work_day_details_summary_label">
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">@dimen/extra_large_text</item>
         <item name="android:textStyle">bold</item>
     </style>
 
