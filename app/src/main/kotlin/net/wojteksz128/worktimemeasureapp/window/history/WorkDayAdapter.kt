@@ -7,10 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.LifecycleOwner
 import androidx.paging.PagingDataAdapter
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.*
 import net.wojteksz128.worktimemeasureapp.databinding.ListItemHistoryWorkDayBinding
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
@@ -93,6 +90,7 @@ class WorkDayAdapter(
                     layoutManager = object : LinearLayoutManager(context) {
                         override fun canScrollVertically() = false
                     }
+                    (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
                     addItemDecoration(
                         DividerItemDecoration(
                             context,
