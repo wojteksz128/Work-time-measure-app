@@ -69,6 +69,13 @@
                         app:layout_constraintTop_toTopOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
+                <net.wojteksz128.worktimemeasureapp.util.view.DurationDisplay
+                    android:id="@+id/dashboard_today_work_time"
+                    style="@style/dashboard_today_work_time"
+                    android:layout_width="match_parent"
+                    app:duration="@{workTimeData.todayWorkTime}"
+                    app:title="@string/dashboard_today_work_time_label" />
+
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/dashboard_current_day_date_container"
                     style="@style/dashboard_current_day_date_container"
@@ -86,14 +93,7 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         tools:text="@string/dashboard_current_day_date_example" />
-                </androidx.constraintlayout.widget.ConstraintLayout><!-- layout_height defined by style -->
-
-                <net.wojteksz128.worktimemeasureapp.util.view.DurationDisplay
-                    android:id="@+id/dashboard_today_work_time"
-                    style="@style/dashboard_today_work_time"
-                    android:layout_width="match_parent"
-                    app:duration="@{workTimeData.todayWorkTime}"
-                    app:title="@string/dashboard_today_work_time_label" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <FrameLayout
                     android:id="@+id/dashboard_current_day_events_container"
