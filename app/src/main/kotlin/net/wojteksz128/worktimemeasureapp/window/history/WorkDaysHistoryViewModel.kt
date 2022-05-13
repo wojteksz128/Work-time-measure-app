@@ -23,7 +23,7 @@ class WorkDaysHistoryViewModel @Inject constructor(
     workDayRepository: WorkDayRepository,
     private val comeEventRepository: ComeEventRepository
 ) : AndroidViewModel(application), ClassTagAware {
-
+    private val workDayItemsViewModels = mutableMapOf<Long, WorkDayAdapter.WorkDayItemViewModel>()
     val workDaysPager: Pager<Int, WorkDay>
 
     init {
@@ -43,5 +43,15 @@ class WorkDaysHistoryViewModel @Inject constructor(
         withContext(Dispatchers.IO) {
             comeEventRepository.save(modifiedComeEvent)
         }
+    }
+
+    fun getWorkDayItemViewModel(workDay: WorkDay): WorkDayAdapter.WorkDayItemViewModel {
+        if (workDay.id == null)
+            throw IllegalStateException("WorkDay without DB id cannot have WorkDayItemViewModel.")
+
+        if (!workDayItemsViewModels.containsKey(workDay.id))
+            workDayItemsViewModels[workDay.id] = WorkDayAdapter.WorkDayItemViewModel()
+
+        return workDayItemsViewModels[workDay.id]!!
     }
 }

@@ -70,6 +70,10 @@ class WorkDaysHistoryFragment : Fragment(), ClassTagAware, WorkDayItemListener,
         return binding.root
     }
 
+    override fun onWorkDayItemViewModelRequires(workDay: WorkDay): WorkDayAdapter.WorkDayItemViewModel {
+        return viewModel.getWorkDayItemViewModel(workDay)
+    }
+
     override fun onWorkDayEventSelected(
         comeEvent: ComeEvent,
         viewHolderInformation: ViewHolderInformation<ComeEventViewHolder>
