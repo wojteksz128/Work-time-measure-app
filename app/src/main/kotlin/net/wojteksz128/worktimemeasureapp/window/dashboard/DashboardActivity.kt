@@ -186,7 +186,10 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
         comeEventsAdapter.notifyDataSetChanged()
     }
 
-    override fun onModifyComeEventClick(dialog: DialogFragment, modifiedComeEvent: ComeEvent) {
+    override fun onAcceptModificationComeEventClick(
+        dialog: DialogFragment,
+        modifiedComeEvent: ComeEvent
+    ) {
         viewModel.onComeEventModified(modifiedComeEvent)
         Snackbar.make(
             binding.root,
