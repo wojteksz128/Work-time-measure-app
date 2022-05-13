@@ -8,43 +8,91 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/day_label"
-            style="@style/history_rv_work_day_header"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@{dateTimeUtils.formatDate(@string/history_work_day_label_format, workDay.date)}"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="@string/history_work_day_label_example" />
-
-        <TextView
-            android:id="@+id/day_work_duration"
-            style="@style/history_rv_work_day_duration"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@{dateTimeUtils.formatCounterTime(dateTimeUtils.mergeComeEventsDuration(workDay))}"
-            app:layout_constraintBottom_toBottomOf="@id/day_label"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toEndOf="@+id/day_label"
-            app:layout_constraintTop_toTopOf="@+id/day_label"
-            tools:text="@string/history_work_day_duration_example" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/day_events_list"
-            style="@style/history_rv_work_day_events"
+        <FrameLayout
+            android:id="@+id/day_events_list_container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:layout_height="@{expandViewModel.comeEventsExpanded, default = @dimen/collapsed}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/day_label"
-            tools:listitem="@layout/list_item_history_day_event" />
+            app:layout_constraintTop_toBottomOf="@+id/day_label_container"
+            tools:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/day_no_events_label"
+                style="@style/dashboard_current_day_no_events_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/history_work_day_empty_events_message"
+                android:visibility="@{(workDay == null || workDay.events == null || workDay.events.empty) ? View.VISIBLE : View.INVISIBLE}" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/day_events_list"
+                style="@style/history_rv_work_day_events"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|center_horizontal"
+                android:visibility="@{(workDay == null || workDay.events == null || workDay.events.empty) ? View.INVISIBLE : View.VISIBLE}"
+                android:orientation="vertical"
+                tools:listitem="@layout/list_item_history_day_event"
+                tools:visibility="visible" />
+        </FrameLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/day_label_container"
+            style="@style/history_rv_work_day_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@id/day_events_list_container"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/day_label"
+                style="@style/history_rv_work_day_header_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{dateTimeUtils.formatDate(@string/history_work_day_label_format, workDay.date)}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="@string/history_work_day_label_example" />
+
+            <TextView
+                android:id="@+id/day_work_duration"
+                style="@style/history_rv_work_day_duration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{dateTimeUtils.formatCounterTime(dateTimeUtils.mergeComeEventsDuration(workDay))}"
+                app:layout_constraintBottom_toBottomOf="@id/day_label"
+                app:layout_constraintEnd_toStartOf="@id/day_expand"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@+id/day_label"
+                app:layout_constraintTop_toTopOf="@+id/day_label"
+                tools:text="@string/history_work_day_duration_example" />
+
+            <ToggleButton
+                android:id="@+id/day_expand"
+                style="@style/expand_button"
+                android:layout_width="@dimen/small_button"
+                android:layout_height="@dimen/small_button"
+                android:checked="@{expandViewModel.comeEventsExpanded}"
+                android:onClick="@{() -> expandViewModel.switchExpansion()}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <data>
+
+        <import type="android.view.View" />
+
         <variable
             name="dateTimeUtils"
             type="net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils" />
@@ -52,5 +100,9 @@
         <variable
             name="workDay"
             type="net.wojteksz128.worktimemeasureapp.model.WorkDay" />
+
+        <variable
+            name="expandViewModel"
+            type="net.wojteksz128.worktimemeasureapp.window.util.button.ExpandViewModel" />
     </data>
 </layout>

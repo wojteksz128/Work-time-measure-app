@@ -36,7 +36,7 @@ class EditComeEventDialogFragment : DialogFragment() {
             setView(dialogBinding.root)
             setTitle(R.string.edit_come_event_dialog_title)
             setPositiveButton(R.string.edit_come_event_dialog_action_edit) { _, _ ->
-                listener.onModifyComeEventClick(
+                listener.onAcceptModificationComeEventClick(
                     this@EditComeEventDialogFragment,
                     editDialogViewModel.prepareModified()
                 )
@@ -78,7 +78,7 @@ class EditComeEventDialogFragment : DialogFragment() {
     }
 
     interface EditComeEventDialogListener {
-        fun onModifyComeEventClick(dialog: DialogFragment, modifiedComeEvent: ComeEvent)
+        fun onAcceptModificationComeEventClick(dialog: DialogFragment, modifiedComeEvent: ComeEvent)
         fun onRejectModificationComeEventClick(dialog: DialogFragment)
         fun onEditComeEventDialogDismiss(dialog: DialogFragment)
     }

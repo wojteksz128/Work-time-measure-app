@@ -10,11 +10,13 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ItemTouchHelper.LEFT
 import androidx.recyclerview.widget.ItemTouchHelper.RIGHT
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import net.wojteksz128.worktimemeasureapp.model.DomainModel
 
-class RecyclerSwipeHelper<Entity>(
-    private val swipeLeft: RecyclerLeftSwipeActionParam<Entity>,
-    private val swipeRight: RecyclerRightSwipeActionParam<Entity>,
-    private val entityExtractor: (RecyclerView.ViewHolder) -> Entity
+class RecyclerSwipeHelper<Entity : DomainModel, VH : ViewHolder>(
+    private val swipeLeft: RecyclerLeftSwipeActionParam<Entity, VH>,
+    private val swipeRight: RecyclerRightSwipeActionParam<Entity, VH>,
+    private val entityExtractor: (VH) -> Entity
 ) : ItemTouchHelper.SimpleCallback(0, LEFT or RIGHT) {
 
     private val clearPaint = Paint().apply {
@@ -25,14 +27,14 @@ class RecyclerSwipeHelper<Entity>(
 
     override fun onMove(
         recyclerView: RecyclerView,
-        viewHolder: RecyclerView.ViewHolder,
-        target: RecyclerView.ViewHolder
+        viewHolder: ViewHolder,
+        target: ViewHolder
     ): Boolean = false
 
     override fun onChildDrawOver(
         c: Canvas,
         recyclerView: RecyclerView,
-        viewHolder: RecyclerView.ViewHolder?,
+        viewHolder: ViewHolder?,
         dX: Float,
         dY: Float,
         actionState: Int,
@@ -63,7 +65,7 @@ class RecyclerSwipeHelper<Entity>(
     }
 
     private fun drawActionSlide(
-        swipeActionParam: RecyclerSwipeActionParam<Entity>,
+        swipeActionParam: RecyclerSwipeActionParam<Entity, VH>,
         itemView: View,
         dX: Float,
         c: Canvas
@@ -85,13 +87,20 @@ class RecyclerSwipeHelper<Entity>(
         c.drawRect(left, top, right, bottom, clearPaint)
     }
 
-    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+    override fun onSwiped(viewHolder: ViewHolder, direction: Int) {
         val bindingAdapterPosition = viewHolder.bindingAdapterPosition
+
+        @Suppress("UNCHECKED_CAST")
+        val viewHolderInformation = ViewHolderInformation(
+            viewHolder as VH,
+            bindingAdapterPosition,
+            viewHolder.bindingAdapter as RecyclerView.Adapter<VH>
+        )
         val entity = entityExtractor(viewHolder)
 
         when (direction) {
-            LEFT -> swipeLeft.action(entity, bindingAdapterPosition)
-            RIGHT -> swipeRight.action(entity, bindingAdapterPosition)
+            LEFT -> swipeLeft.action(entity, viewHolderInformation)
+            RIGHT -> swipeRight.action(entity, viewHolderInformation)
         }
     }
 }

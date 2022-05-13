@@ -51,4 +51,7 @@
     <!-- Button -->
     <dimen name="small_button">48dp</dimen>
 
+    <!-- Expand -->
+    <dimen name="collapsed">0dp</dimen>
+
 </resources>

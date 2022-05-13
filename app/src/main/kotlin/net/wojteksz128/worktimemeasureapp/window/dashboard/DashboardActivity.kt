@@ -6,6 +6,7 @@ import androidx.activity.viewModels
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.google.android.material.snackbar.Snackbar
@@ -80,13 +81,14 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
                     override fun canScrollVertically() = false
                 }
                 (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
+                addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
             }
             this@DashboardActivity.baseContext?.let {
                 ComeEventsRecyclerViewSwipeLogic(
-                    it,
-                    selectedComeEventViewModel.selected,
-                    null
-                ).attach(dashboardCurrentDayEventsList, supportFragmentManager)
+                    it
+                ) { comeEvent, _ ->
+                    selectedComeEventViewModel.select(comeEvent)
+                }.attach(dashboardCurrentDayEventsList, supportFragmentManager)
             }
         }
     }
@@ -184,7 +186,10 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
         comeEventsAdapter.notifyDataSetChanged()
     }
 
-    override fun onModifyComeEventClick(dialog: DialogFragment, modifiedComeEvent: ComeEvent) {
+    override fun onAcceptModificationComeEventClick(
+        dialog: DialogFragment,
+        modifiedComeEvent: ComeEvent
+    ) {
         viewModel.onComeEventModified(modifiedComeEvent)
         Snackbar.make(
             binding.root,

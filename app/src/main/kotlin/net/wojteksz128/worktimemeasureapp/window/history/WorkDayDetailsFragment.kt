@@ -8,6 +8,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.google.android.material.snackbar.Snackbar
@@ -82,13 +83,16 @@ class WorkDayDetailsFragment : Fragment(), DeleteComeEventDialogListener,
                     override fun canScrollVertically() = false
                 }
                 (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
+                addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
             }
             context?.let {
                 ComeEventsRecyclerViewSwipeLogic(
-                    it,
-                    selectedComeEventViewModel.selected,
-                    this@WorkDayDetailsFragment.viewModel.modifiedComeEventPosition
-                ).attach(workDayDetailsComeEvents, childFragmentManager)
+                    it
+                ) { comeEvent, viewHolderInformation ->
+                    selectedComeEventViewModel.select(comeEvent)
+                    this@WorkDayDetailsFragment.viewModel.modifiedComeEventPosition.value =
+                        viewHolderInformation.position
+                }.attach(workDayDetailsComeEvents, childFragmentManager)
             }
         }
     }
@@ -110,7 +114,10 @@ class WorkDayDetailsFragment : Fragment(), DeleteComeEventDialogListener,
         comeEventsAdapter.notifyDataSetChanged()
     }
 
-    override fun onModifyComeEventClick(dialog: DialogFragment, modifiedComeEvent: ComeEvent) {
+    override fun onAcceptModificationComeEventClick(
+        dialog: DialogFragment,
+        modifiedComeEvent: ComeEvent
+    ) {
         viewModel.onComeEventModified(modifiedComeEvent)
         Snackbar.make(
             binding.root,

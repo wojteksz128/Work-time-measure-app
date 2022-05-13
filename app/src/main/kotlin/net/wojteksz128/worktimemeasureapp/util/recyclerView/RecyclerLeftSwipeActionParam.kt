@@ -5,13 +5,15 @@ import android.graphics.Rect
 import android.view.View
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import net.wojteksz128.worktimemeasureapp.model.DomainModel
 
-class RecyclerLeftSwipeActionParam<Entity>(
+class RecyclerLeftSwipeActionParam<Entity : DomainModel, VH : ViewHolder>(
     @ColorRes backgroundColorResId: Int,
     @DrawableRes iconResId: Int,
     context: Context,
-    action: (Entity, Int) -> Unit
-) : RecyclerSwipeActionParam<Entity>(backgroundColorResId, iconResId, context, action) {
+    action: (Entity, ViewHolderInformation<VH>) -> Unit
+) : RecyclerSwipeActionParam<Entity, VH>(backgroundColorResId, iconResId, context, action) {
 
     override fun calculateBackgroundRect(itemView: View, dX: Float) =
         Rect(itemView.right + dX.toInt(), itemView.top, itemView.right, itemView.bottom)
