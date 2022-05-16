@@ -1,6 +1,7 @@
 package net.wojteksz128.worktimemeasureapp.util.view
 
 import android.content.Context
+import android.text.format.DateFormat
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
@@ -24,7 +25,8 @@ import java.util.*
 )
 class DateTimePicker(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs) {
     private lateinit var binding: ComponentDateTimePickerBinding
-    private val model = ObservableModel(this::timeChangeListener)
+    private val model =
+        ObservableModel(this::timeChangeListener, DateFormat.is24HourFormat(context))
 
     init {
         if (isInEditMode) {
@@ -46,14 +48,24 @@ class DateTimePicker(context: Context, attrs: AttributeSet?) : FrameLayout(conte
 
     var timeChangeListener: InverseBindingListener? = null
 
-    class ObservableModel(timeChangeListenerProvider: () -> InverseBindingListener?) :
+    class ObservableModel(
+        timeChangeListenerProvider: () -> InverseBindingListener?,
+        val is24HourFormat: Boolean
+    ) :
         BaseObservable() {
         private var mCalendar = Calendar.getInstance()
 
         @get:Bindable
-        var hour by ObservableDelegate(BR.hour, 0) { oldValue, newValue ->
+        var hour by ObservableDelegate(
+            BR.hour,
+            if (is24HourFormat) 0 else 12   // 00:00 -> 12:00 AM
+        ) { oldValue, newValue ->
             if (oldValue != newValue) {
-                mCalendar.set(Calendar.HOUR_OF_DAY, newValue)
+                val fieldType = if (is24HourFormat) Calendar.HOUR_OF_DAY else Calendar.HOUR
+                val fieldValue = if (is24HourFormat) newValue % 24
+                else newValue % 12
+
+                mCalendar.set(fieldType, fieldValue)
                 timeChangeListenerProvider()?.onChange()
             }
         }
@@ -79,7 +91,8 @@ class DateTimePicker(context: Context, attrs: AttributeSet?) : FrameLayout(conte
             if (oldValue != newValue) {
                 if (newValue) {
                     mCalendar.set(Calendar.AM_PM, Calendar.AM)
-                    hour = mCalendar.get(Calendar.HOUR_OF_DAY)
+                    hour = if (is24HourFormat) mCalendar.get(Calendar.HOUR_OF_DAY)
+                    else if (mCalendar.get(Calendar.HOUR) == 0) 12 else mCalendar.get(Calendar.HOUR)
                 }
                 timeChangeListenerProvider()?.onChange()
             }
@@ -90,7 +103,8 @@ class DateTimePicker(context: Context, attrs: AttributeSet?) : FrameLayout(conte
             if (oldValue != newValue) {
                 if (newValue) {
                     mCalendar.set(Calendar.AM_PM, Calendar.PM)
-                    hour = mCalendar.get(Calendar.HOUR_OF_DAY)
+                    hour = if (is24HourFormat) mCalendar.get(Calendar.HOUR_OF_DAY)
+                    else if (mCalendar.get(Calendar.HOUR) == 0) 12 else mCalendar.get(Calendar.HOUR)
                 }
                 timeChangeListenerProvider()?.onChange()
             }
@@ -110,7 +124,8 @@ class DateTimePicker(context: Context, attrs: AttributeSet?) : FrameLayout(conte
             get() = mCalendar.time
             set(value) {
                 mCalendar.time = value
-                hour = mCalendar.get(Calendar.HOUR_OF_DAY)
+                hour = if (is24HourFormat) mCalendar.get(Calendar.HOUR_OF_DAY)
+                else if (mCalendar.get(Calendar.HOUR) == 0) 12 else mCalendar.get(Calendar.HOUR)
                 minute = mCalendar.get(Calendar.MINUTE)
                 second = mCalendar.get(Calendar.SECOND)
                 isAm = mCalendar.get(Calendar.AM_PM) == Calendar.AM

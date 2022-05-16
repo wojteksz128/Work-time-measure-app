@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="android.view.View" />
 
         <variable
             name="model"
@@ -32,8 +33,8 @@
                 app:layout_constraintRight_toLeftOf="@id/date_time_picker_minute"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:maxValue="@{23}"
-                app:minValue="@{0}"
+                app:maxValue="@{model.is24HourFormat() ? 23 : 12}"
+                app:minValue="@{model.is24HourFormat() ? 0 : 1}"
                 app:value="@{model.hour}"
                 tools:maxValue="23"
                 tools:minValue="0"
@@ -84,6 +85,7 @@
                 android:onClick="@{() -> model.onAmClick()}"
                 android:textOff="@string/work_day_details_come_events_action_edit_am_label"
                 android:textOn="@string/work_day_details_come_events_action_edit_am_label"
+                android:visibility="@{model.is24HourFormat() ? View.GONE : View.VISIBLE }"
                 app:layout_constraintBottom_toTopOf="@id/date_time_picker_pm"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintLeft_toRightOf="@id/date_time_picker_second"
@@ -101,6 +103,7 @@
                 android:onClick="@{() -> model.onPmClick()}"
                 android:textOff="@string/work_day_details_come_events_action_edit_pm_label"
                 android:textOn="@string/work_day_details_come_events_action_edit_pm_label"
+                android:visibility="@{model.is24HourFormat() ? View.GONE : View.VISIBLE }"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintLeft_toRightOf="@id/date_time_picker_second"
