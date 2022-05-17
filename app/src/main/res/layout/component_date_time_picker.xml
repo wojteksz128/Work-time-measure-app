@@ -20,8 +20,6 @@
             android:layout_height="match_parent"
             tools:layout_height="wrap_content">
 
-            <!-- TODO: Sprawdź z ustawieniami czasu lokalnego -->
-
             <NumberPicker
                 android:id="@+id/date_time_picker_hour"
                 android:layout_width="wrap_content"
