@@ -3,7 +3,6 @@ package net.wojteksz128.worktimemeasureapp.di
 import android.content.Context
 import android.util.Log
 import androidx.room.Room
-import androidx.room.migration.Migration
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -11,7 +10,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import net.wojteksz128.worktimemeasureapp.database.AppDatabase
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventDao
-import net.wojteksz128.worktimemeasureapp.database.migration.*
+import net.wojteksz128.worktimemeasureapp.database.dayOff.DayOffDao
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayDao
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import javax.inject.Singleton
@@ -46,5 +45,11 @@ object DatabaseModule : ClassTagAware {
     @Provides
     fun provideComeEventDao(database: AppDatabase): ComeEventDao {
         return database.comeEventDao()
+    }
+
+    @Singleton
+    @Provides
+    fun provideDayOffDao(database: AppDatabase): DayOffDao {
+        return database.dayOffDao()
     }
 }

@@ -7,18 +7,29 @@ import androidx.room.migration.Migration
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventDao
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventDto
 import net.wojteksz128.worktimemeasureapp.database.converter.DateConverter
+import net.wojteksz128.worktimemeasureapp.database.dayOff.DayOffDao
+import net.wojteksz128.worktimemeasureapp.database.dayOff.DayOffDto
 import net.wojteksz128.worktimemeasureapp.database.migration.*
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayDao
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayDto
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 
-@Database(entities = [ComeEventDto::class, WorkDayDto::class], version = 7)
+@Database(
+    entities = [
+        ComeEventDto::class,
+        WorkDayDto::class,
+        DayOffDto::class
+    ],
+    version = 8
+)
 @TypeConverters(DateConverter::class)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun comeEventDao(): ComeEventDao
 
     abstract fun workDayDao(): WorkDayDao
+
+    abstract fun dayOffDao(): DayOffDao
 
     companion object : ClassTagAware {
         const val DATABASE_FILENAME = "work-time-measure.db"
@@ -30,7 +41,8 @@ abstract class AppDatabase : RoomDatabase() {
                 MigrateFrom3To4(),
                 MigrateFrom4To5(),
                 MigrateFrom5To6(),
-                MigrateFrom6To7()
+                MigrateFrom6To7(),
+                MigrateFrom7To8()
             )
     }
 }
