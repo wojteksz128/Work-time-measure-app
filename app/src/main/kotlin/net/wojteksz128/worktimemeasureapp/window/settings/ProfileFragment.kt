@@ -1,44 +1,21 @@
 package net.wojteksz128.worktimemeasureapp.window.settings
 
-import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import androidx.preference.EditTextPreference
-import androidx.preference.PreferenceFragmentCompat
 import dagger.hilt.android.AndroidEntryPoint
 import net.wojteksz128.worktimemeasureapp.R
-import net.wojteksz128.worktimemeasureapp.settings.item.SettingsItemsNotifier
 import net.wojteksz128.worktimemeasureapp.window.settings.property.ImageViewPreference
-import javax.inject.Inject
 
 @AndroidEntryPoint
-class ProfileFragment : PreferenceFragmentCompat() {
+class ProfileFragment : BasePreferenceFragment(R.xml.profile_preferences) {
     private lateinit var imageViewPreference: ImageViewPreference
     private lateinit var mailPreference: EditTextPreference
 
-    @Inject
-    lateinit var settingsItemsNotifier: SettingsItemsNotifier
-
-    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        setPreferencesFromResource(R.xml.profile_preferences, rootKey)
-
+    override fun onPreferencesInit() {
         prepareImageViewPreference()
         prepareMailPreference()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(
-            settingsItemsNotifier
-        )
-    }
-
-    override fun onPause() {
-        super.onPause()
-        preferenceManager.sharedPreferences.unregisterOnSharedPreferenceChangeListener(
-            settingsItemsNotifier
-        )
     }
 
     private fun prepareImageViewPreference() {
