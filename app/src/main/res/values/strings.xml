@@ -188,17 +188,21 @@
     <string name="settings_workTime_notify_title">Notify user at end of work</string>
     <string name="settings_workTime_notify_summaryOff">The user is not notified when the end of work is arrived.</string>
     <string name="settings_workTime_notify_summaryOn">Notification is raised when the end of work is arrived.</string>
-    <string name="settings_workTime_duration_title">Work time duration</string>
-    <string name="settings_workTime_duration_summary">By setting the length of the work time, you can display a message about the end of work.</string>
-    <string name="settings_workTime_duration_summaryValue">Current work time duration: %s.\n%s</string>
-    <string name="settings_workTime_firstWeekDay_title">First day of week</string>
-    <string name="settings_workTime_firstWeekDay_sundayEntry">Sunday</string>
-    <string name="settings_workTime_firstWeekDay_mondayEntry">Monday</string>
-    <string name="settings_workTime_firstWeekDay_tuesdayEntry">Tuesday</string>
-    <string name="settings_workTime_firstWeekDay_wednesdayEntry">Wednesday</string>
-    <string name="settings_workTime_firstWeekDay_thursdayEntry">Thursday</string>
-    <string name="settings_workTime_firstWeekDay_fridayEntry">Friday</string>
-    <string name="settings_workTime_firstWeekDay_saturdayEntry">Saturday</string>
+    <string name="settings_workTime_week_title">Work week</string>
+    <string name="settings_workTime_week_summary">Configuration of working time on individual days of the week.</string>
+
+    <!-- Week work time Preferences -->
+    <string name="settings_workTime_week_duration_title">Work time duration</string>
+    <string name="settings_workTime_week_duration_summary">By setting the length of the work time, you can display a message about the end of work.</string>
+    <string name="settings_workTime_week_duration_summaryValue">Current work time duration: %s.\n%s</string>
+    <string name="settings_workTime_week_firstWeekDay_title">First day of week</string>
+    <string name="settings_workTime_week_firstWeekDay_sundayEntry">Sunday</string>
+    <string name="settings_workTime_week_firstWeekDay_mondayEntry">Monday</string>
+    <string name="settings_workTime_week_firstWeekDay_tuesdayEntry">Tuesday</string>
+    <string name="settings_workTime_week_firstWeekDay_wednesdayEntry">Wednesday</string>
+    <string name="settings_workTime_week_firstWeekDay_thursdayEntry">Thursday</string>
+    <string name="settings_workTime_week_firstWeekDay_fridayEntry">Friday</string>
+    <string name="settings_workTime_week_firstWeekDay_saturdayEntry">Saturday</string>
 
     <!-- Sync Preferences -->
     <string name="settings_sync_timeSync_category_title">Time synchronization</string>
@@ -216,6 +220,7 @@
 
     <string name="settings_key_workTime" translatable="false">settings_workTime</string>
     <string name="settings_key_workTime_notify_enable" translatable="false">settings_workTime_notify_enable</string>
+    <string name="settings_key_workTime_week" translatable="false">settings_workTime_week</string>
     <string name="settings_key_workTime_duration" translatable="false">settings_workTime_duration</string>
     <string name="settings_key_workTime_firstWeekDay" translatable="false">settings_workTime_firstWeekDay</string>
 

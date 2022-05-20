@@ -26,11 +26,11 @@ class TimePickerPreference(context: Context?, attrs: AttributeSet?) :
         val timeString = minutesFromMidnightToHourlyTime(getPersistedMinutesFromMidnight())
         context?.let {
             summary =
-                if (timeString.isEmpty()) it.getString(R.string.settings_workTime_duration_summary)
+                if (timeString.isEmpty()) it.getString(R.string.settings_workTime_week_duration_summary)
                 else it.getString(
-                    R.string.settings_workTime_duration_summaryValue,
+                    R.string.settings_workTime_week_duration_summaryValue,
                     timeString,
-                    it.getString(R.string.settings_workTime_duration_summary)
+                    it.getString(R.string.settings_workTime_week_duration_summary)
                 )
         }
     }

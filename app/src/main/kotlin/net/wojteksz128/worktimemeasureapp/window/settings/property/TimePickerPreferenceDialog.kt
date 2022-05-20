@@ -10,7 +10,7 @@ import net.wojteksz128.worktimemeasureapp.R
 
 class TimePickerPreferenceDialog : PreferenceDialogFragmentCompat() {
 
-    lateinit var timepicker: TimePicker
+    private lateinit var timepicker: TimePicker
 
     override fun onCreateDialogView(context: Context?): View {
         timepicker = TimePicker(context)
@@ -23,6 +23,7 @@ class TimePickerPreferenceDialog : PreferenceDialogFragmentCompat() {
         val minutesAfterMidnight = (preference as TimePickerPreference)
             .getPersistedMinutesFromMidnight()
         timepicker.setIs24HourView(true)
+        @Suppress("DEPRECATION")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             timepicker.hour = minutesAfterMidnight / 60
             timepicker.minute = minutesAfterMidnight % 60
@@ -34,6 +35,7 @@ class TimePickerPreferenceDialog : PreferenceDialogFragmentCompat() {
 
     override fun onDialogClosed(positiveResult: Boolean) {
         // Save settings
+        @Suppress("DEPRECATION")
         if (positiveResult) {
             val minutesAfterMidnight = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 (timepicker.hour * 60) + timepicker.minute
@@ -45,11 +47,11 @@ class TimePickerPreferenceDialog : PreferenceDialogFragmentCompat() {
                 minutesFromMidnightToHourlyTime(minutesAfterMidnight)
             context?.let {
                 preference.summary =
-                    if (timeString.isEmpty()) it.getString(R.string.settings_workTime_duration_summary)
+                    if (timeString.isEmpty()) it.getString(R.string.settings_workTime_week_duration_summary)
                     else it.getString(
-                        R.string.settings_workTime_duration_summaryValue,
+                        R.string.settings_workTime_week_duration_summaryValue,
                         timeString,
-                        it.getString(R.string.settings_workTime_duration_summary)
+                        it.getString(R.string.settings_workTime_week_duration_summary)
                     )
             }
 
