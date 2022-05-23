@@ -3,15 +3,16 @@ package net.wojteksz128.worktimemeasureapp.window.settings
 import androidx.preference.Preference
 import dagger.hilt.android.AndroidEntryPoint
 import net.wojteksz128.worktimemeasureapp.R
-import net.wojteksz128.worktimemeasureapp.window.settings.property.TimePickerPreference
-import net.wojteksz128.worktimemeasureapp.window.settings.property.TimePickerPreferenceDialog
+import net.wojteksz128.worktimemeasureapp.window.settings.property.DayActionDurationPreference
+import net.wojteksz128.worktimemeasureapp.window.settings.property.DayActionDurationPreferenceDialog
 
 @AndroidEntryPoint
 class WeekWorkTimeFragment : BasePreferenceFragment(R.xml.week_work_time_preferences) {
 
     override fun onDisplayPreferenceDialog(preference: Preference?) {
-        if (preference is TimePickerPreference) {
-            val timePickerDialog = TimePickerPreferenceDialog.newInstance(preference.key)
+        if (preference is DayActionDurationPreference) {
+            val timePickerDialog =
+                DayActionDurationPreferenceDialog.newInstance(preference.key, preference)
             // TODO: Popraw na wersję nie "deprecated"
             timePickerDialog.setTargetFragment(this, 0)
             timePickerDialog.show(parentFragmentManager, DIALOG_FRAGMENT_TAG)
