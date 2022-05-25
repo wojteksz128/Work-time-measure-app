@@ -195,6 +195,7 @@
     <string name="settings_workTime_week_duration_title">Długość czasu pracy</string>
     <string name="settings_workTime_week_duration_summary">Ustawienie długości czasu pracy, umożliwi wyświetlenie komunikatu o zakończeniu pracy.</string>
     <string name="settings_workTime_week_duration_summaryValue">Obecna długość czasu pracy: %s.\n%s</string>
+    <string name="settings_workTime_week_daysOfWorkingWeek_title">Dni tygodnia pracy</string>
     <string name="settings_workTime_week_firstWeekDay_title">Pierwszy dzień tygodnia</string>
     <string name="settings_workTime_week_firstWeekDay_sundayEntry">Niedziela</string>
     <string name="settings_workTime_week_firstWeekDay_mondayEntry">Poniedziałek</string>
@@ -220,6 +221,8 @@
 
     <!--<string name="settings_key_workTime" translatable="false">settings_workTime</string>-->
     <!--<string name="settings_key_workTime_notify_enable" translatable="false">settings_workTime_notify_enable</string>-->
+    <!--<string name="settings_key_workTime_week" translatable="false">settings_workTime_week</string>-->
+    <!--<string name="settings_key_workTime_week_daysOfWorkingWeek" translatable="false">settings_workTime_week_daysOfWorkingWeek</string>-->
     <!--<string name="settings_key_workTime_duration" translatable="false">settings_workTime_duration</string>-->
     <!--<string name="settings_key_workTime_firstWeekDay" translatable="false">settings_workTime_firstWeekDay</string>-->
 
