@@ -152,7 +152,7 @@
                         style="@style/work_day_details_summary_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@{dateTimeUtils.formatCounterTime(Settings.WorkTime.Duration.value)}"
+                        android:text="@{dateTimeUtils.formatCounterTime(Settings.WorkTime.Week.Duration.value)}"
                         tools:text="@string/work_day_details_summary_value_example" />
 
                 </LinearLayout>

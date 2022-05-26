@@ -55,10 +55,9 @@ object SettingsModule {
     @Provides
     fun provideWorkTime(
         @Named("settings_workTime_notify_enable") NotifyingEnabled: BooleanSettingsItem,
-        @Named("settings_workTime_duration") Duration: DurationSettingsItem,
-        @Named("settings_workTime_firstWeekDay") FirstWeekDay: IntFromStringSettingsItem,
+        @Named("settings_workTime_week") Week: Settings.WorkTimeSettings.WeekSettings
     ): Settings.WorkTimeSettings =
-        Settings.WorkTimeSettings(NotifyingEnabled, Duration, FirstWeekDay)
+        Settings.WorkTimeSettings(NotifyingEnabled, Week)
 
     @Singleton
     @Provides
@@ -68,15 +67,31 @@ object SettingsModule {
 
     @Singleton
     @Provides
-    @Named("settings_workTime_duration")
-    fun provideSettingsWorkTimeDuration(@ApplicationContext context: Context): DurationSettingsItem =
-        DurationSettingsItem(R.string.settings_key_workTime_duration, context)
+    @Named("settings_workTime_week")
+    fun provideSettingsWorkTimeWeek(
+        @Named("settings_workTime_firstWeekDay") FirstWeekDay: IntFromStringSettingsItem,
+        @Named("settings_workTime_week_daysOfWorkingWeek") DaysOfWorkingWeek: StringsArraySettingsItem,
+        @Named("settings_workTime_duration") Duration: DurationSettingsItem,
+    ): Settings.WorkTimeSettings.WeekSettings =
+        Settings.WorkTimeSettings.WeekSettings(FirstWeekDay, DaysOfWorkingWeek, Duration)
 
     @Singleton
     @Provides
     @Named("settings_workTime_firstWeekDay")
     fun provideSettingsWorkTimeFirstWeekDay(@ApplicationContext context: Context): IntFromStringSettingsItem =
         IntFromStringSettingsItem(R.string.settings_key_workTime_firstWeekDay, context)
+
+    @Singleton
+    @Provides
+    @Named("settings_workTime_week_daysOfWorkingWeek")
+    fun provideSettingsWorkTimeWeekDaysOfWorkingWeek(@ApplicationContext context: Context): StringsArraySettingsItem =
+        StringsArraySettingsItem(R.string.settings_key_workTime_week_daysOfWorkingWeek, context)
+
+    @Singleton
+    @Provides
+    @Named("settings_workTime_duration")
+    fun provideSettingsWorkTimeDuration(@ApplicationContext context: Context): DurationSettingsItem =
+        DurationSettingsItem(R.string.settings_key_workTime_duration, context)
 
     @Singleton
     @Provides

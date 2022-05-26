@@ -22,11 +22,19 @@ class Settings(
 
     class WorkTimeSettings (
         val NotifyingEnabled: BooleanSettingsItem,
-        val Duration: DurationSettingsItem,
-        val FirstWeekDay: IntFromStringSettingsItem
+        val Week: WeekSettings
     ) : SettingsNode {
         override val childNodes: Set<SettingsItem<*>>
-            get() = generateChildren(NotifyingEnabled, Duration, FirstWeekDay)
+            get() = generateChildren(NotifyingEnabled, Week)
+
+        class WeekSettings(
+            val FirstWeekDay: IntFromStringSettingsItem,
+            val DaysOfWorkingWeek: StringsArraySettingsItem,
+            val Duration: DurationSettingsItem
+        ) : SettingsNode {
+            override val childNodes: Set<SettingsItem<*>>
+                get() = generateChildren(FirstWeekDay, DaysOfWorkingWeek, Duration)
+        }
     }
 
     class SyncSettings (val TimeSync: TimeSyncSettings) : SettingsNode {
