@@ -4,21 +4,25 @@
 
     <PreferenceCategory android:title="@string/settings_daysOff_public_category_title">
 
-        <ListPreference
-            app:dependency="@string/settings_key_daysOff_public_country"
-            app:summary="@string/settings_daysOff_public_country_summary"
-            app:title="@string/settings_daysOff_public_country_title" />
-
-        <!-- TODO: Uzupełnij z API -->
-        <Preference
-            app:key="@string/settings_key_daysOff_public_syncNow"
-            app:summary="@string/settings_daysOff_public_syncNow_summary"
-            app:title="@string/settings_daysOff_public_syncNow_title" />
-
         <SwitchPreferenceCompat
             app:key="@string/settings_key_daysOff_public_syncWithApi"
             app:summaryOff="@string/settings_daysOff_public_syncWithApi_summary_off"
             app:summaryOn="@string/settings_daysOff_public_syncWithApi_summary_on"
             app:title="@string/settings_daysOff_public_syncWithApi_title" />
+
+        <!-- TODO: Replace to list with loading -->
+        <ListPreference
+            app:dependency="@string/settings_key_daysOff_public_syncWithApi"
+            app:entries="@array/loading_stub"
+            app:entryValues="@array/loading_stub"
+            app:key="@string/settings_key_daysOff_public_country"
+            app:summary="@string/settings_daysOff_public_country_summary"
+            app:title="@string/settings_daysOff_public_country_title" />
+
+        <Preference
+            app:key="@string/settings_key_daysOff_public_syncNow"
+            app:dependency="@string/settings_key_daysOff_public_syncWithApi"
+            app:summary="@string/settings_daysOff_public_syncNow_summary"
+            app:title="@string/settings_daysOff_public_syncNow_title" />
     </PreferenceCategory>
 </PreferenceScreen>

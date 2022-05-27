@@ -22,4 +22,8 @@
     </string-array>
     <!--</editor-fold>-->
 
+    <string-array name="loading_stub">
+        <item>@string/settings_daysOff_public_country_entities_stub</item>
+    </string-array>
+
 </resources>
