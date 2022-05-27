@@ -33,6 +33,7 @@ class DashboardViewModel @Inject constructor(
     val workDay: LiveData<WorkDay>
     val workTimeData = ObservableLiveData<WorkTimeData>()
     val waitingFor = MutableLiveData(false)
+    var dayOffDialogShowed: Boolean = false
     private val weekWorkDays: LiveData<List<WorkDay>>
 
     init {
