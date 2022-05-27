@@ -1,5 +1,8 @@
 package net.wojteksz128.worktimemeasureapp.api.holidayapi
 
+import com.google.gson.annotations.JsonAdapter
+import com.google.gson.annotations.SerializedName
+import net.wojteksz128.worktimemeasureapp.util.json.IntStringJsonAdapter
 import java.util.*
 
 data class HolidayApiHolidaysResponse(
@@ -42,15 +45,18 @@ data class HolidayApiCountriesResponse(
 data class HolidayApiCountry(
     val code: String,
     val name: String,
-    val codes: Set<HolidayApiCountryCodes>,
+    val codes: HolidayApiCountryCodes,
     val languages: Set<String>,
     val flag: String,
     val subdivisions: Set<HolidayApiSubdivision>
 )
 
 data class HolidayApiCountryCodes(
+    @SerializedName("alpha-2")
     val alpha_2: String,
+    @SerializedName("alpha-3")
     val alpha_3: String,
+    @JsonAdapter(IntStringJsonAdapter::class)
     val numeric: Int
 )
 
