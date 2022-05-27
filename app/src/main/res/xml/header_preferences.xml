@@ -15,6 +15,12 @@
         app:title="@string/settings_header_work_title" />
 
     <Preference
+        app:fragment="net.wojteksz128.worktimemeasureapp.window.settings.DaysOffFragment"
+        app:icon="@drawable/ic_baseline_event_24"
+        app:key="@string/settings_key_daysOff"
+        app:title="@string/settings_header_daysOff_title" />
+
+    <Preference
         app:fragment="net.wojteksz128.worktimemeasureapp.window.settings.SyncFragment"
         app:icon="@drawable/sync"
         app:key="@string/settings_key_sync"

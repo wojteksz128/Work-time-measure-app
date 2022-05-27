@@ -185,6 +185,7 @@
     <!-- Preference Titles -->
     <string name="settings_header_profile_title">Profil</string>
     <string name="settings_header_work_title">Czas pracy</string>
+    <string name="settings_header_daysOff_title">Dni wolne</string>
     <string name="settings_header_sync_title">Synchronizacja</string>
 
     <!-- Profile Preferences -->
@@ -217,6 +218,16 @@
     <string name="settings_workTime_week_firstWeekDay_fridayEntry">Piątek</string>
     <string name="settings_workTime_week_firstWeekDay_saturdayEntry">Sobota</string>
 
+    <!-- Days off Preferences -->
+    <string name="settings_daysOff_public_category_title">Święta państwowe</string>
+    <string name="settings_daysOff_public_syncWithApi_summary_on">Informacje o świętach zostaną pobrane z API holidayapi.com.</string>
+    <string name="settings_daysOff_public_syncWithApi_summary_off">Nie będą pobierane informacje o świętach z zewnętrznego źródła.</string>
+    <string name="settings_daysOff_public_syncWithApi_title">Synchronizuj święta państwowe</string>
+    <string name="settings_daysOff_public_country_title">Kraj</string>
+    <string name="settings_daysOff_public_country_summary">Kraj, którego święta państwowe zostaną pobrane.</string>
+    <string name="settings_daysOff_public_syncNow_title">Synchronizuj teraz</string>
+    <string name="settings_daysOff_public_syncNow_summary">Po wybraniu, święta państwowe zostaną pobrane i zsynchronizowane z wcześniej pobranymi.</string>
+
     <!-- Sync Preferences -->
     <string name="settings_sync_timeSync_category_title">Synchronizacja czasu</string>
     <string name="settings_sync_timeSync_enable_title">Synchronizuj z serwerem NTP</string>
@@ -237,6 +248,11 @@
     <!--<string name="settings_key_workTime_week_daysOfWorkingWeek" translatable="false">settings_workTime_week_daysOfWorkingWeek</string>-->
     <!--<string name="settings_key_workTime_duration" translatable="false">settings_workTime_duration</string>-->
     <!--<string name="settings_key_workTime_firstWeekDay" translatable="false">settings_workTime_firstWeekDay</string>-->
+
+    <!--<string name="settings_key_daysOff" translatable="false">settings_daysOff</string>-->
+    <!--<string name="settings_key_daysOff_public_syncWithApi" translatable="false">settings_daysOff_public_syncWithApi</string>-->
+    <!--<string name="settings_key_daysOff_public_country" translatable="false">settings_daysOff_public_country</string>-->
+    <!--<string name="settings_key_daysOff_public_syncNow" translatable="false">settings_daysOff_public_syncNow</string>-->
 
     <!--<string name="settings_key_sync" translatable="false">settings_sync</string>-->
     <!--<string name="settings_key_sync_timeSync_enable" translatable="false">settings_sync_timeSync_enable</string>-->
