@@ -17,6 +17,7 @@ import net.wojteksz128.worktimemeasureapp.databinding.ActivityDashboardBinding
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
 import net.wojteksz128.worktimemeasureapp.model.ComeEventType
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
+import net.wojteksz128.worktimemeasureapp.module.dayOff.DayOffService
 import net.wojteksz128.worktimemeasureapp.notification.NotificationUtils
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
@@ -50,6 +51,9 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
 
     @Inject
     lateinit var dateTimeUtils: DateTimeUtils
+
+    @Inject
+    lateinit var dayOffService: DayOffService
 
     @Inject
     lateinit var notificationUtils: NotificationUtils
@@ -99,10 +103,15 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
         Log.d(classTag, "onResume: Fill days list")
         viewModel.workDay.observe(this@DashboardActivity, currentDayObserver)
         viewModel.workDay.value?.let { runTimerIfRequiredFor(it) }
+
         // TODO: 21.09.2021 Przenieś do innego miesca (niezależnego od DashboardActivity)
         dateTimeProvider.updateOffset(this)
-        TodayDayOffInformationDialogFragment::class.java.newInstance()
-            .show(supportFragmentManager, TODAY_DAY_OFF_DIALOG_TAG)
+
+        if (dayOffService.getDayType(dateTimeProvider.currentTime).isDayOff)
+            TodayDayOffInformationDialogFragment().show(
+                supportFragmentManager,
+                TODAY_DAY_OFF_DIALOG_TAG
+            )
     }
 
     private fun runTimerIfRequiredFor(workDay: WorkDay) {
