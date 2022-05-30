@@ -67,7 +67,8 @@ class DaysOffFragment : BasePreferenceFragment(R.xml.days_off_preferences) {
                 val holidays = holidayApiService.getHolidays(
                     Settings.DaysOff.Country.value,
                     dateTimeProvider.currentCalendar.get(Calendar.YEAR),
-                    public = true
+                    public = true,
+                    language = Locale.getDefault().language
                 )
                 when (holidays.isSuccessful) {
                     true -> {
