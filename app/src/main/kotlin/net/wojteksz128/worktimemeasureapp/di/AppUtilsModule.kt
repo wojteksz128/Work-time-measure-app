@@ -9,6 +9,7 @@ import dagger.hilt.components.SingletonComponent
 import net.wojteksz128.worktimemeasureapp.module.dayOff.DayOffService
 import net.wojteksz128.worktimemeasureapp.notification.NotificationUtils
 import net.wojteksz128.worktimemeasureapp.repository.ComeEventRepository
+import net.wojteksz128.worktimemeasureapp.repository.DayOffRepository
 import net.wojteksz128.worktimemeasureapp.repository.WorkDayRepository
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.TimerManager
@@ -41,8 +42,11 @@ object AppUtilsModule {
 
     @Singleton
     @Provides
-    fun provideDayOffService(Settings: Settings): DayOffService {
-        return DayOffService(Settings)
+    fun provideDayOffService(
+        dayOffRepository: DayOffRepository,
+        Settings: Settings
+    ): DayOffService {
+        return DayOffService(dayOffRepository, Settings)
     }
 
     @Singleton

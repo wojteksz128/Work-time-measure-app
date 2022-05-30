@@ -107,12 +107,14 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
         // TODO: 21.09.2021 Przenieś do innego miesca (niezależnego od DashboardActivity)
         dateTimeProvider.updateOffset(this)
 
-        if (dayOffService.getDayType(dateTimeProvider.currentTime).isDayOff && !viewModel.dayOffDialogShowed) {
-            viewModel.dayOffDialogShowed = true
-            TodayDayOffInformationDialogFragment().show(
-                supportFragmentManager,
-                TODAY_DAY_OFF_DIALOG_TAG
-            )
+        lifecycleScope.launch {
+            if (dayOffService.getDayType(dateTimeProvider.currentTime).isDayOff && !viewModel.dayOffDialogShowed) {
+                viewModel.dayOffDialogShowed = true
+                TodayDayOffInformationDialogFragment().show(
+                    supportFragmentManager,
+                    TODAY_DAY_OFF_DIALOG_TAG
+                )
+            }
         }
     }
 
