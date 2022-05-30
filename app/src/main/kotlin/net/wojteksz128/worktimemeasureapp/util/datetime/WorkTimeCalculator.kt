@@ -35,10 +35,10 @@ class WorkTimeCalculator @Inject constructor(
         weekWorkDays.map { dateTimeUtils.mergeComeEventsDuration(it) }
             .fold(Duration.ZERO) { sum, element -> sum + element }
 
-    // TODO: 30.08.2021 Obsługa określenia dni roboczych
     // TODO: 30.08.2021 Obsługa określenia nierównomiernych dni roboczych
     private fun calculateWeekExpectedWorkTime(): Duration {
-        return Settings.WorkTime.Duration.value.multipliedBy(5)
+        val daysOfWorkingDaysNo = Settings.WorkTime.Week.DaysOfWorkingWeek.value.size.toLong()
+        return Settings.WorkTime.Week.Duration.value.multipliedBy(daysOfWorkingDaysNo)
     }
 
     private fun calculateCurrentDayWorkTime(currentDay: WorkDay?): Duration {
@@ -47,7 +47,7 @@ class WorkTimeCalculator @Inject constructor(
 
     // TODO: 30.08.2021 Obsługa określenia nierównomiernych dni roboczych
     private fun calculateCurrentDayExpectedWorkTime(): Duration {
-        return Settings.WorkTime.Duration.value
+        return Settings.WorkTime.Week.Duration.value
     }
 
 

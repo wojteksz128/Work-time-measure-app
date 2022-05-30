@@ -34,7 +34,7 @@ class DateTimeProvider @Inject constructor(
 
     val weekBeginDay: Date
         get() {
-            val firstWeekDay = Settings.WorkTime.FirstWeekDay.valueNullable
+            val firstWeekDay = Settings.WorkTime.Week.FirstWeekDay.valueNullable
             val c = Calendar.getInstance()
             val currentTime = currentTime
             c.time = currentTime

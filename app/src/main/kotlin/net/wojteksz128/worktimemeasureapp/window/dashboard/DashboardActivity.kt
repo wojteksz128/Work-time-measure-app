@@ -17,6 +17,7 @@ import net.wojteksz128.worktimemeasureapp.databinding.ActivityDashboardBinding
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
 import net.wojteksz128.worktimemeasureapp.model.ComeEventType
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
+import net.wojteksz128.worktimemeasureapp.module.dayOff.DayOffService
 import net.wojteksz128.worktimemeasureapp.notification.NotificationUtils
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
@@ -30,6 +31,7 @@ import net.wojteksz128.worktimemeasureapp.window.BaseActivity
 import net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.DeleteComeEventDialogFragment.DeleteComeEventDialogListener
 import net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.EditComeEventDialogFragment.EditComeEventDialogListener
 import net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.SelectedComeEventViewModel
+import net.wojteksz128.worktimemeasureapp.window.dialog.dayOff.TodayDayOffInformationDialogFragment
 import net.wojteksz128.worktimemeasureapp.window.history.ComeEventsAdapter
 import net.wojteksz128.worktimemeasureapp.window.util.recyclerView.ComeEventsRecyclerViewSwipeLogic
 import javax.inject.Inject
@@ -49,6 +51,9 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
 
     @Inject
     lateinit var dateTimeUtils: DateTimeUtils
+
+    @Inject
+    lateinit var dayOffService: DayOffService
 
     @Inject
     lateinit var notificationUtils: NotificationUtils
@@ -98,8 +103,20 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
         Log.d(classTag, "onResume: Fill days list")
         viewModel.workDay.observe(this@DashboardActivity, currentDayObserver)
         viewModel.workDay.value?.let { runTimerIfRequiredFor(it) }
+
         // TODO: 21.09.2021 Przenieś do innego miesca (niezależnego od DashboardActivity)
         dateTimeProvider.updateOffset(this)
+
+        lifecycleScope.launch {
+            val dayType = dayOffService.getDayType(dateTimeProvider.currentTime)
+            if (dayType.isDayOff && !viewModel.dayOffDialogShowed) {
+                viewModel.dayOffDialogShowed = true
+                TodayDayOffInformationDialogFragment(dayType).show(
+                    supportFragmentManager,
+                    TODAY_DAY_OFF_DIALOG_TAG
+                )
+            }
+        }
     }
 
     private fun runTimerIfRequiredFor(workDay: WorkDay) {
@@ -204,5 +221,9 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
 
     override fun onEditComeEventDialogDismiss(dialog: DialogFragment) {
         comeEventsAdapter.notifyDataSetChanged()
+    }
+
+    companion object {
+        const val TODAY_DAY_OFF_DIALOG_TAG = "TodayDayOffInformationDialog"
     }
 }

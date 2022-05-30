@@ -2,13 +2,13 @@
 
     <!--<editor-fold desc="Day of week">-->
     <string-array name="day_of_week_entries">
-        <item>@string/settings_workTime_firstWeekDay_sundayEntry</item>
-        <item>@string/settings_workTime_firstWeekDay_mondayEntry</item>
-        <item>@string/settings_workTime_firstWeekDay_tuesdayEntry</item>
-        <item>@string/settings_workTime_firstWeekDay_wednesdayEntry</item>
-        <item>@string/settings_workTime_firstWeekDay_thursdayEntry</item>
-        <item>@string/settings_workTime_firstWeekDay_fridayEntry</item>
-        <item>@string/settings_workTime_firstWeekDay_saturdayEntry</item>
+        <item>@string/settings_workTime_week_firstWeekDay_sundayEntry</item>
+        <item>@string/settings_workTime_week_firstWeekDay_mondayEntry</item>
+        <item>@string/settings_workTime_week_firstWeekDay_tuesdayEntry</item>
+        <item>@string/settings_workTime_week_firstWeekDay_wednesdayEntry</item>
+        <item>@string/settings_workTime_week_firstWeekDay_thursdayEntry</item>
+        <item>@string/settings_workTime_week_firstWeekDay_fridayEntry</item>
+        <item>@string/settings_workTime_week_firstWeekDay_saturdayEntry</item>
     </string-array>
 
     <string-array name="day_of_week_values">
@@ -21,5 +21,9 @@
         <item>7</item>
     </string-array>
     <!--</editor-fold>-->
+
+    <string-array name="loading_stub">
+        <item>@string/settings_daysOff_public_country_entities_stub</item>
+    </string-array>
 
 </resources>

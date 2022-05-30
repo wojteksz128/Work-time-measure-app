@@ -74,6 +74,19 @@
     <!--##########################################-->
 
     <!--##########################################-->
+    <!--<editor-fold desc="#### Today Day Off Information Dialog ####">-->
+
+    <string name="today_day_off_information_dialog_title">Dziś dzień wolny</string>
+    <string name="today_day_off_information_dialog_weekend_message">Dzisiaj, w %s jest weekend. Czy skorzystasz z niego i odpoczniesz od pracy (spowoduje to wyłączenie aplikacji)?</string>
+    <string name="today_day_off_information_dialog_dayOff_message">Dzisiaj, w %s jest święto: %s. Czy skorzystasz z niego i odpoczniesz od pracy (spowoduje to wyłączenie aplikacji)?</string>
+    <string name="today_day_off_information_dialog_message_date_format">EEEE dd.MM.yyyy</string>
+    <string name="today_day_off_information_dialog_action_yes">Tak</string>
+    <string name="today_day_off_information_dialog_action_no">Nie</string>
+
+    <!--</editor-fold>-->
+    <!--##########################################-->
+
+    <!--##########################################-->
     <!--<editor-fold desc="############ History Activity ############">-->
 
     <string name="history_activity_title">Historia</string>
@@ -173,6 +186,7 @@
     <!-- Preference Titles -->
     <string name="settings_header_profile_title">Profil</string>
     <string name="settings_header_work_title">Czas pracy</string>
+    <string name="settings_header_daysOff_title">Dni wolne</string>
     <string name="settings_header_sync_title">Synchronizacja</string>
 
     <!-- Profile Preferences -->
@@ -188,17 +202,33 @@
     <string name="settings_workTime_notify_title">Powiadom o końcu pracy</string>
     <string name="settings_workTime_notify_summaryOff">Użytkownik nie jest powiadamiany o nadejściu końca dnia pracy.</string>
     <string name="settings_workTime_notify_summaryOn">Powiadomienie jest wysyłane, gdy nadejdzie koniec dnia pracy.</string>
-    <string name="settings_workTime_duration_title">Długość czasu pracy</string>
-    <string name="settings_workTime_duration_summary">Ustawienie długości czasu pracy, umożliwi wyświetlenie komunikatu o zakończeniu pracy.</string>
-    <string name="settings_workTime_duration_summaryValue">Obecna długość czasu pracy: %s.\n%s</string>
-    <string name="settings_workTime_firstWeekDay_title">Pierwszy dzień tygodnia</string>
-    <string name="settings_workTime_firstWeekDay_sundayEntry">Niedziela</string>
-    <string name="settings_workTime_firstWeekDay_mondayEntry">Poniedziałek</string>
-    <string name="settings_workTime_firstWeekDay_tuesdayEntry">Wtorek</string>
-    <string name="settings_workTime_firstWeekDay_wednesdayEntry">Środa</string>
-    <string name="settings_workTime_firstWeekDay_thursdayEntry">Czwartek</string>
-    <string name="settings_workTime_firstWeekDay_fridayEntry">Piątek</string>
-    <string name="settings_workTime_firstWeekDay_saturdayEntry">Sobota</string>
+    <string name="settings_workTime_week_title">Tydzień pracy</string>
+    <string name="settings_workTime_week_summary">Konfiguracja czasu pracy w poszczególne dni tygodnia.</string>
+
+    <!-- Week work time Preferences -->
+    <string name="settings_workTime_week_duration_title">Długość czasu pracy</string>
+    <string name="settings_workTime_week_duration_summary">Ustawienie długości czasu pracy, umożliwi wyświetlenie komunikatu o zakończeniu pracy.</string>
+    <string name="settings_workTime_week_duration_summaryValue">Obecna długość czasu pracy: %s.\n%s</string>
+    <string name="settings_workTime_week_daysOfWorkingWeek_title">Dni tygodnia pracy</string>
+    <string name="settings_workTime_week_firstWeekDay_title">Pierwszy dzień tygodnia</string>
+    <string name="settings_workTime_week_firstWeekDay_sundayEntry">Niedziela</string>
+    <string name="settings_workTime_week_firstWeekDay_mondayEntry">Poniedziałek</string>
+    <string name="settings_workTime_week_firstWeekDay_tuesdayEntry">Wtorek</string>
+    <string name="settings_workTime_week_firstWeekDay_wednesdayEntry">Środa</string>
+    <string name="settings_workTime_week_firstWeekDay_thursdayEntry">Czwartek</string>
+    <string name="settings_workTime_week_firstWeekDay_fridayEntry">Piątek</string>
+    <string name="settings_workTime_week_firstWeekDay_saturdayEntry">Sobota</string>
+
+    <!-- Days off Preferences -->
+    <string name="settings_daysOff_public_category_title">Święta państwowe</string>
+    <string name="settings_daysOff_public_syncWithApi_summary_on">Informacje o świętach zostaną pobrane z API holidayapi.com.</string>
+    <string name="settings_daysOff_public_syncWithApi_summary_off">Nie będą pobierane informacje o świętach z zewnętrznego źródła.</string>
+    <string name="settings_daysOff_public_syncWithApi_title">Synchronizuj święta państwowe</string>
+    <string name="settings_daysOff_public_country_title">Kraj</string>
+    <string name="settings_daysOff_public_country_summary">Kraj, którego święta państwowe zostaną pobrane.</string>
+    <string name="settings_daysOff_public_country_entities_stub">Trwa ładowanie…</string>
+    <string name="settings_daysOff_public_syncNow_title">Synchronizuj teraz</string>
+    <string name="settings_daysOff_public_syncNow_summary">Po wybraniu, święta państwowe zostaną pobrane i zsynchronizowane z wcześniej pobranymi.</string>
 
     <!-- Sync Preferences -->
     <string name="settings_sync_timeSync_category_title">Synchronizacja czasu</string>
@@ -216,8 +246,15 @@
 
     <!--<string name="settings_key_workTime" translatable="false">settings_workTime</string>-->
     <!--<string name="settings_key_workTime_notify_enable" translatable="false">settings_workTime_notify_enable</string>-->
+    <!--<string name="settings_key_workTime_week" translatable="false">settings_workTime_week</string>-->
+    <!--<string name="settings_key_workTime_week_daysOfWorkingWeek" translatable="false">settings_workTime_week_daysOfWorkingWeek</string>-->
     <!--<string name="settings_key_workTime_duration" translatable="false">settings_workTime_duration</string>-->
     <!--<string name="settings_key_workTime_firstWeekDay" translatable="false">settings_workTime_firstWeekDay</string>-->
+
+    <!--<string name="settings_key_daysOff" translatable="false">settings_daysOff</string>-->
+    <!--<string name="settings_key_daysOff_public_syncWithApi" translatable="false">settings_daysOff_public_syncWithApi</string>-->
+    <!--<string name="settings_key_daysOff_public_country" translatable="false">settings_daysOff_public_country</string>-->
+    <!--<string name="settings_key_daysOff_public_syncNow" translatable="false">settings_daysOff_public_syncNow</string>-->
 
     <!--<string name="settings_key_sync" translatable="false">settings_sync</string>-->
     <!--<string name="settings_key_sync_timeSync_enable" translatable="false">settings_sync_timeSync_enable</string>-->

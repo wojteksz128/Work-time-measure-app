@@ -6,8 +6,10 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import net.wojteksz128.worktimemeasureapp.module.dayOff.DayOffService
 import net.wojteksz128.worktimemeasureapp.notification.NotificationUtils
 import net.wojteksz128.worktimemeasureapp.repository.ComeEventRepository
+import net.wojteksz128.worktimemeasureapp.repository.DayOffRepository
 import net.wojteksz128.worktimemeasureapp.repository.WorkDayRepository
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.TimerManager
@@ -40,13 +42,23 @@ object AppUtilsModule {
 
     @Singleton
     @Provides
+    fun provideDayOffService(
+        dayOffRepository: DayOffRepository,
+        Settings: Settings
+    ): DayOffService {
+        return DayOffService(dayOffRepository, Settings)
+    }
+
+    @Singleton
+    @Provides
     fun provideComeEventUtils(
         comeEventRepository: ComeEventRepository,
         workDayRepository: WorkDayRepository,
         dateTimeUtils: DateTimeUtils,
         dateTimeProvider: DateTimeProvider,
     ): ComeEventUtils {
-        return ComeEventUtils(comeEventRepository,
+        return ComeEventUtils(
+            comeEventRepository,
             workDayRepository,
             dateTimeUtils,
             dateTimeProvider)

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="net.wojteksz128.worktimemeasureapp.window.settings.WeekWorkTimeFragment">
+
+    <ListPreference
+        android:defaultValue="2"
+        android:entries="@array/day_of_week_entries"
+        android:entryValues="@array/day_of_week_values"
+        android:key="@string/settings_key_workTime_firstWeekDay"
+        android:title="@string/settings_workTime_week_firstWeekDay_title"
+        app:useSimpleSummaryProvider="true" />
+
+    <!-- TODO -->
+    <MultiSelectListPreference
+        android:entries="@array/day_of_week_entries"
+        android:entryValues="@array/day_of_week_values"
+        android:key="@string/settings_key_workTime_week_daysOfWorkingWeek"
+        android:title="@string/settings_workTime_week_daysOfWorkingWeek_title" />
+
+    <net.wojteksz128.worktimemeasureapp.window.settings.property.DayActionDurationPreference
+        android:defaultValue="90"
+        android:key="@string/settings_key_workTime_duration"
+        android:summary="@string/settings_workTime_week_duration_summary"
+        android:title="@string/settings_workTime_week_duration_title" />
+
+</PreferenceScreen>
