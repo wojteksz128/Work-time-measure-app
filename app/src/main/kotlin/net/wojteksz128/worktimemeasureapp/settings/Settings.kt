@@ -5,11 +5,12 @@ import net.wojteksz128.worktimemeasureapp.settings.item.*
 class Settings(
     val Profile: ProfileSettings,
     val WorkTime: WorkTimeSettings,
+    val DaysOff: DaysOffSettings,
     val Sync: SyncSettings,
     val Internal: InternalSettings
 ) : SettingsItemsAware(), SettingsNode {
     override val childNodes: Set<SettingsItem<*>>
-        get() = generateChildren(Profile, WorkTime, Sync, Internal)
+        get() = generateChildren(Profile, WorkTime, DaysOff, Sync, Internal)
 
     class ProfileSettings (
         val ImagePath: StringSettingsItem,
@@ -37,11 +38,21 @@ class Settings(
         }
     }
 
-    class SyncSettings (val TimeSync: TimeSyncSettings) : SettingsNode {
+    class DaysOffSettings(
+        @Suppress("MemberVisibilityCanBePrivate") val SyncWithAPI: BooleanSettingsItem,
+        val Country: StringSettingsItem
+        /* Sync Now is not added - it is only button, not store value */
+    ) : SettingsNode {
+        override val childNodes: Set<SettingsItem<*>>
+            get() = generateChildren(SyncWithAPI, Country)
+
+    }
+
+    class SyncSettings(val TimeSync: TimeSyncSettings) : SettingsNode {
         override val childNodes: Set<SettingsItem<*>>
             get() = generateChildren(TimeSync)
 
-        class TimeSyncSettings (
+        class TimeSyncSettings(
             val Enabled: BooleanSettingsItem,
             val ServerAddress: StringSettingsItem
         ) : SettingsNode {

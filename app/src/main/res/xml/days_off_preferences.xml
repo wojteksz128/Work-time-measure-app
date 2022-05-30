@@ -19,6 +19,7 @@
             app:summary="@string/settings_daysOff_public_country_summary"
             app:title="@string/settings_daysOff_public_country_title" />
 
+        <!-- TODO: Add sync animation during synchronization -->
         <Preference
             app:key="@string/settings_key_daysOff_public_syncNow"
             app:dependency="@string/settings_key_daysOff_public_syncWithApi"

@@ -21,9 +21,10 @@ object SettingsModule {
     fun provideSettings(
         Profile: Settings.ProfileSettings,
         WorkTime: Settings.WorkTimeSettings,
+        DaysOff: Settings.DaysOffSettings,
         Sync: Settings.SyncSettings,
         Internal: Settings.InternalSettings,
-    ): Settings = Settings(Profile, WorkTime, Sync, Internal)
+    ): Settings = Settings(Profile, WorkTime, DaysOff, Sync, Internal)
 
     @Singleton
     @Provides
@@ -92,6 +93,25 @@ object SettingsModule {
     @Named("settings_workTime_duration")
     fun provideSettingsWorkTimeDuration(@ApplicationContext context: Context): DurationSettingsItem =
         DurationSettingsItem(R.string.settings_key_workTime_duration, context)
+
+    @Singleton
+    @Provides
+    fun provideDaysOff(
+        @Named("settings_daysOff_public_syncWithApi") SyncWithAPI: BooleanSettingsItem,
+        @Named("settings_daysOff_public_country") Country: StringSettingsItem
+    ): Settings.DaysOffSettings = Settings.DaysOffSettings(SyncWithAPI, Country)
+
+    @Singleton
+    @Provides
+    @Named("settings_daysOff_public_syncWithApi")
+    fun provideSettingsDaysOffPublicSyncWithApi(@ApplicationContext context: Context): BooleanSettingsItem =
+        BooleanSettingsItem(R.string.settings_key_daysOff_public_syncWithApi, context)
+
+    @Singleton
+    @Provides
+    @Named("settings_daysOff_public_country")
+    fun provideSettingsDaysOffPublicCountry(@ApplicationContext context: Context): StringSettingsItem =
+        StringSettingsItem(R.string.settings_key_daysOff_public_country, context)
 
     @Singleton
     @Provides
