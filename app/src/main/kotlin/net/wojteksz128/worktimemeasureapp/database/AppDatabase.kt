@@ -20,7 +20,7 @@ import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
         WorkDayDto::class,
         DayOffDto::class
     ],
-    version = 8
+    version = 9
 )
 @TypeConverters(DateConverter::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -42,7 +42,8 @@ abstract class AppDatabase : RoomDatabase() {
                 MigrateFrom4To5(),
                 MigrateFrom5To6(),
                 MigrateFrom6To7(),
-                MigrateFrom7To8()
+                MigrateFrom7To8(),
+                MigrateFrom8To9()
             )
     }
 }

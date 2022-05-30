@@ -9,7 +9,9 @@ class DayOffMapper @Inject constructor() : DomainModelMapper<DayOff, DayOffDto> 
     override fun mapFromDomainModel(domainModel: DayOff) =
         DayOffDto(
             id = domainModel.id,
+            uuid = domainModel.uuid,
             type = domainModel.type,
+            name = domainModel.name,
             startDay = domainModel.startDay,
             startMonth = domainModel.startMonth,
             startYear = domainModel.startYear,
@@ -22,7 +24,9 @@ class DayOffMapper @Inject constructor() : DomainModelMapper<DayOff, DayOffDto> 
     override fun mapToDomainModel(entity: DayOffDto) =
         DayOff(
             id = entity.id,
+            uuid = entity.uuid,
             type = entity.type,
+            name = entity.name,
             startDay = entity.startDay,
             startMonth = entity.startMonth,
             startYear = entity.startYear,

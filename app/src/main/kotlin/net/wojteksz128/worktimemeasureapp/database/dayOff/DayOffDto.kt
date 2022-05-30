@@ -14,8 +14,14 @@ data class DayOffDto(
     @ColumnInfo(name = "id")
     override val id: Long?,
 
+    @ColumnInfo(name = "uuid")
+    var uuid: String?,
+
     @ColumnInfo(name = "type")
     var type: DayOffType,
+
+    @ColumnInfo(name = "name")
+    var name: String,
 
     @ColumnInfo(name = "startDay")
     var startDay: Int,
@@ -30,7 +36,7 @@ data class DayOffDto(
     var finishDay: Int,
 
     @ColumnInfo(name = "finishMonth")
-    var finishMonth: Int,
+    var finishMonth: Month,
 
     @ColumnInfo(name = "finishYear")
     var finishYear: Int?,
