@@ -77,7 +77,8 @@
     <!--<editor-fold desc="#### Today Day Off Information Dialog ####">-->
 
     <string name="today_day_off_information_dialog_title">Today is a day off</string>
-    <string name="today_day_off_information_dialog_message">Today, %s you have a day off. Will you use it and rest from work (it will turn off the application)?</string>
+    <string name="today_day_off_information_dialog_weekend_message">Today, %s is a weekend. Will you use it and rest from work (it will turn off the application)?</string>
+    <string name="today_day_off_information_dialog_dayOff_message">Today, %s is a holiday (%s). Will you use it and rest from work (it will turn off the application)?</string>
     <string name="today_day_off_information_dialog_message_date_format">EEEE yyyy-MM-dd</string>
     <string name="today_day_off_information_dialog_action_yes">Yes</string>
     <string name="today_day_off_information_dialog_action_no">No</string>

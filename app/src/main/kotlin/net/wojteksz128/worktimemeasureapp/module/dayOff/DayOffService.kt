@@ -14,7 +14,7 @@ class DayOffService(
 
     suspend fun getDayType(date: Date): DayType {
         return getDayOffInDate(date)?.let {
-            DayType.ofDayOff(it.name)
+            DayType.ofDayOff(it)
         } ?: if (isWorkingDay(date))
             DayType.WorkDay
         else

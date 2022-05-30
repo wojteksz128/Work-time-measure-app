@@ -108,9 +108,10 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
         dateTimeProvider.updateOffset(this)
 
         lifecycleScope.launch {
-            if (dayOffService.getDayType(dateTimeProvider.currentTime).isDayOff && !viewModel.dayOffDialogShowed) {
+            val dayType = dayOffService.getDayType(dateTimeProvider.currentTime)
+            if (dayType.isDayOff && !viewModel.dayOffDialogShowed) {
                 viewModel.dayOffDialogShowed = true
-                TodayDayOffInformationDialogFragment().show(
+                TodayDayOffInformationDialogFragment(dayType).show(
                     supportFragmentManager,
                     TODAY_DAY_OFF_DIALOG_TAG
                 )

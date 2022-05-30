@@ -77,7 +77,8 @@
     <!--<editor-fold desc="#### Today Day Off Information Dialog ####">-->
 
     <string name="today_day_off_information_dialog_title">Dziś dzień wolny</string>
-    <string name="today_day_off_information_dialog_message">Dzisiaj, w %s masz dzień wolny. Czy skorzystasz z niego i odpoczniesz od pracy (spowoduje to wyłączenie aplikacji)?</string>
+    <string name="today_day_off_information_dialog_weekend_message">Dzisiaj, w %s jest weekend. Czy skorzystasz z niego i odpoczniesz od pracy (spowoduje to wyłączenie aplikacji)?</string>
+    <string name="today_day_off_information_dialog_dayOff_message">Dzisiaj, w %s jest święto: %s. Czy skorzystasz z niego i odpoczniesz od pracy (spowoduje to wyłączenie aplikacji)?</string>
     <string name="today_day_off_information_dialog_message_date_format">EEEE dd.MM.yyyy</string>
     <string name="today_day_off_information_dialog_action_yes">Tak</string>
     <string name="today_day_off_information_dialog_action_no">Nie</string>
