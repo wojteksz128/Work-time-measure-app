@@ -224,6 +224,8 @@
     <string name="settings_daysOff_public_syncWithApi_summary_on">Holiday information will be retrieved from the holidayapi.com API.</string>
     <string name="settings_daysOff_public_syncWithApi_summary_off">Information about holidays will not be retrieved from an external source.</string>
     <string name="settings_daysOff_public_syncWithApi_title">Synchronize public holidays</string>
+    <string name="settings_daysOff_public_provider_summary">Provider of information about public holidays.</string>
+    <string name="settings_daysOff_public_provider_title">Holidays provider</string>
     <string name="settings_daysOff_public_country_title">Country</string>
     <string name="settings_daysOff_public_country_summary">The country whose public holidays will be retrieved.</string>
     <string name="settings_daysOff_public_country_entities_stub">Loading…</string>
@@ -253,6 +255,7 @@
 
     <string name="settings_key_daysOff" translatable="false">settings_daysOff</string>
     <string name="settings_key_daysOff_public_syncWithApi" translatable="false">settings_daysOff_public_syncWithApi</string>
+    <string name="settings_key_daysOff_public_provider" translatable="false">settings_daysOff_public_provider</string>
     <string name="settings_key_daysOff_public_country" translatable="false">settings_daysOff_public_country</string>
     <string name="settings_key_daysOff_public_syncNow" translatable="false">settings_daysOff_public_syncNow</string>
 

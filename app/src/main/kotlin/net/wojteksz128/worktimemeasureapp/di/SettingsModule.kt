@@ -7,6 +7,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import net.wojteksz128.worktimemeasureapp.R
+import net.wojteksz128.worktimemeasureapp.api.HolidayProvider
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.settings.item.*
 import javax.inject.Named
@@ -56,7 +57,7 @@ object SettingsModule {
     @Provides
     fun provideWorkTime(
         @Named("settings_workTime_notify_enable") NotifyingEnabled: BooleanSettingsItem,
-        @Named("settings_workTime_week") Week: Settings.WorkTimeSettings.WeekSettings
+        @Named("settings_workTime_week") Week: Settings.WorkTimeSettings.WeekSettings,
     ): Settings.WorkTimeSettings =
         Settings.WorkTimeSettings(NotifyingEnabled, Week)
 
@@ -98,14 +99,23 @@ object SettingsModule {
     @Provides
     fun provideDaysOff(
         @Named("settings_daysOff_public_syncWithApi") SyncWithAPI: BooleanSettingsItem,
-        @Named("settings_daysOff_public_country") Country: StringSettingsItem
-    ): Settings.DaysOffSettings = Settings.DaysOffSettings(SyncWithAPI, Country)
+        @Named("settings_daysOff_public_provider") Provider: EnumSettingsItem<HolidayProvider>,
+        @Named("settings_daysOff_public_country") Country: StringSettingsItem,
+    ): Settings.DaysOffSettings = Settings.DaysOffSettings(SyncWithAPI, Provider, Country)
 
     @Singleton
     @Provides
     @Named("settings_daysOff_public_syncWithApi")
     fun provideSettingsDaysOffPublicSyncWithApi(@ApplicationContext context: Context): BooleanSettingsItem =
         BooleanSettingsItem(R.string.settings_key_daysOff_public_syncWithApi, context)
+
+    @Singleton
+    @Provides
+    @Named("settings_daysOff_public_provider")
+    fun provideSettingsDaysOffPublicProvider(@ApplicationContext context: Context): EnumSettingsItem<HolidayProvider> =
+        EnumSettingsItem(R.string.settings_key_daysOff_public_provider,
+            context,
+            HolidayProvider.values())
 
     @Singleton
     @Provides

@@ -1,5 +1,6 @@
 package net.wojteksz128.worktimemeasureapp.settings
 
+import net.wojteksz128.worktimemeasureapp.api.HolidayProvider
 import net.wojteksz128.worktimemeasureapp.settings.item.*
 
 class Settings(
@@ -40,11 +41,12 @@ class Settings(
 
     class DaysOffSettings(
         @Suppress("MemberVisibilityCanBePrivate") val SyncWithAPI: BooleanSettingsItem,
-        val Country: StringSettingsItem
+        val Provider: EnumSettingsItem<HolidayProvider>,
+        val Country: StringSettingsItem,
         /* Sync Now is not added - it is only button, not store value */
     ) : SettingsNode {
         override val childNodes: Set<SettingsItem<*>>
-            get() = generateChildren(SyncWithAPI, Country)
+            get() = generateChildren(SyncWithAPI, Provider, Country)
 
     }
 

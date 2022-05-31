@@ -14,7 +14,6 @@ import net.wojteksz128.worktimemeasureapp.repository.DayOffRepository
 import net.wojteksz128.worktimemeasureapp.repository.api.ApiErrorResponse
 import net.wojteksz128.worktimemeasureapp.repository.api.ExternalHolidayRepositoriesFacade
 import net.wojteksz128.worktimemeasureapp.settings.Settings
-import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -24,9 +23,6 @@ class DaysOffFragment : BasePreferenceFragment(R.xml.days_off_preferences) {
     lateinit var externalHolidayRepositoriesFacade: ExternalHolidayRepositoriesFacade
 
     @Inject
-    lateinit var dateTimeProvider: DateTimeProvider
-
-    @Inject
     lateinit var dayOffRepository: DayOffRepository
 
     @Suppress("PropertyName")
@@ -34,18 +30,31 @@ class DaysOffFragment : BasePreferenceFragment(R.xml.days_off_preferences) {
     lateinit var Settings: Settings
 
     override fun onPreferencesInit() {
+        initHolidayProviderList()
         initCountriesList()
         initSyncNowButton()
+    }
+
+    private fun initHolidayProviderList() {
+        findPreference<ListPreference>(getString(R.string.settings_key_daysOff_public_provider))?.apply {
+            entryValues = HolidayProvider.values().map { it.name }.toTypedArray()
+            entries = HolidayProvider.values().map { it.displayName }.toTypedArray()
+            setDefaultValue(HolidayProvider.NagerDateAPI.name)
+            onPreferenceChangeListener =
+                Preference.OnPreferenceChangeListener { _, _ ->
+                    initCountriesList()
+                    false
+                }
+        }
     }
 
     private fun initCountriesList() {
         val countriesPreference =
             findPreference<ListPreference>(getString(R.string.settings_key_daysOff_public_country))!!
         lifecycleScope.launch {
-            // TODO: Dodaj wybierajkę informacji o zewnętrznym źródle informacji o świętach.
             try {
                 val countries =
-                    externalHolidayRepositoriesFacade.forAPI(HolidayProvider.NagerDateAPI)
+                    externalHolidayRepositoriesFacade.forAPI(Settings.DaysOff.Provider.value)
                         .getAvailableCountries()
                 countriesPreference.entryValues = countries.map { it.code }.toTypedArray()
                 countriesPreference.entries = countries.map { it.name }.toTypedArray()
@@ -61,17 +70,15 @@ class DaysOffFragment : BasePreferenceFragment(R.xml.days_off_preferences) {
         syncNow.setOnPreferenceClickListener {
             lifecycleScope.launch {
                 try {
-                    // TODO: Dodaj wybierajkę informacji o zewnętrznym źródle informacji o świętach.
-                    externalHolidayRepositoriesFacade.forAPI(HolidayProvider.NagerDateAPI)
+                    externalHolidayRepositoriesFacade.forAPI(Settings.DaysOff.Provider.value)
                         .getHolidays().forEach {
                             withContext(Dispatchers.IO) {
                                 dayOffRepository.save(it)
                             }
                         }
-                    // TODO: Dodaj wybierajkę informacji o zewnętrznym źródle informacji o świętach.
                     Snackbar.make(requireContext(),
                         view!!,
-                        "Holidays fetched from ${HolidayProvider.NagerDateAPI.displayName}.",
+                        "Holidays fetched from ${Settings.DaysOff.Provider.value.displayName}.",
                         Snackbar.LENGTH_LONG)
                         .show()
                 } catch (e: ApiErrorResponse) {
