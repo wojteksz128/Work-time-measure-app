@@ -224,6 +224,8 @@
     <string name="settings_daysOff_public_syncWithApi_summary_on">Informacje o świętach zostaną pobrane z API holidayapi.com.</string>
     <string name="settings_daysOff_public_syncWithApi_summary_off">Nie będą pobierane informacje o świętach z zewnętrznego źródła.</string>
     <string name="settings_daysOff_public_syncWithApi_title">Synchronizuj święta państwowe</string>
+    <string name="settings_daysOff_public_provider_summary">Dostawca informacji o świętach państwowych.</string>
+    <string name="settings_daysOff_public_provider_title">Dostawca informacji</string>
     <string name="settings_daysOff_public_country_title">Kraj</string>
     <string name="settings_daysOff_public_country_summary">Kraj, którego święta państwowe zostaną pobrane.</string>
     <string name="settings_daysOff_public_country_entities_stub">Trwa ładowanie…</string>
@@ -253,6 +255,7 @@
 
     <!--<string name="settings_key_daysOff" translatable="false">settings_daysOff</string>-->
     <!--<string name="settings_key_daysOff_public_syncWithApi" translatable="false">settings_daysOff_public_syncWithApi</string>-->
+    <!--<string name="settings_key_daysOff_public_provider" translatable="false">settings_daysOff_public_provider</string>-->
     <!--<string name="settings_key_daysOff_public_country" translatable="false">settings_daysOff_public_country</string>-->
     <!--<string name="settings_key_daysOff_public_syncNow" translatable="false">settings_daysOff_public_syncNow</string>-->
 

@@ -10,16 +10,27 @@
             app:summaryOn="@string/settings_daysOff_public_syncWithApi_summary_on"
             app:title="@string/settings_daysOff_public_syncWithApi_title" />
 
+        <!-- TODO: Solve problem with selector -->
+        <ListPreference
+            app:dependency="@string/settings_key_daysOff_public_syncWithApi"
+            app:key="@string/settings_key_daysOff_public_provider"
+            app:summary="@string/settings_daysOff_public_provider_summary"
+            app:title="@string/settings_daysOff_public_provider_title"
+            app:useSimpleSummaryProvider="true" />
+
         <!-- TODO: Replace to list with loading -->
+        <!-- TODO: Change summary -->
         <ListPreference
             app:dependency="@string/settings_key_daysOff_public_syncWithApi"
             app:entries="@array/loading_stub"
             app:entryValues="@array/loading_stub"
             app:key="@string/settings_key_daysOff_public_country"
             app:summary="@string/settings_daysOff_public_country_summary"
-            app:title="@string/settings_daysOff_public_country_title" />
+            app:title="@string/settings_daysOff_public_country_title"
+            app:useSimpleSummaryProvider="true" />
 
         <!-- TODO: Add sync animation during synchronization -->
+        <!-- TODO: Change summary -->
         <Preference
             app:key="@string/settings_key_daysOff_public_syncNow"
             app:dependency="@string/settings_key_daysOff_public_syncWithApi"
