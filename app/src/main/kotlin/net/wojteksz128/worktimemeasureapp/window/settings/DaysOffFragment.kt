@@ -3,27 +3,25 @@ package net.wojteksz128.worktimemeasureapp.window.settings
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.ListPreference
 import androidx.preference.Preference
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.wojteksz128.worktimemeasureapp.R
-import net.wojteksz128.worktimemeasureapp.api.holidayapi.HolidayApiService
-import net.wojteksz128.worktimemeasureapp.model.DayOff
-import net.wojteksz128.worktimemeasureapp.model.fieldType.DayOffSource
-import net.wojteksz128.worktimemeasureapp.model.fieldType.DayOffType
+import net.wojteksz128.worktimemeasureapp.api.HolidayProvider
 import net.wojteksz128.worktimemeasureapp.repository.DayOffRepository
+import net.wojteksz128.worktimemeasureapp.repository.api.ApiErrorResponse
+import net.wojteksz128.worktimemeasureapp.repository.api.ExternalHolidayRepositoriesFacade
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
-import org.threeten.bp.Month
-import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class DaysOffFragment : BasePreferenceFragment(R.xml.days_off_preferences) {
 
     @Inject
-    lateinit var holidayApiService: HolidayApiService
+    lateinit var externalHolidayRepositoriesFacade: ExternalHolidayRepositoriesFacade
 
     @Inject
     lateinit var dateTimeProvider: DateTimeProvider
@@ -41,20 +39,18 @@ class DaysOffFragment : BasePreferenceFragment(R.xml.days_off_preferences) {
     }
 
     private fun initCountriesList() {
-        val countries =
+        val countriesPreference =
             findPreference<ListPreference>(getString(R.string.settings_key_daysOff_public_country))!!
         lifecycleScope.launch {
-            val countries1 = holidayApiService.getCountries()
-            when (countries1.isSuccessful) {
-                true -> {
-                    val countriesResponse = countries1.body()!!
-                    val map = countriesResponse.countries
-                        .sortedBy { it.name }
-                        .map { Pair(it.code, it.name) }
-                    countries.entryValues = map.map { it.first }.toTypedArray()
-                    countries.entries = map.map { it.second }.toTypedArray()
-                }
-                else -> {}
+            // TODO: Dodaj wybierajkę informacji o zewnętrznym źródle informacji o świętach.
+            try {
+                val countries =
+                    externalHolidayRepositoriesFacade.forAPI(HolidayProvider.NagerDateAPI)
+                        .getAvailableCountries()
+                countriesPreference.entryValues = countries.map { it.code }.toTypedArray()
+                countriesPreference.entries = countries.map { it.name }.toTypedArray()
+            } catch (e: ApiErrorResponse) {
+                Snackbar.make(requireContext(), view!!, e.message!!, Snackbar.LENGTH_LONG).show()
             }
         }
     }
@@ -64,38 +60,23 @@ class DaysOffFragment : BasePreferenceFragment(R.xml.days_off_preferences) {
             findPreference<Preference>(getString(R.string.settings_key_daysOff_public_syncNow))!!
         syncNow.setOnPreferenceClickListener {
             lifecycleScope.launch {
-                val holidays = holidayApiService.getHolidays(
-                    Settings.DaysOff.Country.value,
-                    dateTimeProvider.currentCalendar.get(Calendar.YEAR),
-                    public = true,
-                    language = Locale.getDefault().language
-                )
-                when (holidays.isSuccessful) {
-                    true -> {
-                        holidays.body()!!.holidays.map {
-                            val dayOffCalendar = Calendar.getInstance().apply { time = it.date }
-                            val dayOffDay = dayOffCalendar.get(Calendar.DAY_OF_MONTH)
-                            val dayOffMonth = Month.of(dayOffCalendar.get(Calendar.MONTH) + 1)
-                            val dayOffYear = dayOffCalendar.get(Calendar.YEAR)
-                            val dayOff = DayOff(
-                                null,
-                                it.uuid,
-                                DayOffType.PublicHoliday,
-                                it.name,
-                                dayOffDay,
-                                dayOffMonth,
-                                dayOffYear,
-                                dayOffDay,
-                                dayOffMonth,
-                                dayOffYear,
-                                DayOffSource.ExternalAPI
-                            )
+                try {
+                    // TODO: Dodaj wybierajkę informacji o zewnętrznym źródle informacji o świętach.
+                    externalHolidayRepositoriesFacade.forAPI(HolidayProvider.NagerDateAPI)
+                        .getHolidays().forEach {
                             withContext(Dispatchers.IO) {
-                                dayOffRepository.save(dayOff)
+                                dayOffRepository.save(it)
                             }
                         }
-                    }
-                    else -> {}
+                    // TODO: Dodaj wybierajkę informacji o zewnętrznym źródle informacji o świętach.
+                    Snackbar.make(requireContext(),
+                        view!!,
+                        "Holidays fetched from ${HolidayProvider.NagerDateAPI.displayName}.",
+                        Snackbar.LENGTH_LONG)
+                        .show()
+                } catch (e: ApiErrorResponse) {
+                    Snackbar.make(requireContext(), view!!, e.message!!, Snackbar.LENGTH_LONG)
+                        .show()
                 }
             }
             false
