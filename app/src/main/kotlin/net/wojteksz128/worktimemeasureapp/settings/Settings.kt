@@ -56,15 +56,16 @@ class Settings(
 
         class TimeSyncSettings(
             val Enabled: BooleanSettingsItem,
-            val ServerAddress: StringSettingsItem
+            val ServerAddress: StringSettingsItem,
         ) : SettingsNode {
             override val childNodes: Set<SettingsItem<*>>
                 get() = generateChildren(Enabled, ServerAddress)
         }
     }
 
-    class InternalSettings (
-        val AlarmState: AlarmStateSettingsItem
+    class InternalSettings(
+        val AlarmState: AlarmStateSettingsItem,
+        val FirstRun: BooleanSettingsItem,
     ) : SettingsNode {
         override val childNodes: Set<SettingsItem<*>>
             get() = generateChildren(AlarmState)

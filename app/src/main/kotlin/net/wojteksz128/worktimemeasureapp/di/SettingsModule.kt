@@ -153,11 +153,18 @@ object SettingsModule {
     @Provides
     fun provideInternal(
         @Named("settings_internal_alarmState") AlarmState: AlarmStateSettingsItem,
-    ): Settings.InternalSettings = Settings.InternalSettings(AlarmState)
+        @Named("settings_internal_firstRun") FirstRun: BooleanSettingsItem,
+    ): Settings.InternalSettings = Settings.InternalSettings(AlarmState, FirstRun)
 
     @Singleton
     @Provides
     @Named("settings_internal_alarmState")
     fun provideSettingsInternalAlarmState(@ApplicationContext context: Context): AlarmStateSettingsItem =
         AlarmStateSettingsItem(R.string.settings_key_internal_alarmSetTime, context)
+
+    @Singleton
+    @Provides
+    @Named("settings_internal_firstRun")
+    fun provideSettingsInternalFirstRun(@ApplicationContext context: Context): BooleanSettingsItem =
+        BooleanSettingsItem(R.string.settings_key_internal_firstRun, context, true)
 }
