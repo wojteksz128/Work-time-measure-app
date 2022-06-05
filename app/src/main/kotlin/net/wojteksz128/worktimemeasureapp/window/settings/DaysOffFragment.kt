@@ -14,6 +14,8 @@ import net.wojteksz128.worktimemeasureapp.repository.DayOffRepository
 import net.wojteksz128.worktimemeasureapp.repository.api.ApiErrorResponse
 import net.wojteksz128.worktimemeasureapp.repository.api.ExternalHolidayRepositoriesFacade
 import net.wojteksz128.worktimemeasureapp.settings.Settings
+import net.wojteksz128.worktimemeasureapp.window.settings.property.AsyncActionPreference
+import net.wojteksz128.worktimemeasureapp.window.settings.property.AsyncActionPreference.Listener
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -65,28 +67,24 @@ class DaysOffFragment : BasePreferenceFragment(R.xml.days_off_preferences) {
     }
 
     private fun initSyncNowButton() {
-        val syncNow =
-            findPreference<Preference>(getString(R.string.settings_key_daysOff_public_syncNow))!!
-        syncNow.setOnPreferenceClickListener {
-            lifecycleScope.launch {
-                try {
-                    externalHolidayRepositoriesFacade.forAPI(Settings.DaysOff.Provider.value)
-                        .getHolidays().forEach {
-                            withContext(Dispatchers.IO) {
-                                dayOffRepository.save(it)
+        findPreference<AsyncActionPreference>(getString(R.string.settings_key_daysOff_public_syncNow))!!.apply {
+            listener = object : Listener {
+                override suspend fun onAsyncClick() {
+                    val message = try {
+                        externalHolidayRepositoriesFacade.forAPI(Settings.DaysOff.Provider.value)
+                            .getHolidays().forEach {
+                                withContext(Dispatchers.IO) {
+                                    dayOffRepository.save(it)
+                                }
                             }
-                        }
-                    Snackbar.make(requireContext(),
-                        view!!,
-                        "Holidays fetched from ${Settings.DaysOff.Provider.value.displayName}.",
-                        Snackbar.LENGTH_LONG)
-                        .show()
-                } catch (e: ApiErrorResponse) {
-                    Snackbar.make(requireContext(), view!!, e.message!!, Snackbar.LENGTH_LONG)
-                        .show()
+                        "Holidays fetched from ${Settings.DaysOff.Provider.value.displayName}."
+                    } catch (e: ApiErrorResponse) {
+                        e.message!!
+                    }
+
+                    Snackbar.make(requireContext(), view!!, message, Snackbar.LENGTH_LONG).show()
                 }
             }
-            false
         }
     }
 }
