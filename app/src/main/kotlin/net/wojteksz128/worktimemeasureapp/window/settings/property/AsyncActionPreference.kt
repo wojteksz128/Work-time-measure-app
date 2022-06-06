@@ -1,6 +1,8 @@
 package net.wojteksz128.worktimemeasureapp.window.settings.property
 
 import android.content.Context
+import android.graphics.BlendMode
+import android.graphics.BlendModeColorFilter
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.util.AttributeSet
 import androidx.databinding.BindingMethods
@@ -18,11 +20,13 @@ class AsyncActionPreference(context: Context, attrs: AttributeSet) : Preference(
 
     lateinit var listener: Listener
 
+    private val coverColorFilter =
+        BlendModeColorFilter(android.R.color.transparent, BlendMode.CLEAR)
+
     override fun onBindViewHolder(holder: PreferenceViewHolder?) {
         super.onBindViewHolder(holder)
-        if (icon is AnimatedVectorDrawableCompat) {
-            (icon as AnimatedVectorDrawableCompat).start()
-        }
+
+        icon.colorFilter = coverColorFilter
 
         setOnPreferenceClickListener {
             scopeForSaving.launch {
@@ -35,6 +39,7 @@ class AsyncActionPreference(context: Context, attrs: AttributeSet) : Preference(
     }
 
     private fun onStartAsyncAction() {
+        icon.clearColorFilter()
         if (icon is AnimatedVectorDrawable) {
             (icon as AnimatedVectorDrawable).start()
         }
@@ -44,6 +49,7 @@ class AsyncActionPreference(context: Context, attrs: AttributeSet) : Preference(
     }
 
     private fun onStopAsyncAction() {
+        icon.colorFilter = coverColorFilter
         if (icon is AnimatedVectorDrawable) {
             (icon as AnimatedVectorDrawable).stop()
         }
