@@ -33,6 +33,7 @@
             app:key="@string/settings_key_daysOff_public_syncNow"
             app:dependency="@string/settings_key_daysOff_public_syncWithApi"
             app:summary="@string/settings_daysOff_public_syncNow_summary"
-            app:title="@string/settings_daysOff_public_syncNow_title" />
+            app:title="@string/settings_daysOff_public_syncNow_title"
+            app:icon="@drawable/avd_sync" />
     </PreferenceCategory>
 </PreferenceScreen>

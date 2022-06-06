@@ -1,13 +1,13 @@
 package net.wojteksz128.worktimemeasureapp.window.settings.property
 
 import android.content.Context
+import android.graphics.drawable.AnimatedVectorDrawable
 import android.util.AttributeSet
 import androidx.databinding.BindingMethods
 import androidx.preference.Preference
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import androidx.preference.PreferenceViewHolder
+import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
+import kotlinx.coroutines.*
 
 @BindingMethods
 class AsyncActionPreference(context: Context, attrs: AttributeSet) : Preference(context, attrs) {
@@ -18,14 +18,37 @@ class AsyncActionPreference(context: Context, attrs: AttributeSet) : Preference(
 
     lateinit var listener: Listener
 
-    init {
+    override fun onBindViewHolder(holder: PreferenceViewHolder?) {
+        super.onBindViewHolder(holder)
+        if (icon is AnimatedVectorDrawableCompat) {
+            (icon as AnimatedVectorDrawableCompat).start()
+        }
+
         setOnPreferenceClickListener {
             scopeForSaving.launch {
-                // TODO: Add icon on async operation in progress
+                withContext(Dispatchers.Main) { onStartAsyncAction() }
                 listener.onAsyncClick()
-                // TODO: Remove icon on async operation in progress
+                withContext(Dispatchers.Main) { onStopAsyncAction() }
             }
             true
+        }
+    }
+
+    private fun onStartAsyncAction() {
+        if (icon is AnimatedVectorDrawable) {
+            (icon as AnimatedVectorDrawable).start()
+        }
+        if (icon is AnimatedVectorDrawableCompat) {
+            (icon as AnimatedVectorDrawableCompat).start()
+        }
+    }
+
+    private fun onStopAsyncAction() {
+        if (icon is AnimatedVectorDrawable) {
+            (icon as AnimatedVectorDrawable).stop()
+        }
+        if (icon is AnimatedVectorDrawableCompat) {
+            (icon as AnimatedVectorDrawableCompat).stop()
         }
     }
 
