@@ -8,8 +8,6 @@ import androidx.preference.MultiSelectListPreference
 import androidx.preference.Preference
 import dagger.hilt.android.AndroidEntryPoint
 import net.wojteksz128.worktimemeasureapp.R
-import net.wojteksz128.worktimemeasureapp.util.collection.asSet
-import net.wojteksz128.worktimemeasureapp.util.preference.setSummaryFromValues
 import net.wojteksz128.worktimemeasureapp.window.settings.property.DayActionDurationPreference
 import net.wojteksz128.worktimemeasureapp.window.settings.property.DayActionDurationPreferenceDialog
 
@@ -19,16 +17,16 @@ class WeekWorkTimeFragment : BasePreferenceFragment(R.xml.week_work_time_prefere
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         val daysOfWorkingWeekSelector =
             findPreference<MultiSelectListPreference>(getString(R.string.settings_key_workTime_week_daysOfWorkingWeek))
-        daysOfWorkingWeekSelector?.let {
-            it.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
-                it.setSummaryFromValues(newValue.asSet())
-                true
-            }
-            it.setSummaryFromValues(it.values)
+        daysOfWorkingWeekSelector?.let { multiSelectListPreference ->
+            multiSelectListPreference.summaryProvider =
+                Preference.SummaryProvider { preference: MultiSelectListPreference ->
+                    preference.values.map { preference.findIndexOfValue(it) }.sorted()
+                        .joinToString(", ") { preference.entries[it] }
+                }
         }
         return super.onCreateView(inflater, container, savedInstanceState)
     }
