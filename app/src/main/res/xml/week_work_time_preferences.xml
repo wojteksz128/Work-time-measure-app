@@ -12,7 +12,6 @@
         android:title="@string/settings_workTime_week_firstWeekDay_title"
         app:useSimpleSummaryProvider="true" />
 
-    <!-- TODO -->
     <MultiSelectListPreference
         android:entries="@array/day_of_week_entries"
         android:entryValues="@array/day_of_week_values"
