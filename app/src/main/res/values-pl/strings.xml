@@ -221,7 +221,7 @@
 
     <!-- Days off Preferences -->
     <string name="settings_daysOff_public_category_title">Święta państwowe</string>
-    <string name="settings_daysOff_public_syncWithApi_summary_on">Informacje o świętach zostaną pobrane z API holidayapi.com.</string>
+    <string name="settings_daysOff_public_syncWithApi_summary_on">Informacje o świętach zostaną pobrane z %s.</string>
     <string name="settings_daysOff_public_syncWithApi_summary_off">Nie będą pobierane informacje o świętach z zewnętrznego źródła.</string>
     <string name="settings_daysOff_public_syncWithApi_title">Synchronizuj święta państwowe</string>
     <string name="settings_daysOff_public_provider_summary">Dostawca informacji o świętach państwowych.</string>

@@ -6,8 +6,6 @@
 
         <SwitchPreferenceCompat
             app:key="@string/settings_key_daysOff_public_syncWithApi"
-            app:summaryOff="@string/settings_daysOff_public_syncWithApi_summary_off"
-            app:summaryOn="@string/settings_daysOff_public_syncWithApi_summary_on"
             app:title="@string/settings_daysOff_public_syncWithApi_title" />
 
         <ListPreference

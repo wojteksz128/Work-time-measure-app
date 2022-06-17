@@ -3,6 +3,7 @@ package net.wojteksz128.worktimemeasureapp.window.settings
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.ListPreference
 import androidx.preference.Preference
+import androidx.preference.SwitchPreferenceCompat
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -14,12 +15,13 @@ import net.wojteksz128.worktimemeasureapp.repository.DayOffRepository
 import net.wojteksz128.worktimemeasureapp.repository.api.ApiErrorResponse
 import net.wojteksz128.worktimemeasureapp.repository.api.ExternalHolidayRepositoriesFacade
 import net.wojteksz128.worktimemeasureapp.settings.Settings
+import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.window.settings.property.AsyncActionPreference
 import net.wojteksz128.worktimemeasureapp.window.settings.property.AsyncActionPreference.Listener
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class DaysOffFragment : BasePreferenceFragment(R.xml.days_off_preferences) {
+class DaysOffFragment : BasePreferenceFragment(R.xml.days_off_preferences), ClassTagAware {
 
     @Inject
     lateinit var externalHolidayRepositoriesFacade: ExternalHolidayRepositoriesFacade
@@ -32,6 +34,13 @@ class DaysOffFragment : BasePreferenceFragment(R.xml.days_off_preferences) {
     lateinit var Settings: Settings
 
     override fun onPreferencesInit() {
+        findPreference<SwitchPreferenceCompat>(getString(R.string.settings_key_daysOff_public_syncWithApi))?.setSummaryProvider { preference ->
+            if ((preference as SwitchPreferenceCompat).isChecked) {
+                val providerDisplayName = Settings.DaysOff.Provider.value.displayName
+                getString(R.string.settings_daysOff_public_syncWithApi_summary_on,
+                    providerDisplayName)
+            } else getString(R.string.settings_daysOff_public_syncWithApi_summary_off)
+        }
         initHolidayProviderList()
         initCountriesList()
         initSyncNowButton()
