@@ -34,15 +34,8 @@ class DaysOffFragment : BasePreferenceFragment(R.xml.days_off_preferences), Clas
     lateinit var Settings: Settings
 
     override fun onPreferencesInit() {
-        findPreference<SwitchPreferenceCompat>(getString(R.string.settings_key_daysOff_public_syncWithApi))?.setSummaryProvider { preference ->
-            if ((preference as SwitchPreferenceCompat).isChecked) {
-                val providerDisplayName = Settings.DaysOff.Provider.value.displayName
-                getString(R.string.settings_daysOff_public_syncWithApi_summary_on,
-                    providerDisplayName)
-            } else getString(R.string.settings_daysOff_public_syncWithApi_summary_off)
-        }
+        onChangeHolidayProvider(Settings.DaysOff.Provider.value)
         initHolidayProviderList()
-        initCountriesList()
         initSyncNowButton()
     }
 
@@ -52,11 +45,22 @@ class DaysOffFragment : BasePreferenceFragment(R.xml.days_off_preferences), Clas
             entries = HolidayProvider.values().map { it.displayName }.toTypedArray()
             setDefaultValue(HolidayProvider.NagerDateAPI.name)
             onPreferenceChangeListener =
-                Preference.OnPreferenceChangeListener { _, _ ->
-                    initCountriesList()
-                    false
+                Preference.OnPreferenceChangeListener { _, newValue ->
+                    val holidayProvider = HolidayProvider.valueOf(newValue as String)
+                    onChangeHolidayProvider(holidayProvider)
+                    true
                 }
         }
+    }
+
+    private fun onChangeHolidayProvider(newHolidayProvider: HolidayProvider) {
+        changeSyncWithApiSwitchSummaryProvider(newHolidayProvider)
+        initCountriesList()
+    }
+
+    private fun changeSyncWithApiSwitchSummaryProvider(holidayProvider: HolidayProvider) {
+        findPreference<SwitchPreferenceCompat>(getString(R.string.settings_key_daysOff_public_syncWithApi))?.summaryProvider =
+            SyncWithAPISwitchSummaryProvider(holidayProvider)
     }
 
     private fun initCountriesList() {
@@ -94,6 +98,15 @@ class DaysOffFragment : BasePreferenceFragment(R.xml.days_off_preferences), Clas
                     Snackbar.make(requireContext(), view!!, message, Snackbar.LENGTH_LONG).show()
                 }
             }
+        }
+    }
+
+    private inner class SyncWithAPISwitchSummaryProvider(val holidayProvider: HolidayProvider) :
+        Preference.SummaryProvider<SwitchPreferenceCompat> {
+
+        override fun provideSummary(preference: SwitchPreferenceCompat?): CharSequence {
+            return if ((preference as SwitchPreferenceCompat).isChecked) getString(R.string.settings_daysOff_public_syncWithApi_summary_on,
+                holidayProvider.displayName) else getString(R.string.settings_daysOff_public_syncWithApi_summary_off)
         }
     }
 }
