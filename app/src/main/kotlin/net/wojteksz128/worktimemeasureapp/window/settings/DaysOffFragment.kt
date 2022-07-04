@@ -73,6 +73,7 @@ class DaysOffFragment : BasePreferenceFragment(R.xml.days_off_preferences), Clas
                         .getAvailableCountries()
                 countriesPreference.entryValues = countries.map { it.code }.toTypedArray()
                 countriesPreference.entries = countries.map { it.name }.toTypedArray()
+                countriesPreference.summaryProvider = countriesPreference.summaryProvider
             } catch (e: ApiErrorResponse) {
                 Snackbar.make(requireContext(), view!!, e.message!!, Snackbar.LENGTH_LONG).show()
             }
