@@ -85,13 +85,14 @@ class DaysOffFragment : BasePreferenceFragment(R.xml.days_off_preferences), Clas
             listener = object : Listener {
                 override suspend fun onAsyncClick() {
                     val message = try {
-                        externalHolidayRepositoriesFacade.forAPI(Settings.DaysOff.Provider.value)
+                        val holidayProvider = Settings.DaysOff.Provider.value
+                        externalHolidayRepositoriesFacade.forAPI(holidayProvider)
                             .getHolidays().forEach {
                                 withContext(Dispatchers.IO) {
                                     dayOffRepository.save(it)
                                 }
                             }
-                        "Holidays fetched from ${Settings.DaysOff.Provider.value.displayName}."
+                        "Holidays fetched from ${holidayProvider.displayName}."
                     } catch (e: ApiErrorResponse) {
                         e.message!!
                     }
