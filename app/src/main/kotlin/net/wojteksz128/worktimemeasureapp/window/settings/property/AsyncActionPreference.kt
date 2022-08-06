@@ -3,7 +3,10 @@ package net.wojteksz128.worktimemeasureapp.window.settings.property
 import android.content.Context
 import android.graphics.BlendMode
 import android.graphics.BlendModeColorFilter
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
 import android.graphics.drawable.AnimatedVectorDrawable
+import android.os.Build
 import android.util.AttributeSet
 import androidx.databinding.BindingMethods
 import androidx.preference.Preference
@@ -20,8 +23,12 @@ class AsyncActionPreference(context: Context, attrs: AttributeSet) : Preference(
 
     lateinit var listener: Listener
 
-    private val coverColorFilter =
-        BlendModeColorFilter(android.R.color.transparent, BlendMode.CLEAR)
+    private val coverColorFilter = getCoverColorFilter()
+
+    private fun getCoverColorFilter() =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+            BlendModeColorFilter(android.R.color.transparent, BlendMode.CLEAR)
+        else PorterDuffColorFilter(android.R.color.transparent, PorterDuff.Mode.CLEAR)
 
     override fun onBindViewHolder(holder: PreferenceViewHolder?) {
         super.onBindViewHolder(holder)
