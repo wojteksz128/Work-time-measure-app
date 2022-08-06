@@ -8,70 +8,45 @@ class Settings(
     val WorkTime: WorkTimeSettings,
     val DaysOff: DaysOffSettings,
     val Sync: SyncSettings,
-    val Internal: InternalSettings
-) : SettingsItemsAware(), SettingsNode {
-    override val childNodes: Set<SettingsItem<*>>
-        get() = generateChildren(Profile, WorkTime, DaysOff, Sync, Internal)
+    val Internal: InternalSettings,
+) : SettingsItemsAware(Profile, WorkTime, DaysOff, Sync, Internal) {
 
-    class ProfileSettings (
+    class ProfileSettings(
         val ImagePath: StringSettingsItem,
         val Username: StringSettingsItem,
-        val Email: StringSettingsItem
-    ) : SettingsNode {
-        override val childNodes: Set<SettingsItem<*>>
-            get() = generateChildren(ImagePath, Username, Email)
-    }
+        val Email: StringSettingsItem,
+    ) : SettingsNode(ImagePath, Username, Email)
 
-    class WorkTimeSettings (
+    class WorkTimeSettings(
         val NotifyingEnabled: BooleanSettingsItem,
-        val Week: WeekSettings
-    ) : SettingsNode {
-        override val childNodes: Set<SettingsItem<*>>
-            get() = generateChildren(NotifyingEnabled, Week)
+        val Week: WeekSettings,
+    ) : SettingsNode(NotifyingEnabled, Week) {
 
         class WeekSettings(
             val FirstWeekDay: IntFromStringSettingsItem,
             val DaysOfWorkingWeek: StringsArraySettingsItem,
-            val Duration: DurationSettingsItem
-        ) : SettingsNode {
-            override val childNodes: Set<SettingsItem<*>>
-                get() = generateChildren(FirstWeekDay, DaysOfWorkingWeek, Duration)
-        }
+            val Duration: DurationSettingsItem,
+        ) : SettingsNode(FirstWeekDay, DaysOfWorkingWeek, Duration)
     }
 
     class DaysOffSettings(
-        @Suppress("MemberVisibilityCanBePrivate") val SyncWithAPI: BooleanSettingsItem,
+        val SyncWithAPI: BooleanSettingsItem,
         val Provider: EnumSettingsItem<HolidayProvider>,
         val Country: StringSettingsItem,
         /* Sync Now is not added - it is only button, not store value */
-    ) : SettingsNode {
-        override val childNodes: Set<SettingsItem<*>>
-            get() = generateChildren(SyncWithAPI, Provider, Country)
+    ) : SettingsNode(SyncWithAPI, Provider, Country)
 
-    }
-
-    class SyncSettings(val TimeSync: TimeSyncSettings) : SettingsNode {
-        override val childNodes: Set<SettingsItem<*>>
-            get() = generateChildren(TimeSync)
+    class SyncSettings(val TimeSync: TimeSyncSettings) : SettingsNode(TimeSync) {
 
         class TimeSyncSettings(
             val Enabled: BooleanSettingsItem,
             val ServerAddress: StringSettingsItem,
-        ) : SettingsNode {
-            override val childNodes: Set<SettingsItem<*>>
-                get() = generateChildren(Enabled, ServerAddress)
-        }
+        ) : SettingsNode(Enabled, ServerAddress)
     }
 
     class InternalSettings(
         val AlarmState: AlarmStateSettingsItem,
         val FirstRun: BooleanSettingsItem,
-    ) : SettingsNode {
-        override val childNodes: Set<SettingsItem<*>>
-            get() = generateChildren(AlarmState)
-    }
+    ) : SettingsNode(AlarmState, FirstRun)
 }
-
-private fun generateChildren(vararg node: SettingsNode): Set<SettingsItem<*>> =
-    node.flatMap { it.childNodes }.toSet()
 

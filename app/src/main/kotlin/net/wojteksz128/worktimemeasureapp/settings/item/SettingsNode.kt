@@ -1,5 +1,5 @@
 package net.wojteksz128.worktimemeasureapp.settings.item
 
-interface SettingsNode {
-    val childNodes: Set<SettingsItem<*>>
+abstract class SettingsNode(vararg nodes: SettingsNode) {
+    open val childNodes: Set<SettingsItem<*>> = nodes.flatMap { it.childNodes }.toSet()
 }

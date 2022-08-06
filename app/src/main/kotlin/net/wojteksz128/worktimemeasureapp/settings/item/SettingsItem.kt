@@ -8,8 +8,8 @@ open class SettingsItem<R>(
     val keyResourceId: Int,
     private val appContext: Context,
     private val valueGettingMethod: (SharedPreferences, String) -> R?,
-    private val valueSettingMethod: (SharedPreferences.Editor, String, R) -> Unit
-) : SettingsNode {
+    private val valueSettingMethod: (SharedPreferences.Editor, String, R) -> Unit,
+) : SettingsNode() {
     override val childNodes: Set<SettingsItem<*>>
         get() = setOf(this)
 
