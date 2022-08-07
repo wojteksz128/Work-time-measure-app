@@ -231,6 +231,8 @@
     <string name="settings_daysOff_public_country_entities_stub">Loading…</string>
     <string name="settings_daysOff_public_syncNow_title">Sync now</string>
     <string name="settings_daysOff_public_syncNow_summary">When selected, public holidays will be downloaded and synced with previously downloaded ones.</string>
+    <string name="settings_daysOff_public_syncNow_success_message">Holidays fetched from %s.</string>
+    <string name="settings_daysOff_public_syncNow_fail_message">Error occurred: %s.</string>
 
     <!-- Sync Preferences -->
     <string name="settings_sync_timeSync_category_title">Time synchronization</string>

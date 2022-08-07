@@ -231,6 +231,8 @@
     <string name="settings_daysOff_public_country_entities_stub">Trwa ładowanie…</string>
     <string name="settings_daysOff_public_syncNow_title">Synchronizuj teraz</string>
     <string name="settings_daysOff_public_syncNow_summary">Po wybraniu, święta państwowe zostaną pobrane i zsynchronizowane z wcześniej pobranymi.</string>
+    <string name="settings_daysOff_public_syncNow_success_message">Święta państwowe zsynchronizowane z %s.</string>
+    <string name="settings_daysOff_public_syncNow_fail_message">Wystąpił błąd: %s.</string>
 
     <!-- Sync Preferences -->
     <string name="settings_sync_timeSync_category_title">Synchronizacja czasu</string>

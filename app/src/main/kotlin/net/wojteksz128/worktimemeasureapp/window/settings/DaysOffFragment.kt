@@ -92,9 +92,11 @@ class DaysOffFragment : BasePreferenceFragment(R.xml.days_off_preferences), Clas
                                     dayOffRepository.save(it)
                                 }
                             }
-                        "Holidays fetched from ${holidayProvider.displayName}."
+                        getString(R.string.settings_daysOff_public_syncNow_success_message,
+                            holidayProvider.displayName)
                     } catch (e: ApiErrorResponse) {
-                        e.message!!
+                        getString(R.string.settings_daysOff_public_syncNow_fail_message,
+                            e.message!!)
                     }
 
                     Snackbar.make(requireContext(), view!!, message, Snackbar.LENGTH_LONG).show()
