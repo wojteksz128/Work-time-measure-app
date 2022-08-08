@@ -1,5 +1,7 @@
 package net.wojteksz128.worktimemeasureapp.repository.api
 
+import android.content.Context
+import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.api.nagerDate.NagerDateApiV3Service
 import net.wojteksz128.worktimemeasureapp.model.Country
 import net.wojteksz128.worktimemeasureapp.model.DayOff
@@ -15,6 +17,7 @@ class NagerDateApiV3Repository(
     private val nagerDateApiV3Service: NagerDateApiV3Service,
     override val Settings: Settings,
     override val dateTimeProvider: DateTimeProvider,
+    private val context: Context,
 ) : ExternalHolidayRepository {
     override suspend fun getAvailableCountries(): Collection<Country> {
         val getAvailableCountriesResponse = nagerDateApiV3Service.getAvailableCountries()
@@ -63,8 +66,9 @@ class NagerDateApiV3Repository(
     }
 
     private fun throwApiErrorResponse(response: Response<*>): ApiErrorResponse {
-        val errorMessage = "Page response with code: ${response.code()}. Error: ${response.body()}"
-        return ApiErrorResponse(errorMessage)
+        val errorMessage =
+            context.getString(R.string.nager_date_error_template, response.code(), response.body())
+        return ApiErrorResponse(errorMessage, errorMessage)
     }
 
 }

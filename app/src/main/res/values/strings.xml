@@ -271,4 +271,12 @@
     <!--</editor-fold>-->
     <!--##########################################-->
 
+    <!--##########################################-->
+    <!--<editor-fold desc="############# Nager.Date API #############">-->
+
+    <string name="nager_date_error_template">Error code: %i; Message: %s</string>
+
+    <!--</editor-fold>-->
+    <!--##########################################-->
+
 </resources>

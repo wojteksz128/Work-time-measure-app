@@ -1,5 +1,7 @@
 package net.wojteksz128.worktimemeasureapp.repository.api
 
+import com.google.gson.Gson
+import net.wojteksz128.worktimemeasureapp.api.holidayapi.HolidayApiErrorResponse
 import net.wojteksz128.worktimemeasureapp.api.holidayapi.HolidayApiResponse
 import net.wojteksz128.worktimemeasureapp.api.holidayapi.HolidayApiService
 import net.wojteksz128.worktimemeasureapp.model.Country
@@ -16,6 +18,7 @@ class HolidayApiRepository(
     private val holidayApiService: HolidayApiService,
     override val Settings: Settings,
     override val dateTimeProvider: DateTimeProvider,
+    private val gson: Gson,
 ) : ExternalHolidayRepository {
     override suspend fun getAvailableCountries(): Collection<Country> {
         val getCountriesResponse = holidayApiService.getCountries()
@@ -66,10 +69,12 @@ class HolidayApiRepository(
         }
     }
 
-    private fun <T : HolidayApiResponse> throwApiErrorResponse(getCountriesResponse: Response<T>): ApiErrorResponse {
-        val errorMessage =
-            getCountriesResponse.body()?.error ?: getCountriesResponse.errorBody()?.string()
-            ?: "Unexpected error"
-        return ApiErrorResponse(errorMessage)
+    private fun <T : HolidayApiResponse> throwApiErrorResponse(response: Response<T>): ApiErrorResponse {
+        val bodyError = response.body()?.error
+        val errorBodyString = response.errorBody()?.string()
+        val errorBody =
+            errorBodyString?.let { gson.fromJson(it, HolidayApiErrorResponse::class.java) }
+        val errorMessage = bodyError ?: errorBody?.error ?: "Unexpected error"
+        return ApiErrorResponse(errorMessage, errorMessage)
     }
 }
