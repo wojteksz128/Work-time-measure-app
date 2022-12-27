@@ -5,8 +5,6 @@ import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.api.nagerDate.NagerDateApiV3Service
 import net.wojteksz128.worktimemeasureapp.model.Country
 import net.wojteksz128.worktimemeasureapp.model.DayOff
-import net.wojteksz128.worktimemeasureapp.model.fieldType.DayOffSource
-import net.wojteksz128.worktimemeasureapp.model.fieldType.DayOffType
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import org.threeten.bp.Month
@@ -18,14 +16,14 @@ class NagerDateApiV3Repository(
     override val Settings: Settings,
     override val dateTimeProvider: DateTimeProvider,
     private val context: Context,
-) : ExternalHolidayRepository {
+) : ExternalHolidayRepository(Settings, dateTimeProvider) {
     override suspend fun getAvailableCountries(): Collection<Country> {
         val getAvailableCountriesResponse = nagerDateApiV3Service.getAvailableCountries()
         when (getAvailableCountriesResponse.isSuccessful) {
             true -> {
                 val counties = getAvailableCountriesResponse.body()!!
                 return counties.sortedBy { it.name }
-                    .map { Country(it.countryCode ?: "", it.name ?: "") }
+                    .map { prepareCountryDomainModel(it.countryCode ?: "", it.name ?: "") }
             }
             else -> {
                 throw throwApiErrorResponse(getAvailableCountriesResponse)
@@ -44,19 +42,7 @@ class NagerDateApiV3Repository(
                     val dayOffDay = dayOffCalendar.get(Calendar.DAY_OF_MONTH)
                     val dayOffMonth = Month.of(dayOffCalendar.get(Calendar.MONTH) + 1)
                     val dayOffYear = dayOffCalendar.get(Calendar.YEAR)
-                    DayOff(
-                        null,
-                        null,
-                        DayOffType.PublicHoliday,
-                        it.localName ?: "",
-                        dayOffDay,
-                        dayOffMonth,
-                        dayOffYear,
-                        dayOffDay,
-                        dayOffMonth,
-                        dayOffYear,
-                        DayOffSource.ExternalAPI
-                    )
+                    prepareDayOffDomainModel(it.localName ?: "", dayOffDay, dayOffMonth, dayOffYear)
                 }
             }
             else -> {
