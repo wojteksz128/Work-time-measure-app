@@ -50,7 +50,6 @@ android {
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
-    namespace 'net.wojteksz128.worktimemeasureapp'
 }
 
 dependencies {
