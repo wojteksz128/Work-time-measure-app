@@ -23,7 +23,7 @@ class WorkDayRepository (
             .mapByPage { workDayWithEventsMapper.mapToDomainModelList(it) }
             .asPagingSourceFactory(Dispatchers.IO)
 
-    fun getCurrentWorkDay(currentDate: Date, createIfNotExists: Boolean = true): WorkDay {
+    suspend fun getCurrentWorkDay(currentDate: Date, createIfNotExists: Boolean = true): WorkDay {
         val entity = workDayDao.findByIntervalContains(currentDate)
         val workDay = entity?.let { workDayWithEventsMapper.mapToDomainModel(entity) }
             ?: if (createIfNotExists) {

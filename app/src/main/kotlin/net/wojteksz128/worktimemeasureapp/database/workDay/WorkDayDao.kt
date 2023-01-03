@@ -8,7 +8,6 @@ import java.util.*
 
 @Dao
 @Suppress("unused")
-// TODO: 30.09.2021 Make all suspended
 interface WorkDayDao : EntityDao<WorkDayDto> {
 
     @Transaction
@@ -17,7 +16,7 @@ interface WorkDayDao : EntityDao<WorkDayDto> {
 
     @Transaction
     @Query("SELECT * FROM work_day ORDER BY date DESC")
-    fun findAll(): List<WorkDayWithEventsDto>
+    suspend fun findAll(): List<WorkDayWithEventsDto>
 
     @Transaction
     @Query("SELECT * FROM work_day WHERE id = :id")
@@ -25,26 +24,26 @@ interface WorkDayDao : EntityDao<WorkDayDto> {
 
     @Transaction
     @Query("SELECT * FROM work_day WHERE id = :id")
-    fun findById(id: Int): WorkDayWithEventsDto
+    suspend fun findById(id: Int): WorkDayWithEventsDto
 
     @Transaction
     @Query("SELECT * FROM work_day WHERE :date BETWEEN beginSlot AND endSlot")
-    fun findByIntervalContains(date: Date): WorkDayWithEventsDto?
+    suspend fun findByIntervalContains(date: Date): WorkDayWithEventsDto?
 
     @Transaction
     @Query("SELECT * FROM work_day WHERE :date BETWEEN beginSlot AND endSlot")
-    fun findByIntervalContainsInLiveData(date: Date): LiveData<WorkDayWithEventsDto>
+    fun findByIntervalContainsInLiveData(date: Date): LiveData<WorkDayWithEventsDto?>
 
     @Transaction
     @Query("SELECT * FROM work_day WHERE date BETWEEN :beginDate AND :endDate")
     fun findBetweenDates(beginDate: Date, endDate: Date): LiveData<List<WorkDayWithEventsDto>>
 
     @Insert
-    override fun insert(workDay: WorkDayDto)
+    override suspend fun insert(entity: WorkDayDto)
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    override fun update(workDay: WorkDayDto)
+    override suspend fun update(entity: WorkDayDto)
 
     @Delete
-    override fun delete(workDay: WorkDayDto)
+    override suspend fun delete(entity: WorkDayDto)
 }

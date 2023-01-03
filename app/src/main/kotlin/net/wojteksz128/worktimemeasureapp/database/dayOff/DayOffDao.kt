@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package net.wojteksz128.worktimemeasureapp.database.dayOff
 
 import androidx.lifecycle.LiveData
@@ -14,7 +16,7 @@ interface DayOffDao : EntityDao<DayOffDto> {
 
     @Transaction
     @Query("SELECT * FROM day_off ORDER BY startYear, finishYear, startDay, startMonth, finishDay, finishMonth")
-    fun findAll(): List<DayOffDto>
+    suspend fun findAll(): List<DayOffDto>
 
     @Transaction
     @Query("SELECT * FROM day_off WHERE id = :id")
@@ -22,18 +24,18 @@ interface DayOffDao : EntityDao<DayOffDto> {
 
     @Transaction
     @Query("SELECT * FROM day_off WHERE id = :id")
-    fun findById(id: Long): DayOffDto
+    suspend fun findById(id: Long): DayOffDto
 
     @Transaction
     @Query("SELECT * FROM day_off WHERE :year BETWEEN startYear AND finishYear AND :month BETWEEN startMonth AND finishMonth AND :day BETWEEN startDay AND finishDay")
     suspend fun findByDate(year: Int, month: Month?, day: Int): DayOffDto?
 
     @Insert
-    override fun insert(entity: DayOffDto)
+    override suspend fun insert(entity: DayOffDto)
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    override fun update(entity: DayOffDto)
+    override suspend fun update(entity: DayOffDto)
 
     @Delete
-    override fun delete(entity: DayOffDto)
+    override suspend fun delete(entity: DayOffDto)
 }

@@ -32,14 +32,17 @@ class ComeEventUtils(
         }
     }
 
-    private fun assignEndDateIntoCurrentEvent(comeEvent: ComeEvent, registerDate: Date): ComeEventType {
+    private suspend fun assignEndDateIntoCurrentEvent(
+        comeEvent: ComeEvent,
+        registerDate: Date,
+    ): ComeEventType {
         comeEvent.endDate = registerDate
         comeEvent.durationMillis = dateTimeUtils.calculateDuration(comeEvent).toMillis()
         comeEventRepository.save(comeEvent)
         return ComeEventType.COME_OUT
     }
 
-    private fun createNewEvent(workDay: WorkDay, registerDate: Date): ComeEventType {
+    private suspend fun createNewEvent(workDay: WorkDay, registerDate: Date): ComeEventType {
         val comeEvent = ComeEvent(registerDate, workDay)
         comeEventRepository.save(comeEvent)
         return ComeEventType.COME_IN
