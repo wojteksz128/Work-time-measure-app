@@ -25,15 +25,17 @@ class AsyncActionPreference(context: Context, attrs: AttributeSet) : Preference(
 
     private val coverColorFilter = getCoverColorFilter()
 
+    @Suppress("DEPRECATION")
     private fun getCoverColorFilter() =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
-            BlendModeColorFilter(android.R.color.transparent, BlendMode.CLEAR)
-        else PorterDuffColorFilter(android.R.color.transparent, PorterDuff.Mode.CLEAR)
+            BlendModeColorFilter(context.getColor(android.R.color.transparent), BlendMode.CLEAR)
+        else PorterDuffColorFilter(context.resources.getColor(android.R.color.transparent),
+            PorterDuff.Mode.CLEAR)
 
-    override fun onBindViewHolder(holder: PreferenceViewHolder?) {
+    override fun onBindViewHolder(holder: PreferenceViewHolder) {
         super.onBindViewHolder(holder)
 
-        icon.colorFilter = coverColorFilter
+        icon?.colorFilter = coverColorFilter
 
         setOnPreferenceClickListener {
             scopeForSaving.launch {
@@ -46,9 +48,11 @@ class AsyncActionPreference(context: Context, attrs: AttributeSet) : Preference(
     }
 
     private fun onStartAsyncAction() {
-        icon.clearColorFilter()
-        if (icon is AnimatedVectorDrawable) {
-            (icon as AnimatedVectorDrawable).start()
+        icon?.clearColorFilter()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (icon is AnimatedVectorDrawable) {
+                (icon as AnimatedVectorDrawable).start()
+            }
         }
         if (icon is AnimatedVectorDrawableCompat) {
             (icon as AnimatedVectorDrawableCompat).start()
@@ -56,9 +60,11 @@ class AsyncActionPreference(context: Context, attrs: AttributeSet) : Preference(
     }
 
     private fun onStopAsyncAction() {
-        icon.colorFilter = coverColorFilter
-        if (icon is AnimatedVectorDrawable) {
-            (icon as AnimatedVectorDrawable).stop()
+        icon?.colorFilter = coverColorFilter
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (icon is AnimatedVectorDrawable) {
+                (icon as AnimatedVectorDrawable).stop()
+            }
         }
         if (icon is AnimatedVectorDrawableCompat) {
             (icon as AnimatedVectorDrawableCompat).stop()

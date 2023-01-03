@@ -24,14 +24,14 @@ abstract class BasePreferenceFragment(
 
     override fun onResume() {
         super.onResume()
-        preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(
+        preferenceManager.sharedPreferences?.registerOnSharedPreferenceChangeListener(
             settingsItemsNotifier
         )
     }
 
     override fun onPause() {
         super.onPause()
-        preferenceManager.sharedPreferences.unregisterOnSharedPreferenceChangeListener(
+        preferenceManager.sharedPreferences?.unregisterOnSharedPreferenceChangeListener(
             settingsItemsNotifier
         )
     }

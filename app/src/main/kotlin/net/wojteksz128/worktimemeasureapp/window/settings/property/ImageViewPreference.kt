@@ -78,28 +78,25 @@ class ImageViewPreference(context: Context, attrs: AttributeSet) : Preference(co
     }
 
     private fun copyImageToInternalStorage(newImageUri: Uri, newImageFile: File) {
-        val inputStream = context.contentResolver.openInputStream(newImageUri)?.buffered()
-        val outputStream = BufferedOutputStream(FileOutputStream(newImageFile))
+        context.contentResolver.openInputStream(newImageUri)?.use {
+            val inputStream = it.buffered()
+            BufferedOutputStream(FileOutputStream(newImageFile)).use { outputStream ->
+                val buffer = ByteArray(inputStream.available())
+                inputStream.read(buffer)
+                do {
+                    outputStream.write(buffer)
+                } while (inputStream.read(buffer) > 0)
 
-        inputStream?.let {
-            val buffer = ByteArray(inputStream.available())
-            inputStream.read(buffer)
-            do {
-                outputStream.write(buffer)
-            } while (inputStream.read(buffer) > 0)
-
-            inputStream.close()
-            outputStream.flush()
-            outputStream.close()
+                outputStream.flush()
+            }
         }
-
     }
 
-    override fun onBindViewHolder(holder: PreferenceViewHolder?) {
+    override fun onBindViewHolder(holder: PreferenceViewHolder) {
         super.onBindViewHolder(holder)
 
         loadingIndicator =
-            holder?.findViewById(R.id.image_view_preference_loading_indicator) as FrameLayout
+            holder.findViewById(R.id.image_view_preference_loading_indicator) as FrameLayout
 
         imageView = holder.findViewById(R.id.image_view_preference_image_preview) as ImageView
         holder.findViewById(R.id.image_view_preference_layout).setOnClickListener {
@@ -121,17 +118,16 @@ class ImageViewPreference(context: Context, attrs: AttributeSet) : Preference(co
         imageBitmap?.let { setImageBitmap(it) }
     }
 
-    override fun onSaveInstanceState(): Parcelable {
+    override fun onSaveInstanceState(): Parcelable? {
         val superState = super.onSaveInstanceState()
 
         return if (this.isPersistent) {
             superState
         } else {
-            val myState = SavedState(superState)
-            myState.imageBitmap = imageBitmap
+            val myState = superState?.let { SavedState(it) }
+            myState?.imageBitmap = imageBitmap
             myState
         }
-
     }
 
     override fun onRestoreInstanceState(state: Parcelable?) {

@@ -75,7 +75,8 @@ class DaysOffFragment : BasePreferenceFragment(R.xml.days_off_preferences), Clas
                 countriesPreference.entries = countries.map { it.name }.toTypedArray()
                 countriesPreference.summaryProvider = countriesPreference.summaryProvider
             } catch (e: ApiErrorResponse) {
-                Snackbar.make(requireContext(), view!!, e.message!!, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(requireContext(), requireView(), e.message!!, Snackbar.LENGTH_LONG)
+                    .show()
             }
         }
     }
@@ -108,8 +109,8 @@ class DaysOffFragment : BasePreferenceFragment(R.xml.days_off_preferences), Clas
     private inner class SyncWithAPISwitchSummaryProvider(val holidayProvider: HolidayProvider) :
         Preference.SummaryProvider<SwitchPreferenceCompat> {
 
-        override fun provideSummary(preference: SwitchPreferenceCompat?): CharSequence {
-            return if ((preference as SwitchPreferenceCompat).isChecked) getString(R.string.settings_daysOff_public_syncWithApi_summary_on,
+        override fun provideSummary(preference: SwitchPreferenceCompat): CharSequence {
+            return if (preference.isChecked) getString(R.string.settings_daysOff_public_syncWithApi_summary_on,
                 holidayProvider.displayName) else getString(R.string.settings_daysOff_public_syncWithApi_summary_off)
         }
     }

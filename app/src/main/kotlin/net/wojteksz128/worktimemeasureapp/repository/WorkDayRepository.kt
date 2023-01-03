@@ -37,7 +37,7 @@ class WorkDayRepository (
     }
 
     // TODO: 09.10.2021 Czy oddzielne metody LiveData i normalne jest potrzebne?
-    fun getCurrentWorkDayInLiveData(currentDate: Date): LiveData<WorkDay> =
+    fun getCurrentWorkDayInLiveData(currentDate: Date): LiveData<WorkDay?> =
         workDayDao.findByIntervalContainsInLiveData(currentDate)
             .map { workDayWithEventsDto ->
                 workDayWithEventsDto?.let {
@@ -45,9 +45,9 @@ class WorkDayRepository (
                 }
             }
 
-    fun getWorkDayByIdInLiveData(workDayId: Long): LiveData<WorkDay> =
+    fun getWorkDayByIdInLiveData(workDayId: Long): LiveData<WorkDay?> =
         workDayDao.findByIdInLiveData(workDayId.toInt()).map { workDayWithEventsDto ->
-            workDayWithEventsDto?.let {
+            workDayWithEventsDto.let {
                 workDayWithEventsMapper.mapToDomainModel(it)
             }
         }

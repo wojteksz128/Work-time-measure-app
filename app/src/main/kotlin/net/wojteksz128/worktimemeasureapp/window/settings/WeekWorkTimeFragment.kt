@@ -18,7 +18,7 @@ class WeekWorkTimeFragment : BasePreferenceFragment(R.xml.week_work_time_prefere
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         val daysOfWorkingWeekSelector =
             findPreference<MultiSelectListPreference>(getString(R.string.settings_key_workTime_week_daysOfWorkingWeek))
         daysOfWorkingWeekSelector?.let { multiSelectListPreference ->
@@ -31,7 +31,7 @@ class WeekWorkTimeFragment : BasePreferenceFragment(R.xml.week_work_time_prefere
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
-    override fun onDisplayPreferenceDialog(preference: Preference?) {
+    override fun onDisplayPreferenceDialog(preference: Preference) {
         if (preference is DayActionDurationPreference) {
             val timePickerDialog =
                 DayActionDurationPreferenceDialog.newInstance(preference.key, preference)
