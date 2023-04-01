@@ -59,6 +59,7 @@
     <!-- Navigation drawer items strings -->
     <string name="menu_home">Strona główna</string>
     <string name="menu_history">Historia</string>
+    <string name="menu_days_off">Dni wolne</string>
     <string name="menu_header_info">Informacje</string>
     <string name="menu_settings">Ustawienia</string>
     <string name="menu_about">O aplikacji…</string>
@@ -159,6 +160,17 @@
 
     <string name="edit_come_event_dialog_action_cancel">Anuluj</string>
     <string name="edit_come_event_dialog_action_edit">Edytuj</string>
+
+    <!--</editor-fold>-->
+    <!--##########################################-->
+
+    <!--##########################################-->
+    <!--<editor-fold desc="############ Days Off Activity ###########">-->
+
+    <string name="daysOff_activity_title">@string/app_name</string>
+    <string name="daysOff_item_icon_weekend_desc">Ikona weekendu</string>
+    <string name="daysOff_item_icon_personalHoliday_desc">Ikona własnego urlopu</string>
+    <string name="daysOff_item_icon_publicHoliday_desc">Ikona święta państwowego</string>
 
     <!--</editor-fold>-->
     <!--##########################################-->

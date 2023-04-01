@@ -16,11 +16,11 @@ import androidx.databinding.ViewDataBinding
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.*
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.databinding.ActivityBaseBinding
 import net.wojteksz128.worktimemeasureapp.databinding.BaseNavHeaderBinding
 import net.wojteksz128.worktimemeasureapp.window.dashboard.DashboardActivity
+import net.wojteksz128.worktimemeasureapp.window.dayoff.DaysOffListActivity
 import net.wojteksz128.worktimemeasureapp.window.history.HistoryActivity
 import net.wojteksz128.worktimemeasureapp.window.settings.SettingsActivity
 
@@ -111,6 +111,10 @@ abstract class BaseActivity<VDB>(@LayoutRes val layoutResId: Int?) :
                 }
                 R.id.nav_history -> {
                     val intent = Intent(baseActivityGetter(), HistoryActivity::class.java)
+                    baseActivityGetter().startActivity(intent)
+                }
+                R.id.nav_days_off_list -> {
+                    val intent = Intent(baseActivityGetter(), DaysOffListActivity::class.java)
                     baseActivityGetter().startActivity(intent)
                 }
                 R.id.nav_settings -> {
