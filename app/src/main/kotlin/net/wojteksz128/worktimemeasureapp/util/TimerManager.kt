@@ -7,7 +7,7 @@ import android.content.Intent
 import android.os.Build
 import net.wojteksz128.worktimemeasureapp.notification.TimerExpiredReceiver
 import net.wojteksz128.worktimemeasureapp.settings.Settings
-import java.util.*
+import java.util.Calendar
 
 class TimerManager(
     private val context: Context,
@@ -39,6 +39,6 @@ class TimerManager(
 
     private fun getTimerExpiredReceiverPendingIntent(context: Context): PendingIntent? {
         val intent = Intent(context, TimerExpiredReceiver::class.java)
-        return PendingIntent.getBroadcast(context, 1, intent, 0)
+        return PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_IMMUTABLE)
     }
 }

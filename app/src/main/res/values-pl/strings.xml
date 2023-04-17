@@ -59,6 +59,7 @@
     <!-- Navigation drawer items strings -->
     <string name="menu_home">Strona główna</string>
     <string name="menu_history">Historia</string>
+    <string name="menu_days_off">Dni wolne</string>
     <string name="menu_header_info">Informacje</string>
     <string name="menu_settings">Ustawienia</string>
     <string name="menu_about">O aplikacji…</string>
@@ -164,6 +165,17 @@
     <!--##########################################-->
 
     <!--##########################################-->
+    <!--<editor-fold desc="############ Days Off Activity ###########">-->
+
+    <string name="daysOff_activity_title">@string/app_name</string>
+    <string name="daysOff_item_icon_weekend_desc">Ikona weekendu</string>
+    <string name="daysOff_item_icon_personalHoliday_desc">Ikona własnego urlopu</string>
+    <string name="daysOff_item_icon_publicHoliday_desc">Ikona święta państwowego</string>
+
+    <!--</editor-fold>-->
+    <!--##########################################-->
+
+    <!--##########################################-->
     <!--<editor-fold desc="######### Time Editor Component ##########">-->
 
     <string name="time_editor_title_example">Tytuł:</string>
@@ -221,7 +233,7 @@
 
     <!-- Days off Preferences -->
     <string name="settings_daysOff_public_category_title">Święta państwowe</string>
-    <string name="settings_daysOff_public_syncWithApi_summary_on">Informacje o świętach zostaną pobrane z API holidayapi.com.</string>
+    <string name="settings_daysOff_public_syncWithApi_summary_on">Informacje o świętach zostaną pobrane z %s.</string>
     <string name="settings_daysOff_public_syncWithApi_summary_off">Nie będą pobierane informacje o świętach z zewnętrznego źródła.</string>
     <string name="settings_daysOff_public_syncWithApi_title">Synchronizuj święta państwowe</string>
     <string name="settings_daysOff_public_provider_summary">Dostawca informacji o świętach państwowych.</string>
@@ -231,6 +243,8 @@
     <string name="settings_daysOff_public_country_entities_stub">Trwa ładowanie…</string>
     <string name="settings_daysOff_public_syncNow_title">Synchronizuj teraz</string>
     <string name="settings_daysOff_public_syncNow_summary">Po wybraniu, święta państwowe zostaną pobrane i zsynchronizowane z wcześniej pobranymi.</string>
+    <string name="settings_daysOff_public_syncNow_success_message">Święta państwowe zsynchronizowane z %s.</string>
+    <string name="settings_daysOff_public_syncNow_fail_message">Wystąpił błąd: %s.</string>
 
     <!-- Sync Preferences -->
     <string name="settings_sync_timeSync_category_title">Synchronizacja czasu</string>
@@ -265,6 +279,14 @@
 
     <!--<string name="settings_key_internal_alarmSetTime" translatable="false">settings_internal_alarmSetTime</string>-->
     <!--<string name="settings_key_internal_firstRun" translatable="false">settings_internal_firstRun</string>-->
+
+    <!--</editor-fold>-->
+    <!--##########################################-->
+
+    <!--##########################################-->
+    <!--<editor-fold desc="############# Nager.Date API #############">-->
+
+    <string name="nager_date_error_template">Kod błędu: %i; Odpowiedź: %s</string>
 
     <!--</editor-fold>-->
     <!--##########################################-->

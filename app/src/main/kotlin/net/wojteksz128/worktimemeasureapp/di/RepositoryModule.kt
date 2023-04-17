@@ -1,8 +1,11 @@
 package net.wojteksz128.worktimemeasureapp.di
 
+import android.content.Context
+import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import net.wojteksz128.worktimemeasureapp.api.holidayapi.HolidayApiService
 import net.wojteksz128.worktimemeasureapp.api.nagerDate.NagerDateApiV3Service
@@ -69,8 +72,9 @@ object RepositoryModule {
         holidayApiService: HolidayApiService,
         Settings: Settings,
         dateTimeProvider: DateTimeProvider,
+        gson: Gson,
     ): HolidayApiRepository =
-        HolidayApiRepository(holidayApiService, Settings, dateTimeProvider)
+        HolidayApiRepository(holidayApiService, Settings, dateTimeProvider, gson)
 
     @Singleton
     @Provides
@@ -78,6 +82,7 @@ object RepositoryModule {
         nagerDateApiV3Service: NagerDateApiV3Service,
         Settings: Settings,
         dateTimeProvider: DateTimeProvider,
+        @ApplicationContext context: Context,
     ): NagerDateApiV3Repository =
-        NagerDateApiV3Repository(nagerDateApiV3Service, Settings, dateTimeProvider)
+        NagerDateApiV3Repository(nagerDateApiV3Service, Settings, dateTimeProvider, context)
 }

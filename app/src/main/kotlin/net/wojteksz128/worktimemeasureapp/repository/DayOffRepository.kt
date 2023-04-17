@@ -1,5 +1,7 @@
 package net.wojteksz128.worktimemeasureapp.repository
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.map
 import net.wojteksz128.worktimemeasureapp.database.dayOff.DayOffDao
 import net.wojteksz128.worktimemeasureapp.database.dayOff.DayOffDto
 import net.wojteksz128.worktimemeasureapp.database.dayOff.DayOffMapper
@@ -9,7 +11,7 @@ import java.util.*
 
 class DayOffRepository(
     private val dayOffDao: DayOffDao,
-    dayOffMapper: DayOffMapper
+    dayOffMapper: DayOffMapper,
 ) : Repository<DayOff, DayOffDto>(dayOffDao, dayOffMapper) {
 
     suspend fun getDayOff(date: Date): DayOff? {
@@ -20,4 +22,9 @@ class DayOffRepository(
         val entity = dayOffDao.findByDate(year, month, day)
         return entity?.let { mapper.mapToDomainModel(it) }
     }
+
+    fun getAllInLiveData(): LiveData<List<DayOff>> =
+        dayOffDao.findAllInLiveData().map { dayOffDtoList ->
+            dayOffDtoList.map { mapper.mapToDomainModel(it) }
+        }
 }

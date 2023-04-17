@@ -85,7 +85,7 @@ data class HolidayApiWorkdayResponse(
     override val status: Int,
     override val requests: HolidayApiUsage,
     override val error: String?,
-    override val warning: String?
+    override val warning: String?,
 ) : HolidayApiResponse
 
 data class HolidayApiWorkdaysResponse(
@@ -93,7 +93,14 @@ data class HolidayApiWorkdaysResponse(
     override val status: Int,
     override val requests: HolidayApiUsage,
     override val error: String?,
-    override val warning: String?
+    override val warning: String?,
+) : HolidayApiResponse
+
+data class HolidayApiErrorResponse(
+    override val status: Int,
+    override val requests: HolidayApiUsage,
+    override val error: String?,
+    override val warning: String?,
 ) : HolidayApiResponse
 
 interface HolidayApiResponse {
@@ -106,5 +113,5 @@ interface HolidayApiResponse {
 data class HolidayApiUsage(
     val available: Int,
     val used: Int,
-    val resets: Date
+    val resets: Date,
 )

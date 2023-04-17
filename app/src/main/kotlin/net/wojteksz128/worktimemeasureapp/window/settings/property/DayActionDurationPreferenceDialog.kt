@@ -29,14 +29,14 @@ class DayActionDurationPreferenceDialog private constructor(private val listener
 
     private lateinit var timepicker: TimePicker
 
-    override fun onCreateDialogView(context: Context?): View {
+    override fun onCreateDialogView(context: Context): View {
         timepicker = TimePicker(context).apply {
             setIs24HourView(true)
         }
         return timepicker
     }
 
-    override fun onBindDialogView(view: View?) {
+    override fun onBindDialogView(view: View) {
         super.onBindDialogView(view)
         listener.onDurationChangeDialogBinding(this::durationInMinutes::set)
     }

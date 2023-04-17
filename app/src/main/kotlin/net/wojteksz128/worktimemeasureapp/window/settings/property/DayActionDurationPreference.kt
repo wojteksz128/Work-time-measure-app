@@ -8,7 +8,7 @@ import net.wojteksz128.worktimemeasureapp.window.settings.property.DayActionDura
 
 // This class is used in our preference where user can pick a time for notifications to appear.
 // Specifically, this class is responsible for saving/retrieving preference data.
-class DayActionDurationPreference(context: Context?, attrs: AttributeSet?) :
+class DayActionDurationPreference(context: Context, attrs: AttributeSet?) :
     DialogPreference(context, attrs), DayActionDurationPreferenceDialogListener {
 
     private var durationInMinutes: Int
@@ -20,14 +20,14 @@ class DayActionDurationPreference(context: Context?, attrs: AttributeSet?) :
 
     override fun getSummary(): CharSequence {
         val timeString = formatDuration(durationInMinutes)
-        return context?.let {
+        return context.let {
             if (timeString.isEmpty()) it.getString(R.string.settings_workTime_week_duration_summary)
             else it.getString(
                 R.string.settings_workTime_week_duration_summaryValue,
                 timeString,
                 it.getString(R.string.settings_workTime_week_duration_summary)
             )
-        } ?: super.getSummary()
+        }
     }
 
     private fun formatDuration(minutesFromMidnight: Int): String {

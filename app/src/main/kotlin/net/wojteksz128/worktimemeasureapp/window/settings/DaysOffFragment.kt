@@ -3,6 +3,7 @@ package net.wojteksz128.worktimemeasureapp.window.settings
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.ListPreference
 import androidx.preference.Preference
+import androidx.preference.SwitchPreferenceCompat
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -14,10 +15,13 @@ import net.wojteksz128.worktimemeasureapp.repository.DayOffRepository
 import net.wojteksz128.worktimemeasureapp.repository.api.ApiErrorResponse
 import net.wojteksz128.worktimemeasureapp.repository.api.ExternalHolidayRepositoriesFacade
 import net.wojteksz128.worktimemeasureapp.settings.Settings
+import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
+import net.wojteksz128.worktimemeasureapp.window.settings.property.AsyncActionPreference
+import net.wojteksz128.worktimemeasureapp.window.settings.property.AsyncActionPreference.Listener
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class DaysOffFragment : BasePreferenceFragment(R.xml.days_off_preferences) {
+class DaysOffFragment : BasePreferenceFragment(R.xml.days_off_preferences), ClassTagAware {
 
     @Inject
     lateinit var externalHolidayRepositoriesFacade: ExternalHolidayRepositoriesFacade
@@ -30,8 +34,8 @@ class DaysOffFragment : BasePreferenceFragment(R.xml.days_off_preferences) {
     lateinit var Settings: Settings
 
     override fun onPreferencesInit() {
+        onChangeHolidayProvider(Settings.DaysOff.Provider.value)
         initHolidayProviderList()
-        initCountriesList()
         initSyncNowButton()
     }
 
@@ -41,11 +45,22 @@ class DaysOffFragment : BasePreferenceFragment(R.xml.days_off_preferences) {
             entries = HolidayProvider.values().map { it.displayName }.toTypedArray()
             setDefaultValue(HolidayProvider.NagerDateAPI.name)
             onPreferenceChangeListener =
-                Preference.OnPreferenceChangeListener { _, _ ->
-                    initCountriesList()
-                    false
+                Preference.OnPreferenceChangeListener { _, newValue ->
+                    val holidayProvider = HolidayProvider.valueOf(newValue as String)
+                    onChangeHolidayProvider(holidayProvider)
+                    true
                 }
         }
+    }
+
+    private fun onChangeHolidayProvider(newHolidayProvider: HolidayProvider) {
+        changeSyncWithApiSwitchSummaryProvider(newHolidayProvider)
+        initCountriesList()
+    }
+
+    private fun changeSyncWithApiSwitchSummaryProvider(holidayProvider: HolidayProvider) {
+        findPreference<SwitchPreferenceCompat>(getString(R.string.settings_key_daysOff_public_syncWithApi))?.summaryProvider =
+            SyncWithAPISwitchSummaryProvider(holidayProvider)
     }
 
     private fun initCountriesList() {
@@ -58,35 +73,45 @@ class DaysOffFragment : BasePreferenceFragment(R.xml.days_off_preferences) {
                         .getAvailableCountries()
                 countriesPreference.entryValues = countries.map { it.code }.toTypedArray()
                 countriesPreference.entries = countries.map { it.name }.toTypedArray()
+                countriesPreference.summaryProvider = countriesPreference.summaryProvider
             } catch (e: ApiErrorResponse) {
-                Snackbar.make(requireContext(), view!!, e.message!!, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(requireContext(), requireView(), e.message!!, Snackbar.LENGTH_LONG)
+                    .show()
             }
         }
     }
 
     private fun initSyncNowButton() {
-        val syncNow =
-            findPreference<Preference>(getString(R.string.settings_key_daysOff_public_syncNow))!!
-        syncNow.setOnPreferenceClickListener {
-            lifecycleScope.launch {
-                try {
-                    externalHolidayRepositoriesFacade.forAPI(Settings.DaysOff.Provider.value)
-                        .getHolidays().forEach {
-                            withContext(Dispatchers.IO) {
-                                dayOffRepository.save(it)
+        findPreference<AsyncActionPreference>(getString(R.string.settings_key_daysOff_public_syncNow))!!.apply {
+            listener = object : Listener {
+                override suspend fun onAsyncClick() {
+                    val message = try {
+                        val holidayProvider = Settings.DaysOff.Provider.value
+                        externalHolidayRepositoriesFacade.forAPI(holidayProvider)
+                            .getHolidays().forEach {
+                                withContext(Dispatchers.IO) {
+                                    dayOffRepository.save(it)
+                                }
                             }
-                        }
-                    Snackbar.make(requireContext(),
-                        view!!,
-                        "Holidays fetched from ${Settings.DaysOff.Provider.value.displayName}.",
-                        Snackbar.LENGTH_LONG)
-                        .show()
-                } catch (e: ApiErrorResponse) {
-                    Snackbar.make(requireContext(), view!!, e.message!!, Snackbar.LENGTH_LONG)
-                        .show()
+                        getString(R.string.settings_daysOff_public_syncNow_success_message,
+                            holidayProvider.displayName)
+                    } catch (e: ApiErrorResponse) {
+                        getString(R.string.settings_daysOff_public_syncNow_fail_message,
+                            e.message!!)
+                    }
+
+                    Snackbar.make(requireContext(), view!!, message, Snackbar.LENGTH_LONG).show()
                 }
             }
-            false
+        }
+    }
+
+    private inner class SyncWithAPISwitchSummaryProvider(val holidayProvider: HolidayProvider) :
+        Preference.SummaryProvider<SwitchPreferenceCompat> {
+
+        override fun provideSummary(preference: SwitchPreferenceCompat): CharSequence {
+            return if (preference.isChecked) getString(R.string.settings_daysOff_public_syncWithApi_summary_on,
+                holidayProvider.displayName) else getString(R.string.settings_daysOff_public_syncWithApi_summary_off)
         }
     }
 }

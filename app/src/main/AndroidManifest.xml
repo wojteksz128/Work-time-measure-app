@@ -3,11 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="net.wojteksz128.worktimemeasureapp">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <application
         android:name=".WorkTimeMeasureApp"
         android:allowBackup="true"
@@ -17,14 +13,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <receiver
-            android:name=".notification.TimerExpiredReceiver"
-            android:enabled="true"
-            android:exported="false" />
-        <receiver
-            android:name=".notification.worktime.action.WorkTimeNotificationActionReceiver"
-            android:enabled="true"
-            android:exported="false" />
+        <activity
+            android:name=".window.dayoff.DaysOffListActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
 
         <activity
             android:name=".window.dashboard.DashboardActivity"
@@ -49,6 +44,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.wojteksz128.worktimemeasureapp.window.dashboard.DashboardActivity" />
         </activity>
+
         <activity
             android:name=".window.settings.SettingsActivity"
             android:label="@string/settings_activity_title">
@@ -56,6 +52,27 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".window.dashboard.DashboardActivity" />
         </activity>
+
+        <receiver
+            android:name=".notification.worktime.action.WorkTimeNotificationActionReceiver"
+            android:enabled="true"
+            android:exported="false" />
+        <receiver
+            android:name=".notification.TimerExpiredReceiver"
+            android:enabled="true"
+            android:exported="false" />
+
+        <receiver
+            android:name="com.medavox.library.mutime.Persistence"
+            android:exported="false"
+            tools:ignore="Instantiatable"
+            tools:node="merge" />
     </application>
+
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>

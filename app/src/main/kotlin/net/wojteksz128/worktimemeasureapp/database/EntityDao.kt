@@ -2,9 +2,9 @@ package net.wojteksz128.worktimemeasureapp.database
 
 interface EntityDao<Entity> where Entity : EntityDto {
 
-    fun insert(entity: Entity)
+    suspend fun insert(entity: Entity)
 
-    fun update(entity: Entity)
+    suspend fun update(entity: Entity)
 
-    fun delete(entity: Entity)
+    suspend fun delete(entity: Entity)
 }

@@ -2,10 +2,7 @@ package net.wojteksz128.worktimemeasureapp.window.dashboard
 
 import android.app.Application
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -27,7 +24,7 @@ class DashboardViewModel @Inject constructor(
     workDayRepository: WorkDayRepository,
     private val comeEventRepository: ComeEventRepository,
     dateTimeProvider: DateTimeProvider,
-    workTimeCalculator: WorkTimeCalculator
+    workTimeCalculator: WorkTimeCalculator,
 ) : AndroidViewModel(application), ClassTagAware {
     var workTimeCounterRunner: PeriodicOperation.PeriodicOperationRunner? = null
     val workDay: LiveData<WorkDay>
@@ -40,6 +37,7 @@ class DashboardViewModel @Inject constructor(
         Log.d(classTag, "ctor: Retrieve current work day with events")
         val start = dateTimeProvider.weekBeginDay
         val end = dateTimeProvider.weekEndDay
+        val currentTime = dateTimeProvider.currentTime
         val workTimeDataInst = WorkTimeData(start, end, workTimeCalculator)
         workTimeData.value = workTimeDataInst
 
@@ -51,9 +49,15 @@ class DashboardViewModel @Inject constructor(
         }
 
         workDay =
-            workDayRepository.getCurrentWorkDayInLiveData(dateTimeProvider.currentTime).apply {
+            workDayRepository.getCurrentWorkDayInLiveData(currentTime).apply {
                 observeForever { workDayEvents: WorkDay? ->
                     workTimeDataInst.currentDay = workDayEvents
+                }
+            }.map { workDay ->
+                workDay ?: WorkDay(currentTime).apply {
+                    viewModelScope.launch {
+                        workDayRepository.save(this@apply)
+                    }
                 }
             }
     }

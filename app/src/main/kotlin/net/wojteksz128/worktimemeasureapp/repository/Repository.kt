@@ -10,7 +10,7 @@ abstract class Repository<DM, E>(
     protected val mapper: DomainModelMapper<DM, E>
 ) where DM : DomainModel, E : EntityDto {
 
-    open fun save(domainModel: DM) {
+    open suspend fun save(domainModel: DM) {
         val entity = mapper.mapFromDomainModel(domainModel)
         if (entity.id == null)
             dao.insert(entity)
@@ -18,7 +18,7 @@ abstract class Repository<DM, E>(
             dao.update(entity)
     }
 
-    open fun delete(domainModel: DM) {
+    open suspend fun delete(domainModel: DM) {
         val entity = mapper.mapFromDomainModel(domainModel)
         dao.delete(entity)
     }
