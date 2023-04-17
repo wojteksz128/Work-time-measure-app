@@ -47,7 +47,10 @@ abstract class AppNotification<T>(
             addNextIntent(intent)
         }
 
-        return stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)!!
+        return stackBuilder.getPendingIntent(
+            0,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )!!
     }
 
     protected inline fun <reified T : BroadcastReceiver> getAction(
@@ -59,7 +62,12 @@ abstract class AppNotification<T>(
             this.action = action.name
         }
         val pendingIntent =
-            PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+            PendingIntent.getBroadcast(
+                context,
+                0,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
         return NotificationCompat.Action(action.icon,
             context.getString(action.title),
             pendingIntent)
