@@ -11,6 +11,7 @@ import net.wojteksz128.worktimemeasureapp.notification.NotificationUtils
 import net.wojteksz128.worktimemeasureapp.repository.ComeEventRepository
 import net.wojteksz128.worktimemeasureapp.repository.DayOffRepository
 import net.wojteksz128.worktimemeasureapp.repository.WorkDayRepository
+import net.wojteksz128.worktimemeasureapp.repository.api.ExternalHolidayRepositoriesFacade
 import net.wojteksz128.worktimemeasureapp.settings.InitialSettingsPreparer
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.TimerManager
@@ -45,9 +46,10 @@ object AppUtilsModule {
     @Provides
     fun provideDayOffService(
         dayOffRepository: DayOffRepository,
+        externalHolidayRepositoriesFacade: ExternalHolidayRepositoriesFacade,
         Settings: Settings,
     ): DayOffService {
-        return DayOffService(dayOffRepository, Settings)
+        return DayOffService(dayOffRepository, externalHolidayRepositoriesFacade, Settings)
     }
 
     @Singleton

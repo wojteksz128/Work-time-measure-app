@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.api.HolidayProvider
+import net.wojteksz128.worktimemeasureapp.module.dayOff.DayOffService
 import net.wojteksz128.worktimemeasureapp.repository.DayOffRepository
 import net.wojteksz128.worktimemeasureapp.repository.api.ApiErrorResponse
 import net.wojteksz128.worktimemeasureapp.repository.api.ExternalHolidayRepositoriesFacade
@@ -28,6 +29,9 @@ class DaysOffFragment : BasePreferenceFragment(R.xml.days_off_preferences), Clas
 
     @Inject
     lateinit var dayOffRepository: DayOffRepository
+
+    @Inject
+    lateinit var daysOffService: DayOffService
 
     @Suppress("PropertyName")
     @Inject
@@ -87,14 +91,13 @@ class DaysOffFragment : BasePreferenceFragment(R.xml.days_off_preferences), Clas
                 override suspend fun onAsyncClick() {
                     val message = try {
                         val holidayProvider = Settings.DaysOff.Provider.value
-                        externalHolidayRepositoriesFacade.forAPI(holidayProvider)
-                            .getHolidays().forEach {
-                                withContext(Dispatchers.IO) {
-                                    dayOffRepository.save(it)
-                                }
-                            }
-                        getString(R.string.settings_daysOff_public_syncNow_success_message,
-                            holidayProvider.displayName)
+                        withContext(Dispatchers.IO) {
+                            daysOffService.syncHolidaysWith(holidayProvider)
+                        }
+                        getString(
+                            R.string.settings_daysOff_public_syncNow_success_message,
+                            holidayProvider.displayName
+                        )
                     } catch (e: ApiErrorResponse) {
                         getString(R.string.settings_daysOff_public_syncNow_fail_message,
                             e.message!!)
