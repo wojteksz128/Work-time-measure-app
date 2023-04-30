@@ -8,9 +8,9 @@ import net.wojteksz128.worktimemeasureapp.model.Country
 import net.wojteksz128.worktimemeasureapp.model.DayOff
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
-import org.threeten.bp.Month
+import net.wojteksz128.worktimemeasureapp.util.datetime.toLocalDate
 import retrofit2.Response
-import java.util.*
+import java.util.Locale
 
 class HolidayApiRepository(
     private val holidayApiService: HolidayApiService,
@@ -26,6 +26,7 @@ class HolidayApiRepository(
                 return countries.sortedBy { it.name }
                     .map { prepareCountryDomainModel(it.code, it.name) }
             }
+
             else -> {
                 throw throwApiErrorResponse(getCountriesResponse)
             }
@@ -43,15 +44,12 @@ class HolidayApiRepository(
             true -> {
                 val holidays = getHolidaysResponse.body()!!.holidays
                 return holidays.map {
-                    val dayOffCalendar = Calendar.getInstance().apply { time = it.date }
-                    val dayOffDay = dayOffCalendar.get(Calendar.DAY_OF_MONTH)
-                    val dayOffMonth = Month.of(dayOffCalendar.get(Calendar.MONTH) + 1)
-                    val dayOffYear = dayOffCalendar.get(Calendar.YEAR)
                     prepareDayOffDomainModel(
-                        it.name, dayOffDay, dayOffMonth, dayOffYear, it.uuid,
+                        it.name, toLocalDate(it.date), toLocalDate(it.date), it.uuid,
                     )
                 }
             }
+
             else -> {
                 throw throwApiErrorResponse(getHolidaysResponse)
             }

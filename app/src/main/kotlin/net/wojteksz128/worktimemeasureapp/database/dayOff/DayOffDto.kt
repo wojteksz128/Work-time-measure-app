@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 import net.wojteksz128.worktimemeasureapp.database.EntityDto
 import net.wojteksz128.worktimemeasureapp.model.fieldType.DayOffSource
 import net.wojteksz128.worktimemeasureapp.model.fieldType.DayOffType
-import org.threeten.bp.Month
+import org.threeten.bp.LocalDate
 
 @Entity(tableName = "day_off")
 data class DayOffDto(
@@ -23,24 +23,12 @@ data class DayOffDto(
     @ColumnInfo(name = "name")
     var name: String,
 
-    @ColumnInfo(name = "startDay")
-    var startDay: Int,
+    @ColumnInfo(name = "startDate")
+    var startDate: LocalDate,
 
-    @ColumnInfo(name = "startMonth")
-    var startMonth: Month,
-
-    @ColumnInfo(name = "startYear")
-    var startYear: Int?,
-
-    @ColumnInfo(name = "finishDay")
-    var finishDay: Int,
-
-    @ColumnInfo(name = "finishMonth")
-    var finishMonth: Month,
-
-    @ColumnInfo(name = "finishYear")
-    var finishYear: Int?,
+    @ColumnInfo(name = "finishDate")
+    var finishDate: LocalDate,
 
     @ColumnInfo(name = "source")
-    var source: DayOffSource
+    var source: DayOffSource,
 ) : EntityDto

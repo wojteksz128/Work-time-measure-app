@@ -6,11 +6,11 @@ import net.wojteksz128.worktimemeasureapp.model.fieldType.DayOffSource
 import net.wojteksz128.worktimemeasureapp.model.fieldType.DayOffType
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
-import org.threeten.bp.Month
-import java.util.*
+import org.threeten.bp.LocalDate
+import java.util.Calendar
 
 abstract class ExternalHolidayRepository(
-    @Suppress("PropertyName") open val Settings: Settings,
+    open val Settings: Settings,
     open val dateTimeProvider: DateTimeProvider,
 ) {
 
@@ -25,21 +25,16 @@ abstract class ExternalHolidayRepository(
 
     protected fun prepareDayOffDomainModel(
         name: String,
-        dayOffDay: Int,
-        dayOffMonth: Month,
-        dayOffYear: Int,
+        startDate: LocalDate,
+        finishDate: LocalDate,
         uuid: String? = null,
     ) = DayOff(
         null,
         uuid,
         DayOffType.PublicHoliday,
         name,
-        dayOffDay,
-        dayOffMonth,
-        dayOffYear,
-        dayOffDay,
-        dayOffMonth,
-        dayOffYear,
+        startDate,
+        finishDate,
         DayOffSource.ExternalAPI
     )
 }
