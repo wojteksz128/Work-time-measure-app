@@ -8,6 +8,7 @@ import net.wojteksz128.worktimemeasureapp.model.ComeEvent
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import org.threeten.bp.Duration
 import org.threeten.bp.Instant
+import org.threeten.bp.ZoneId
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.abs
@@ -66,3 +67,6 @@ class DateTimeUtils (
 
 operator fun Date.minus(other: Date): Date =
     Date(this.time - other.time)
+
+fun toLocalDate(date: Date) =
+    Instant.ofEpochMilli(date.time).atZone(ZoneId.systemDefault()).toLocalDate()

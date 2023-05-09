@@ -12,12 +12,8 @@ class DayOffMapper @Inject constructor() : DomainModelMapper<DayOff, DayOffDto> 
             uuid = domainModel.uuid,
             type = domainModel.type,
             name = domainModel.name,
-            startDay = domainModel.startDay,
-            startMonth = domainModel.startMonth,
-            startYear = domainModel.startYear,
-            finishDay = domainModel.finishDay,
-            finishMonth = domainModel.finishMonth,
-            finishYear = domainModel.finishYear,
+            startDate = domainModel.startDate,
+            finishDate = domainModel.finishDate,
             source = domainModel.source
         )
 
@@ -27,12 +23,8 @@ class DayOffMapper @Inject constructor() : DomainModelMapper<DayOff, DayOffDto> 
             uuid = entity.uuid,
             type = entity.type,
             name = entity.name,
-            startDay = entity.startDay,
-            startMonth = entity.startMonth,
-            startYear = entity.startYear,
-            finishDay = entity.finishDay,
-            finishMonth = entity.finishMonth,
-            finishYear = entity.finishYear,
+            startDate = entity.startDate,
+            finishDate = entity.finishDate,
             source = entity.source
         )
 

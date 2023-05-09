@@ -2,6 +2,7 @@ package net.wojteksz128.worktimemeasureapp
 
 import android.app.Activity
 import android.app.Application
+import com.jakewharton.threetenabp.AndroidThreeTen
 import dagger.hilt.android.HiltAndroidApp
 import net.wojteksz128.worktimemeasureapp.notification.NotificationUtils
 import net.wojteksz128.worktimemeasureapp.settings.InitialSettingsPreparer
@@ -20,6 +21,7 @@ class WorkTimeMeasureApp : Application() {
     override fun onCreate() {
         super.onCreate()
 
+        AndroidThreeTen.init(this)
         initialSettingsPreparer.initSettings()
         notificationUtils.initNotifications()
     }

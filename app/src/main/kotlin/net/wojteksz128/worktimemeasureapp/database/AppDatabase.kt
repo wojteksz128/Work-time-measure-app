@@ -6,7 +6,7 @@ import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventDao
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventDto
-import net.wojteksz128.worktimemeasureapp.database.converter.DateConverter
+import net.wojteksz128.worktimemeasureapp.database.converter.DateConverters
 import net.wojteksz128.worktimemeasureapp.database.dayOff.DayOffDao
 import net.wojteksz128.worktimemeasureapp.database.dayOff.DayOffDto
 import net.wojteksz128.worktimemeasureapp.database.migration.*
@@ -20,9 +20,9 @@ import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
         WorkDayDto::class,
         DayOffDto::class
     ],
-    version = 9
+    version = 10
 )
-@TypeConverters(DateConverter::class)
+@TypeConverters(DateConverters::class)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun comeEventDao(): ComeEventDao
@@ -43,7 +43,8 @@ abstract class AppDatabase : RoomDatabase() {
                 MigrateFrom5To6(),
                 MigrateFrom6To7(),
                 MigrateFrom7To8(),
-                MigrateFrom8To9()
+                MigrateFrom8To9(),
+                MigrateFrom9To10(),
             )
     }
 }
