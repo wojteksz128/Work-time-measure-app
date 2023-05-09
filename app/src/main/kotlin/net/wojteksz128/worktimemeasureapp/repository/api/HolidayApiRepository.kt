@@ -64,4 +64,8 @@ class HolidayApiRepository(
         val errorMessage = bodyError ?: errorBody?.error ?: "Unexpected error"
         return ApiErrorResponse(errorMessage, errorMessage)
     }
+
+    override fun isTheSameDayOffEntry(originalDayOff: DayOff, otherDayOff: DayOff): Boolean =
+        super.isTheSameDayOffEntry(originalDayOff, otherDayOff)
+                || originalDayOff.uuid == otherDayOff.uuid
 }

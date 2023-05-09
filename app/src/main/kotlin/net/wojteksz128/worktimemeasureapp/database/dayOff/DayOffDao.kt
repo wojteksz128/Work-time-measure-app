@@ -27,8 +27,12 @@ interface DayOffDao : EntityDao<DayOffDto> {
     suspend fun findById(id: Long): DayOffDto
 
     @Transaction
-    @Query("SELECT * FROM day_off WHERE :year BETWEEN startDate AND finishDate")
-    suspend fun findByDate(year: LocalDate): DayOffDto?
+    @Query("SELECT * FROM day_off WHERE :localDate BETWEEN startDate AND finishDate")
+    suspend fun findByDate(localDate: LocalDate): DayOffDto?
+
+    @Transaction
+    @Query("SELECT * FROM day_off WHERE :startDate BETWEEN startDate AND finishDate OR :finishDate BETWEEN startDate AND finishDate OR startDate BETWEEN :startDate AND :finishDate")
+    suspend fun findAllInDateRange(startDate: LocalDate, finishDate: LocalDate): List<DayOffDto>
 
     @Insert
     override suspend fun insert(entity: DayOffDto)

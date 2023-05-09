@@ -1,5 +1,6 @@
 package net.wojteksz128.worktimemeasureapp.module.dayOff
 
+import android.util.Log
 import net.wojteksz128.worktimemeasureapp.api.HolidayProvider
 import net.wojteksz128.worktimemeasureapp.model.DayOff
 import net.wojteksz128.worktimemeasureapp.model.fieldType.DayType
@@ -39,9 +40,32 @@ class DayOffService(
     }
 
     suspend fun syncHolidaysWith(holidayProvider: HolidayProvider) {
-        externalHolidayRepositoriesFacade.forAPI(holidayProvider)
-            .getHolidays().forEach {
-                dayOffRepository.save(it)
+        val holidayRepository = externalHolidayRepositoriesFacade.forAPI(holidayProvider)
+        holidayRepository.getHolidays()
+            .forEach { newDayOff ->
+                dayOffRepository.getSimilarDaysOff(newDayOff)
+                    .filter { holidayRepository.isTheSameDayOffEntry(it, newDayOff) }
+                    .forEach { dayOffRepository.delete(it) }
+                dayOffRepository.save(newDayOff)
+            }
+        removeDuplicates()
+    }
+
+    private suspend fun removeDuplicates() {
+        dayOffRepository.getAll()
+            .groupBy { "${it.type}_${it.startDate}_${it.finishDate}" }
+            .map {
+                Log.d(
+                    classTag,
+                    "removeDuplicates: Found group ${it.key} with ${it.value.size} element${if (it.value.size > 1) "s" else ""}"
+                )
+                Pair(it.value.last(), it.value.dropLast(1))
+            }
+            .forEach { daysOffGroup ->
+                daysOffGroup.second.forEach {
+                    Log.d(classTag, "removeDuplicates: Remove element:\n $it")
+                    dayOffRepository.delete(it)
+                }
             }
     }
 }
