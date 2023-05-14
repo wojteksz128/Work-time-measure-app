@@ -175,13 +175,11 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
 
     private inner class CurrentDayObserver : Observer<WorkDay> {
 
-        override fun onChanged(workDayEvents: WorkDay?) {
+        override fun onChanged(value: WorkDay) {
             viewModel.workTimeData.value?.updateData()
 
-            workDayEvents?.let { dayEvents ->
-                comeEventsAdapter.submitList(dayEvents.events)
-                runTimerIfRequiredFor(dayEvents)
-            }
+            comeEventsAdapter.submitList(value.events)
+            runTimerIfRequiredFor(value)
         }
 
     }
