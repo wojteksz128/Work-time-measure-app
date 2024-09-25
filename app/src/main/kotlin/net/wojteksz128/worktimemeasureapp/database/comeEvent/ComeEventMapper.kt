@@ -11,7 +11,7 @@ class ComeEventMapper @Inject constructor() : DomainModelMapper<ComeEvent, ComeE
             id = domainModel.id,
             startDate = domainModel.startDate,
             endDate = domainModel.endDate,
-            durationLong = domainModel.durationMillis,
+            duration = domainModel.duration,
             workDayId = domainModel.workDayId
         )
 
@@ -20,7 +20,7 @@ class ComeEventMapper @Inject constructor() : DomainModelMapper<ComeEvent, ComeE
             id = entity.id,
             startDate = entity.startDate,
             endDate = entity.endDate,
-            durationMillis = entity.durationLong,
+            duration = entity.duration,
             workDayId = entity.workDayId
         )
 

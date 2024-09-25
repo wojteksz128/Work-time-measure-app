@@ -10,8 +10,7 @@ import net.wojteksz128.worktimemeasureapp.repository.WorkDayRepository
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
-import net.wojteksz128.worktimemeasureapp.util.datetime.toDate
-import java.util.Date
+import org.threeten.bp.ZonedDateTime
 
 class ComeEventUtils(
     private val comeEventRepository: ComeEventRepository,
@@ -23,28 +22,30 @@ class ComeEventUtils(
     // TODO: 07.07.2019 Move to separate action object.
     suspend fun registerNewEvent(): ComeEventType = withContext(Dispatchers.IO) {
         val registerDate = dateTimeProvider.currentTime
-        val registerJavaDate = registerDate.toDate()
         val workDay = workDayRepository.getCurrentWorkDay(registerDate)
         val comeEvent = workDay.events.lastOrNull { !it.isEnded }
 
         if (comeEvent != null) {
-            assignEndDateIntoCurrentEvent(comeEvent, registerJavaDate)
+            assignEndDateIntoCurrentEvent(comeEvent, registerDate)
         } else {
-            createNewEvent(workDay, registerJavaDate)
+            createNewEvent(workDay, registerDate)
         }
     }
 
     private suspend fun assignEndDateIntoCurrentEvent(
         comeEvent: ComeEvent,
-        registerDate: Date,
+        registerDate: ZonedDateTime,
     ): ComeEventType {
         comeEvent.endDate = registerDate
-        comeEvent.durationMillis = dateTimeUtils.calculateDuration(comeEvent).toMillis()
+        comeEvent.duration = dateTimeUtils.calculateDuration(comeEvent)
         comeEventRepository.save(comeEvent)
         return ComeEventType.COME_OUT
     }
 
-    private suspend fun createNewEvent(workDay: WorkDay, registerDate: Date): ComeEventType {
+    private suspend fun createNewEvent(
+        workDay: WorkDay,
+        registerDate: ZonedDateTime,
+    ): ComeEventType {
         val comeEvent = ComeEvent(registerDate, workDay)
         comeEventRepository.save(comeEvent)
         return ComeEventType.COME_IN

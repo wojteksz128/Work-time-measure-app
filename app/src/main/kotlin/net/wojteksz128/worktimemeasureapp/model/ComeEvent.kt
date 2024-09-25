@@ -1,22 +1,28 @@
 package net.wojteksz128.worktimemeasureapp.model
 
-import net.wojteksz128.worktimemeasureapp.util.datetime.minus
-import java.util.*
+import org.threeten.bp.Duration
+import org.threeten.bp.ZonedDateTime
 
 data class ComeEvent(
     val id: Long?,
-    var startDate: Date,
-    var endDate: Date?,
-    var durationMillis: Long?,
+    var startDate: ZonedDateTime,
+    var endDate: ZonedDateTime?,
+    var duration: Duration?,
     val workDayId: Long,
 ) : DomainModel {
     val isEnded: Boolean
         get() = endDate != null
 
-    constructor(startDate: Date, endDate: Date?, workDayId: Long)
-            : this(null, startDate, endDate, endDate?.let { (it - startDate).time }, workDayId)
+    constructor(startDate: ZonedDateTime, endDate: ZonedDateTime?, workDayId: Long)
+            : this(
+        null,
+        startDate,
+        endDate,
+        endDate?.let { Duration.between(startDate, it) },
+        workDayId
+    )
 
-    constructor(startDate: Date, workDay: WorkDay)
+    constructor(startDate: ZonedDateTime, workDay: WorkDay)
             : this(startDate, null, workDay.id!!)
 
     override fun equals(other: Any?): Boolean {

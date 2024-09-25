@@ -1,6 +1,7 @@
 package net.wojteksz128.worktimemeasureapp.database.converter
 
 import androidx.room.TypeConverter
+import org.threeten.bp.Duration
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalDateTime
@@ -43,4 +44,11 @@ class DateConverters {
 
     @TypeConverter
     fun toZonedDateTimeString(date: ZonedDateTime?): String? = date?.toString()
+
+    @TypeConverter
+    fun toDuration(durationString: String?): Duration? =
+        durationString?.let { Duration.parse(durationString) }
+
+    @TypeConverter
+    fun toDurationString(duration: Duration?): String? = duration?.toString()
 }

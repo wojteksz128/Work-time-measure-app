@@ -12,6 +12,7 @@ import org.threeten.bp.LocalDate
 import org.threeten.bp.ZoneId
 import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.format.DateTimeFormatter
+import org.threeten.bp.jdk8.DefaultInterfaceTemporal
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.TimeZone
@@ -25,34 +26,32 @@ class DateTimeUtils (
     fun formatDate(format: String, date: Date?) =
         date?.let { formatDate(format, date, TimeZone.getDefault()) } ?: ""
 
-    fun formatDate(format: String, date: Date, timeZone: TimeZone = TimeZone.getDefault()): String {
+    fun formatDate(format: String, date: DefaultInterfaceTemporal?) =
+        date?.let { formatDate(format, date, ZoneId.systemDefault()) }
+
+    private fun formatDate(
+        format: String,
+        date: Date,
+        timeZone: TimeZone = TimeZone.getDefault(),
+    ): String {
         @SuppressLint("SimpleDateFormat") val formatter = SimpleDateFormat(format)
         formatter.timeZone = timeZone
         return formatter.format(date)
     }
 
-    fun formatDate(format: String, date: LocalDate?) =
-        date?.let { formatDate(format, date, ZoneId.systemDefault()) }
-
     private fun formatDate(
         format: String,
-        date: LocalDate,
+        date: DefaultInterfaceTemporal,
         timeZone: ZoneId = ZoneId.systemDefault(),
     ): String {
         val formatter = DateTimeFormatter.ofPattern(format).withZone(timeZone)
         return formatter.format(date)
     }
 
-    fun calculateDuration(comeEvent: ComeEvent): Duration {
-        val startTime = comeEvent.startDate.time
-        val endTime =
-            if (comeEvent.endDate != null) comeEvent.endDate!!.time else dateTimeProvider.currentTime.toInstant()
-                .toEpochMilli()
-        return Duration.between(
-            Instant.ofEpochMilli(startTime),
-            Instant.ofEpochMilli(endTime + 1)
-        ) // +1, but exclusive duration
-    }
+    fun calculateDuration(comeEvent: ComeEvent): Duration = Duration.between(
+        comeEvent.startDate,
+        comeEvent.endDate ?: dateTimeProvider.currentTime
+    )
 
     fun mergeComeEventsDuration(workDay: WorkDay?): Duration = workDay?.events?.map { it.duration }
         ?.fold(Duration.ZERO) { sum, element -> sum + element } ?: Duration.ZERO
@@ -78,16 +77,14 @@ class DateTimeUtils (
     }
 
     val ComeEvent.duration: Duration
-        get() = Duration.between(
-            Instant.ofEpochMilli(startDate.time),
-            endDate?.let { Instant.ofEpochMilli(it.time) } ?: dateTimeProvider.currentTime)
+        get() = Duration.between(startDate, endDate ?: dateTimeProvider.currentTime)
 
 }
 
 operator fun Date.minus(other: Date): Date =
     Date(this.time - other.time)
 
-fun toLocalDate(date: Date) =
+fun toLocalDate(date: Date): LocalDate =
     Instant.ofEpochMilli(date.time).atZone(ZoneId.systemDefault()).toLocalDate()
 
 fun ZonedDateTime.toDate(): Date = Date(this.toInstant().toEpochMilli())

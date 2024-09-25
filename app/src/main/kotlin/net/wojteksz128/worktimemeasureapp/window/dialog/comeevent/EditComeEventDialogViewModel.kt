@@ -7,8 +7,11 @@ import androidx.lifecycle.MutableLiveData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
+import net.wojteksz128.worktimemeasureapp.util.datetime.toDate
+import net.wojteksz128.worktimemeasureapp.util.datetime.toZonedDateTime
 import net.wojteksz128.worktimemeasureapp.util.livedata.SemaphoreLiveData
-import java.util.*
+import org.threeten.bp.Duration
+import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,17 +35,22 @@ class EditComeEventDialogViewModel @Inject constructor(
                     "\told finishTime = ${finishTime.value}"
         )
         comeEventToModify = comeEvent
-        startTime.value = comeEvent.startDate
+        startTime.value = comeEvent.startDate.toDate()
         startTimeInEditMode.value = false
-        finishTime.value = comeEvent.endDate
+        finishTime.value = comeEvent.endDate?.toDate()
         finishTimeInEditMode.value = false
     }
 
     fun prepareModified(): ComeEvent {
         return comeEventToModify.copy(
-            startDate = startTime.value!!,
-            endDate = finishTime.value,
-            durationMillis = finishTime.value?.let { it.time - startTime.value!!.time })
+            startDate = startTime.value!!.toZonedDateTime(),
+            endDate = finishTime.value?.toZonedDateTime(),
+            duration = finishTime.value?.let {
+                Duration.between(
+                    it.toZonedDateTime(),
+                    startTime.value!!.toZonedDateTime()
+                )
+            })
     }
 }
 
