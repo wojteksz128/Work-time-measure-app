@@ -48,11 +48,6 @@ class DateTimeUtils (
         return formatter.format(date)
     }
 
-    fun calculateDuration(comeEvent: ComeEvent): Duration = Duration.between(
-        comeEvent.startDate,
-        comeEvent.endDate ?: dateTimeProvider.currentTime
-    )
-
     fun mergeComeEventsDuration(workDay: WorkDay?): Duration = workDay?.events?.map { it.duration }
         ?.fold(Duration.ZERO) { sum, element -> sum + element } ?: Duration.ZERO
 

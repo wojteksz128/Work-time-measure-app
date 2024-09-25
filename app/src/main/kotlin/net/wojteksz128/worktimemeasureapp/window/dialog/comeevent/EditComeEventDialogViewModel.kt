@@ -10,7 +10,6 @@ import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.datetime.toDate
 import net.wojteksz128.worktimemeasureapp.util.datetime.toZonedDateTime
 import net.wojteksz128.worktimemeasureapp.util.livedata.SemaphoreLiveData
-import org.threeten.bp.Duration
 import java.util.Date
 import javax.inject.Inject
 
@@ -44,13 +43,8 @@ class EditComeEventDialogViewModel @Inject constructor(
     fun prepareModified(): ComeEvent {
         return comeEventToModify.copy(
             startDate = startTime.value!!.toZonedDateTime(),
-            endDate = finishTime.value?.toZonedDateTime(),
-            duration = finishTime.value?.let {
-                Duration.between(
-                    it.toZonedDateTime(),
-                    startTime.value!!.toZonedDateTime()
-                )
-            })
+            endDate = finishTime.value?.toZonedDateTime()
+        )
     }
 }
 

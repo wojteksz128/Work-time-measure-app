@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 11,
-    "identityHash": "fadea03ce3794ddde2fb24797c730073",
+    "identityHash": "645d0283a9808f51c989160c1a2aa9d4",
     "entities": [
       {
         "tableName": "come_event",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `startDate` TEXT NOT NULL, `endDate` TEXT, `duration` TEXT, `workDayId` INTEGER NOT NULL, FOREIGN KEY(`workDayId`) REFERENCES `work_day`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `startDate` TEXT NOT NULL, `endDate` TEXT, `workDayId` INTEGER NOT NULL, FOREIGN KEY(`workDayId`) REFERENCES `work_day`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -23,12 +23,6 @@
           {
             "fieldPath": "endDate",
             "columnName": "endDate",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "duration",
-            "columnName": "duration",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -168,7 +162,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'fadea03ce3794ddde2fb24797c730073')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '645d0283a9808f51c989160c1a2aa9d4')"
     ]
   }
 }

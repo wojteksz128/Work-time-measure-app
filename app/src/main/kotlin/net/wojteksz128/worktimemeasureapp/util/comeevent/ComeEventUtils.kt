@@ -9,13 +9,11 @@ import net.wojteksz128.worktimemeasureapp.repository.ComeEventRepository
 import net.wojteksz128.worktimemeasureapp.repository.WorkDayRepository
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
-import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import org.threeten.bp.ZonedDateTime
 
 class ComeEventUtils(
     private val comeEventRepository: ComeEventRepository,
     private val workDayRepository: WorkDayRepository,
-    private val dateTimeUtils: DateTimeUtils,
     private val dateTimeProvider: DateTimeProvider
 ): ClassTagAware {
 
@@ -37,7 +35,6 @@ class ComeEventUtils(
         registerDate: ZonedDateTime,
     ): ComeEventType {
         comeEvent.endDate = registerDate
-        comeEvent.duration = dateTimeUtils.calculateDuration(comeEvent)
         comeEventRepository.save(comeEvent)
         return ComeEventType.COME_OUT
     }

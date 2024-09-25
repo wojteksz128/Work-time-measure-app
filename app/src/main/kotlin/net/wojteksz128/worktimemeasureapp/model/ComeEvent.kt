@@ -1,13 +1,11 @@
 package net.wojteksz128.worktimemeasureapp.model
 
-import org.threeten.bp.Duration
 import org.threeten.bp.ZonedDateTime
 
 data class ComeEvent(
     val id: Long?,
     var startDate: ZonedDateTime,
     var endDate: ZonedDateTime?,
-    var duration: Duration?,
     val workDayId: Long,
 ) : DomainModel {
     val isEnded: Boolean
@@ -18,7 +16,6 @@ data class ComeEvent(
         null,
         startDate,
         endDate,
-        endDate?.let { Duration.between(startDate, it) },
         workDayId
     )
 

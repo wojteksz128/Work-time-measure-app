@@ -7,7 +7,6 @@ import androidx.room.ForeignKey.CASCADE
 import androidx.room.PrimaryKey
 import net.wojteksz128.worktimemeasureapp.database.EntityDto
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayDto
-import org.threeten.bp.Duration
 import org.threeten.bp.ZonedDateTime
 
 @Entity(
@@ -31,9 +30,6 @@ data class ComeEventDto(
 
     @ColumnInfo(name = "endDate")
     var endDate: ZonedDateTime?,
-
-    @ColumnInfo(name = "duration")
-    var duration: Duration?,
 
     @ColumnInfo(
         name = "workDayId",
