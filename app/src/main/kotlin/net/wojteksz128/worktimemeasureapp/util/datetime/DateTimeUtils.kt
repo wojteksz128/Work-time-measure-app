@@ -78,7 +78,9 @@ class DateTimeUtils (
     }
 
     val ComeEvent.duration: Duration
-        get() = Duration.between(Instant.ofEpochMilli(startDate.time), dateTimeProvider.currentTime)
+        get() = Duration.between(
+            Instant.ofEpochMilli(startDate.time),
+            endDate?.let { Instant.ofEpochMilli(it.time) } ?: dateTimeProvider.currentTime)
 
 }
 
