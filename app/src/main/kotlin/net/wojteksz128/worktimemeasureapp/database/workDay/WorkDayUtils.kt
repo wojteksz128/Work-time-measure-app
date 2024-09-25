@@ -8,5 +8,5 @@ object WorkDayUtils {
     fun calculateBeginSlot(date: ZonedDateTime): ZonedDateTime = date.truncatedTo(ChronoUnit.DAYS)
 
     fun calculateEndSlot(date: ZonedDateTime): ZonedDateTime =
-        date.truncatedTo(ChronoUnit.DAYS).plusDays(1).minusNanos(1)
+        date.truncatedTo(ChronoUnit.DAYS).plusDays(1).minus(1, ChronoUnit.MILLIS)
 }
