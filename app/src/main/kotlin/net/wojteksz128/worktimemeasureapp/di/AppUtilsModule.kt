@@ -47,7 +47,7 @@ object AppUtilsModule {
     fun provideDayOffService(
         dayOffRepository: DayOffRepository,
         externalHolidayRepositoriesFacade: ExternalHolidayRepositoriesFacade,
-        Settings: Settings,
+        @Suppress("LocalVariableName") Settings: Settings,
     ): DayOffService {
         return DayOffService(dayOffRepository, externalHolidayRepositoriesFacade, Settings)
     }
@@ -57,13 +57,11 @@ object AppUtilsModule {
     fun provideComeEventUtils(
         comeEventRepository: ComeEventRepository,
         workDayRepository: WorkDayRepository,
-        dateTimeUtils: DateTimeUtils,
         dateTimeProvider: DateTimeProvider,
     ): ComeEventUtils {
         return ComeEventUtils(
             comeEventRepository,
             workDayRepository,
-            dateTimeUtils,
             dateTimeProvider)
     }
 
@@ -81,6 +79,6 @@ object AppUtilsModule {
     @Singleton
     @Provides
     fun provideInitialSettingsPreparer(
-        Settings: Settings,
+        @Suppress("LocalVariableName") Settings: Settings,
     ): InitialSettingsPreparer = InitialSettingsPreparer(Settings)
 }

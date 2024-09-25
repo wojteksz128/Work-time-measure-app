@@ -30,29 +30,29 @@ class MigrateFrom10To11 : Migration(10, 11), ClassTagAware {
         database.execSQL("ALTER TABLE `work_day` RENAME TO `_work_day_old`")
         database.execSQL(
             """
-                    CREATE TABLE IF NOT EXISTS `work_day` (
-                        `id` INTEGER PRIMARY KEY AUTOINCREMENT, 
-                        `date` TEXT NOT NULL, 
-                        `beginSlot` TEXT NOT NULL, 
-                        `endSlot` TEXT NOT NULL
-                    )
-                """.trimIndent()
+                CREATE TABLE IF NOT EXISTS `work_day` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT, 
+                    `date` TEXT NOT NULL, 
+                    `beginSlot` TEXT NOT NULL, 
+                    `endSlot` TEXT NOT NULL
+                )
+            """.trimIndent()
         )
         database.execSQL(
             """
-                    INSERT INTO `work_day` (
-                        `id`, 
-                        `date`, 
-                        `beginSlot`, 
-                        `endSlot`
-                    ) 
-                    SELECT 
-                        `id`, 
-                        strftime('%Y-%m-%d', `date`/1000.0, 'unixepoch'),
-                        strftime('%Y-%m-%dT%H:%M:%f${formattedZoneId}', `beginSlot`/1000.0, 'unixepoch'), 
-                        strftime('%Y-%m-%dT%H:%M:%f${formattedZoneId}', `endSlot`/1000.0, 'unixepoch') 
-                    FROM `_work_day_old`
-                """.trimIndent()
+                INSERT INTO `work_day` (
+                    `id`, 
+                    `date`, 
+                    `beginSlot`, 
+                    `endSlot`
+                ) 
+                SELECT 
+                    `id`, 
+                    strftime('%Y-%m-%d', `date`/1000.0, 'unixepoch'),
+                    strftime('%Y-%m-%dT%H:%M:%f${formattedZoneId}', `beginSlot`/1000.0, 'unixepoch'), 
+                    strftime('%Y-%m-%dT%H:%M:%f${formattedZoneId}', `endSlot`/1000.0, 'unixepoch') 
+                FROM `_work_day_old`
+            """.trimIndent()
         )
     }
 
@@ -62,33 +62,31 @@ class MigrateFrom10To11 : Migration(10, 11), ClassTagAware {
         database.execSQL("DROP INDEX `index_come_event_workDayId`")
         database.execSQL(
             """
-                    CREATE TABLE IF NOT EXISTS `come_event` (
-                        `id` INTEGER PRIMARY KEY AUTOINCREMENT, 
-                        `startDate` TEXT NOT NULL, 
-                        `endDate` TEXT,
-                        `duration` INTEGER,
-                        `workDayId` INTEGER NOT NULL, 
-                        FOREIGN KEY(`workDayId`) REFERENCES `work_day`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE
-                )""".trimIndent()
+                CREATE TABLE IF NOT EXISTS `come_event` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT, 
+                    `startDate` TEXT NOT NULL, 
+                    `endDate` TEXT,
+                    `workDayId` INTEGER NOT NULL, 
+                    FOREIGN KEY(`workDayId`) REFERENCES `work_day`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE
+                )
+            """.trimIndent()
         )
         database.execSQL("CREATE INDEX `index_come_event_workDayId` ON `come_event` (`workDayId`)")
         database.execSQL(
             """
-                    INSERT INTO `come_event` (
-                        `id`,
-                        `startDate`,
-                        `endDate`,
-                        `duration`,
-                        `workDayId`
-                    ) 
-                    SELECT 
-                        `id`, 
-                        strftime('%Y-%m-%dT%H:%M:%f', `startDate`/1000.0, 'unixepoch'), 
-                        strftime('%Y-%m-%dT%H:%M:%f', `endDate`/1000.0, 'unixepoch'), 
-                        `duration`, 
-                        `workDayId` 
-                    FROM `_come_event_old`
-                """.trimIndent()
+                INSERT INTO `come_event` (
+                    `id`,
+                    `startDate`,
+                    `endDate`,
+                    `workDayId`
+                ) 
+                SELECT 
+                    `id`, 
+                    strftime('%Y-%m-%dT%H:%M:%f${formattedZoneId}', `startDate`/1000.0, 'unixepoch'), 
+                    strftime('%Y-%m-%dT%H:%M:%f${formattedZoneId}', `endDate`/1000.0, 'unixepoch'), 
+                    `workDayId` 
+                FROM `_come_event_old`
+            """.trimIndent()
         )
     }
 
