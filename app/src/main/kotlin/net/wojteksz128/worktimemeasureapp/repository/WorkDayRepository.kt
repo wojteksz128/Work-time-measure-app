@@ -24,20 +24,9 @@ class WorkDayRepository (
             .mapByPage { workDayWithEventsMapper.mapToDomainModelList(it) }
             .asPagingSourceFactory(Dispatchers.IO)
 
-    suspend fun getCurrentWorkDay(
-        currentDate: ZonedDateTime,
-        createIfNotExists: Boolean = true,
-    ): WorkDay {
+    suspend fun getCurrentWorkDay(currentDate: ZonedDateTime): WorkDay? {
         val entity = workDayDao.findByIntervalContains(currentDate)
-        val workDay = entity?.let { workDayWithEventsMapper.mapToDomainModel(entity) }
-            ?: if (createIfNotExists) {
-                save(WorkDay(currentDate))
-                return getCurrentWorkDay(currentDate, false)
-            } else {
-                throw WorkDayNotExistsException(currentDate)
-            }
-
-        return workDay
+        return entity?.let { workDayWithEventsMapper.mapToDomainModel(entity) }
     }
 
     // TODO: 09.10.2021 Czy oddzielne metody LiveData i normalne jest potrzebne?

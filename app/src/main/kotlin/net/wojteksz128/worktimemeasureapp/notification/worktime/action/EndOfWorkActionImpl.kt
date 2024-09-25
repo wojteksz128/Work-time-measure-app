@@ -14,7 +14,6 @@ import net.wojteksz128.worktimemeasureapp.notification.worktime.EndOfWorkTimeNot
 import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeInProgressNotification
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.comeevent.ComeEventUtils
-import javax.inject.Inject
 
 internal class EndOfWorkActionImpl (
     private val comeEventUtils: ComeEventUtils
