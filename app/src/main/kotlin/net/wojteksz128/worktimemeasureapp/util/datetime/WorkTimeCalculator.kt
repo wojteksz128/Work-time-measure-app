@@ -3,16 +3,20 @@ package net.wojteksz128.worktimemeasureapp.util.datetime
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import org.threeten.bp.Duration
-import java.util.*
+import org.threeten.bp.LocalDate
 import javax.inject.Inject
 
 class WorkTimeCalculator @Inject constructor(
     private val dateTimeUtils: DateTimeUtils,
-    private val Settings: Settings
+    @Suppress("PrivatePropertyName") private val Settings: Settings,
 ){
 
-    fun calculateCurrentWorkTime(currentDay: WorkDay?, weekWorkDays: List<WorkDay>, weekRange: ClosedRange<Date>): WorkTimeResult {
-        val currentDayDate = prepareWorkDay(currentDay) ?: Date()
+    fun calculateCurrentWorkTime(
+        currentDay: WorkDay?,
+        weekWorkDays: List<WorkDay>,
+        weekRange: ClosedRange<LocalDate>,
+    ): WorkTimeResult {
+        val currentDayDate = prepareWorkDay(currentDay) ?: LocalDate.now()
         if (weekWorkDays.any { it.date !in weekRange })
             throw IllegalStateException("All week work days must be in week range.")
 
@@ -29,7 +33,7 @@ class WorkTimeCalculator @Inject constructor(
             )
     }
 
-    private fun prepareWorkDay(workDay: WorkDay?): Date? = workDay?.date
+    private fun prepareWorkDay(workDay: WorkDay?): LocalDate? = workDay?.date
 
     private fun calculateCurrentWeekWorkTime(weekWorkDays: Collection<WorkDay>) =
         weekWorkDays.map { dateTimeUtils.mergeComeEventsDuration(it) }
@@ -52,12 +56,12 @@ class WorkTimeCalculator @Inject constructor(
 
 
     data class WorkTimeResult(
-        val weekRange: ClosedRange<Date>,
-        val currentDay: Date,
+        val weekRange: ClosedRange<LocalDate>,
+        val currentDay: LocalDate,
         val weekCurrentWorkTimeDuration: Duration,
         val weekExpectedWorkTimeDuration: Duration,
         val currentDayWorkTimeDuration: Duration,
-        val currentDayExpectedWorkTimeDuration: Duration
+        val currentDayExpectedWorkTimeDuration: Duration,
     ) {
         val weekRemainingWorkTimeDuration: Duration
             get() = weekExpectedWorkTimeDuration - weekCurrentWorkTimeDuration

@@ -8,9 +8,13 @@ import net.wojteksz128.worktimemeasureapp.model.ComeEvent
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import org.threeten.bp.Duration
 import org.threeten.bp.Instant
+import org.threeten.bp.LocalDate
 import org.threeten.bp.ZoneId
+import org.threeten.bp.ZonedDateTime
+import org.threeten.bp.format.DateTimeFormatter
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.TimeZone
 import kotlin.math.abs
 
 class DateTimeUtils (
@@ -27,10 +31,23 @@ class DateTimeUtils (
         return formatter.format(date)
     }
 
+    fun formatDate(format: String, date: LocalDate?) =
+        date?.let { formatDate(format, date, ZoneId.systemDefault()) }
+
+    private fun formatDate(
+        format: String,
+        date: LocalDate,
+        timeZone: ZoneId = ZoneId.systemDefault(),
+    ): String {
+        val formatter = DateTimeFormatter.ofPattern(format).withZone(timeZone)
+        return formatter.format(date)
+    }
+
     fun calculateDuration(comeEvent: ComeEvent): Duration {
         val startTime = comeEvent.startDate.time
         val endTime =
-            if (comeEvent.endDate != null) comeEvent.endDate!!.time else dateTimeProvider.currentTime.time
+            if (comeEvent.endDate != null) comeEvent.endDate!!.time else dateTimeProvider.currentTime.toInstant()
+                .toEpochMilli()
         return Duration.between(
             Instant.ofEpochMilli(startTime),
             Instant.ofEpochMilli(endTime + 1)
@@ -61,7 +78,9 @@ class DateTimeUtils (
     }
 
     val ComeEvent.duration: Duration
-        get() = Duration.ofMillis(((endDate ?: dateTimeProvider.currentTime) - startDate).time)
+        get() = Duration.between(
+            Instant.ofEpochMilli(startDate.time),
+            endDate?.let { Instant.ofEpochMilli(it.time) } ?: dateTimeProvider.currentTime)
 
 }
 
@@ -70,3 +89,8 @@ operator fun Date.minus(other: Date): Date =
 
 fun toLocalDate(date: Date) =
     Instant.ofEpochMilli(date.time).atZone(ZoneId.systemDefault()).toLocalDate()
+
+fun ZonedDateTime.toDate(): Date = Date(this.toInstant().toEpochMilli())
+
+fun Date.toZonedDateTime(): ZonedDateTime =
+    Instant.ofEpochMilli(this.time).atZone(ZoneId.systemDefault())

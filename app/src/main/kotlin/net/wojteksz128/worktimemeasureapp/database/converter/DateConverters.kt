@@ -5,6 +5,7 @@ import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.ZoneId
+import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.format.DateTimeFormatter
 import java.util.Date
 
@@ -34,4 +35,12 @@ class DateConverters {
 
     @TypeConverter
     fun toLocalDateString(date: LocalDate?): String? = date?.toString()
+
+    @TypeConverter
+    fun toZonedDateTime(dateString: String?): ZonedDateTime? = dateString?.let {
+        ZonedDateTime.parse(dateString)
+    }
+
+    @TypeConverter
+    fun toZonedDateTimeString(date: ZonedDateTime?): String? = date?.toString()
 }

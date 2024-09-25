@@ -6,18 +6,15 @@ import net.wojteksz128.worktimemeasureapp.database.dayOff.DayOffDao
 import net.wojteksz128.worktimemeasureapp.database.dayOff.DayOffDto
 import net.wojteksz128.worktimemeasureapp.database.dayOff.DayOffMapper
 import net.wojteksz128.worktimemeasureapp.model.DayOff
-import org.threeten.bp.Instant
-import org.threeten.bp.ZoneId
-import java.util.Date
+import org.threeten.bp.ZonedDateTime
 
 class DayOffRepository(
     private val dayOffDao: DayOffDao,
     dayOffMapper: DayOffMapper,
 ) : Repository<DayOff, DayOffDto>(dayOffDao, dayOffMapper) {
 
-    suspend fun getDayOff(date: Date): DayOff? {
-        val localDate =
-            Instant.ofEpochMilli(date.time).atZone(ZoneId.systemDefault()).toLocalDate()!!
+    suspend fun getDayOff(date: ZonedDateTime): DayOff? {
+        val localDate = date.toLocalDate()!!
         val entity = dayOffDao.findByDate(localDate)
         return entity?.let { mapper.mapToDomainModel(it) }
     }

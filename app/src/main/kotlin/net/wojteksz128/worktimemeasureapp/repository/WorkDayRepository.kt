@@ -9,7 +9,8 @@ import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayDto
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayMapper
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayWithEventsMapper
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
-import java.util.*
+import org.threeten.bp.LocalDate
+import org.threeten.bp.ZonedDateTime
 
 class WorkDayRepository (
     private val workDayDao: WorkDayDao,
@@ -23,7 +24,10 @@ class WorkDayRepository (
             .mapByPage { workDayWithEventsMapper.mapToDomainModelList(it) }
             .asPagingSourceFactory(Dispatchers.IO)
 
-    suspend fun getCurrentWorkDay(currentDate: Date, createIfNotExists: Boolean = true): WorkDay {
+    suspend fun getCurrentWorkDay(
+        currentDate: ZonedDateTime,
+        createIfNotExists: Boolean = true,
+    ): WorkDay {
         val entity = workDayDao.findByIntervalContains(currentDate)
         val workDay = entity?.let { workDayWithEventsMapper.mapToDomainModel(entity) }
             ?: if (createIfNotExists) {
@@ -37,7 +41,7 @@ class WorkDayRepository (
     }
 
     // TODO: 09.10.2021 Czy oddzielne metody LiveData i normalne jest potrzebne?
-    fun getCurrentWorkDayInLiveData(currentDate: Date): LiveData<WorkDay?> =
+    fun getCurrentWorkDayInLiveData(currentDate: ZonedDateTime): LiveData<WorkDay?> =
         workDayDao.findByIntervalContainsInLiveData(currentDate)
             .map { workDayWithEventsDto ->
                 workDayWithEventsDto?.let {
@@ -52,7 +56,10 @@ class WorkDayRepository (
             }
         }
 
-    fun getCurrentWeekWorkDaysInLiveData(start: Date, end: Date): LiveData<List<WorkDay>> =
+    fun getCurrentWeekWorkDaysInLiveData(
+        start: LocalDate,
+        end: LocalDate,
+    ): LiveData<List<WorkDay>> =
         workDayDao.findBetweenDates(start, end)
             .map { workDayWithEventsMapper.mapToDomainModelList(it) }
 }

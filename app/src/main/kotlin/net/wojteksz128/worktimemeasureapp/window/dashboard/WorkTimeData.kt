@@ -6,12 +6,17 @@ import net.wojteksz128.worktimemeasureapp.BR
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import net.wojteksz128.worktimemeasureapp.util.datetime.WorkTimeCalculator
 import org.threeten.bp.Duration
-import java.util.*
+import org.threeten.bp.LocalDate
+import java.util.Calendar
+import java.util.Date
 
-class WorkTimeData(start: Date, end: Date, private val workTimeCalculator: WorkTimeCalculator) :
+class WorkTimeData(
+    start: LocalDate,
+    end: LocalDate,
+    private val workTimeCalculator: WorkTimeCalculator,
+) :
     BaseObservable() {
-    @Suppress("unused")
-    val weekRange: ClosedRange<Date> = start..end
+    private val weekRange: ClosedRange<LocalDate> = start..end
 
     @Suppress("RedundantGetter")
     var currentDay: WorkDay? = null
@@ -28,7 +33,7 @@ class WorkTimeData(start: Date, end: Date, private val workTimeCalculator: WorkT
             updateData()
         }
 
-    var currentDayDate: Date? = null
+    var currentDayDate: LocalDate? = null
         @Bindable get
         set(value) {
             field = value
