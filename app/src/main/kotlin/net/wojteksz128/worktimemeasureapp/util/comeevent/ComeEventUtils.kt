@@ -10,7 +10,8 @@ import net.wojteksz128.worktimemeasureapp.repository.WorkDayRepository
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
-import java.util.*
+import net.wojteksz128.worktimemeasureapp.util.datetime.toDate
+import java.util.Date
 
 class ComeEventUtils(
     private val comeEventRepository: ComeEventRepository,
@@ -22,13 +23,14 @@ class ComeEventUtils(
     // TODO: 07.07.2019 Move to separate action object.
     suspend fun registerNewEvent(): ComeEventType = withContext(Dispatchers.IO) {
         val registerDate = dateTimeProvider.currentTime
+        val registerJavaDate = registerDate.toDate()
         val workDay = workDayRepository.getCurrentWorkDay(registerDate)
         val comeEvent = workDay.events.lastOrNull { !it.isEnded }
 
         if (comeEvent != null) {
-            assignEndDateIntoCurrentEvent(comeEvent, registerDate)
+            assignEndDateIntoCurrentEvent(comeEvent, registerJavaDate)
         } else {
-            createNewEvent(workDay, registerDate)
+            createNewEvent(workDay, registerJavaDate)
         }
     }
 

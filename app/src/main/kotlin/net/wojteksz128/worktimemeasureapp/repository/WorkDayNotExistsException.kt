@@ -1,6 +1,6 @@
 package net.wojteksz128.worktimemeasureapp.repository
 
-import java.util.*
+import org.threeten.bp.ZonedDateTime
 
-class WorkDayNotExistsException(currentDate: Date) :
+class WorkDayNotExistsException(currentDate: ZonedDateTime) :
     Exception("Work day for $currentDate not exists")

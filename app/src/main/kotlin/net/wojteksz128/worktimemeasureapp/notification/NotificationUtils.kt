@@ -4,14 +4,17 @@ import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import android.util.Log
-
 import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeNotificationFactory
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.TimerManager
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import net.wojteksz128.worktimemeasureapp.window.dashboard.WorkTimeData
-import java.util.*
+import org.threeten.bp.Instant
+import org.threeten.bp.ZoneId
+import org.threeten.bp.ZonedDateTime
+import java.util.Calendar
+import java.util.Date
 
 class NotificationUtils(
     private val context: Context,
@@ -42,7 +45,14 @@ class NotificationUtils(
         val expectedEndWorkDayTime = workTimeData.expectedEndWorkDayTime ?: Date()
 
         scheduleEndOfWorkTimeNotification(endOfWorkTimeExpired)
-        if (dateTimeProvider.currentTime.before(endOfWorkTimeExpired.time))
+        if (dateTimeProvider.currentTime.isBefore(
+                ZonedDateTime.ofInstant(
+                    Instant.ofEpochMilli(
+                        endOfWorkTimeExpired.timeInMillis
+                    ), ZoneId.systemDefault()
+                )
+            )
+        )
             WorkTimeNotificationFactory.createWorkTimeInProgressNotification(
                 context,
                 expectedEndWorkDayTime,

@@ -2,18 +2,19 @@ package net.wojteksz128.worktimemeasureapp.model
 
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayUtils.calculateBeginSlot
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayUtils.calculateEndSlot
-import java.util.*
+import org.threeten.bp.LocalDate
+import org.threeten.bp.ZonedDateTime
 
 data class WorkDay(
     val id: Long?,
-    var date: Date,
-    var beginSlot: Date,
-    var endSlot: Date,
+    var date: LocalDate,
+    var beginSlot: ZonedDateTime,
+    var endSlot: ZonedDateTime,
     val events: MutableList<ComeEvent> = mutableListOf(), // TODO: 30.09.2021 Change to set?!
 ) : DomainModel {
 
-    constructor(date: Date)
-            : this(null, date, calculateBeginSlot(date), calculateEndSlot(date))
+    constructor(date: ZonedDateTime)
+            : this(null, date.toLocalDate(), calculateBeginSlot(date), calculateEndSlot(date))
 
     fun isAllEventsEnded() = events.all { it.isEnded }
 

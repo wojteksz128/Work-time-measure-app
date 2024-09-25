@@ -6,47 +6,54 @@ import android.util.Log
 import com.medavox.library.mutime.MuTime
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
-import java.util.*
+import org.threeten.bp.Instant
+import org.threeten.bp.LocalDate
+import org.threeten.bp.ZoneId
+import org.threeten.bp.ZonedDateTime
+import org.threeten.bp.temporal.ChronoUnit
+import java.util.Calendar
+import java.util.Date
 import javax.inject.Inject
 
 class DateTimeProvider @Inject constructor(
-    private val Settings: Settings
+    @Suppress("PrivatePropertyName") private val Settings: Settings,
 ) : ClassTagAware {
     private var offset: Long = 0
 
-    val currentTime: Date
-        get() = Date(System.currentTimeMillis() + offset)
+    val currentTime: ZonedDateTime
+        get() = ZonedDateTime.now(ZoneId.systemDefault()).plus(offset, ChronoUnit.MILLIS)
 
     val currentCalendar: Calendar
-        get() = currentCalendarWithoutCorrection.apply { time = currentTime }
+        get() = currentCalendarWithoutCorrection.apply { time = currentTime.toDate() }
 
     val currentCalendarWithoutCorrection: Calendar
         get() = Calendar.getInstance()
 
-    val weekEndDay: Date
+    val weekEndDay: LocalDate
         get() {
             val c = Calendar.getInstance()
-            c.time = weekBeginDay
+            c.time =
+                Date(weekBeginDay.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli())
             c.add(Calendar.WEEK_OF_YEAR, 1)
             c.add(Calendar.MILLISECOND, -1)
-            return c.time
+            return Instant.ofEpochMilli(c.time.time).atZone(ZoneId.systemDefault()).toLocalDate()
         }
 
-    val weekBeginDay: Date
+    val weekBeginDay: LocalDate
         get() {
             val firstWeekDay = Settings.WorkTime.Week.FirstWeekDay.valueNullable
             val c = Calendar.getInstance()
             val currentTime = currentTime
-            c.time = currentTime
+            c.time = currentTime.toDate()
             c.set(Calendar.HOUR_OF_DAY, 0)
             c.clear(Calendar.MINUTE)
             c.clear(Calendar.SECOND)
             c.clear(Calendar.MILLISECOND)
             c.set(Calendar.DAY_OF_WEEK, firstWeekDay ?: Calendar.MONDAY)
-            if (c.time > currentTime)
+            if (c.time > currentTime.toDate())
                 c.add(Calendar.WEEK_OF_YEAR, -1)
 
-            return c.time
+            return Instant.ofEpochMilli(c.time.time).atZone(ZoneId.systemDefault()).toLocalDate()
         }
 
     fun updateOffset(context: Context) {
