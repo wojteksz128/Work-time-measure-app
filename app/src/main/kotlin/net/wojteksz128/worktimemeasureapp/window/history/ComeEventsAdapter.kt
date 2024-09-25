@@ -79,7 +79,6 @@ class ComeEventsAdapter(
         override fun areContentsTheSame(oldItem: ComeEvent, newItem: ComeEvent): Boolean {
             return oldItem.startDate == newItem.startDate &&
                     oldItem.endDate == newItem.endDate &&
-                    oldItem.durationMillis == newItem.durationMillis &&
                     oldItem.workDayId == newItem.workDayId &&
                     oldItem.endDate != null
         }
