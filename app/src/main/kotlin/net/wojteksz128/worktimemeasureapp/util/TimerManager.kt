@@ -21,7 +21,21 @@ class TimerManager(
     fun setAlarm(wakeUpTime: Calendar): Long {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val pendingIntent = getTimerExpiredReceiverPendingIntent(context)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (alarmManager.canScheduleExactAlarms()) {
+                alarmManager.setExactAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    wakeUpTime.timeInMillis,
+                    pendingIntent
+                )
+            } else {
+                alarmManager.setExact(
+                    AlarmManager.RTC_WAKEUP,
+                    wakeUpTime.timeInMillis,
+                    pendingIntent
+                )
+            }
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             alarmManager.setExact(AlarmManager.RTC_WAKEUP, wakeUpTime.timeInMillis, pendingIntent)
         } else {
             alarmManager.set(AlarmManager.RTC_WAKEUP, wakeUpTime.timeInMillis, pendingIntent)
@@ -37,8 +51,8 @@ class TimerManager(
         Settings.Internal.AlarmState.value = AlarmState.NotSet
     }
 
-    private fun getTimerExpiredReceiverPendingIntent(context: Context): PendingIntent? {
+    private fun getTimerExpiredReceiverPendingIntent(context: Context): PendingIntent {
         val intent = Intent(context, TimerExpiredReceiver::class.java)
-        return PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_IMMUTABLE)
+        return PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_IMMUTABLE)!!
     }
 }
