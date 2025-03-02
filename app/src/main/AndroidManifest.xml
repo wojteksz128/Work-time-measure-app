@@ -62,10 +62,8 @@
             android:exported="false" />
 
         <receiver
-            android:name="com.medavox.library.mutime.Persistence"
-            android:exported="false"
-            tools:ignore="Instantiatable"
-            tools:node="merge" />
+            android:name=".util.datetime.RebootReceiver"
+            android:exported="false" />
     </application>
 
     <uses-permission android:name="android.permission.VIBRATE" />

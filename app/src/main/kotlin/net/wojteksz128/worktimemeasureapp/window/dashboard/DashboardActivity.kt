@@ -105,7 +105,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
         viewModel.workDay.value?.let { runTimerIfRequiredFor(it) }
 
         // TODO: 21.09.2021 Przenieś do innego miesca (niezależnego od DashboardActivity)
-        dateTimeProvider.updateOffset(this)
+        dateTimeProvider.updateOffset()
 
         lifecycleScope.launch {
             val dayType = dayOffService.getDayType(dateTimeProvider.currentTime)
