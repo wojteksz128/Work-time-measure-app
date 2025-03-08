@@ -29,9 +29,10 @@ class TimerManager(
                     pendingIntent
                 )
             } else {
-                alarmManager.setExact(
+                alarmManager.setWindow(
                     AlarmManager.RTC_WAKEUP,
                     wakeUpTime.timeInMillis,
+                    1000,
                     pendingIntent
                 )
             }
