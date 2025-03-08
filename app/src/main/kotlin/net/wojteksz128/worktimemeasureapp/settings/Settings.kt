@@ -1,7 +1,16 @@
 package net.wojteksz128.worktimemeasureapp.settings
 
 import net.wojteksz128.worktimemeasureapp.api.HolidayProvider
-import net.wojteksz128.worktimemeasureapp.settings.item.*
+import net.wojteksz128.worktimemeasureapp.settings.item.AlarmStateSettingsItem
+import net.wojteksz128.worktimemeasureapp.settings.item.BooleanSettingsItem
+import net.wojteksz128.worktimemeasureapp.settings.item.DurationSettingsItem
+import net.wojteksz128.worktimemeasureapp.settings.item.EnumSettingsItem
+import net.wojteksz128.worktimemeasureapp.settings.item.InetAddressSettingsItem
+import net.wojteksz128.worktimemeasureapp.settings.item.IntFromStringSettingsItem
+import net.wojteksz128.worktimemeasureapp.settings.item.SettingsItemsAware
+import net.wojteksz128.worktimemeasureapp.settings.item.SettingsNode
+import net.wojteksz128.worktimemeasureapp.settings.item.StringSettingsItem
+import net.wojteksz128.worktimemeasureapp.settings.item.StringsArraySettingsItem
 
 class Settings(
     val Profile: ProfileSettings,
@@ -40,7 +49,7 @@ class Settings(
 
         class TimeSyncSettings(
             val Enabled: BooleanSettingsItem,
-            val ServerAddress: StringSettingsItem,
+            val ServerAddress: InetAddressSettingsItem,
         ) : SettingsNode(Enabled, ServerAddress)
     }
 

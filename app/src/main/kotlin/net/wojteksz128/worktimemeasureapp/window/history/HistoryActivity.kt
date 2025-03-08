@@ -1,6 +1,5 @@
 package net.wojteksz128.worktimemeasureapp.window.history
 
-import android.os.Bundle
 import dagger.hilt.android.AndroidEntryPoint
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.databinding.ActivityHistoryBinding
@@ -31,6 +30,6 @@ class HistoryActivity : BaseActivity<ActivityHistoryBinding>(R.layout.activity_h
         super.onResume()
 
         // TODO: 21.09.2021 Przenieś do innego miesca (niezależnego od HistoryActivity)
-        dateTimeProvider.updateOffset(this)
+        dateTimeProvider.updateOffset()
     }
 }

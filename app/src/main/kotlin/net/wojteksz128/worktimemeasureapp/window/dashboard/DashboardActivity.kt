@@ -105,7 +105,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
         viewModel.workDay.value?.let { runTimerIfRequiredFor(it) }
 
         // TODO: 21.09.2021 Przenieś do innego miesca (niezależnego od DashboardActivity)
-        dateTimeProvider.updateOffset(this)
+        dateTimeProvider.updateOffset()
 
         lifecycleScope.launch {
             val dayType = dayOffService.getDayType(dateTimeProvider.currentTime)
@@ -175,10 +175,11 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
 
     private inner class CurrentDayObserver : Observer<WorkDay> {
 
-        override fun onChanged(workDayEvents: WorkDay?) {
+        @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
+        override fun onChanged(workDayEvents: WorkDay) {
             viewModel.workTimeData.value?.updateData()
 
-            workDayEvents?.let { dayEvents ->
+            workDayEvents.let { dayEvents ->
                 comeEventsAdapter.submitList(dayEvents.events)
                 runTimerIfRequiredFor(dayEvents)
             }

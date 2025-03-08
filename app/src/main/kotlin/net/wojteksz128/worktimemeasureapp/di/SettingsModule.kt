@@ -9,7 +9,14 @@ import dagger.hilt.components.SingletonComponent
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.api.HolidayProvider
 import net.wojteksz128.worktimemeasureapp.settings.Settings
-import net.wojteksz128.worktimemeasureapp.settings.item.*
+import net.wojteksz128.worktimemeasureapp.settings.item.AlarmStateSettingsItem
+import net.wojteksz128.worktimemeasureapp.settings.item.BooleanSettingsItem
+import net.wojteksz128.worktimemeasureapp.settings.item.DurationSettingsItem
+import net.wojteksz128.worktimemeasureapp.settings.item.EnumSettingsItem
+import net.wojteksz128.worktimemeasureapp.settings.item.InetAddressSettingsItem
+import net.wojteksz128.worktimemeasureapp.settings.item.IntFromStringSettingsItem
+import net.wojteksz128.worktimemeasureapp.settings.item.StringSettingsItem
+import net.wojteksz128.worktimemeasureapp.settings.item.StringsArraySettingsItem
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -133,7 +140,7 @@ object SettingsModule {
     @Provides
     fun provideTimeSyncSettings(
         @Named("settings_sync_timeSync_enable") Enabled: BooleanSettingsItem,
-        @Named("settings_sync_timeSync_serverAddress") ServerAddress: StringSettingsItem,
+        @Named("settings_sync_timeSync_serverAddress") ServerAddress: InetAddressSettingsItem,
     ): Settings.SyncSettings.TimeSyncSettings =
         Settings.SyncSettings.TimeSyncSettings(Enabled, ServerAddress)
 
@@ -146,8 +153,8 @@ object SettingsModule {
     @Singleton
     @Provides
     @Named("settings_sync_timeSync_serverAddress")
-    fun provideSettingsSyncTimeSyncServerAddress(@ApplicationContext context: Context): StringSettingsItem =
-        StringSettingsItem(R.string.settings_key_sync_timeSync_server, context)
+    fun provideSettingsSyncTimeSyncServerAddress(@ApplicationContext context: Context): InetAddressSettingsItem =
+        InetAddressSettingsItem(R.string.settings_key_sync_timeSync_server, context)
 
     @Singleton
     @Provides
