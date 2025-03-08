@@ -103,6 +103,9 @@ class DateTimeProvider @Inject constructor(
     }
 
     private fun getNtpTime(): ZonedDateTime? {
+        if (!Settings.Sync.TimeSync.Enabled.value)
+            return null
+
         val client = NTPUDPClient()
         @Suppress("DEPRECATION")
         client.defaultTimeout = Duration.ofSeconds(5).toMillis().toInt()
