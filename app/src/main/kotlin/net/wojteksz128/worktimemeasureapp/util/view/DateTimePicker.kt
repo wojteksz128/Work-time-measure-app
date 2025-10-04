@@ -66,7 +66,7 @@ class DateTimePicker(context: Context, attrs: AttributeSet?) : FrameLayout(conte
     var time: Date?
         get() = model.time
         set(value) {
-            model.time = value ?: Date(0)
+            model.time = value ?: Date()
         }
 
     var workDayDate: LocalDate?
