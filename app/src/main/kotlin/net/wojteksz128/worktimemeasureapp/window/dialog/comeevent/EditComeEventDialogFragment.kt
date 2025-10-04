@@ -61,13 +61,13 @@ class EditComeEventDialogFragment : DialogFragment() {
         listener = if (parentFragment != null)
             try {
                 parentFragment as EditComeEventDialogListener
-            } catch (e: ClassCastException) {
+            } catch (_: ClassCastException) {
                 throw ClassCastException("Fragment ${parentFragment.toString()} must implement EditComeEventDialogListener")
             }
         else
             try {
                 context as EditComeEventDialogListener
-            } catch (e: ClassCastException) {
+            } catch (_: ClassCastException) {
                 throw ClassCastException("Activity $context must implement EditComeEventDialogListener")
             }
     }

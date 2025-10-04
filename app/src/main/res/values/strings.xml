@@ -100,7 +100,8 @@
     <string name="history_day_event_start_date_example">Mon., 08:00</string>
     <string name="history_day_event_item_type_example">@string/history_come_in_label</string>
     <string name="history_day_event_duration_example" translatable="false">8:30:00</string>
-    <string name="history_day_event_time_format" translatable="false">E, HH:mm:ss</string>
+    <string name="history_day_event_time_short_format">E, HH:mm:ss</string>
+    <string name="history_day_event_time_long_format">E, yyyy-MM-dd HH:mm:ss</string>
     <string name="history_day_event_end_date_now">Now</string>
     <string name="history_day_event_realization_dates_divider" translatable="false">—</string>
 

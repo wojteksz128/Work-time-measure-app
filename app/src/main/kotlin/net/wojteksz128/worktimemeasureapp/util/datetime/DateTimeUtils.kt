@@ -84,5 +84,9 @@ fun toLocalDate(date: Date): LocalDate =
 
 fun ZonedDateTime.toDate(): Date = Date(this.toInstant().toEpochMilli())
 
+fun ZonedDateTime.isTheSameDay(other: ZonedDateTime?): Boolean =
+    other?.let { this.toLocalDate() == it.toLocalDate() }
+        ?: (this.toLocalDate() == LocalDate.now())
+
 fun Date.toZonedDateTime(): ZonedDateTime =
     Instant.ofEpochMilli(this.time).atZone(ZoneId.systemDefault())
