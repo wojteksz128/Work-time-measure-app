@@ -134,6 +134,8 @@
     <!--<string name="work_day_details_come_events_action_edit_am_label" translatable="false">AM</string>-->
     <!--<string name="work_day_details_come_events_action_edit_pm_label" translatable="false">PM</string>-->
 
+    <string name="work_day_details_come_events_action_edit_select_date_label">Użyj daty dnia pracy</string>
+
     <string name="work_day_details_come_events_deleted_message">Wpis został usunięty.</string>
     <string name="work_day_details_come_events_edited_message">Wpis został zmodyfikowany.</string>
 

@@ -45,7 +45,7 @@ class HolidayApiRepository(
                 val holidays = getHolidaysResponse.body()!!.holidays
                 return holidays.map {
                     prepareDayOffDomainModel(
-                        it.name, toLocalDate(it.date), toLocalDate(it.date), it.uuid,
+                        it.name, it.date.toLocalDate(), it.date.toLocalDate(), it.uuid,
                     )
                 }
             }

@@ -6,16 +6,19 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
+import net.wojteksz128.worktimemeasureapp.repository.WorkDayRepository
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.datetime.toDate
 import net.wojteksz128.worktimemeasureapp.util.datetime.toZonedDateTime
 import net.wojteksz128.worktimemeasureapp.util.livedata.SemaphoreLiveData
+import org.threeten.bp.LocalDate
 import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
 class EditComeEventDialogViewModel @Inject constructor(
-    application: Application
+    application: Application,
+    private val workDayRepository: WorkDayRepository,
 ) : AndroidViewModel(application), ClassTagAware {
     private lateinit var comeEventToModify: ComeEvent
     val startTime = MutableLiveData<Date?>()
@@ -24,9 +27,11 @@ class EditComeEventDialogViewModel @Inject constructor(
     val finishTime = MutableLiveData<Date?>()
     val finishTimeInEditMode = MutableLiveData(false)
 
+    val workDayDate = MutableLiveData<LocalDate?>()
+
     val positiveButtonEnabled = SemaphoreLiveData(1, startTimeInEditMode, finishTimeInEditMode)
 
-    fun fill(comeEvent: ComeEvent) {
+    suspend fun fill(comeEvent: ComeEvent) {
         Log.d(
             classTag, "fill: Fill dialog using\n" +
                     "\tnew data = $comeEvent\n" +
@@ -38,6 +43,7 @@ class EditComeEventDialogViewModel @Inject constructor(
         startTimeInEditMode.value = false
         finishTime.value = comeEvent.endDate?.toDate()
         finishTimeInEditMode.value = false
+        workDayDate.value = workDayRepository.getWorkDayById(comeEvent.workDayId)?.date
     }
 
     fun prepareModified(): ComeEvent {

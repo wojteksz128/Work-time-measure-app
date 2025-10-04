@@ -38,6 +38,11 @@ class WorkDayRepository (
                 }
             }
 
+    suspend fun getWorkDayById(workDayId: Long): WorkDay? =
+        workDayDao.findById(workDayId.toInt()).let { workDayWithEventsDto ->
+            workDayWithEventsMapper.mapToDomainModel(workDayWithEventsDto)
+        }
+
     fun getWorkDayByIdInLiveData(workDayId: Long): LiveData<WorkDay?> =
         workDayDao.findByIdInLiveData(workDayId.toInt()).map { workDayWithEventsDto ->
             workDayWithEventsDto.let {

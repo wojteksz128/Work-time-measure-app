@@ -40,8 +40,8 @@ class NagerDateApiV3Repository(
                 return upcomingPublicHolidays.map {
                     prepareDayOffDomainModel(
                         it.localName ?: "",
-                        toLocalDate(it.date),
-                        toLocalDate(it.date)
+                        it.date.toLocalDate(),
+                        it.date.toLocalDate()
                     )
                 }
             }

@@ -8,7 +8,9 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.databinding.DialogComeEventEditBinding
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
@@ -51,7 +53,9 @@ class EditComeEventDialogFragment : DialogFragment() {
                 }
             }
             selectedComeEventViewModel.selected.observe(this@EditComeEventDialogFragment) { comeEvent ->
-                editDialogViewModel.fill(comeEvent)
+                lifecycleScope.launch {
+                    editDialogViewModel.fill(comeEvent)
+                }
             }
         }
     }

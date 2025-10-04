@@ -134,6 +134,8 @@
     <string name="work_day_details_come_events_action_edit_am_label" translatable="false">AM</string>
     <string name="work_day_details_come_events_action_edit_pm_label" translatable="false">PM</string>
 
+    <string name="work_day_details_come_events_action_edit_select_date_label">Use current work day date</string>
+
     <string name="work_day_details_come_events_deleted_message">Entry has been deleted.</string>
     <string name="work_day_details_come_events_edited_message">Entry has been modified.</string>
 
