@@ -3,11 +3,13 @@ package net.wojteksz128.worktimemeasureapp.window.dialog.comeevent
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
 import net.wojteksz128.worktimemeasureapp.repository.WorkDayRepository
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
+import net.wojteksz128.worktimemeasureapp.util.datetime.isTheSameDay
 import net.wojteksz128.worktimemeasureapp.util.datetime.toDate
 import net.wojteksz128.worktimemeasureapp.util.datetime.toZonedDateTime
 import net.wojteksz128.worktimemeasureapp.util.livedata.SemaphoreLiveData
@@ -28,6 +30,19 @@ class EditComeEventDialogViewModel @Inject constructor(
     val finishTimeInEditMode = MutableLiveData(false)
 
     val workDayDate = MutableLiveData<LocalDate?>()
+
+    val useFullFormat = MediatorLiveData<Boolean>().apply {
+        val updater = {
+            val start = startTime.value
+            val finish = finishTime.value
+            value = if (start != null && finish != null)
+                !start.toZonedDateTime().isTheSameDay(finish.toZonedDateTime())
+            else false
+        }
+
+        addSource(startTime) { updater() }
+        addSource(finishTime) { updater() }
+    }
 
     val positiveButtonEnabled = SemaphoreLiveData(1, startTimeInEditMode, finishTimeInEditMode)
 

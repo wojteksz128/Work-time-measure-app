@@ -21,7 +21,8 @@
                 app:time="@={viewModel.startTime}"
                 app:workDayDate="@{viewModel.workDayDate}"
                 app:inTimeEditMode="@={viewModel.startTimeInEditMode}"
-                app:title="@string/edit_come_event_dialog_start_time_label" />
+                app:title="@string/edit_come_event_dialog_start_time_label"
+                app:useFullFormat="@{viewModel.useFullFormat}" />
 
             <net.wojteksz128.worktimemeasureapp.util.view.TimeEditor
                 android:layout_width="match_parent"
@@ -29,7 +30,8 @@
                 app:time="@={viewModel.finishTime}"
                 app:workDayDate="@{viewModel.workDayDate}"
                 app:inTimeEditMode="@={viewModel.finishTimeInEditMode}"
-                app:title="@string/edit_come_event_dialog_finish_time_label" />
+                app:title="@string/edit_come_event_dialog_finish_time_label"
+                app:useFullFormat="@{viewModel.useFullFormat}" />
         </LinearLayout>
     </ScrollView>
 

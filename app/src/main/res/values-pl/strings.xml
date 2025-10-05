@@ -182,7 +182,8 @@
     <!--<editor-fold desc="######### Time Editor Component ##########">-->
 
     <string name="time_editor_title_example">Tytuł:</string>
-    <!--<string name="time_editor_value_format" translatable="false">H:mm:ss</string>-->
+    <!--<string name="time_editor_value_short_format" translatable="false">HH:mm:ss</string>-->
+    <string name="time_editor_value_long_format">E, dd.MM.yyyy HH:mm:ss</string>
     <string name="time_editor_value_not_set">Nie ustawiono</string>
     <!--<string name="time_editor_value_example" translatable="false">00:00:00</string>-->
     <string name="time_editor_set_time_desc">Ustaw czas</string>

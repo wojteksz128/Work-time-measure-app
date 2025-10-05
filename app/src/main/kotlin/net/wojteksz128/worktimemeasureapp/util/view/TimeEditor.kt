@@ -42,7 +42,12 @@ import javax.inject.Inject
         type = TimeEditor::class,
         attribute = "inTimeEditModeAttrChanged",
         method = "setInTimeEditModeChangeListener"
-    )
+    ),
+    BindingMethod(
+        type = TimeEditor::class,
+        attribute = "useFullFormat",
+        method = "setUseFullFormat"
+    ),
 )
 @InverseBindingMethods(
     InverseBindingMethod(type = TimeEditor::class, attribute = "time", method = "getTime"),
@@ -55,7 +60,7 @@ import javax.inject.Inject
         type = TimeEditor::class,
         attribute = "inTimeEditMode",
         method = "getInTimeEditMode"
-    )
+    ),
 )
 class TimeEditor(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs) {
     private lateinit var binding: ComponentTimeEditorBinding
@@ -107,6 +112,12 @@ class TimeEditor(context: Context, attrs: AttributeSet?) : FrameLayout(context, 
 
     var inTimeEditModeChangeListener: InverseBindingListener? = null
 
+    var useFullFormat: Boolean
+        get() = model.useFullFormat
+        set(value) {
+            model.useFullFormat = value
+        }
+
     class ObservableModel(
         timeChangeListenerProvider: () -> InverseBindingListener?,
         inEditModeChangeListenerProvider: () -> InverseBindingListener?
@@ -137,6 +148,9 @@ class TimeEditor(context: Context, attrs: AttributeSet?) : FrameLayout(context, 
                 inEditModeChangeListenerProvider()?.onChange()
             }
         }
+
+        @get:Bindable
+        var useFullFormat by ObservableDelegate(BR.useFullFormat, false)
 
         fun onSetTimeClick() {
             editedTime = time
