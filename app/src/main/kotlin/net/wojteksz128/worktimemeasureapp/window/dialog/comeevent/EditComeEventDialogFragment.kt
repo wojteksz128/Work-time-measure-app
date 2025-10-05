@@ -8,7 +8,9 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.databinding.DialogComeEventEditBinding
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
@@ -35,14 +37,16 @@ class EditComeEventDialogFragment : DialogFragment() {
                 }
             setView(dialogBinding.root)
             setTitle(R.string.edit_come_event_dialog_title)
-            setPositiveButton(R.string.edit_come_event_dialog_action_edit) { _, _ ->
+            setPositiveButton(R.string.edit_come_event_dialog_action_edit) { dialog, _ ->
                 listener.onAcceptModificationComeEventClick(
                     this@EditComeEventDialogFragment,
                     editDialogViewModel.prepareModified()
                 )
+                dialog.dismiss()
             }
-            setNegativeButton(R.string.edit_come_event_dialog_action_cancel) { _, _ ->
+            setNegativeButton(R.string.edit_come_event_dialog_action_cancel) { dialog, _ ->
                 listener.onRejectModificationComeEventClick(this@EditComeEventDialogFragment)
+                dialog.dismiss()
             }
         }.create().apply {
             editDialogViewModel.positiveButtonEnabled.observe(this@EditComeEventDialogFragment) { buttonEnabled ->
@@ -51,7 +55,9 @@ class EditComeEventDialogFragment : DialogFragment() {
                 }
             }
             selectedComeEventViewModel.selected.observe(this@EditComeEventDialogFragment) { comeEvent ->
-                editDialogViewModel.fill(comeEvent)
+                lifecycleScope.launch {
+                    editDialogViewModel.fill(comeEvent)
+                }
             }
         }
     }
@@ -61,13 +67,13 @@ class EditComeEventDialogFragment : DialogFragment() {
         listener = if (parentFragment != null)
             try {
                 parentFragment as EditComeEventDialogListener
-            } catch (e: ClassCastException) {
+            } catch (_: ClassCastException) {
                 throw ClassCastException("Fragment ${parentFragment.toString()} must implement EditComeEventDialogListener")
             }
         else
             try {
                 context as EditComeEventDialogListener
-            } catch (e: ClassCastException) {
+            } catch (_: ClassCastException) {
                 throw ClassCastException("Activity $context must implement EditComeEventDialogListener")
             }
     }
@@ -78,8 +84,13 @@ class EditComeEventDialogFragment : DialogFragment() {
     }
 
     interface EditComeEventDialogListener {
-        fun onAcceptModificationComeEventClick(dialog: DialogFragment, modifiedComeEvent: ComeEvent)
-        fun onRejectModificationComeEventClick(dialog: DialogFragment)
-        fun onEditComeEventDialogDismiss(dialog: DialogFragment)
+        fun onAcceptModificationComeEventClick(
+            dialog: DialogFragment,
+            modifiedComeEvent: ComeEvent,
+        ) {
+        }
+
+        fun onRejectModificationComeEventClick(dialog: DialogFragment) {}
+        fun onEditComeEventDialogDismiss(dialog: DialogFragment) {}
     }
 }

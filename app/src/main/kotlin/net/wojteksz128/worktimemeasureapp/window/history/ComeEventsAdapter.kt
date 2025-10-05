@@ -10,6 +10,7 @@ import net.wojteksz128.worktimemeasureapp.databinding.ListItemHistoryDayEventBin
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
 import net.wojteksz128.worktimemeasureapp.util.coroutines.PeriodicOperation
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
+import net.wojteksz128.worktimemeasureapp.util.datetime.isTheSameDay
 import net.wojteksz128.worktimemeasureapp.util.livedata.RecyclerViewPeriodicUpdater
 import net.wojteksz128.worktimemeasureapp.util.recyclerView.RecyclerViewItemClick
 
@@ -43,6 +44,12 @@ class ComeEventsAdapter(
         }
     }
 
+    fun modifyCurrentList(operation: MutableList<ComeEvent>.() -> Unit) {
+        val currentList = currentList.toMutableList()
+        currentList.operation()
+        submitList(currentList)
+    }
+
 //    override fun onViewDetachedFromWindow(holder: ComeEventViewHolder) {
         // TODO: 22.09.2021 Jak to rozwiązać na dashboard 
 //        periodicUpdater.removeItem(holder.absoluteAdapterPosition)
@@ -63,6 +70,7 @@ class ComeEventsAdapter(
 
         fun bind(comeEvent: ComeEvent) {
             binding.comeEvent = comeEvent
+            binding.endsAtTheSameDay = comeEvent.startDate.isTheSameDay(comeEvent.endDate)
         }
 
         fun setOnClickListener(onItemClickListener: (View) -> Unit) {

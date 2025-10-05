@@ -87,16 +87,25 @@ class WorkDaysHistoryFragment : Fragment(), ClassTagAware, WorkDayItemListener,
     }
 
     override fun onAcceptDeletionComeEventClick(dialog: DialogFragment) {
-        viewModel.onComeEventDelete(selectedComeEventViewModel.selected.value)
+        val selectedEvent = selectedComeEventViewModel.selected.value
+        if (selectedEvent == null) return
+
+        viewModel.onComeEventDelete(selectedEvent)
+
+        selectedComeEventViewModel.viewHolderInformation?.let {
+            val comeEventsAdapter = it.adapter as ComeEventsAdapter
+            val position = it.position
+            comeEventsAdapter.modifyCurrentList {
+                if (position >= 0 && position < this.size) {
+                    this.removeAt(position)
+                }
+            }
+        }
         Snackbar.make(
             binding.root,
             R.string.history_come_events_deleted_message,
             Snackbar.LENGTH_LONG
         ).show()
-    }
-
-    override fun onRejectDeletionComeEventClick(dialog: DialogFragment) {
-        // Nothing to do
     }
 
     override fun onDeleteComeEventDialogDismiss(dialog: DialogFragment) {
@@ -108,15 +117,20 @@ class WorkDaysHistoryFragment : Fragment(), ClassTagAware, WorkDayItemListener,
         modifiedComeEvent: ComeEvent
     ) {
         viewModel.onComeEventModified(modifiedComeEvent)
+        selectedComeEventViewModel.viewHolderInformation?.let {
+            val comeEventsAdapter = it.adapter as ComeEventsAdapter
+            val position = it.position
+            comeEventsAdapter.modifyCurrentList {
+                if (position >= 0 && position < this.size) {
+                    this[position] = modifiedComeEvent
+                }
+            }
+        }
         Snackbar.make(
             binding.root,
             R.string.history_come_events_edited_message,
             Snackbar.LENGTH_LONG
         ).show()
-    }
-
-    override fun onRejectModificationComeEventClick(dialog: DialogFragment) {
-        // Nothing to do
     }
 
     override fun onEditComeEventDialogDismiss(dialog: DialogFragment) {

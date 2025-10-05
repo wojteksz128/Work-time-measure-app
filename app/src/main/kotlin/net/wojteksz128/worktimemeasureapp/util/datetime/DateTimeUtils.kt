@@ -79,10 +79,14 @@ class DateTimeUtils (
 operator fun Date.minus(other: Date): Date =
     Date(this.time - other.time)
 
-fun toLocalDate(date: Date): LocalDate =
-    Instant.ofEpochMilli(date.time).atZone(ZoneId.systemDefault()).toLocalDate()
+fun Date.toLocalDate(): LocalDate =
+    Instant.ofEpochMilli(this.time).atZone(ZoneId.systemDefault()).toLocalDate()
 
 fun ZonedDateTime.toDate(): Date = Date(this.toInstant().toEpochMilli())
+
+fun ZonedDateTime.isTheSameDay(other: ZonedDateTime?): Boolean =
+    other?.let { this.toLocalDate() == it.toLocalDate() }
+        ?: (this.toLocalDate() == LocalDate.now())
 
 fun Date.toZonedDateTime(): ZonedDateTime =
     Instant.ofEpochMilli(this.time).atZone(ZoneId.systemDefault())

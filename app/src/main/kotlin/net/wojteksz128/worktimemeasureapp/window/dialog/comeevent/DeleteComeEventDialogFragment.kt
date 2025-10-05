@@ -10,6 +10,7 @@ import androidx.fragment.app.activityViewModels
 import dagger.hilt.android.AndroidEntryPoint
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
+import net.wojteksz128.worktimemeasureapp.util.datetime.isTheSameDay
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -25,25 +26,32 @@ class DeleteComeEventDialogFragment : DialogFragment() {
         return AlertDialog.Builder(requireContext()).apply {
             setTitle(R.string.delete_come_event_dialog_title)
             setMessage(prepareDeleteMessage())
-            setPositiveButton(R.string.delete_come_event_dialog_action_delete) { _, _ ->
+            setPositiveButton(R.string.delete_come_event_dialog_action_delete) { dialog, _ ->
                 listener.onAcceptDeletionComeEventClick(this@DeleteComeEventDialogFragment)
+                dialog.dismiss()
             }
-            setNegativeButton(R.string.delete_come_event_dialog_action_cancel) { _, _ ->
+            setNegativeButton(R.string.delete_come_event_dialog_action_cancel) { dialog, _ ->
                 listener.onRejectDeletionComeEventClick(this@DeleteComeEventDialogFragment)
+                dialog.dismiss()
             }
         }.create()
     }
 
     private fun prepareDeleteMessage(): String {
         return selectedComeEventViewModel.selected.value?.let {
+            val dateFormat =
+                if (it.startDate.isTheSameDay(it.endDate))
+                    R.string.history_day_event_time_short_format
+                else
+                    R.string.history_day_event_time_long_format
             getString(
                 R.string.delete_come_event_dialog_delete_message,
                 dateTimeUtils.formatDate(
-                    getString(R.string.history_day_event_time_format),
+                    getString(dateFormat),
                     it.startDate
                 ),
                 dateTimeUtils.formatDate(
-                    getString(R.string.history_day_event_time_format),
+                    getString(dateFormat),
                     it.endDate
                 )
             )
@@ -55,13 +63,13 @@ class DeleteComeEventDialogFragment : DialogFragment() {
         listener = if (parentFragment != null)
             try {
                 parentFragment as DeleteComeEventDialogListener
-            } catch (e: ClassCastException) {
+            } catch (_: ClassCastException) {
                 throw ClassCastException("Fragment ${parentFragment.toString()} must implement DeleteComeEventDialogListener")
             }
         else
             try {
                 context as DeleteComeEventDialogListener
-            } catch (e: ClassCastException) {
+            } catch (_: ClassCastException) {
                 throw ClassCastException("Activity $context must implement DeleteComeEventDialogListener")
             }
     }
@@ -72,8 +80,8 @@ class DeleteComeEventDialogFragment : DialogFragment() {
     }
 
     interface DeleteComeEventDialogListener {
-        fun onAcceptDeletionComeEventClick(dialog: DialogFragment)
-        fun onRejectDeletionComeEventClick(dialog: DialogFragment)
-        fun onDeleteComeEventDialogDismiss(dialog: DialogFragment)
+        fun onAcceptDeletionComeEventClick(dialog: DialogFragment) {}
+        fun onRejectDeletionComeEventClick(dialog: DialogFragment) {}
+        fun onDeleteComeEventDialogDismiss(dialog: DialogFragment) {}
     }
 }

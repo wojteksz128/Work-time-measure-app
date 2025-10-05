@@ -2,22 +2,32 @@ package net.wojteksz128.worktimemeasureapp.util.view
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import android.widget.TextView
-import androidx.databinding.*
+import androidx.databinding.BaseObservable
+import androidx.databinding.Bindable
+import androidx.databinding.BindingMethod
+import androidx.databinding.BindingMethods
+import androidx.databinding.InverseBindingListener
+import androidx.databinding.InverseBindingMethod
+import androidx.databinding.InverseBindingMethods
 import dagger.hilt.android.AndroidEntryPoint
 import net.wojteksz128.worktimemeasureapp.BR
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.databinding.ComponentTimeEditorBinding
+import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import net.wojteksz128.worktimemeasureapp.util.view.util.ObservableDelegate
-import java.util.*
+import org.threeten.bp.LocalDate
+import java.util.Date
 import javax.inject.Inject
 
 @AndroidEntryPoint
 @BindingMethods(
     BindingMethod(type = TimeEditor::class, attribute = "time", method = "setTime"),
+    BindingMethod(type = TimeEditor::class, attribute = "workDayDate", method = "setWorkDayDate"),
     BindingMethod(
         type = TimeEditor::class,
         attribute = "timeAttrChanged",
@@ -32,15 +42,25 @@ import javax.inject.Inject
         type = TimeEditor::class,
         attribute = "inTimeEditModeAttrChanged",
         method = "setInTimeEditModeChangeListener"
-    )
+    ),
+    BindingMethod(
+        type = TimeEditor::class,
+        attribute = "useFullFormat",
+        method = "setUseFullFormat"
+    ),
 )
 @InverseBindingMethods(
     InverseBindingMethod(type = TimeEditor::class, attribute = "time", method = "getTime"),
     InverseBindingMethod(
         type = TimeEditor::class,
+        attribute = "workDayDate",
+        method = "getWorkDayDate"
+    ),
+    InverseBindingMethod(
+        type = TimeEditor::class,
         attribute = "inTimeEditMode",
         method = "getInTimeEditMode"
-    )
+    ),
 )
 class TimeEditor(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs) {
     private lateinit var binding: ComponentTimeEditorBinding
@@ -76,6 +96,12 @@ class TimeEditor(context: Context, attrs: AttributeSet?) : FrameLayout(context, 
             model.time = value
         }
 
+    var workDayDate: LocalDate?
+        get() = model.workDayDate
+        set(value) {
+            model.workDayDate = value
+        }
+
     var timeChangeListener: InverseBindingListener? = null
 
     var inTimeEditMode: Boolean
@@ -86,11 +112,17 @@ class TimeEditor(context: Context, attrs: AttributeSet?) : FrameLayout(context, 
 
     var inTimeEditModeChangeListener: InverseBindingListener? = null
 
+    var useFullFormat: Boolean
+        get() = model.useFullFormat
+        set(value) {
+            model.useFullFormat = value
+        }
+
     class ObservableModel(
         timeChangeListenerProvider: () -> InverseBindingListener?,
         inEditModeChangeListenerProvider: () -> InverseBindingListener?
     ) :
-        BaseObservable() {
+        BaseObservable(), ClassTagAware {
         @get:Bindable
         var title by ObservableDelegate(BR.title, "")
 
@@ -104,11 +136,21 @@ class TimeEditor(context: Context, attrs: AttributeSet?) : FrameLayout(context, 
         var editedTime by ObservableDelegate<Date?>(BR.editedTime, null)
 
         @get:Bindable
+        var workDayDate by ObservableDelegate<LocalDate?>(BR.workDayDate, null)
+        { oldValue, newValue ->
+            if (oldValue != newValue)
+                timeChangeListenerProvider()?.onChange()
+        }
+
+        @get:Bindable
         var editMode by ObservableDelegate(BR.editMode, false) { oldValue, newValue ->
             if (oldValue != newValue) {
                 inEditModeChangeListenerProvider()?.onChange()
             }
         }
+
+        @get:Bindable
+        var useFullFormat by ObservableDelegate(BR.useFullFormat, false)
 
         fun onSetTimeClick() {
             editedTime = time
@@ -120,6 +162,7 @@ class TimeEditor(context: Context, attrs: AttributeSet?) : FrameLayout(context, 
         }
 
         fun onAcceptClick() {
+            Log.d(classTag, "onAcceptClick: time: $time, editedTime: $editedTime")
             time = editedTime
             editMode = false
         }

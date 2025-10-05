@@ -97,10 +97,11 @@
     <string name="history_come_out_label">Wyjście</string>
 
     <!-- Day Event list item strings -->
-    <string name="history_day_event_start_date_example">01.01.2018 12:00</string>
+    <string name="history_day_event_start_date_example">pon., 12:00</string>
     <string name="history_day_event_item_type_example">@string/history_come_in_label</string>
     <!--<string name="history_day_event_duration_example" translatable="false">8:30:00</string>-->
-    <!--<string name="history_day_event_time_format" translatable="false">E, HH:mm:ss</string>-->
+    <string name="history_day_event_time_short_format">E, HH:mm:ss</string>
+    <string name="history_day_event_time_long_format">E, dd.MM.yyyy HH:mm:ss</string>
     <string name="history_day_event_end_date_now">Teraz</string>
     <!--<string name="history_day_event_realization_dates_divider" translatable="false">—</string>-->
 
@@ -132,6 +133,8 @@
 
     <!--<string name="work_day_details_come_events_action_edit_am_label" translatable="false">AM</string>-->
     <!--<string name="work_day_details_come_events_action_edit_pm_label" translatable="false">PM</string>-->
+
+    <string name="work_day_details_come_events_action_edit_select_date_label">Użyj daty dnia pracy</string>
 
     <string name="work_day_details_come_events_deleted_message">Wpis został usunięty.</string>
     <string name="work_day_details_come_events_edited_message">Wpis został zmodyfikowany.</string>
@@ -179,7 +182,8 @@
     <!--<editor-fold desc="######### Time Editor Component ##########">-->
 
     <string name="time_editor_title_example">Tytuł:</string>
-    <!--<string name="time_editor_value_format" translatable="false">H:mm:ss</string>-->
+    <!--<string name="time_editor_value_short_format" translatable="false">HH:mm:ss</string>-->
+    <string name="time_editor_value_long_format">E, dd.MM.yyyy HH:mm:ss</string>
     <string name="time_editor_value_not_set">Nie ustawiono</string>
     <!--<string name="time_editor_value_example" translatable="false">00:00:00</string>-->
     <string name="time_editor_set_time_desc">Ustaw czas</string>
