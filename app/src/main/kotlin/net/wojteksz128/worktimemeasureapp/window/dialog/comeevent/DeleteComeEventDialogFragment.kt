@@ -26,11 +26,13 @@ class DeleteComeEventDialogFragment : DialogFragment() {
         return AlertDialog.Builder(requireContext()).apply {
             setTitle(R.string.delete_come_event_dialog_title)
             setMessage(prepareDeleteMessage())
-            setPositiveButton(R.string.delete_come_event_dialog_action_delete) { _, _ ->
+            setPositiveButton(R.string.delete_come_event_dialog_action_delete) { dialog, _ ->
                 listener.onAcceptDeletionComeEventClick(this@DeleteComeEventDialogFragment)
+                dialog.dismiss()
             }
-            setNegativeButton(R.string.delete_come_event_dialog_action_cancel) { _, _ ->
+            setNegativeButton(R.string.delete_come_event_dialog_action_cancel) { dialog, _ ->
                 listener.onRejectDeletionComeEventClick(this@DeleteComeEventDialogFragment)
+                dialog.dismiss()
             }
         }.create()
     }
@@ -78,8 +80,8 @@ class DeleteComeEventDialogFragment : DialogFragment() {
     }
 
     interface DeleteComeEventDialogListener {
-        fun onAcceptDeletionComeEventClick(dialog: DialogFragment)
-        fun onRejectDeletionComeEventClick(dialog: DialogFragment)
-        fun onDeleteComeEventDialogDismiss(dialog: DialogFragment)
+        fun onAcceptDeletionComeEventClick(dialog: DialogFragment) {}
+        fun onRejectDeletionComeEventClick(dialog: DialogFragment) {}
+        fun onDeleteComeEventDialogDismiss(dialog: DialogFragment) {}
     }
 }

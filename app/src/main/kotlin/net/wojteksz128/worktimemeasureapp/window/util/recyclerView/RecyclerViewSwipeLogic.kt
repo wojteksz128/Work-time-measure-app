@@ -33,18 +33,22 @@ abstract class RecyclerViewSwipeLogic<Model, VH, EntityLeftDialogFragment, Entit
         itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 
-    protected fun prepareSwipeLeftAction(fragmentManager: FragmentManager): (Model, ViewHolderInformation<VH>) -> Unit =
+    protected fun prepareSwipeLeftAction(fragmentManager: FragmentManager)
+            : (Model, ViewHolderInformation<VH>) -> Unit =
+        prepareSwipeAction(fragmentManager, swipeLeftDialogFragmentClass)
+
+    protected fun prepareSwipeRightAction(fragmentManager: FragmentManager)
+            : (Model, ViewHolderInformation<VH>) -> Unit =
+        prepareSwipeAction(fragmentManager, swipeRightDialogFragmentClass)
+
+    protected fun <DF : DialogFragment> prepareSwipeAction(
+        fragmentManager: FragmentManager,
+        swipeDialogFragmentClass: Class<DF>,
+    ): (Model, ViewHolderInformation<VH>) -> Unit =
         { entity: Model, viewHolderInformation: ViewHolderInformation<VH> ->
             selectionUpdater.invoke(entity, viewHolderInformation)
-            val newInstance = swipeLeftDialogFragmentClass.newInstance()
-            newInstance.show(fragmentManager, swipeLeftDialogFragmentClass.toString())
-        }
-
-    protected fun prepareSwipeRightAction(fragmentManager: FragmentManager): (Model, ViewHolderInformation<VH>) -> Unit =
-        { entity: Model, viewHolderInformation ->
-            selectionUpdater.invoke(entity, viewHolderInformation)
-            val newInstance = swipeRightDialogFragmentClass.newInstance()
-            newInstance.show(fragmentManager, swipeRightDialogFragmentClass.toString())
+            val dialog = swipeDialogFragmentClass.getDeclaredConstructor().newInstance()
+            dialog.show(fragmentManager, swipeDialogFragmentClass.toString())
         }
 
     protected abstract fun extractEntity(viewHolder: VH): Model

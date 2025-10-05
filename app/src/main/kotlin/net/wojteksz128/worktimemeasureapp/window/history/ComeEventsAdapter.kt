@@ -44,6 +44,12 @@ class ComeEventsAdapter(
         }
     }
 
+    fun modifyCurrentList(operation: MutableList<ComeEvent>.() -> Unit) {
+        val currentList = currentList.toMutableList()
+        currentList.operation()
+        submitList(currentList)
+    }
+
 //    override fun onViewDetachedFromWindow(holder: ComeEventViewHolder) {
         // TODO: 22.09.2021 Jak to rozwiązać na dashboard 
 //        periodicUpdater.removeItem(holder.absoluteAdapterPosition)
