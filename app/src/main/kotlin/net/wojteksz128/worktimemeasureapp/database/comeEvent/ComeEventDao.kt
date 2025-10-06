@@ -1,7 +1,12 @@
 package net.wojteksz128.worktimemeasureapp.database.comeEvent
 
 import androidx.lifecycle.LiveData
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Update
 import net.wojteksz128.worktimemeasureapp.database.EntityDao
 
 @Dao
@@ -18,7 +23,7 @@ interface ComeEventDao : EntityDao<ComeEventDto> {
     fun findByIdInLiveData(id: Int): LiveData<ComeEventDto>
 
     @Query("SELECT * FROM come_event WHERE id = :id")
-    suspend fun findById(id: Int): ComeEventDto
+    suspend fun findById(id: Int): ComeEventDto?
 
     @Insert
     override suspend fun insert(entity: ComeEventDto)

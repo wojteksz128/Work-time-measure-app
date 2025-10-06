@@ -11,6 +11,7 @@ import dagger.hilt.components.SingletonComponent
 import net.wojteksz128.worktimemeasureapp.database.AppDatabase
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventDao
 import net.wojteksz128.worktimemeasureapp.database.dayOff.DayOffDao
+import net.wojteksz128.worktimemeasureapp.database.history.EntityHistoryDao
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayDao
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import javax.inject.Singleton
@@ -51,5 +52,11 @@ object DatabaseModule : ClassTagAware {
     @Provides
     fun provideDayOffDao(database: AppDatabase): DayOffDao {
         return database.dayOffDao()
+    }
+
+    @Singleton
+    @Provides
+    fun provideEntityHistoryDao(database: AppDatabase): EntityHistoryDao {
+        return database.entityHistoryDao()
     }
 }

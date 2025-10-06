@@ -6,6 +6,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import net.wojteksz128.worktimemeasureapp.database.history.HistoryService
 import net.wojteksz128.worktimemeasureapp.module.dayOff.DayOffService
 import net.wojteksz128.worktimemeasureapp.notification.NotificationUtils
 import net.wojteksz128.worktimemeasureapp.repository.ComeEventRepository
@@ -51,6 +52,10 @@ object AppUtilsModule {
     ): DayOffService {
         return DayOffService(dayOffRepository, externalHolidayRepositoriesFacade, Settings)
     }
+
+    @Singleton
+    @Provides
+    fun provideHistoryService() = HistoryService()
 
     @Singleton
     @Provides
