@@ -1,6 +1,7 @@
 package net.wojteksz128.worktimemeasureapp.di
 
 import android.content.Context
+import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -55,7 +56,7 @@ object AppUtilsModule {
 
     @Singleton
     @Provides
-    fun provideHistoryService() = HistoryService()
+    fun provideHistoryService(gson: Gson) = HistoryService(gson)
 
     @Singleton
     @Provides

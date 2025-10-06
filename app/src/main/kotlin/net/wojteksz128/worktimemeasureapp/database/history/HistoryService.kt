@@ -1,10 +1,12 @@
 package net.wojteksz128.worktimemeasureapp.database.history
 
+import com.google.gson.Gson
 import net.wojteksz128.worktimemeasureapp.database.EntityDto
+import javax.inject.Inject
 import kotlin.reflect.full.memberProperties
 
 
-class HistoryService {
+class HistoryService @Inject constructor(private val gson: Gson) {
 
     fun <T : EntityDto> getChanges(
         oldEntity: T?,
@@ -57,7 +59,7 @@ class HistoryService {
                         entityId = entityId,
                         actionType = "DELETE",
                         fieldName = "entity",
-                        oldValue = oldEntity.toString(),
+                        oldValue = gson.toJson(oldEntity),
                         newValue = null
                     )
                 )
