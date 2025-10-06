@@ -26,7 +26,7 @@ interface ComeEventDao : EntityDao<ComeEventDto> {
     suspend fun findById(id: Int): ComeEventDto?
 
     @Insert
-    override suspend fun insert(entity: ComeEventDto)
+    override suspend fun insert(entity: ComeEventDto): Long
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     override suspend fun update(entity: ComeEventDto)

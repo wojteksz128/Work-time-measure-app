@@ -11,7 +11,7 @@ import net.wojteksz128.worktimemeasureapp.database.EntityDao
 interface EntityHistoryDao : EntityDao<EntityHistoryDto> {
 
     @Insert
-    override suspend fun insert(entity: EntityHistoryDto)
+    override suspend fun insert(entity: EntityHistoryDto): Long
 
     // Not needed for history
     @Update(onConflict = OnConflictStrategy.REPLACE)

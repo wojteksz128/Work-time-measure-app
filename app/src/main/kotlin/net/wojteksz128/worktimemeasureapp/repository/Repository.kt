@@ -22,12 +22,15 @@ abstract class Repository<DM, E>(
 
         val action = if (oldEntity == null) "INSERT" else "UPDATE"
 
-        if (action == "INSERT")
-            dao.insert(newEntity)
-        else
+        val storiedEntity = if (action == "INSERT") {
+            val newId = dao.insert(newEntity)
+            getById(newId)
+        } else {
             dao.update(newEntity)
+            newEntity
+        }
 
-        addToHistory(oldEntity, newEntity, action)
+        addToHistory(oldEntity, storiedEntity, action)
     }
 
     open suspend fun delete(domainModel: DM) {

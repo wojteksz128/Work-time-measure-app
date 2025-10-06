@@ -49,7 +49,7 @@ interface WorkDayDao : EntityDao<WorkDayDto> {
     ): LiveData<List<WorkDayWithEventsDto>>
 
     @Insert
-    override suspend fun insert(entity: WorkDayDto)
+    override suspend fun insert(entity: WorkDayDto): Long
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     override suspend fun update(entity: WorkDayDto)
