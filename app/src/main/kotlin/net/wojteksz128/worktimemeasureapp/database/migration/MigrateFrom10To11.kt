@@ -13,7 +13,7 @@ class MigrateFrom10To11 : Migration(10, 11), ClassTagAware {
         "${it.rules.getOffset(Instant.now()).id}[${it.id}]"
     }
 
-    override fun migrate(database: SupportSQLiteDatabase) {
+    override fun migrate(@Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE") database: SupportSQLiteDatabase) {
         Log.d(classTag, "migrate: Begin migrate data from 10 to 11 db version")
         database.execSQL("PRAGMA foreign_keys=off")
 
@@ -49,8 +49,8 @@ class MigrateFrom10To11 : Migration(10, 11), ClassTagAware {
                 SELECT 
                     `id`, 
                     strftime('%Y-%m-%d', `date`/1000.0, 'unixepoch'),
-                    strftime('%Y-%m-%dT%H:%M:%f${formattedZoneId}', `beginSlot`/1000.0, 'unixepoch'), 
-                    strftime('%Y-%m-%dT%H:%M:%f${formattedZoneId}', `endSlot`/1000.0, 'unixepoch') 
+                    strftime('%Y-%m-%dT%H:%M:%f${formattedZoneId}', `beginSlot`/1000.0, 'unixepoch', 'localtime'), 
+                    strftime('%Y-%m-%dT%H:%M:%f${formattedZoneId}', `endSlot`/1000.0, 'unixepoch', 'localtime') 
                 FROM `_work_day_old`
             """.trimIndent()
         )
@@ -82,8 +82,8 @@ class MigrateFrom10To11 : Migration(10, 11), ClassTagAware {
                 ) 
                 SELECT 
                     `id`, 
-                    strftime('%Y-%m-%dT%H:%M:%f${formattedZoneId}', `startDate`/1000.0, 'unixepoch'), 
-                    strftime('%Y-%m-%dT%H:%M:%f${formattedZoneId}', `endDate`/1000.0, 'unixepoch'), 
+                    strftime('%Y-%m-%dT%H:%M:%f${formattedZoneId}', `startDate`/1000.0, 'unixepoch', 'localtime'), 
+                    strftime('%Y-%m-%dT%H:%M:%f${formattedZoneId}', `endDate`/1000.0, 'unixepoch', 'localtime'), 
                     `workDayId` 
                 FROM `_come_event_old`
             """.trimIndent()
