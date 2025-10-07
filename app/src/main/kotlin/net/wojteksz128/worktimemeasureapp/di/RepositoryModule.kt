@@ -20,6 +20,7 @@ import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayMapper
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayWithEventsMapper
 import net.wojteksz128.worktimemeasureapp.repository.ComeEventRepository
 import net.wojteksz128.worktimemeasureapp.repository.DayOffRepository
+import net.wojteksz128.worktimemeasureapp.repository.EntityHistoryRepository
 import net.wojteksz128.worktimemeasureapp.repository.WorkDayRepository
 import net.wojteksz128.worktimemeasureapp.repository.api.ExternalHolidayRepositoriesFacade
 import net.wojteksz128.worktimemeasureapp.repository.api.HolidayApiRepository
@@ -95,4 +96,10 @@ object RepositoryModule {
         @ApplicationContext context: Context,
     ): NagerDateApiV3Repository =
         NagerDateApiV3Repository(nagerDateApiV3Service, Settings, dateTimeProvider, context)
+
+    @Singleton
+    @Provides
+    fun provideEntityHistoryRepository(
+        entityHistoryDao: EntityHistoryDao,
+    ): EntityHistoryRepository = EntityHistoryRepository(entityHistoryDao)
 }

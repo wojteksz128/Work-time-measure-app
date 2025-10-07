@@ -12,6 +12,7 @@ class HistoryService @Inject constructor(private val gson: Gson) {
         oldEntity: T?,
         newEntity: T?,
         action: String,
+        changeGroupId: String,
     ): List<EntityHistoryDto> {
         val changes = mutableListOf<EntityHistoryDto>()
         val entityType = (oldEntity ?: newEntity)!!::class.java.simpleName
@@ -22,6 +23,7 @@ class HistoryService @Inject constructor(private val gson: Gson) {
                 newEntity!!::class.memberProperties.forEach { property ->
                     changes.add(
                         EntityHistoryDto(
+                            changeGroupId = changeGroupId,
                             entityType = entityType,
                             entityId = entityId,
                             actionType = "INSERT",
@@ -40,6 +42,7 @@ class HistoryService @Inject constructor(private val gson: Gson) {
                     if (oldValue != newValue) {
                         changes.add(
                             EntityHistoryDto(
+                                changeGroupId = changeGroupId,
                                 entityType = entityType,
                                 entityId = entityId,
                                 actionType = "UPDATE",
@@ -55,6 +58,7 @@ class HistoryService @Inject constructor(private val gson: Gson) {
             "DELETE" -> {
                 changes.add(
                     EntityHistoryDto(
+                        changeGroupId = changeGroupId,
                         entityType = entityType,
                         entityId = entityId,
                         actionType = "DELETE",
@@ -66,6 +70,6 @@ class HistoryService @Inject constructor(private val gson: Gson) {
             }
         }
 
-        return changes
+        return changes.toList()
     }
 }

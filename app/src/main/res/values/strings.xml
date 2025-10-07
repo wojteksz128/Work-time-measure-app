@@ -41,7 +41,7 @@
     <string name="dashboard_week">In this week:</string>
     <string name="dashboard_today_work_time_label">Today works:</string>
     <string name="dashboard_current_day_date_example">Mon., 08.07.2019</string>
-    <string name="dashboard_current_day_empty_events_message">Empty list of events</string>
+    <string name="dashboard_current_day_empty_events_message">No events</string>
 
     <!-- Duration display -->
     <string name="duration_display_title_example">Title</string>
@@ -130,11 +130,15 @@
     <string name="work_day_details_summary_values_divider" translatable="false">/</string>
 
     <string name="work_day_details_come_events_label">Work time entries:</string>
+    <string name="work_day_details_come_events_no_events_message">@string/dashboard_current_day_empty_events_message</string>
 
     <string name="work_day_details_come_events_action_edit_am_label" translatable="false">AM</string>
     <string name="work_day_details_come_events_action_edit_pm_label" translatable="false">PM</string>
 
     <string name="work_day_details_come_events_action_edit_select_date_label">Use current work day date</string>
+
+    <string name="work_day_details_history_label">History of edition:</string>
+    <string name="work_day_details_history_no_events_message">No history</string>
 
     <string name="work_day_details_come_events_deleted_message">Entry has been deleted.</string>
     <string name="work_day_details_come_events_edited_message">Entry has been modified.</string>
@@ -190,6 +194,31 @@
     <string name="time_editor_clear_time_desc">Clear time</string>
     <string name="time_editor_accept_desc">Accept changes</string>
     <string name="time_editor_dismiss_desc">Dismiss changes</string>
+
+    <!--</editor-fold>-->
+    <!--##########################################-->
+
+    <!--##########################################-->
+    <!--<editor-fold desc="####### Work Day History Component #######">-->
+
+    <string name="work_day_history_timestamp_format">yyyy-MM-dd HH:mm:ss</string>
+    <string name="work_day_history_timestamp_example">2025–10–07 12:34:56</string>
+    <string name="work_day_history_action_type_format" translatable="false">%1$s: </string>
+
+    <string name="work_day_history_action_type_example">Modified:</string>
+
+    <string name="work_day_history_entity_type_example">work day</string>
+
+    <!--</editor-fold>-->
+    <!--##########################################-->
+
+    <!--##########################################-->
+    <!--<editor-fold desc="#### Work Day History Change Component ###">-->
+
+    <string name="work_day_history_change_field_name_example">field:</string>
+    <string name="work_day_history_change_old_value_example">old value</string>
+    <string name="work_day_history_change_arrow" translatable="false"> → </string>
+    <string name="work_day_history_change_new_value_example">new value</string>
 
     <!--</editor-fold>-->
     <!--##########################################-->

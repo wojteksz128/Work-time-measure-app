@@ -1,5 +1,6 @@
 package net.wojteksz128.worktimemeasureapp.database.migration
 
+import android.util.Log
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
@@ -7,6 +8,8 @@ import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 class MigrateFrom11To12 : Migration(11, 12), ClassTagAware {
 
     override fun migrate(@Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE") database: SupportSQLiteDatabase) {
+        Log.d(classTag, "migrate: Begin migrate data from 11 to 12 db version")
+        Log.d(classTag, "migrate: Create table 'entity_history'")
         database.execSQL(
             """
                 CREATE TABLE IF NOT EXISTS `entity_history` (
@@ -21,5 +24,6 @@ class MigrateFrom11To12 : Migration(11, 12), ClassTagAware {
                 )
             """.trimIndent()
         )
+        Log.d(classTag, "migrate: End migrate data from 11 to 12 db version")
     }
 }

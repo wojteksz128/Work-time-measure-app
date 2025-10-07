@@ -6,6 +6,7 @@ import net.wojteksz128.worktimemeasureapp.database.history.EntityHistoryDao
 import net.wojteksz128.worktimemeasureapp.database.history.HistoryService
 import net.wojteksz128.worktimemeasureapp.model.DomainModel
 import net.wojteksz128.worktimemeasureapp.util.DomainModelMapper
+import java.util.UUID
 
 abstract class Repository<DM, E>(
     protected val dao: EntityDao<E>,
@@ -41,7 +42,8 @@ abstract class Repository<DM, E>(
     }
 
     private suspend fun addToHistory(oldEntity: E?, newEntity: E?, action: String) {
-        val changes = historyService.getChanges(oldEntity, newEntity, action)
+        val changeGroupId = UUID.randomUUID().toString()
+        val changes = historyService.getChanges(oldEntity, newEntity, action, changeGroupId)
         changes.forEach { historyDao.insert(it) }
     }
 }

@@ -13,6 +13,7 @@ import net.wojteksz128.worktimemeasureapp.database.history.EntityHistoryDao
 import net.wojteksz128.worktimemeasureapp.database.history.EntityHistoryDto
 import net.wojteksz128.worktimemeasureapp.database.migration.MigrateFrom10To11
 import net.wojteksz128.worktimemeasureapp.database.migration.MigrateFrom11To12
+import net.wojteksz128.worktimemeasureapp.database.migration.MigrateFrom12To13
 import net.wojteksz128.worktimemeasureapp.database.migration.MigrateFrom1To2
 import net.wojteksz128.worktimemeasureapp.database.migration.MigrateFrom2To3
 import net.wojteksz128.worktimemeasureapp.database.migration.MigrateFrom3To4
@@ -33,7 +34,7 @@ import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
         DayOffDto::class,
         EntityHistoryDto::class,
     ],
-    version = 12
+    version = 13
 )
 @TypeConverters(DateConverters::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -63,6 +64,7 @@ abstract class AppDatabase : RoomDatabase() {
                 MigrateFrom9To10(),
                 MigrateFrom10To11(),
                 MigrateFrom11To12(),
+                MigrateFrom12To13(),
             )
     }
 }

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="historyItem"
+            type="net.wojteksz128.worktimemeasureapp.window.history.GroupedHistoryItem" />
+
+        <variable
+            name="dateTimeUtils"
+            type="net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/rv_background"
+        android:orientation="vertical"
+        android:padding="@dimen/default_padding">
+
+        <TextView
+            android:id="@+id/work_day_history_timestamp"
+            style="@style/work_day_history_timestamp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{dateTimeUtils.formatDate(@string/history_work_day_label_format, historyItem.timestamp)}"
+            app:layout_constraintBottom_toTopOf="@id/work_day_history_entity_type"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@string/work_day_history_timestamp_example" />
+
+        <TextView
+            android:id="@+id/work_day_history_action_type"
+            style="@style/work_day_history_action_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{@string/work_day_history_action_type_format(historyItem.actionType)}"
+            app:layout_constraintEnd_toStartOf="@id/work_day_history_entity_type"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/work_day_history_entity_type"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/work_day_history_timestamp"
+            tools:text="@string/work_day_history_action_type_example" />
+
+        <TextView
+            android:id="@+id/work_day_history_entity_type"
+            style="@style/work_day_history_entity_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{historyItem.entityType}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/work_day_history_action_type"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toEndOf="@id/work_day_history_action_type"
+            app:layout_constraintTop_toBottomOf="@id/work_day_history_timestamp"
+            tools:text="@string/work_day_history_entity_type_example" />
+
+        <LinearLayout
+            android:id="@+id/work_day_history_changes"
+            style="@style/work_day_history_changes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/work_day_history_action_type" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

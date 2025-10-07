@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="change"
+            type="net.wojteksz128.worktimemeasureapp.window.history.FieldChange" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/work_day_history_change_field_name"
+            android:id="@+id/work_day_history_change_field_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{change.fieldName + ':'}"
+            tools:text="@string/work_day_history_change_field_name_example" />
+
+        <TextView
+            style="@style/work_day_history_change_old_value"
+            android:id="@+id/work_day_history_change_old_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{change.oldValue}"
+            tools:text="@string/work_day_history_change_old_value_example" />
+
+        <TextView
+            style="@style/work_day_history_change_arrow"
+            android:id="@+id/work_day_history_change_arrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/work_day_history_change_arrow" />
+
+        <TextView
+            style="@style/work_day_history_change_new_value"
+            android:id="@+id/work_day_history_change_new_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{change.newValue}"
+            tools:text="@string/work_day_history_change_new_value_example" />
+    </LinearLayout>
+
+</layout>

@@ -12,6 +12,9 @@ data class EntityHistoryDto(
     @ColumnInfo(name = "id")
     override val id: Long? = null,
 
+    @ColumnInfo(name = "changeGroupId")
+    val changeGroupId: String,
+
     @ColumnInfo(name = "entityType")
     val entityType: String,
 
