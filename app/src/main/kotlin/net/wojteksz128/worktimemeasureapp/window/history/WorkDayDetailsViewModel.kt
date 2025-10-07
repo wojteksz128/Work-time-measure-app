@@ -6,7 +6,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.map
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -34,26 +33,7 @@ class WorkDayDetailsViewModel @Inject constructor(
 
     val history: LiveData<List<GroupedHistoryItem>> =
         workDay.switchMap { workDay ->
-            workDay.id?.let { workDayId ->
-                entityHistoryRepository.getGroupedHistory(workDayId).map { historyList ->
-                    historyList.groupBy { it.changeGroupId }
-                        .map { (_, group) ->
-                            val first = group.first()
-                            GroupedHistoryItem(
-                                timestamp = first.timestamp,
-                                entityType = first.entityType,
-                                actionType = first.actionType,
-                                changes = group.map {
-                                    FieldChange(
-                                        it.fieldName,
-                                        it.oldValue,
-                                        it.newValue
-                                    )
-                                }
-                            )
-                        }.sortedByDescending { it.timestamp }
-                }
-            }
+            workDay.id?.let { entityHistoryRepository.getGroupedHistory(it) }
         }
 
     fun fillWorkDayUsingLocal(workDaySource: LiveData<WorkDay>) {
