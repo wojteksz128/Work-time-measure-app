@@ -101,5 +101,6 @@ object RepositoryModule {
     @Provides
     fun provideEntityHistoryRepository(
         entityHistoryDao: EntityHistoryDao,
-    ): EntityHistoryRepository = EntityHistoryRepository(entityHistoryDao)
+        gson: Gson,
+    ): EntityHistoryRepository = EntityHistoryRepository(entityHistoryDao, gson)
 }
