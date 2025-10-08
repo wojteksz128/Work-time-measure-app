@@ -2,23 +2,23 @@
 
     <!--<editor-fold desc="Day of week">-->
     <string-array name="day_of_week_entries">
-        <item>@string/settings_workTime_week_firstWeekDay_sundayEntry</item>
         <item>@string/settings_workTime_week_firstWeekDay_mondayEntry</item>
         <item>@string/settings_workTime_week_firstWeekDay_tuesdayEntry</item>
         <item>@string/settings_workTime_week_firstWeekDay_wednesdayEntry</item>
         <item>@string/settings_workTime_week_firstWeekDay_thursdayEntry</item>
         <item>@string/settings_workTime_week_firstWeekDay_fridayEntry</item>
         <item>@string/settings_workTime_week_firstWeekDay_saturdayEntry</item>
+        <item>@string/settings_workTime_week_firstWeekDay_sundayEntry</item>
     </string-array>
 
     <string-array name="day_of_week_values">
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-        <item>6</item>
-        <item>7</item>
+        <item>MONDAY</item>
+        <item>TUESDAY</item>
+        <item>WEDNESDAY</item>
+        <item>THURSDAY</item>
+        <item>FRIDAY</item>
+        <item>SATURDAY</item>
+        <item>SUNDAY</item>
     </string-array>
     <!--</editor-fold>-->
 

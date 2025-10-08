@@ -1,3 +1,5 @@
+@file:Suppress("PropertyName")
+
 package net.wojteksz128.worktimemeasureapp.settings
 
 import net.wojteksz128.worktimemeasureapp.api.HolidayProvider
@@ -32,7 +34,7 @@ class Settings(
     ) : SettingsNode(NotifyingEnabled, Week) {
 
         class WeekSettings(
-            val FirstWeekDay: IntFromStringSettingsItem,
+            val FirstWeekDay: StringSettingsItem,
             val DaysOfWorkingWeek: StringsArraySettingsItem,
             val Duration: DurationSettingsItem,
         ) : SettingsNode(FirstWeekDay, DaysOfWorkingWeek, Duration)
@@ -56,6 +58,7 @@ class Settings(
     class InternalSettings(
         val AlarmState: AlarmStateSettingsItem,
         val FirstRun: BooleanSettingsItem,
-    ) : SettingsNode(AlarmState, FirstRun)
+        val ConfigurationVersion: IntFromStringSettingsItem,
+    ) : SettingsNode(AlarmState, FirstRun, ConfigurationVersion)
 }
 

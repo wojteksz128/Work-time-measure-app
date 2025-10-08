@@ -242,6 +242,7 @@
     <!--<editor-fold desc="############ Settings Activity ###########">-->
 
     <string name="settings_activity_title">Ustawienia</string>
+    <!--<string name="settings_configuration_version" translatable="false">Settings</string>-->
 
     <!-- Preference Titles -->
     <string name="settings_header_profile_title">Profil</string>
@@ -327,6 +328,7 @@
 
     <!--<string name="settings_key_internal_alarmSetTime" translatable="false">settings_internal_alarmSetTime</string>-->
     <!--<string name="settings_key_internal_firstRun" translatable="false">settings_internal_firstRun</string>-->
+    <!--<string name="settings_key_internal_configurationVersion" translatable="false">settings_internal_configurationVersion</string>-->
 
     <!--</editor-fold>-->
     <!--##########################################-->
