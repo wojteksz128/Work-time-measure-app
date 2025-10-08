@@ -20,7 +20,6 @@ import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate
 import org.threeten.bp.ZoneId
 import org.threeten.bp.ZonedDateTime
-import java.util.Calendar
 import javax.inject.Inject
 
 class DateTimeProvider @Inject constructor(
@@ -30,6 +29,9 @@ class DateTimeProvider @Inject constructor(
 
     val currentTime: ZonedDateTime
         get() = getCorrectedTime()
+
+    val currentDate: LocalDate
+        get() = currentTime.toLocalDate()
 
     val currentTimeZone: ZoneId
         get() = ZoneId.systemDefault()
@@ -49,12 +51,6 @@ class DateTimeProvider @Inject constructor(
 
         return Instant.ofEpochMilli(correctedNtpTime).atZone(ZoneId.systemDefault())
     }
-
-    val currentCalendar: Calendar
-        get() = currentCalendarWithoutCorrection.apply { time = currentTime.toDate() }
-
-    val currentCalendarWithoutCorrection: Calendar
-        get() = Calendar.getInstance()
 
     val weekEndDay: LocalDate
         get() {
@@ -126,8 +122,8 @@ class RebootReceiver @Inject constructor(
 ) : BroadcastReceiver(), ClassTagAware {
     override fun onReceive(context: Context?, intent: Intent?) {
         if (intent?.action == Intent.ACTION_BOOT_COMPLETED) {
-            dateTimeProvider.updateOffset()
             Log.d(classTag, "Reboot detected. Attempting to sync NTP time.")
+            dateTimeProvider.updateOffset()
         }
     }
 }
