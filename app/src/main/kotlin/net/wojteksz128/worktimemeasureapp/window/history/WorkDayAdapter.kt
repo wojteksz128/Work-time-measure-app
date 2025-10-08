@@ -6,14 +6,22 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import androidx.paging.PagingDataAdapter
-import androidx.recyclerview.widget.*
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SimpleItemAnimator
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import net.wojteksz128.worktimemeasureapp.databinding.ListItemHistoryWorkDayBinding
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
-import net.wojteksz128.worktimemeasureapp.util.livedata.RecyclerViewPeriodicUpdater
 import net.wojteksz128.worktimemeasureapp.util.recyclerView.RecyclerViewItemClick
 import net.wojteksz128.worktimemeasureapp.util.recyclerView.ViewHolderInformation
 import net.wojteksz128.worktimemeasureapp.window.history.ComeEventsAdapter.ComeEventViewHolder
@@ -25,10 +33,10 @@ class WorkDayAdapter(
     private val dateTimeUtils: DateTimeUtils,
     private val fragmentManager: FragmentManager,
     private val lifecycleOwner: LifecycleOwner,
-    private val workDayItemListener: WorkDayItemListener
+    private val ticker: Flow<Unit>,
+    private val workDayItemListener: WorkDayItemListener,
 ) : PagingDataAdapter<WorkDay, WorkDayAdapter.WorkDayViewHolder>(WorkDayEventsDiffCallback),
     RecyclerViewItemClick<WorkDay> {
-    private val periodicUpdater = RecyclerViewPeriodicUpdater(this)
 
     @Suppress("UNUSED_PARAMETER")
     override var onItemClickListenerProvider: (WorkDay) -> (View) -> Unit
@@ -44,28 +52,16 @@ class WorkDayAdapter(
             fragmentManager,
             lifecycleOwner,
             dateTimeUtils,
+            ticker,
             workDayItemListener::onWorkDayEventSelected
         )
     }
 
     override fun onBindViewHolder(holder: WorkDayViewHolder, position: Int) {
         getItem(position)?.let { workDay ->
-            holder.setOnClickListener(onItemClickListenerProvider(workDay))
             holder.bind(workDay, workDayItemListener.onWorkDayItemViewModelRequires(workDay))
+            holder.setOnClickListener(onItemClickListenerProvider(workDay))
         }
-    }
-
-    override fun onViewAttachedToWindow(holder: WorkDayViewHolder) {
-        super.onViewAttachedToWindow(holder)
-        if (holder.binding.workDay?.isAllEventsEnded() != true) {
-            periodicUpdater.addItem(holder.absoluteAdapterPosition)
-            holder.syncUpdaterWith(periodicUpdater)
-        }
-    }
-
-    override fun onViewDetachedFromWindow(holder: WorkDayViewHolder) {
-        periodicUpdater.removeItem(holder.absoluteAdapterPosition)
-        super.onViewDetachedFromWindow(holder)
     }
 
 
@@ -75,9 +71,11 @@ class WorkDayAdapter(
         private val fragmentManager: FragmentManager,
         private val lifecycleOwner: LifecycleOwner,
         private val dateTimeUtils: DateTimeUtils,
+        private val ticker: Flow<Unit>,
         private val selectionUpdater: (ComeEvent, ViewHolderInformation<ComeEventViewHolder>) -> Unit,
     ) : RecyclerView.ViewHolder(binding.root), ClassTagAware {
-        private val comeEventsAdapter = ComeEventsAdapter(dateTimeUtils)
+        private val comeEventsAdapter = ComeEventsAdapter(dateTimeUtils, lifecycleOwner, ticker)
+        private var updateJob: Job? = null
 
         init {
             binding.apply {
@@ -106,10 +104,15 @@ class WorkDayAdapter(
             binding.expandViewModel = itemViewModel
 
             comeEventsAdapter.submitList(workDay.events)
-        }
 
-        fun syncUpdaterWith(anotherUpdater: RecyclerViewPeriodicUpdater) {
-            comeEventsAdapter.syncUpdaterWith(anotherUpdater)
+            updateJob?.cancel()
+            if (!workDay.isAllEventsEnded()) {
+                updateJob = lifecycleOwner.lifecycleScope.launch {
+                    ticker.collectLatest {
+                        binding.invalidateAll()
+                    }
+                }
+            }
         }
 
         fun setOnClickListener(onItemClickListener: (View) -> Unit) {

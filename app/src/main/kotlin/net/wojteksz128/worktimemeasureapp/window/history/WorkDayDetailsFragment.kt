@@ -8,11 +8,14 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.databinding.FragmentWorkDayDetailsBinding
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
@@ -44,8 +47,6 @@ class WorkDayDetailsFragment : Fragment(), DeleteComeEventDialogListener,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        comeEventsAdapter = ComeEventsAdapter(dateTimeUtils)
         historyAdapter = WorkDayHistoryAdapter()
     }
 
@@ -54,6 +55,7 @@ class WorkDayDetailsFragment : Fragment(), DeleteComeEventDialogListener,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        comeEventsAdapter = ComeEventsAdapter(dateTimeUtils, viewLifecycleOwner, viewModel.ticker)
         binding = FragmentWorkDayDetailsBinding.inflate(layoutInflater, container, false)
         initializeLayoutData()
         viewModel.apply {
@@ -71,6 +73,12 @@ class WorkDayDetailsFragment : Fragment(), DeleteComeEventDialogListener,
                     workDayId,
                     selectedWorkDayViewModel.selected
                 )
+            }
+        }
+        lifecycleScope.launch {
+            viewModel.ticker.collectLatest {
+                if (viewModel.workDay.value?.isAllEventsEnded() == false)
+                    binding.invalidateAll()
             }
         }
 
