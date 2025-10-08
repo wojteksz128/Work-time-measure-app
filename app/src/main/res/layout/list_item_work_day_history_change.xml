@@ -6,7 +6,7 @@
 
         <variable
             name="change"
-            type="net.wojteksz128.worktimemeasureapp.window.history.FieldChange" />
+            type="net.wojteksz128.worktimemeasureapp.window.history.ChangeDisplayItem" />
     </data>
 
     <LinearLayout

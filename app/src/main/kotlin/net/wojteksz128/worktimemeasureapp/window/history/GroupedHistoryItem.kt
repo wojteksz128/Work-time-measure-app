@@ -2,6 +2,7 @@ package net.wojteksz128.worktimemeasureapp.window.history
 
 import org.threeten.bp.ZonedDateTime
 
+// TODO do przeniesienia chhyba do model
 data class GroupedHistoryItem(
     val timestamp: ZonedDateTime,
     val entityType: String,

@@ -1,25 +1,26 @@
 package net.wojteksz128.worktimemeasureapp.window.history
 
+import android.annotation.SuppressLint
 import android.graphics.Paint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import net.wojteksz128.worktimemeasureapp.databinding.ListItemWorkDayHistoryBinding
 import net.wojteksz128.worktimemeasureapp.databinding.ListItemWorkDayHistoryChangeBinding
-import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 
-class WorkDayHistoryAdapter(private val dateTimeUtils: DateTimeUtils) :
-    ListAdapter<GroupedHistoryItem, WorkDayHistoryAdapter.WorkDayHistoryViewHolder>(
-        GroupedHistoryItemDiffCallback
+class WorkDayHistoryAdapter :
+    ListAdapter<HistoryDisplayItem, WorkDayHistoryAdapter.WorkDayHistoryViewHolder>(
+        HistoryItemDiffCallback
     ) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WorkDayHistoryViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = ListItemWorkDayHistoryBinding.inflate(inflater, parent, false)
-        return WorkDayHistoryViewHolder(binding, dateTimeUtils)
+        return WorkDayHistoryViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: WorkDayHistoryViewHolder, position: Int) {
@@ -28,13 +29,15 @@ class WorkDayHistoryAdapter(private val dateTimeUtils: DateTimeUtils) :
 
     class WorkDayHistoryViewHolder(
         private val binding: ListItemWorkDayHistoryBinding,
-        private val dateTimeUtils: DateTimeUtils,
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: GroupedHistoryItem) {
+        @SuppressLint("ResourceAsColor")
+        fun bind(item: HistoryDisplayItem) {
             binding.apply {
                 historyItem = item
-                dateTimeUtils = this@WorkDayHistoryViewHolder.dateTimeUtils
+                binding.workDayHistoryActionType.setTextColor(
+                    ContextCompat.getColor(binding.root.context, item.actionColorRes)
+                )
                 workDayHistoryChanges.removeAllViews()
             }
 
@@ -59,11 +62,11 @@ class WorkDayHistoryAdapter(private val dateTimeUtils: DateTimeUtils) :
         }
     }
 
-    object GroupedHistoryItemDiffCallback : DiffUtil.ItemCallback<GroupedHistoryItem>() {
-        override fun areItemsTheSame(oldItem: GroupedHistoryItem, newItem: GroupedHistoryItem) =
-            oldItem.timestamp == newItem.timestamp && oldItem.entityType == newItem.entityType
+    object HistoryItemDiffCallback : DiffUtil.ItemCallback<HistoryDisplayItem>() {
+        override fun areItemsTheSame(oldItem: HistoryDisplayItem, newItem: HistoryDisplayItem) =
+            oldItem.timestamp == newItem.timestamp && oldItem.entityText == newItem.entityText
 
-        override fun areContentsTheSame(oldItem: GroupedHistoryItem, newItem: GroupedHistoryItem) =
+        override fun areContentsTheSame(oldItem: HistoryDisplayItem, newItem: HistoryDisplayItem) =
             oldItem == newItem
     }
 }

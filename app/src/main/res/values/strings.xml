@@ -208,8 +208,14 @@
     <string name="work_day_history_action_type_format" translatable="false">%1$s: </string>
 
     <string name="work_day_history_action_type_example">Modified:</string>
+    <string name="work_day_history_action_type_deleted">Deleted</string>
+    <string name="work_day_history_action_type_added">Added</string>
+    <string name="work_day_history_action_type_modified">Modified</string>
 
     <string name="work_day_history_entity_type_example">work day</string>
+    <string name="work_day_history_entity_type_come_event">Event</string>
+    <string name="work_day_history_entity_type_work_day">Work Day</string>
+    <string name="work_day_history_entity_type_unknown">Unknown</string>
 
     <!--</editor-fold>-->
     <!--##########################################-->

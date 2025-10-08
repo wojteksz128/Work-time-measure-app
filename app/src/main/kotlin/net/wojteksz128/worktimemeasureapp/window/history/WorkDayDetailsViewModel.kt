@@ -6,6 +6,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.map
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +19,9 @@ import net.wojteksz128.worktimemeasureapp.repository.ComeEventRepository
 import net.wojteksz128.worktimemeasureapp.repository.EntityHistoryRepository
 import net.wojteksz128.worktimemeasureapp.repository.WorkDayRepository
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
+import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import javax.inject.Inject
+import javax.inject.Named
 
 @HiltViewModel
 class WorkDayDetailsViewModel @Inject constructor(
@@ -26,14 +29,38 @@ class WorkDayDetailsViewModel @Inject constructor(
     private val comeEventRepository: ComeEventRepository,
     private val workDayRepository: WorkDayRepository,
     private val entityHistoryRepository: EntityHistoryRepository,
+    private val historyDisplayMapper: HistoryDisplayMapper,
+    private val dayTimeUtils: DateTimeUtils,
+    @Named("entryHistoryDateTimeFormat") private val dateTimeFormat: String,
 ) : AndroidViewModel(application), ClassTagAware {
     val workDay = MediatorLiveData<WorkDay>()
 
     val modifiedComeEventPosition = MutableLiveData<Int>()
 
-    val history: LiveData<List<GroupedHistoryItem>> =
+    val history: LiveData<List<HistoryDisplayItem>> =
         workDay.switchMap { workDay ->
-            workDay.id?.let { entityHistoryRepository.getGroupedHistory(it) }
+            workDay.id?.let {
+                entityHistoryRepository.getGroupedHistoryForWorkDay(it).map { historyItems ->
+                    historyItems.map { historyItem ->
+                        HistoryDisplayItem(
+                            timestamp = dayTimeUtils.formatDate(
+                                dateTimeFormat,
+                                historyItem.timestamp
+                            ),
+                            actionText = historyDisplayMapper.mapActionType(historyItem.actionType),
+                            actionColorRes = historyDisplayMapper.mapActionToColor(historyItem.actionType),
+                            entityText = historyDisplayMapper.mapEntityType(historyItem.entityType),
+                            changes = historyItem.changes.map { change ->
+                                ChangeDisplayItem(
+                                    fieldName = change.fieldName,
+                                    oldValue = change.oldValue,
+                                    newValue = change.newValue
+                                )
+                            }
+                        )
+                    }
+                }
+            }
         }
 
     fun fillWorkDayUsingLocal(workDaySource: LiveData<WorkDay>) {

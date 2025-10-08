@@ -25,7 +25,7 @@ class EntityHistoryRepository @Inject constructor(
     private val formatterProvider: HistoryFormatterProvider,
 ) : ClassTagAware {
 
-    fun getGroupedHistory(workDayId: Long): LiveData<List<GroupedHistoryItem>> {
+    fun getGroupedHistoryForWorkDay(workDayId: Long): LiveData<List<GroupedHistoryItem>> {
         val rawHistory = entityHistoryDao.findHistoryForWorkDay(workDayId)
 
         return rawHistory.map { historyList ->

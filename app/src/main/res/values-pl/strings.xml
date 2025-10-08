@@ -208,8 +208,14 @@
     <!--    <string name="work_day_history_action_type_format" translatable="false">%1$s: </string>-->
 
     <string name="work_day_history_action_type_example">Zmodyfikowano:</string>
+    <string name="work_day_history_action_type_deleted">Usunięto</string>
+    <string name="work_day_history_action_type_added">Dodano</string>
+    <string name="work_day_history_action_type_modified">Zmodyfikowano</string>
 
     <string name="work_day_history_entity_type_example">dzień pracy</string>
+    <string name="work_day_history_entity_type_come_event">Zdarzenie</string>
+    <string name="work_day_history_entity_type_work_day">Dzień pracy</string>
+    <string name="work_day_history_entity_type_unknown">Nieznany</string>
 
     <!--</editor-fold>-->
     <!--##########################################-->

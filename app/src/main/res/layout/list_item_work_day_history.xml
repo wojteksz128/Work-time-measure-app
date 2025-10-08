@@ -7,11 +7,7 @@
 
         <variable
             name="historyItem"
-            type="net.wojteksz128.worktimemeasureapp.window.history.GroupedHistoryItem" />
-
-        <variable
-            name="dateTimeUtils"
-            type="net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils" />
+            type="net.wojteksz128.worktimemeasureapp.window.history.HistoryDisplayItem" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -26,7 +22,7 @@
             style="@style/work_day_history_timestamp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{dateTimeUtils.formatDate(@string/history_work_day_label_format, historyItem.timestamp)}"
+            android:text="@{historyItem.timestamp}"
             app:layout_constraintBottom_toTopOf="@id/work_day_history_entity_type"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -40,7 +36,7 @@
             style="@style/work_day_history_action_type"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{@string/work_day_history_action_type_format(historyItem.actionType)}"
+            android:text="@{@string/work_day_history_action_type_format(historyItem.actionText)}"
             app:layout_constraintEnd_toStartOf="@id/work_day_history_entity_type"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintHorizontal_chainStyle="packed"
@@ -55,7 +51,7 @@
             style="@style/work_day_history_entity_type"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{historyItem.entityType}"
+            android:text="@{historyItem.entityText}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintLeft_toRightOf="@id/work_day_history_action_type"
             app:layout_constraintRight_toRightOf="parent"

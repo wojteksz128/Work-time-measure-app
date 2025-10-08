@@ -46,7 +46,7 @@ class WorkDayDetailsFragment : Fragment(), DeleteComeEventDialogListener,
         super.onCreate(savedInstanceState)
 
         comeEventsAdapter = ComeEventsAdapter(dateTimeUtils)
-        historyAdapter = WorkDayHistoryAdapter(dateTimeUtils)
+        historyAdapter = WorkDayHistoryAdapter()
     }
 
     override fun onCreateView(
