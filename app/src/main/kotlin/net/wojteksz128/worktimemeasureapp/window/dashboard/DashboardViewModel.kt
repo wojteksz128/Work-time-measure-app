@@ -5,10 +5,13 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.liveData
 import androidx.lifecycle.map
+import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
@@ -16,7 +19,6 @@ import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import net.wojteksz128.worktimemeasureapp.repository.ComeEventRepository
 import net.wojteksz128.worktimemeasureapp.repository.WorkDayRepository
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
-import net.wojteksz128.worktimemeasureapp.util.coroutines.PeriodicOperation
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.datetime.WorkTimeCalculator
 import net.wojteksz128.worktimemeasureapp.util.livedata.ObservableLiveData
@@ -30,9 +32,11 @@ class DashboardViewModel @Inject constructor(
     dateTimeProvider: DateTimeProvider,
     workTimeCalculator: WorkTimeCalculator,
 ) : AndroidViewModel(application), ClassTagAware {
-    var workTimeCounterRunner: PeriodicOperation.PeriodicOperationRunner? = null
     val workDay: LiveData<WorkDay>
     val workTimeData = ObservableLiveData<WorkTimeData>()
+
+    val liveWorkTimeData: LiveData<WorkTimeData>
+
     val waitingFor = MutableLiveData(false)
     private val weekWorkDays: LiveData<List<WorkDay>>
 
@@ -56,6 +60,21 @@ class DashboardViewModel @Inject constructor(
             }
         }.map {
             it ?: WorkDay(currentTime)
+        }
+        liveWorkTimeData = workDay.switchMap { currentWorkDay ->
+            val isTimerActive = currentWorkDay.events.any { !it.isEnded }
+
+            if (isTimerActive) liveData {
+                while (true) {
+                    val updatedData = workTimeData.value?.apply { updateData() }
+                    if (updatedData != null)
+                        emit(updatedData)
+                    delay(1000)
+                }
+            } else {
+                val updatedData = workTimeData.value!!.apply { updateData() }
+                MutableLiveData(updatedData)
+            }
         }
     }
 
