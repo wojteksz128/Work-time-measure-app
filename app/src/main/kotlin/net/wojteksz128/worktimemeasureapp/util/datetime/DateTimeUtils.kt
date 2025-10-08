@@ -29,6 +29,9 @@ class DateTimeUtils (
     fun formatDate(format: String, date: DefaultInterfaceTemporal?) =
         date?.let { formatDate(format, date, ZoneId.systemDefault()) }
 
+    fun formatDate(format: String, date: ZonedDateTime): String =
+        DateTimeFormatter.ofPattern(format).withZone(ZoneId.systemDefault()).format(date)
+
     private fun formatDate(
         format: String,
         date: Date,

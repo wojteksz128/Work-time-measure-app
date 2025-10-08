@@ -5,6 +5,8 @@
 
     <!--<string name="empty_time_string" translatable="false">0:00:00</string>-->
 
+    <string name="entry_history_date_time_format">dd.MM.yyyy HH:mm:ss</string>
+
     <!--##########################################-->
     <!--<editor-fold desc="################ Channels ################">-->
 

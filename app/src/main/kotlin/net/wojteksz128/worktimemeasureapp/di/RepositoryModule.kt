@@ -27,6 +27,7 @@ import net.wojteksz128.worktimemeasureapp.repository.api.HolidayApiRepository
 import net.wojteksz128.worktimemeasureapp.repository.api.NagerDateApiV3Repository
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
+import net.wojteksz128.worktimemeasureapp.window.history.formatters.HistoryFormatterProvider
 import javax.inject.Singleton
 
 @Module
@@ -102,5 +103,6 @@ object RepositoryModule {
     fun provideEntityHistoryRepository(
         entityHistoryDao: EntityHistoryDao,
         gson: Gson,
-    ): EntityHistoryRepository = EntityHistoryRepository(entityHistoryDao, gson)
+        formatterProvider: HistoryFormatterProvider,
+    ): EntityHistoryRepository = EntityHistoryRepository(entityHistoryDao, gson, formatterProvider)
 }
