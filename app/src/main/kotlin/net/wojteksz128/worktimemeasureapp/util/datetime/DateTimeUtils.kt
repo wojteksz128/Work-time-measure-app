@@ -9,6 +9,7 @@ import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import org.threeten.bp.Duration
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate
+import org.threeten.bp.LocalDateTime
 import org.threeten.bp.ZoneId
 import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.format.DateTimeFormatter
@@ -93,6 +94,10 @@ fun Date.toLocalDate(): LocalDate =
     Instant.ofEpochMilli(this.time).atZone(ZoneId.systemDefault()).toLocalDate()
 
 fun ZonedDateTime.toDate(): Date = Date(this.toInstant().toEpochMilli())
+
+fun LocalDateTime.isTheSameDay(other: LocalDateTime?): Boolean =
+    other?.let { this.toLocalDate() == it.toLocalDate() }
+        ?: (this.toLocalDate() == LocalDate.now())
 
 fun ZonedDateTime.isTheSameDay(other: ZonedDateTime?): Boolean =
     other?.let { this.toLocalDate() == it.toLocalDate() }

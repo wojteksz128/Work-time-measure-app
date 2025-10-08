@@ -30,6 +30,9 @@ class DateTimeProvider @Inject constructor(
     val currentTime: ZonedDateTime
         get() = getCorrectedTime()
 
+    val currentTimeZone: ZoneId
+        get() = ZoneId.systemDefault()
+
     private fun getCorrectedTime(): ZonedDateTime {
         val lastNtpTime = sharedPreferences.getLong("last_ntp_time", 0L)
         val lastSystemTime = sharedPreferences.getLong("last_system_time", 0L)
