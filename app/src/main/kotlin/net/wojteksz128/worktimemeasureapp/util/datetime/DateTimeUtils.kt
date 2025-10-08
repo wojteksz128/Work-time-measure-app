@@ -29,8 +29,10 @@ class DateTimeUtils (
     fun formatDate(format: String, date: DefaultInterfaceTemporal?) =
         date?.let { formatDate(format, date, ZoneId.systemDefault()) }
 
-    fun formatDate(format: String, date: ZonedDateTime): String =
-        DateTimeFormatter.ofPattern(format).withZone(ZoneId.systemDefault()).format(date)
+    fun formatDate(format: String, date: ZonedDateTime?): String =
+        date?.let {
+            DateTimeFormatter.ofPattern(format).withZone(ZoneId.systemDefault()).format(it)
+        } ?: ""
 
     private fun formatDate(
         format: String,
@@ -74,8 +76,13 @@ class DateTimeUtils (
         } ?: defaultValue
     }
 
-    val ComeEvent.duration: Duration
-        get() = Duration.between(startDate, endDate ?: dateTimeProvider.currentTime)
+    val ComeEvent?.duration: Duration
+        get() = this?.let {
+            Duration.between(
+                it.startDate,
+                it.endDate ?: dateTimeProvider.currentTime
+            )
+        } ?: Duration.ZERO
 
 }
 

@@ -65,7 +65,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        comeEventsAdapter = ComeEventsAdapter(dateTimeUtils)
+        comeEventsAdapter = ComeEventsAdapter(dateTimeUtils, this)
 
         val localViewModel = viewModel
 

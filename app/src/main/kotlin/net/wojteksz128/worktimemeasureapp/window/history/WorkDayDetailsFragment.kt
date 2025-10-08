@@ -45,7 +45,6 @@ class WorkDayDetailsFragment : Fragment(), DeleteComeEventDialogListener,
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        comeEventsAdapter = ComeEventsAdapter(dateTimeUtils)
         historyAdapter = WorkDayHistoryAdapter()
     }
 
@@ -54,6 +53,7 @@ class WorkDayDetailsFragment : Fragment(), DeleteComeEventDialogListener,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        comeEventsAdapter = ComeEventsAdapter(dateTimeUtils, viewLifecycleOwner)
         binding = FragmentWorkDayDetailsBinding.inflate(layoutInflater, container, false)
         initializeLayoutData()
         viewModel.apply {
