@@ -13,9 +13,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
@@ -23,6 +20,7 @@ import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import net.wojteksz128.worktimemeasureapp.repository.ComeEventRepository
 import net.wojteksz128.worktimemeasureapp.repository.WorkDayRepository
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
+import net.wojteksz128.worktimemeasureapp.util.coroutines.TickerFactory
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.datetime.WorkTimeCalculator
 import net.wojteksz128.worktimemeasureapp.util.livedata.ObservableLiveData
@@ -35,18 +33,14 @@ class DashboardViewModel @Inject constructor(
     private val comeEventRepository: ComeEventRepository,
     dateTimeProvider: DateTimeProvider,
     workTimeCalculator: WorkTimeCalculator,
+    tickerFactory: TickerFactory,
 ) : AndroidViewModel(application), ClassTagAware {
     val workDay: LiveData<WorkDay>
     val workTimeData = ObservableLiveData<WorkTimeData>()
 
     val liveWorkTimeData: LiveData<WorkTimeData>
 
-    val ticker: SharedFlow<Unit> = flow {
-        while (true) {
-            emit(Unit)
-            delay(1000)
-        }
-    }.shareIn(viewModelScope, SharingStarted.WhileSubscribed(5000))
+    val ticker: SharedFlow<Unit> = tickerFactory.create(viewModelScope)
 
     val waitingFor = MutableLiveData(false)
     private val weekWorkDays: LiveData<List<WorkDay>>
