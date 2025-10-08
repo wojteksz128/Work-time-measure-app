@@ -7,10 +7,9 @@ import net.wojteksz128.worktimemeasureapp.model.fieldType.DayOffType.PublicHolid
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import org.threeten.bp.LocalDate
-import java.util.Calendar
 
 abstract class ExternalHolidayRepository(
-    open val Settings: Settings,
+    @Suppress("PropertyName") open val Settings: Settings,
     open val dateTimeProvider: DateTimeProvider,
 ) {
 
@@ -18,7 +17,7 @@ abstract class ExternalHolidayRepository(
 
     abstract suspend fun getHolidays(
         countryCode: String = Settings.DaysOff.Country.value,
-        year: Int = dateTimeProvider.currentCalendar.get(Calendar.YEAR),
+        year: Int = dateTimeProvider.currentDate.year,
     ): Collection<DayOff>
 
     protected fun prepareCountryDomainModel(code: String, name: String) = Country(code, name)

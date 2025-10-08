@@ -21,7 +21,7 @@ import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import net.wojteksz128.worktimemeasureapp.util.view.util.ObservableDelegate
 import org.threeten.bp.LocalDate
-import java.util.Date
+import org.threeten.bp.LocalDateTime
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -90,7 +90,7 @@ class TimeEditor(context: Context, attrs: AttributeSet?) : FrameLayout(context, 
         }
     }
 
-    var time: Date?
+    var time: LocalDateTime?
         get() = model.time
         set(value) {
             model.time = value
@@ -127,13 +127,13 @@ class TimeEditor(context: Context, attrs: AttributeSet?) : FrameLayout(context, 
         var title by ObservableDelegate(BR.title, "")
 
         @get:Bindable
-        var time by ObservableDelegate<Date?>(BR.time, null) { oldValue, newValue ->
+        var time by ObservableDelegate<LocalDateTime?>(BR.time, null) { oldValue, newValue ->
             if (oldValue != newValue)
                 timeChangeListenerProvider()?.onChange()
         }
 
         @get:Bindable
-        var editedTime by ObservableDelegate<Date?>(BR.editedTime, null)
+        var editedTime by ObservableDelegate<LocalDateTime?>(BR.editedTime, null)
 
         @get:Bindable
         var workDayDate by ObservableDelegate<LocalDate?>(BR.workDayDate, null)

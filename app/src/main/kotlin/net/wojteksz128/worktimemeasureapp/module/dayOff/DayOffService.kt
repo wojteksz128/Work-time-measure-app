@@ -8,9 +8,8 @@ import net.wojteksz128.worktimemeasureapp.repository.DayOffRepository
 import net.wojteksz128.worktimemeasureapp.repository.api.ExternalHolidayRepositoriesFacade
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
-import net.wojteksz128.worktimemeasureapp.util.datetime.toDate
+import org.threeten.bp.DayOfWeek
 import org.threeten.bp.ZonedDateTime
-import java.util.Calendar
 
 class DayOffService(
     private val dayOffRepository: DayOffRepository,
@@ -32,12 +31,11 @@ class DayOffService(
     }
 
     private fun isWorkingDay(date: ZonedDateTime): Boolean {
-        val dayOfWeekIndex = Calendar.getInstance().apply {
-            time = date.toDate()
-        }[Calendar.DAY_OF_WEEK]
-        val daysOfWorkingWeek = Settings.WorkTime.Week.DaysOfWorkingWeek.value
+        val dayOfWeek = date.dayOfWeek
+        val daysOfWorkingWeek =
+            Settings.WorkTime.Week.DaysOfWorkingWeek.value.map { DayOfWeek.valueOf(it) }
 
-        return daysOfWorkingWeek.map { it.toInt() }.any { it == dayOfWeekIndex }
+        return daysOfWorkingWeek.any { it == dayOfWeek }
     }
 
     suspend fun syncHolidaysWith(holidayProvider: HolidayProvider) {

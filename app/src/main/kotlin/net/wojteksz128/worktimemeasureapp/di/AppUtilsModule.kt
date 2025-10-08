@@ -17,6 +17,7 @@ import net.wojteksz128.worktimemeasureapp.repository.WorkDayRepository
 import net.wojteksz128.worktimemeasureapp.repository.api.ExternalHolidayRepositoriesFacade
 import net.wojteksz128.worktimemeasureapp.settings.InitialSettingsPreparer
 import net.wojteksz128.worktimemeasureapp.settings.Settings
+import net.wojteksz128.worktimemeasureapp.settings.converter.ConfigurationConverterFactory
 import net.wojteksz128.worktimemeasureapp.util.TimerManager
 import net.wojteksz128.worktimemeasureapp.util.comeevent.ComeEventUtils
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
@@ -92,7 +93,10 @@ object AppUtilsModule {
     @Provides
     fun provideInitialSettingsPreparer(
         @Suppress("LocalVariableName") Settings: Settings,
-    ): InitialSettingsPreparer = InitialSettingsPreparer(Settings)
+        @Named("settings_configuration_version") configurationVersion: String,
+        configurationConverterFactory: ConfigurationConverterFactory,
+    ): InitialSettingsPreparer =
+        InitialSettingsPreparer(Settings, configurationVersion, configurationConverterFactory)
 
     @Singleton
     @Provides

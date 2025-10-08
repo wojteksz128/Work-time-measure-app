@@ -1,6 +1,6 @@
 package net.wojteksz128.worktimemeasureapp.api.nagerDate
 
-import java.util.*
+import org.threeten.bp.LocalDate
 
 data class NagerDateCountryInfoDto(
     val commonName: String?,
@@ -16,14 +16,14 @@ data class NagerDateCountryV3Dto(
 )
 
 data class NagerDateLongWeekendV3Dto(
-    val startDate: Date,
-    val endDate: Date,
+    val startDate: LocalDate,
+    val endDate: LocalDate,
     val dayCount: Int,
-    val needBridgeDay: Boolean
+    val needBridgeDay: Boolean,
 )
 
 data class NagerDatePublicHolidayV3Dto(
-    val date: Date,
+    val date: LocalDate,
     val localName: String?,
     val name: String?,
     val countryCode: String?,
@@ -31,7 +31,7 @@ data class NagerDatePublicHolidayV3Dto(
     val global: Boolean,
     val counties: Set<String>?,
     val launchYear: Int?,
-    val types: Set<NagerDatePublicHolidayType>?
+    val types: Set<NagerDatePublicHolidayType>?,
 )
 
 enum class NagerDatePublicHolidayType {

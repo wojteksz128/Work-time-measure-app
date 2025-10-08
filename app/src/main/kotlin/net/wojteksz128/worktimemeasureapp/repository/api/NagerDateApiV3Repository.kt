@@ -7,7 +7,6 @@ import net.wojteksz128.worktimemeasureapp.model.Country
 import net.wojteksz128.worktimemeasureapp.model.DayOff
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
-import net.wojteksz128.worktimemeasureapp.util.datetime.toLocalDate
 import retrofit2.Response
 
 class NagerDateApiV3Repository(
@@ -40,8 +39,8 @@ class NagerDateApiV3Repository(
                 return upcomingPublicHolidays.map {
                     prepareDayOffDomainModel(
                         it.localName ?: "",
-                        it.date.toLocalDate(),
-                        it.date.toLocalDate()
+                        it.date,
+                        it.date
                     )
                 }
             }

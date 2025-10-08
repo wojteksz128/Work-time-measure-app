@@ -11,14 +11,15 @@ import net.wojteksz128.worktimemeasureapp.notification.worktime.action.WorkTimeN
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import net.wojteksz128.worktimemeasureapp.window.dashboard.DashboardActivity
-import java.util.*
+import org.threeten.bp.ZonedDateTime
 
 class WorkTimeInProgressNotification(
     context: Context,
-    endOfWorkTime: Date,
-    dateTimeUtils: DateTimeUtils
+    endOfWorkTime: ZonedDateTime,
+    dateTimeUtils: DateTimeUtils,
 ) : AppNotification<WorkTimeNotificationActionReceiver>(
-        Channel.WORK_TIME_CHANNEL, notificationId, context),
+    Channel.WORK_TIME_CHANNEL, NOTIFICATION_ID, context
+),
     ClassTagAware {
 
     init {
@@ -37,6 +38,6 @@ class WorkTimeInProgressNotification(
     }
 
     companion object {
-        const val notificationId = 251
+        const val NOTIFICATION_ID = 251
     }
 }

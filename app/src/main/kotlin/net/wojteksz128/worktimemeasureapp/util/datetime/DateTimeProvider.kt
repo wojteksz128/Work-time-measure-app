@@ -6,6 +6,7 @@ import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.os.SystemClock
 import android.util.Log
+import androidx.core.content.edit
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -13,13 +14,12 @@ import kotlinx.coroutines.launch
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import org.apache.commons.net.ntp.NTPUDPClient
+import org.threeten.bp.DayOfWeek
 import org.threeten.bp.Duration
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate
 import org.threeten.bp.ZoneId
 import org.threeten.bp.ZonedDateTime
-import java.util.Calendar
-import java.util.Date
 import javax.inject.Inject
 
 class DateTimeProvider @Inject constructor(
@@ -29,6 +29,12 @@ class DateTimeProvider @Inject constructor(
 
     val currentTime: ZonedDateTime
         get() = getCorrectedTime()
+
+    val currentDate: LocalDate
+        get() = currentTime.toLocalDate()
+
+    val currentTimeZone: ZoneId
+        get() = ZoneId.systemDefault()
 
     private fun getCorrectedTime(): ZonedDateTime {
         val lastNtpTime = sharedPreferences.getLong("last_ntp_time", 0L)
@@ -46,37 +52,23 @@ class DateTimeProvider @Inject constructor(
         return Instant.ofEpochMilli(correctedNtpTime).atZone(ZoneId.systemDefault())
     }
 
-    val currentCalendar: Calendar
-        get() = currentCalendarWithoutCorrection.apply { time = currentTime.toDate() }
-
-    val currentCalendarWithoutCorrection: Calendar
-        get() = Calendar.getInstance()
-
     val weekEndDay: LocalDate
         get() {
-            val c = Calendar.getInstance()
-            c.time =
-                Date(weekBeginDay.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli())
-            c.add(Calendar.WEEK_OF_YEAR, 1)
-            c.add(Calendar.MILLISECOND, -1)
-            return Instant.ofEpochMilli(c.time.time).atZone(ZoneId.systemDefault()).toLocalDate()
+            return weekBeginDay.plusWeeks(1).minusDays(1)
         }
 
     val weekBeginDay: LocalDate
         get() {
-            val firstWeekDay = Settings.WorkTime.Week.FirstWeekDay.valueNullable
-            val c = Calendar.getInstance()
-            val currentTime = currentTime
-            c.time = currentTime.toDate()
-            c.set(Calendar.HOUR_OF_DAY, 0)
-            c.clear(Calendar.MINUTE)
-            c.clear(Calendar.SECOND)
-            c.clear(Calendar.MILLISECOND)
-            c.set(Calendar.DAY_OF_WEEK, firstWeekDay ?: Calendar.MONDAY)
-            if (c.time > currentTime.toDate())
-                c.add(Calendar.WEEK_OF_YEAR, -1)
+            val firstWeekDay =
+                Settings.WorkTime.Week.FirstWeekDay.valueNullable?.let { DayOfWeek.valueOf(it) }
+                    ?: DayOfWeek.MONDAY
+            val currentDate = currentTime.toLocalDate()
+            val currentDayOfWeek = currentDate.dayOfWeek
+            val previousFirstDayOfWeekDiff =
+                if (currentDayOfWeek >= firstWeekDay) currentDayOfWeek.value - firstWeekDay.value
+                else DayOfWeek.entries.size - firstWeekDay.value + currentDayOfWeek.value
 
-            return Instant.ofEpochMilli(c.time.time).atZone(ZoneId.systemDefault()).toLocalDate()
+            return currentDate.minusDays(previousFirstDayOfWeekDiff.toLong())
         }
 
     private val sharedPreferences = context.getSharedPreferences("time_prefs", MODE_PRIVATE)
@@ -92,11 +84,11 @@ class DateTimeProvider @Inject constructor(
                     val systemTimeMillis = System.currentTimeMillis()
                     val elapsedTime = SystemClock.elapsedRealtime()
 
-                    sharedPreferences.edit()
-                        .putLong("last_ntp_time", ntpTimeMillis)
-                        .putLong("last_system_time", systemTimeMillis)
-                        .putLong("last_elapsed_time", elapsedTime)
-                        .apply()
+                    sharedPreferences.edit {
+                        putLong("last_ntp_time", ntpTimeMillis)
+                            .putLong("last_system_time", systemTimeMillis)
+                            .putLong("last_elapsed_time", elapsedTime)
+                    }
                 }
             }
         }
@@ -130,8 +122,8 @@ class RebootReceiver @Inject constructor(
 ) : BroadcastReceiver(), ClassTagAware {
     override fun onReceive(context: Context?, intent: Intent?) {
         if (intent?.action == Intent.ACTION_BOOT_COMPLETED) {
-            dateTimeProvider.updateOffset()
             Log.d(classTag, "Reboot detected. Attempting to sync NTP time.")
+            dateTimeProvider.updateOffset()
         }
     }
 }

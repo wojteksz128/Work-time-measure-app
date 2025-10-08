@@ -17,13 +17,15 @@ import net.wojteksz128.worktimemeasureapp.BR
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.databinding.ComponentDateTimePickerBinding
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
-import net.wojteksz128.worktimemeasureapp.util.datetime.toLocalDate
+import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.view.util.ObservableDelegate
 import org.threeten.bp.LocalDate
+import org.threeten.bp.LocalDateTime
 import org.threeten.bp.Year
 import org.threeten.bp.YearMonth
-import java.util.Calendar
-import java.util.Date
+import org.threeten.bp.ZoneId
+import org.threeten.bp.temporal.ChronoUnit
+import javax.inject.Inject
 
 @BindingMethods(
     BindingMethod(type = DateTimePicker::class, attribute = "time", method = "setTime"),
@@ -49,7 +51,14 @@ import java.util.Date
 class DateTimePicker(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs) {
     private lateinit var binding: ComponentDateTimePickerBinding
     private val model =
-        ObservableModel(this::timeChangeListener, DateFormat.is24HourFormat(context))
+        ObservableModel(
+            this::timeChangeListener,
+            dateTimeProvider.currentTimeZone,
+            DateFormat.is24HourFormat(context)
+        )
+
+    @Inject
+    lateinit var dateTimeProvider: DateTimeProvider
 
     init {
         if (isInEditMode) {
@@ -63,27 +72,28 @@ class DateTimePicker(context: Context, attrs: AttributeSet?) : FrameLayout(conte
         }
     }
 
-    var time: Date?
+    var time: LocalDateTime?
         get() = model.time
         set(value) {
-            model.time = value ?: Date()
+            model.time = value ?: LocalDateTime.now(dateTimeProvider.currentTimeZone)
         }
 
     var workDayDate: LocalDate?
         get() = model.workDayDate
         set(value) {
-            model.workDayDate = value ?: LocalDate.now()
+            model.workDayDate = value ?: LocalDate.now(dateTimeProvider.currentTimeZone)
         }
 
     var timeChangeListener: InverseBindingListener? = null
 
     class ObservableModel(
         timeChangeListenerProvider: () -> InverseBindingListener?,
+        private val timeZone: ZoneId,
         val is24HourFormat: Boolean,
     ) :
         BaseObservable(), ClassTagAware {
-        private var mCalendar = Calendar.getInstance()
-        private var mWorkDayDate: LocalDate? = LocalDate.now()
+        private var mDateTime = LocalDateTime.now(timeZone).truncatedTo(ChronoUnit.SECONDS)
+        private var mWorkDayDate: LocalDate? = LocalDate.now(timeZone)
 
         internal var workDayDate: LocalDate?
             get() = mWorkDayDate
@@ -99,11 +109,11 @@ class DateTimePicker(context: Context, attrs: AttributeSet?) : FrameLayout(conte
         @get:Bindable
         var year by ObservableDelegate(
             BR.year,
-            mCalendar.get(Calendar.YEAR)
+            mDateTime.year
         ) { oldValue, newValue ->
             if (oldValue != newValue) {
                 Log.d(classTag, "setYear: old: $oldValue, new: $newValue")
-                mCalendar.set(Calendar.YEAR, newValue)
+                mDateTime = mDateTime.withYear(newValue)
                 timeChangeListenerProvider()?.onChange()
             }
         }
@@ -111,11 +121,11 @@ class DateTimePicker(context: Context, attrs: AttributeSet?) : FrameLayout(conte
         @get:Bindable
         var month by ObservableDelegate(
             BR.month,
-            mCalendar.get(Calendar.MONTH) + 1
+            mDateTime.month.value
         ) { oldValue, newValue ->
             if (oldValue != newValue) {
                 Log.d(classTag, "setMonth: old: $oldValue, new: $newValue")
-                mCalendar.set(Calendar.MONTH, newValue - 1)
+                mDateTime = mDateTime.withMonth(newValue)
                 timeChangeListenerProvider()?.onChange()
             }
         }
@@ -123,11 +133,11 @@ class DateTimePicker(context: Context, attrs: AttributeSet?) : FrameLayout(conte
         @get:Bindable
         var day by ObservableDelegate(
             BR.day,
-            mCalendar.get(Calendar.DAY_OF_MONTH)
+            mDateTime.dayOfMonth
         ) { oldValue, newValue ->
             if (oldValue != newValue) {
                 Log.d(classTag, "setDay: old: $oldValue, new: $newValue")
-                mCalendar.set(Calendar.DAY_OF_MONTH, newValue)
+                mDateTime = mDateTime.withDayOfMonth(newValue)
                 timeChangeListenerProvider()?.onChange()
             }
         }
@@ -139,11 +149,10 @@ class DateTimePicker(context: Context, attrs: AttributeSet?) : FrameLayout(conte
         ) { oldValue, newValue ->
             if (oldValue != newValue) {
                 Log.d(classTag, "setHour: old: $oldValue, new: $newValue")
-                val fieldType = if (is24HourFormat) Calendar.HOUR_OF_DAY else Calendar.HOUR
-                val fieldValue = if (is24HourFormat) newValue % 24
-                else newValue % 12
+                val newValue24 = if (is24HourFormat) newValue % 24
+                else newValue % 12 + if (isAm) 0 else 12
 
-                mCalendar.set(fieldType, fieldValue)
+                mDateTime = mDateTime.withHour(newValue24)
                 timeChangeListenerProvider()?.onChange()
             }
         }
@@ -152,7 +161,7 @@ class DateTimePicker(context: Context, attrs: AttributeSet?) : FrameLayout(conte
         var minute by ObservableDelegate(BR.minute, 0) { oldValue, newValue ->
             if (oldValue != newValue) {
                 Log.d(classTag, "setMinute: old: $oldValue, new: $newValue")
-                mCalendar.set(Calendar.MINUTE, newValue)
+                mDateTime = mDateTime.withMinute(newValue)
                 timeChangeListenerProvider()?.onChange()
             }
         }
@@ -161,7 +170,7 @@ class DateTimePicker(context: Context, attrs: AttributeSet?) : FrameLayout(conte
         var second by ObservableDelegate(BR.second, 0) { oldValue, newValue ->
             if (oldValue != newValue) {
                 Log.d(classTag, "setSecond: old: $oldValue, new: $newValue")
-                mCalendar.set(Calendar.SECOND, newValue)
+                mDateTime = mDateTime.withSecond(newValue)
                 timeChangeListenerProvider()?.onChange()
             }
         }
@@ -170,9 +179,13 @@ class DateTimePicker(context: Context, attrs: AttributeSet?) : FrameLayout(conte
         var isAm by ObservableDelegate(BR.am, true) { oldValue, newValue ->
             if (oldValue != newValue) {
                 if (newValue) {
-                    mCalendar.set(Calendar.AM_PM, Calendar.AM)
-                    hour = if (is24HourFormat) mCalendar.get(Calendar.HOUR_OF_DAY)
-                    else if (mCalendar.get(Calendar.HOUR) == 0) 12 else mCalendar.get(Calendar.HOUR)
+                    val hour = mDateTime.hour
+                    mDateTime = mDateTime.withHour(
+                        if (is24HourFormat) hour else when (hour) {
+                            in 0..11 -> hour
+                            else -> hour % 12
+                        }
+                    )
                 }
                 timeChangeListenerProvider()?.onChange()
             }
@@ -182,9 +195,13 @@ class DateTimePicker(context: Context, attrs: AttributeSet?) : FrameLayout(conte
         var isPm by ObservableDelegate(BR.pm, false) { oldValue, newValue ->
             if (oldValue != newValue) {
                 if (newValue) {
-                    mCalendar.set(Calendar.AM_PM, Calendar.PM)
-                    hour = if (is24HourFormat) mCalendar.get(Calendar.HOUR_OF_DAY)
-                    else if (mCalendar.get(Calendar.HOUR) == 0) 12 else mCalendar.get(Calendar.HOUR)
+                    val hour = mDateTime.hour
+                    mDateTime = mDateTime.withHour(
+                        if (is24HourFormat) hour else when (hour) {
+                            in 0..11 -> hour + 12
+                            else -> hour
+                        }
+                    )
                 }
                 timeChangeListenerProvider()?.onChange()
             }
@@ -198,7 +215,7 @@ class DateTimePicker(context: Context, attrs: AttributeSet?) : FrameLayout(conte
 
         fun getMinYear(): Int = 1970
 
-        fun getCurrentYear(): Int = Year.now().value
+        fun getCurrentYear(): Int = Year.now(timeZone).value
 
         fun getMaxMonthDay(): Int = YearMonth.of(year, month).lengthOfMonth()
 
@@ -215,26 +232,34 @@ class DateTimePicker(context: Context, attrs: AttributeSet?) : FrameLayout(conte
         fun onSelectDateClick() {
             isSelectDate = !isSelectDate
             if (isSelectDate) {
-                val currentDate = LocalDate.now()
+                val currentDate = LocalDate.now(timeZone)
                 year = workDayDate?.year ?: currentDate.year
                 month = workDayDate?.monthValue ?: currentDate.month.value
                 day = workDayDate?.dayOfMonth ?: currentDate.dayOfMonth
             }
         }
 
-        internal var time: Date
-            get() = mCalendar.time
+        internal var time: LocalDateTime
+            get() = mDateTime
             set(value) {
-                mCalendar.time = value
-                year = mCalendar.get(Calendar.YEAR)
-                month = mCalendar.get(Calendar.MONTH) + 1
-                day = mCalendar.get(Calendar.DAY_OF_MONTH)
-                hour = if (is24HourFormat) mCalendar.get(Calendar.HOUR_OF_DAY)
-                else if (mCalendar.get(Calendar.HOUR) == 0) 12 else mCalendar.get(Calendar.HOUR)
-                minute = mCalendar.get(Calendar.MINUTE)
-                second = mCalendar.get(Calendar.SECOND)
-                isAm = mCalendar.get(Calendar.AM_PM) == Calendar.AM
-                isPm = mCalendar.get(Calendar.AM_PM) == Calendar.PM
+                year = value.year
+                month = value.month.value
+                day = value.dayOfMonth
+                minute = value.minute
+                second = value.second
+                mDateTime.hour.let {
+                    isAm = it < 12
+                    isPm = it >= 12
+                    hour = if (is24HourFormat) {
+                        it
+                    } else {
+                        when (it) {
+                            0 -> 12
+                            in 1..12 -> it
+                            else -> it % 12
+                        }
+                    }
+                }
                 Log.d(
                     classTag,
                     "setTime: workDayDate: $workDayDate, time.toLocalDate(): ${time.toLocalDate()}, old isSelectDate: $isSelectDate, new isSelectDate: ${workDayDate == time.toLocalDate()}"

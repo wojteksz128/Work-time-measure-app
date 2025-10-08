@@ -12,7 +12,8 @@ internal object IgnoreReminderActionImpl : NotificationActionImpl, ClassTagAware
 
     override operator fun invoke(context: Context) {
         Log.d(classTag, "invoke: Ignore Reminder action clicked")
-        NotificationManagerCompat.from(context).cancel(WorkTimeInProgressNotification.notificationId)
+        NotificationManagerCompat.from(context)
+            .cancel(WorkTimeInProgressNotification.NOTIFICATION_ID)
         NotificationManagerCompat.from(context).cancel(EndOfWorkTimeNotification.notificationId)
     }
 }
