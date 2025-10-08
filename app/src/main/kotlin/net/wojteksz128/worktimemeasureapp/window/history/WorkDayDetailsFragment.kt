@@ -102,7 +102,9 @@ class WorkDayDetailsFragment : Fragment(), DeleteComeEventDialogListener,
 
             workDayDetailsHistoryEntries.apply {
                 adapter = historyAdapter
-                layoutManager = LinearLayoutManager(requireContext())
+                layoutManager = object : LinearLayoutManager(requireContext()) {
+                    override fun canScrollVertically() = false
+                }
                 addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
             }
 

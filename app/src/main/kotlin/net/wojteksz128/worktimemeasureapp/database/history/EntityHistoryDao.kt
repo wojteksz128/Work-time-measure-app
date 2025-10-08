@@ -17,8 +17,14 @@ interface EntityHistoryDao : EntityDao<EntityHistoryDto> {
         SELECT * FROM entity_history
         WHERE
             (entityType = 'WorkDayDto' AND entityId = :workDayId)
-            OR (entityType = 'ComeEventDto' AND entityId IN (SELECT id FROM come_event WHERE workDayId = :workDayId))
-            OR (entityType = 'ComeEventDto' AND actionType = 'DELETE' AND json_extract(oldValue, '$.workDayId') = :workDayId)
+            OR (entityType = 'ComeEventDto' AND entityId IN (
+                SELECT id FROM come_event WHERE workDayId = :workDayId
+                UNION ALL
+                SELECT entityId FROM entity_history WHERE 
+                    entityType = 'ComeEventDto' 
+                    AND actionType = 'DELETE'
+                    AND json_extract(oldValue, '$.workDayId') = :workDayId
+            ))
         ORDER BY timestamp DESC
     """
     )
