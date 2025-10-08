@@ -56,6 +56,7 @@ class WorkDaysHistoryFragment : Fragment(), ClassTagAware, WorkDayItemListener,
                     dateTimeUtils,
                     childFragmentManager,
                     viewLifecycleOwner,
+                    viewModel.ticker,
                     this@WorkDaysHistoryFragment
                 )
             adapter = workDayAdapter.also { this@WorkDaysHistoryFragment.workDayAdapter = it }

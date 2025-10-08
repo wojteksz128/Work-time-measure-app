@@ -11,6 +11,11 @@ import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
@@ -62,6 +67,13 @@ class WorkDayDetailsViewModel @Inject constructor(
                 }
             }
         }
+
+    val ticker: SharedFlow<Unit> = flow {
+        while (true) {
+            emit(Unit)
+            delay(1000)
+        }
+    }.shareIn(viewModelScope, SharingStarted.WhileSubscribed(5000))
 
     fun fillWorkDayUsingLocal(workDaySource: LiveData<WorkDay>) {
         workDay.addSource(workDaySource) {

@@ -9,8 +9,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import net.wojteksz128.worktimemeasureapp.databinding.ListItemHistoryDayEventBinding
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
@@ -21,6 +21,7 @@ import net.wojteksz128.worktimemeasureapp.util.recyclerView.RecyclerViewItemClic
 class ComeEventsAdapter(
     private val dateTimeUtils: DateTimeUtils,
     private val lifecycleOwner: LifecycleOwner,
+    private val ticker: Flow<Unit>,
     override var onItemClickListenerProvider: (ComeEvent) -> (View) -> Unit = { {} },
 ) : ListAdapter<ComeEvent, ComeEventsAdapter.ComeEventViewHolder>(ComeEventDiffCallback),
     RecyclerViewItemClick<ComeEvent> {
@@ -32,7 +33,7 @@ class ComeEventsAdapter(
                 dateTimeUtils = this@ComeEventsAdapter.dateTimeUtils
                 lifecycleOwner = this@ComeEventsAdapter.lifecycleOwner
             }
-        return ComeEventViewHolder(binding)
+        return ComeEventViewHolder(binding, ticker)
     }
 
     override fun onBindViewHolder(holder: ComeEventViewHolder, position: Int) {
@@ -49,8 +50,10 @@ class ComeEventsAdapter(
     }
 
 
-    class ComeEventViewHolder(val binding: ListItemHistoryDayEventBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    class ComeEventViewHolder(
+        val binding: ListItemHistoryDayEventBinding,
+        private val ticker: Flow<Unit>,
+    ) : RecyclerView.ViewHolder(binding.root) {
 
         private var updateJob: Job? = null
 
@@ -64,9 +67,8 @@ class ComeEventsAdapter(
 
             if (!comeEvent.isEnded) {
                 updateJob = binding.lifecycleOwner?.lifecycleScope?.launch {
-                    while (isActive) {
+                    ticker.collectLatest {
                         binding.invalidateAll()
-                        delay(1000)
                     }
                 }
             }

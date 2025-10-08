@@ -14,8 +14,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import net.wojteksz128.worktimemeasureapp.databinding.ListItemHistoryWorkDayBinding
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
@@ -33,7 +33,8 @@ class WorkDayAdapter(
     private val dateTimeUtils: DateTimeUtils,
     private val fragmentManager: FragmentManager,
     private val lifecycleOwner: LifecycleOwner,
-    private val workDayItemListener: WorkDayItemListener
+    private val ticker: Flow<Unit>,
+    private val workDayItemListener: WorkDayItemListener,
 ) : PagingDataAdapter<WorkDay, WorkDayAdapter.WorkDayViewHolder>(WorkDayEventsDiffCallback),
     RecyclerViewItemClick<WorkDay> {
 
@@ -51,14 +52,15 @@ class WorkDayAdapter(
             fragmentManager,
             lifecycleOwner,
             dateTimeUtils,
+            ticker,
             workDayItemListener::onWorkDayEventSelected
         )
     }
 
     override fun onBindViewHolder(holder: WorkDayViewHolder, position: Int) {
         getItem(position)?.let { workDay ->
-            holder.setOnClickListener(onItemClickListenerProvider(workDay))
             holder.bind(workDay, workDayItemListener.onWorkDayItemViewModelRequires(workDay))
+            holder.setOnClickListener(onItemClickListenerProvider(workDay))
         }
     }
 
@@ -69,9 +71,10 @@ class WorkDayAdapter(
         private val fragmentManager: FragmentManager,
         private val lifecycleOwner: LifecycleOwner,
         private val dateTimeUtils: DateTimeUtils,
+        private val ticker: Flow<Unit>,
         private val selectionUpdater: (ComeEvent, ViewHolderInformation<ComeEventViewHolder>) -> Unit,
     ) : RecyclerView.ViewHolder(binding.root), ClassTagAware {
-        private val comeEventsAdapter = ComeEventsAdapter(dateTimeUtils, lifecycleOwner)
+        private val comeEventsAdapter = ComeEventsAdapter(dateTimeUtils, lifecycleOwner, ticker)
         private var updateJob: Job? = null
 
         init {
@@ -105,9 +108,8 @@ class WorkDayAdapter(
             updateJob?.cancel()
             if (!workDay.isAllEventsEnded()) {
                 updateJob = lifecycleOwner.lifecycleScope.launch {
-                    while (isActive) {
+                    ticker.collectLatest {
                         binding.invalidateAll()
-                        delay(1000)
                     }
                 }
             }

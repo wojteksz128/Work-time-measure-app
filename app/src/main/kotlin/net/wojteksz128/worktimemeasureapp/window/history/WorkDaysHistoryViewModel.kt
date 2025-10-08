@@ -8,6 +8,11 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
@@ -25,6 +30,13 @@ class WorkDaysHistoryViewModel @Inject constructor(
 ) : AndroidViewModel(application), ClassTagAware {
     private val workDayItemsViewModels = mutableMapOf<Long, WorkDayAdapter.WorkDayItemViewModel>()
     val workDaysPager: Pager<Int, WorkDay>
+
+    val ticker: SharedFlow<Unit> = flow {
+        while (true) {
+            emit(Unit)
+            delay(1000)
+        }
+    }.shareIn(viewModelScope, SharingStarted.WhileSubscribed(5000))
 
     init {
         Log.d(classTag, "ctor: Retrieve work days with events")
