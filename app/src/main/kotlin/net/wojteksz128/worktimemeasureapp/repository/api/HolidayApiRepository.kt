@@ -8,7 +8,6 @@ import net.wojteksz128.worktimemeasureapp.model.Country
 import net.wojteksz128.worktimemeasureapp.model.DayOff
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
-import net.wojteksz128.worktimemeasureapp.util.datetime.toLocalDate
 import retrofit2.Response
 import java.util.Locale
 
@@ -45,7 +44,7 @@ class HolidayApiRepository(
                 val holidays = getHolidaysResponse.body()!!.holidays
                 return holidays.map {
                     prepareDayOffDomainModel(
-                        it.name, it.date.toLocalDate(), it.date.toLocalDate(), it.uuid,
+                        it.name, it.date, it.date, it.uuid,
                     )
                 }
             }

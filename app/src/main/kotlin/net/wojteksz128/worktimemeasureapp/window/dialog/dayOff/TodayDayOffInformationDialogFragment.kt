@@ -12,8 +12,8 @@ import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.WorkTimeMeasureApp
 import net.wojteksz128.worktimemeasureapp.model.fieldType.DayType
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
+import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
-import java.util.Date
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -21,6 +21,9 @@ class TodayDayOffInformationDialogFragment(private val dayType: DayType) : Dialo
 
     @Inject
     lateinit var dateTimeUtils: DateTimeUtils
+
+    @Inject
+    lateinit var dateTimeProvider: DateTimeProvider
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return AlertDialog.Builder(requireContext()).apply {
@@ -41,13 +44,13 @@ class TodayDayOffInformationDialogFragment(private val dayType: DayType) : Dialo
     private fun getMessage(dayType: DayType) = if (dayType.dayOffInfo == null) getString(
         R.string.today_day_off_information_dialog_weekend_message, dateTimeUtils.formatDate(
             getString(R.string.today_day_off_information_dialog_message_date_format),
-            Date()
+            dateTimeProvider.currentTime
         )
     )
     else getString(
         R.string.today_day_off_information_dialog_dayOff_message, dateTimeUtils.formatDate(
             getString(R.string.today_day_off_information_dialog_message_date_format),
-            Date()
+            dateTimeProvider.currentTime
         ), dayType.dayOffInfo.name
     )
 
@@ -61,10 +64,6 @@ class TodayDayOffInformationDialogFragment(private val dayType: DayType) : Dialo
 
     override fun showNow(manager: FragmentManager, tag: String?) {
         openOnce { super.showNow(manager, tag) }
-    }
-
-    fun clearDayOffToggle() {
-        dayOffDialogShowed = false
     }
 
     companion object : ClassTagAware {

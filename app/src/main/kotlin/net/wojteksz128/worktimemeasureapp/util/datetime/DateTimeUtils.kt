@@ -1,31 +1,23 @@
 package net.wojteksz128.worktimemeasureapp.util.datetime
 
-import android.annotation.SuppressLint
 import android.content.Context
 import androidx.annotation.StringRes
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import org.threeten.bp.Duration
-import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.ZoneId
 import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.jdk8.DefaultInterfaceTemporal
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.TimeZone
 import kotlin.math.abs
 
 class DateTimeUtils (
     private val context: Context,
     private val dateTimeProvider: DateTimeProvider,
 ) {
-
-    fun formatDate(format: String, date: Date?) =
-        date?.let { formatDate(format, date, TimeZone.getDefault()) } ?: ""
 
     fun formatDate(format: String, date: DefaultInterfaceTemporal?) =
         date?.let { formatDate(format, date, ZoneId.systemDefault()) }
@@ -34,16 +26,6 @@ class DateTimeUtils (
         date?.let {
             DateTimeFormatter.ofPattern(format).withZone(ZoneId.systemDefault()).format(it)
         } ?: ""
-
-    private fun formatDate(
-        format: String,
-        date: Date,
-        timeZone: TimeZone = TimeZone.getDefault(),
-    ): String {
-        @SuppressLint("SimpleDateFormat") val formatter = SimpleDateFormat(format)
-        formatter.timeZone = timeZone
-        return formatter.format(date)
-    }
 
     private fun formatDate(
         format: String,
@@ -87,14 +69,6 @@ class DateTimeUtils (
 
 }
 
-operator fun Date.minus(other: Date): Date =
-    Date(this.time - other.time)
-
-fun Date.toLocalDate(): LocalDate =
-    Instant.ofEpochMilli(this.time).atZone(ZoneId.systemDefault()).toLocalDate()
-
-fun ZonedDateTime.toDate(): Date = Date(this.toInstant().toEpochMilli())
-
 fun LocalDateTime.isTheSameDay(other: LocalDateTime?): Boolean =
     other?.let { this.toLocalDate() == it.toLocalDate() }
         ?: (this.toLocalDate() == LocalDate.now())
@@ -102,6 +76,3 @@ fun LocalDateTime.isTheSameDay(other: LocalDateTime?): Boolean =
 fun ZonedDateTime.isTheSameDay(other: ZonedDateTime?): Boolean =
     other?.let { this.toLocalDate() == it.toLocalDate() }
         ?: (this.toLocalDate() == LocalDate.now())
-
-fun Date.toZonedDateTime(): ZonedDateTime =
-    Instant.ofEpochMilli(this.time).atZone(ZoneId.systemDefault())

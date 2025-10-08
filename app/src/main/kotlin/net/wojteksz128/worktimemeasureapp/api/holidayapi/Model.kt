@@ -3,7 +3,7 @@ package net.wojteksz128.worktimemeasureapp.api.holidayapi
 import com.google.gson.annotations.JsonAdapter
 import com.google.gson.annotations.SerializedName
 import net.wojteksz128.worktimemeasureapp.util.json.IntStringJsonAdapter
-import java.util.*
+import org.threeten.bp.LocalDate
 
 data class HolidayApiHolidaysResponse(
     val holidays: Set<HolidayApiHoliday>,
@@ -15,13 +15,13 @@ data class HolidayApiHolidaysResponse(
 
 data class HolidayApiHoliday(
     val name: String,
-    val date: Date,
-    val observed: Date,
+    val date: LocalDate,
+    val observed: LocalDate,
     val public: Boolean,
     val country: String,
     val uuid: String,
     val weekday: HolidayApiWeekday,
-    val subdivisions: Set<String>? = null
+    val subdivisions: Set<String>? = null,
 )
 
 data class HolidayApiWeekday(
@@ -80,7 +80,7 @@ data class HolidayApiLanguage(
 )
 
 data class HolidayApiWorkdayResponse(
-    val date: Date,
+    val date: LocalDate,
     val weekday: HolidayApiWeekdayInfo,
     override val status: Int,
     override val requests: HolidayApiUsage,
@@ -113,5 +113,5 @@ interface HolidayApiResponse {
 data class HolidayApiUsage(
     val available: Int,
     val used: Int,
-    val resets: Date,
+    val resets: LocalDate,
 )
