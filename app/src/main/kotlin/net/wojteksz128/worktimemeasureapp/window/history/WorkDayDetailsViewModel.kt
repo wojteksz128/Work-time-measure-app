@@ -52,7 +52,7 @@ class WorkDayDetailsViewModel @Inject constructor(
                             entityText = historyDisplayMapper.mapEntityType(historyItem.entityType),
                             changes = historyItem.changes.map { change ->
                                 ChangeDisplayItem(
-                                    fieldName = change.fieldName,
+                                    fieldName = historyDisplayMapper.mapFieldName(change.fieldName),
                                     oldValue = change.oldValue,
                                     newValue = change.newValue
                                 )

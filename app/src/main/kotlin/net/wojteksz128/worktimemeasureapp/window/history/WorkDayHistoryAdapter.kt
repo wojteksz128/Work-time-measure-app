@@ -1,6 +1,5 @@
 package net.wojteksz128.worktimemeasureapp.window.history
 
-import android.annotation.SuppressLint
 import android.graphics.Paint
 import android.view.LayoutInflater
 import android.view.View
@@ -31,7 +30,6 @@ class WorkDayHistoryAdapter :
         private val binding: ListItemWorkDayHistoryBinding,
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        @SuppressLint("ResourceAsColor")
         fun bind(item: HistoryDisplayItem) {
             binding.apply {
                 historyItem = item

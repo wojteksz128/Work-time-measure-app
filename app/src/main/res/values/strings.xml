@@ -224,6 +224,13 @@
     <!--<editor-fold desc="#### Work Day History Change Component ###">-->
 
     <string name="work_day_history_change_field_name_example">field:</string>
+    <string name="work_day_history_change_field_name_startDate">Start time</string>
+    <string name="work_day_history_change_field_name_endDate">End time</string>
+    <string name="work_day_history_change_field_name_type">Type</string>
+    <string name="work_day_history_change_field_name_beginSlot">Start of slot</string>
+    <string name="work_day_history_change_field_name_endSlot">End of slot</string>
+    <string name="work_day_history_change_field_name_date">Date</string>
+
     <string name="work_day_history_change_old_value_example">old value</string>
     <string name="work_day_history_change_arrow" translatable="false"> → </string>
     <string name="work_day_history_change_new_value_example">new value</string>
