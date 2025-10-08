@@ -10,10 +10,8 @@ import net.wojteksz128.worktimemeasureapp.util.TimerManager
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import net.wojteksz128.worktimemeasureapp.window.dashboard.WorkTimeData
-import org.threeten.bp.Instant
-import org.threeten.bp.ZoneId
 import org.threeten.bp.ZonedDateTime
-import java.util.Calendar
+import org.threeten.bp.temporal.ChronoUnit
 import java.util.Date
 
 class NotificationUtils(
@@ -29,7 +27,7 @@ class NotificationUtils(
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationManager = context.getSystemService(NotificationManager::class.java)
             if (notificationManager != null) {
-                for (channel in Channel.values()) {
+                for (channel in Channel.entries) {
                     notificationManager.createNotificationChannel(channel.getNotificationChannel(context))
                 }
             }
@@ -38,21 +36,14 @@ class NotificationUtils(
     }
 
     fun notifyUserAboutWorkTime(workTimeData: WorkTimeData) {
-        val endOfWorkTimeExpired = dateTimeProvider.currentCalendarWithoutCorrection.apply {
+        val endOfWorkTimeExpired = dateTimeProvider.currentTime.apply {
             val remainingTodayWorkTimeMillis = workTimeData.remainingTodayWorkTime?.toMillis() ?: 0L
-            add(Calendar.MILLISECOND, remainingTodayWorkTimeMillis.toInt())
+            this.plus(remainingTodayWorkTimeMillis, ChronoUnit.MILLIS)
         }
         val expectedEndWorkDayTime = workTimeData.expectedEndWorkDayTime ?: Date()
 
         scheduleEndOfWorkTimeNotification(endOfWorkTimeExpired)
-        if (dateTimeProvider.currentTime.isBefore(
-                ZonedDateTime.ofInstant(
-                    Instant.ofEpochMilli(
-                        endOfWorkTimeExpired.timeInMillis
-                    ), ZoneId.systemDefault()
-                )
-            )
-        )
+        if (dateTimeProvider.currentTime.isBefore(endOfWorkTimeExpired))
             WorkTimeNotificationFactory.createWorkTimeInProgressNotification(
                 context,
                 expectedEndWorkDayTime,
@@ -60,7 +51,7 @@ class NotificationUtils(
             ).notifyUser()
     }
 
-    private fun scheduleEndOfWorkTimeNotification(endOfWorkTimeExpired: Calendar) {
+    private fun scheduleEndOfWorkTimeNotification(endOfWorkTimeExpired: ZonedDateTime) {
         timerManager.setAlarm(endOfWorkTimeExpired)
     }
 

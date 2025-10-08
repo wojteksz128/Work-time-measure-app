@@ -7,42 +7,43 @@ import android.content.Intent
 import android.os.Build
 import net.wojteksz128.worktimemeasureapp.notification.TimerExpiredReceiver
 import net.wojteksz128.worktimemeasureapp.settings.Settings
-import java.util.Calendar
+import org.threeten.bp.ZonedDateTime
 
 class TimerManager(
     private val context: Context,
-    private val Settings: Settings
+    @Suppress("PrivatePropertyName") private val Settings: Settings,
 ) {
 
     enum class AlarmState {
         NotSet, Set
     }
 
-    fun setAlarm(wakeUpTime: Calendar): Long {
+    fun setAlarm(wakeUpTime: ZonedDateTime): Long {
+        val epochMilli = wakeUpTime.toInstant().toEpochMilli()
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val pendingIntent = getTimerExpiredReceiverPendingIntent(context)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             if (alarmManager.canScheduleExactAlarms()) {
                 alarmManager.setExactAndAllowWhileIdle(
                     AlarmManager.RTC_WAKEUP,
-                    wakeUpTime.timeInMillis,
+                    epochMilli,
                     pendingIntent
                 )
             } else {
                 alarmManager.setWindow(
                     AlarmManager.RTC_WAKEUP,
-                    wakeUpTime.timeInMillis,
+                    epochMilli,
                     1000,
                     pendingIntent
                 )
             }
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, wakeUpTime.timeInMillis, pendingIntent)
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent)
         } else {
-            alarmManager.set(AlarmManager.RTC_WAKEUP, wakeUpTime.timeInMillis, pendingIntent)
+            alarmManager.set(AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent)
         }
         Settings.Internal.AlarmState.value = AlarmState.Set
-        return wakeUpTime.timeInMillis
+        return epochMilli
     }
 
     fun removeAlarm() {
