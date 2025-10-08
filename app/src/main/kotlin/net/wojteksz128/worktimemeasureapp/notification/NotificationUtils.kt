@@ -12,7 +12,6 @@ import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import net.wojteksz128.worktimemeasureapp.window.dashboard.WorkTimeData
 import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.temporal.ChronoUnit
-import java.util.Date
 
 class NotificationUtils(
     private val context: Context,
@@ -40,7 +39,8 @@ class NotificationUtils(
             val remainingTodayWorkTimeMillis = workTimeData.remainingTodayWorkTime?.toMillis() ?: 0L
             this.plus(remainingTodayWorkTimeMillis, ChronoUnit.MILLIS)
         }
-        val expectedEndWorkDayTime = workTimeData.expectedEndWorkDayTime ?: Date()
+        val expectedEndWorkDayTime =
+            workTimeData.expectedEndWorkDayTime ?: dateTimeProvider.currentTime
 
         scheduleEndOfWorkTimeNotification(endOfWorkTimeExpired)
         if (dateTimeProvider.currentTime.isBefore(endOfWorkTimeExpired))

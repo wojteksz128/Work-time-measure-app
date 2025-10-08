@@ -4,16 +4,17 @@ import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
 import net.wojteksz128.worktimemeasureapp.BR
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
+import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.datetime.WorkTimeCalculator
 import org.threeten.bp.Duration
 import org.threeten.bp.LocalDate
-import java.util.Calendar
-import java.util.Date
+import org.threeten.bp.ZonedDateTime
 
 class WorkTimeData(
     start: LocalDate,
     end: LocalDate,
     private val workTimeCalculator: WorkTimeCalculator,
+    private val dateTimeProvider: DateTimeProvider,
 ) :
     BaseObservable() {
     private val weekRange: ClosedRange<LocalDate> = start..end
@@ -54,12 +55,8 @@ class WorkTimeData(
             notifyPropertyChanged(BR.remainingTodayWorkTime)
         }
 
-    var expectedEndWorkDayTime: Date? = null
+    var expectedEndWorkDayTime: ZonedDateTime? = null
         @Bindable get
-//        set(value) {
-//            field = value
-//            notifyPropertyChanged(BR.expectedEndWorkDayTime)
-//        }
 
     var remainingWeekWorkTime: Duration? = null
         @Bindable get
@@ -73,10 +70,7 @@ class WorkTimeData(
         currentDayDate = result.currentDay
         todayWorkTime = result.currentDayWorkTimeDuration
         remainingTodayWorkTime = result.currentDayRemainingWorkTimeDuration
-        expectedEndWorkDayTime = Calendar.getInstance().apply {
-            add(Calendar.MILLISECOND,
-                remainingTodayWorkTime?.toMillis()?.toInt() ?: 0)
-        }.time
+        expectedEndWorkDayTime = dateTimeProvider.currentTime.plus(remainingTodayWorkTime)
         remainingWeekWorkTime = result.weekRemainingWorkTimeDuration
     }
 }

@@ -29,7 +29,8 @@ internal class EndOfWorkActionImpl (
             Log.d(classTag, "invoke: End Work Day action clicked")
 
             comeEventUtils.registerNewEvent()
-            NotificationManagerCompat.from(context).cancel(WorkTimeInProgressNotification.notificationId)
+            NotificationManagerCompat.from(context)
+                .cancel(WorkTimeInProgressNotification.NOTIFICATION_ID)
             NotificationManagerCompat.from(context).cancel(EndOfWorkTimeNotification.notificationId)
 
             Toast.makeText(context.applicationContext, context.getString(R.string.dashboard_snackbar_info_outcome_registered), Toast.LENGTH_LONG).show()

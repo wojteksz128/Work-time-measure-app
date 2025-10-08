@@ -50,7 +50,7 @@ class DashboardViewModel @Inject constructor(
         val start = dateTimeProvider.weekBeginDay
         val end = dateTimeProvider.weekEndDay
         val currentTime = dateTimeProvider.currentTime
-        val workTimeDataInst = WorkTimeData(start, end, workTimeCalculator)
+        val workTimeDataInst = WorkTimeData(start, end, workTimeCalculator, dateTimeProvider)
         workTimeData.value = workTimeDataInst
 
         weekWorkDays = workDayRepository.getCurrentWeekWorkDaysInLiveData(start, end).apply {
