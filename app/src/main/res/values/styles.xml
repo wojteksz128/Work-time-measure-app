@@ -26,6 +26,10 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="subheader_label" parent="header_label">
+        <item name="android:textSize">@dimen/default_text</item>
+    </style>
+
     <style name="card">
         <item name="android:background">@color/rv_background</item>
         <item name="android:elevation" tools:targetApi="lollipop">@dimen/primary_elevation</item>
@@ -54,6 +58,11 @@
 
     <style name="recycler_view_item_header_label" parent="header_label">
         <item name="android:layout_margin">@dimen/default_margin</item>
+    </style>
+
+    <style name="recycler_view_empty_message">
+        <item name="android:padding">@dimen/default_padding</item>
+        <item name="android:textStyle">italic</item>
     </style>
 
     <style name="loading_indicator_background">
@@ -176,10 +185,7 @@
 
     <style name="dashboard_current_day_events" parent="card_items" />
 
-    <style name="dashboard_current_day_no_events_label">
-        <item name="android:padding">@dimen/default_padding</item>
-        <item name="android:textStyle">italic</item>
-    </style>
+    <style name="dashboard_current_day_no_events_label" parent="recycler_view_empty_message" />
 
     <style name="dashboard_enter_fab">
         <item name="android:layout_margin">@dimen/large_margin</item>
@@ -268,6 +274,10 @@
         <item name="android:layout_marginTop">@dimen/default_margin</item>
     </style>
 
+    <style name="work_day_details_summary_transparent" parent="work_day_details_summary">
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
     <style name="work_day_details_summary_label">
         <item name="android:textSize">@dimen/extra_large_text</item>
         <item name="android:textStyle">bold</item>
@@ -288,17 +298,78 @@
         <item name="android:paddingRight">@dimen/default_padding</item>
     </style>
 
-    <style name="work_day_details_come_events_label_container" parent="work_day_details_summary">
-        <item name="android:background">@android:color/transparent</item>
-
-    </style>
+    <style name="work_day_details_come_events_label_container" parent="work_day_details_summary_transparent" />
 
     <style name="work_day_details_come_event_list_group" parent="work_day_details_summary">
         <item name="android:background">@android:color/transparent</item>
         <item name="android:layout_margin">@dimen/no_margin</item>
+        <item name="android:padding">@dimen/no_padding</item>
     </style>
 
+    <style name="work_day_details_come_event_list_no_events_label" parent="recycler_view_empty_message" />
+
     <style name="work_day_details_come_event_list_recyclerView" />
+
+    <style name="work_day_details_history_label_container" parent="work_day_details_summary_transparent" />
+
+    <style name="work_day_details_history_list_group" parent="work_day_details_summary">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:layout_margin">@dimen/no_margin</item>
+        <item name="android:padding">@dimen/no_padding</item>
+    </style>
+
+    <style name="work_day_details_history_no_events_label" parent="dashboard_current_day_no_events_label" />
+
+    <style name="work_day_details_history_list_recyclerView" />
+
+    <!--</editor-fold>-->
+    <!--##########################################-->
+
+    <!--##########################################-->
+    <!--<editor-fold desc="####### Work Day History Component #######">-->
+
+    <style name="work_day_history_timestamp" parent="subheader_label">
+        <item name="android:paddingBottom">@dimen/default_padding</item>
+    </style>
+
+    <style name="work_day_history_action_type">
+        <item name="android:layout_marginStart">@dimen/extra_large_margin</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="work_day_history_entity_type">
+        <item name="android:layout_marginStart">@dimen/default_margin</item>
+        <item name="android:textStyle">italic</item>
+    </style>
+
+    <style name="work_day_history_changes" />
+
+    <!--</editor-fold>-->
+    <!--##########################################-->
+
+    <!--##########################################-->
+    <!--<editor-fold desc="#### Work Day History Change Component ###">-->
+
+    <style name="work_day_history_change_field_name">
+        <item name="android:layout_marginEnd">@dimen/extra_large_margin</item>
+        <item name="android:layout_marginStart">@dimen/extra_large_margin</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="work_day_history_change_old_value">
+        <!-- Striking through text -->
+        <item name="android:textStyle">italic</item>
+    </style>
+
+    <style name="work_day_history_change_arrow">
+        <item name="android:layout_marginEnd">@dimen/default_margin</item>
+        <item name="android:layout_marginStart">@dimen/default_margin</item>
+
+    </style>
+
+    <style name="work_day_history_change_new_value">
+        <item name="android:textStyle">italic</item>
+    </style>
 
     <!--</editor-fold>-->
     <!--##########################################-->

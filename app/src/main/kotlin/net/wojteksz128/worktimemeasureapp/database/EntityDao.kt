@@ -2,7 +2,7 @@ package net.wojteksz128.worktimemeasureapp.database
 
 interface EntityDao<Entity> where Entity : EntityDto {
 
-    suspend fun insert(entity: Entity)
+    suspend fun insert(entity: Entity): Long
 
     suspend fun update(entity: Entity)
 

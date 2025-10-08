@@ -3,7 +3,13 @@
 package net.wojteksz128.worktimemeasureapp.database.dayOff
 
 import androidx.lifecycle.LiveData
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Transaction
+import androidx.room.Update
 import net.wojteksz128.worktimemeasureapp.database.EntityDao
 import org.threeten.bp.LocalDate
 
@@ -35,7 +41,7 @@ interface DayOffDao : EntityDao<DayOffDto> {
     suspend fun findAllInDateRange(startDate: LocalDate, finishDate: LocalDate): List<DayOffDto>
 
     @Insert
-    override suspend fun insert(entity: DayOffDto)
+    override suspend fun insert(entity: DayOffDto): Long
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     override suspend fun update(entity: DayOffDto)

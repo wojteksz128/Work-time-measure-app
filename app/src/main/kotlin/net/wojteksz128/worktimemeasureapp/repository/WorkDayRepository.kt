@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
 import androidx.paging.PagingSource
 import kotlinx.coroutines.Dispatchers
+import net.wojteksz128.worktimemeasureapp.database.history.EntityHistoryDao
+import net.wojteksz128.worktimemeasureapp.database.history.HistoryService
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayDao
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayDto
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayMapper
@@ -15,8 +17,12 @@ import org.threeten.bp.ZonedDateTime
 class WorkDayRepository (
     private val workDayDao: WorkDayDao,
     workDayMapper: WorkDayMapper,
-    private val workDayWithEventsMapper: WorkDayWithEventsMapper
-) : Repository<WorkDay, WorkDayDto>(workDayDao, workDayMapper) {
+    private val workDayWithEventsMapper: WorkDayWithEventsMapper,
+    historyService: HistoryService,
+    historyDao: EntityHistoryDao,
+) : Repository<WorkDay, WorkDayDto>(workDayDao, workDayMapper, historyService, historyDao) {
+
+    override suspend fun getById(id: Long): WorkDayDto? = workDayDao.findById(id.toInt()).workDay
 
     // TODO: 09.10.2021 Key z Int do Long
     fun getAllPaged(): () -> PagingSource<Int, WorkDay> =

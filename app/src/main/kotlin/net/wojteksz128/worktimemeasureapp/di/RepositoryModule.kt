@@ -13,17 +13,21 @@ import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventDao
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventMapper
 import net.wojteksz128.worktimemeasureapp.database.dayOff.DayOffDao
 import net.wojteksz128.worktimemeasureapp.database.dayOff.DayOffMapper
+import net.wojteksz128.worktimemeasureapp.database.history.EntityHistoryDao
+import net.wojteksz128.worktimemeasureapp.database.history.HistoryService
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayDao
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayMapper
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayWithEventsMapper
 import net.wojteksz128.worktimemeasureapp.repository.ComeEventRepository
 import net.wojteksz128.worktimemeasureapp.repository.DayOffRepository
+import net.wojteksz128.worktimemeasureapp.repository.EntityHistoryRepository
 import net.wojteksz128.worktimemeasureapp.repository.WorkDayRepository
 import net.wojteksz128.worktimemeasureapp.repository.api.ExternalHolidayRepositoriesFacade
 import net.wojteksz128.worktimemeasureapp.repository.api.HolidayApiRepository
 import net.wojteksz128.worktimemeasureapp.repository.api.NagerDateApiV3Repository
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
+import net.wojteksz128.worktimemeasureapp.window.history.formatters.HistoryFormatterProvider
 import javax.inject.Singleton
 
 @Module
@@ -36,27 +40,35 @@ object RepositoryModule {
         workDayDao: WorkDayDao,
         workDayMapper: WorkDayMapper,
         workDayWithEventsMapper: WorkDayWithEventsMapper,
-    ): WorkDayRepository {
-        return WorkDayRepository(workDayDao, workDayMapper, workDayWithEventsMapper)
-    }
+        historyService: HistoryService,
+        historyDao: EntityHistoryDao,
+    ): WorkDayRepository =
+        WorkDayRepository(
+            workDayDao,
+            workDayMapper,
+            workDayWithEventsMapper,
+            historyService,
+            historyDao
+        )
 
     @Singleton
     @Provides
     fun provideComeEventRepository(
         comeEventDao: ComeEventDao,
-        comeEventMapper: ComeEventMapper
-    ): ComeEventRepository {
-        return ComeEventRepository(comeEventDao, comeEventMapper)
-    }
+        comeEventMapper: ComeEventMapper,
+        historyService: HistoryService,
+        historyDao: EntityHistoryDao,
+    ): ComeEventRepository =
+        ComeEventRepository(comeEventDao, comeEventMapper, historyService, historyDao)
 
     @Singleton
     @Provides
     fun provideDayOffRepository(
         dayOffDao: DayOffDao,
         dayOffMapper: DayOffMapper,
-    ): DayOffRepository {
-        return DayOffRepository(dayOffDao, dayOffMapper)
-    }
+        historyService: HistoryService,
+        historyDao: EntityHistoryDao,
+    ): DayOffRepository = DayOffRepository(dayOffDao, dayOffMapper, historyService, historyDao)
 
     @Singleton
     @Provides
@@ -70,7 +82,7 @@ object RepositoryModule {
     @Provides
     fun provideHolidayApiRepository(
         holidayApiService: HolidayApiService,
-        Settings: Settings,
+        @Suppress("LocalVariableName") Settings: Settings,
         dateTimeProvider: DateTimeProvider,
         gson: Gson,
     ): HolidayApiRepository =
@@ -80,9 +92,17 @@ object RepositoryModule {
     @Provides
     fun provideNagerDateApiV4Repository(
         nagerDateApiV3Service: NagerDateApiV3Service,
-        Settings: Settings,
+        @Suppress("LocalVariableName") Settings: Settings,
         dateTimeProvider: DateTimeProvider,
         @ApplicationContext context: Context,
     ): NagerDateApiV3Repository =
         NagerDateApiV3Repository(nagerDateApiV3Service, Settings, dateTimeProvider, context)
+
+    @Singleton
+    @Provides
+    fun provideEntityHistoryRepository(
+        entityHistoryDao: EntityHistoryDao,
+        gson: Gson,
+        formatterProvider: HistoryFormatterProvider,
+    ): EntityHistoryRepository = EntityHistoryRepository(entityHistoryDao, gson, formatterProvider)
 }

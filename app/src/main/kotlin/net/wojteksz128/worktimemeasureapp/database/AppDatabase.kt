@@ -9,7 +9,11 @@ import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventDto
 import net.wojteksz128.worktimemeasureapp.database.converter.DateConverters
 import net.wojteksz128.worktimemeasureapp.database.dayOff.DayOffDao
 import net.wojteksz128.worktimemeasureapp.database.dayOff.DayOffDto
+import net.wojteksz128.worktimemeasureapp.database.history.EntityHistoryDao
+import net.wojteksz128.worktimemeasureapp.database.history.EntityHistoryDto
 import net.wojteksz128.worktimemeasureapp.database.migration.MigrateFrom10To11
+import net.wojteksz128.worktimemeasureapp.database.migration.MigrateFrom11To12
+import net.wojteksz128.worktimemeasureapp.database.migration.MigrateFrom12To13
 import net.wojteksz128.worktimemeasureapp.database.migration.MigrateFrom1To2
 import net.wojteksz128.worktimemeasureapp.database.migration.MigrateFrom2To3
 import net.wojteksz128.worktimemeasureapp.database.migration.MigrateFrom3To4
@@ -27,9 +31,10 @@ import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
     entities = [
         ComeEventDto::class,
         WorkDayDto::class,
-        DayOffDto::class
+        DayOffDto::class,
+        EntityHistoryDto::class,
     ],
-    version = 11
+    version = 13
 )
 @TypeConverters(DateConverters::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -39,6 +44,9 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun workDayDao(): WorkDayDao
 
     abstract fun dayOffDao(): DayOffDao
+
+    abstract fun entityHistoryDao(): EntityHistoryDao
+
 
     companion object : ClassTagAware {
         const val DATABASE_FILENAME = "work-time-measure.db"
@@ -54,7 +62,9 @@ abstract class AppDatabase : RoomDatabase() {
                 MigrateFrom7To8(),
                 MigrateFrom8To9(),
                 MigrateFrom9To10(),
-                MigrateFrom10To11()
+                MigrateFrom10To11(),
+                MigrateFrom11To12(),
+                MigrateFrom12To13(),
             )
     }
 }

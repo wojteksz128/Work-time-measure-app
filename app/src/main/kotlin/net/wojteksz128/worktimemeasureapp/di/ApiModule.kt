@@ -8,8 +8,10 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import net.wojteksz128.worktimemeasureapp.api.holidayapi.HolidayApiService
 import net.wojteksz128.worktimemeasureapp.api.nagerDate.NagerDateApiV3Service
+import net.wojteksz128.worktimemeasureapp.util.json.ZonedDateTimeDeserializer
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.threeten.bp.ZonedDateTime
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Named
@@ -41,6 +43,7 @@ object ApiModule {
     fun providesGson(): Gson =
         GsonBuilder()
             .setDateFormat("yyyy-MM-dd HH:mm:ss")
+            .registerTypeAdapter(ZonedDateTime::class.java, ZonedDateTimeDeserializer())
             .create()
 
     @Singleton

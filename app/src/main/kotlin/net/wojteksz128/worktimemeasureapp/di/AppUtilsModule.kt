@@ -1,11 +1,14 @@
 package net.wojteksz128.worktimemeasureapp.di
 
 import android.content.Context
+import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import net.wojteksz128.worktimemeasureapp.R
+import net.wojteksz128.worktimemeasureapp.database.history.HistoryService
 import net.wojteksz128.worktimemeasureapp.module.dayOff.DayOffService
 import net.wojteksz128.worktimemeasureapp.notification.NotificationUtils
 import net.wojteksz128.worktimemeasureapp.repository.ComeEventRepository
@@ -18,6 +21,10 @@ import net.wojteksz128.worktimemeasureapp.util.TimerManager
 import net.wojteksz128.worktimemeasureapp.util.comeevent.ComeEventUtils
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
+import net.wojteksz128.worktimemeasureapp.window.history.formatters.HiddenFieldNameFormatter
+import net.wojteksz128.worktimemeasureapp.window.history.formatters.HistoryFormatterProvider
+import net.wojteksz128.worktimemeasureapp.window.history.formatters.TimeFieldNameFormatter
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -54,6 +61,10 @@ object AppUtilsModule {
 
     @Singleton
     @Provides
+    fun provideHistoryService(gson: Gson) = HistoryService(gson)
+
+    @Singleton
+    @Provides
     fun provideComeEventUtils(
         comeEventRepository: ComeEventRepository,
         workDayRepository: WorkDayRepository,
@@ -62,7 +73,8 @@ object AppUtilsModule {
         return ComeEventUtils(
             comeEventRepository,
             workDayRepository,
-            dateTimeProvider)
+            dateTimeProvider
+        )
     }
 
     @Singleton
@@ -81,4 +93,30 @@ object AppUtilsModule {
     fun provideInitialSettingsPreparer(
         @Suppress("LocalVariableName") Settings: Settings,
     ): InitialSettingsPreparer = InitialSettingsPreparer(Settings)
+
+    @Singleton
+    @Provides
+    @Named("entryHistoryDateTimeFormat")
+    fun provideEntryHistoryDateTimeFormat(@ApplicationContext context: Context) =
+        context.getString(R.string.entry_history_date_time_format)
+
+    @Singleton
+    @Provides
+    fun provideTimeFieldNameFormatter(
+        dateTimeUtils: DateTimeUtils,
+        gson: Gson,
+        @Named("entryHistoryDateTimeFormat") dateTimeFormat: String,
+    ) = TimeFieldNameFormatter(dateTimeUtils, gson, dateTimeFormat)
+
+    @Singleton
+    @Provides
+    fun provideHiddenFieldNameFormatter() = HiddenFieldNameFormatter()
+
+    @Singleton
+    @Provides
+    fun provideHistoryFormatterProvider(
+        timeFieldNameFormatter: TimeFieldNameFormatter,
+        hiddenFieldNameFormatter: HiddenFieldNameFormatter,
+    ) = HistoryFormatterProvider(timeFieldNameFormatter, hiddenFieldNameFormatter)
+
 }

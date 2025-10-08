@@ -39,11 +39,14 @@ class WorkDayDetailsFragment : Fragment(), DeleteComeEventDialogListener,
 
     private lateinit var binding: FragmentWorkDayDetailsBinding
     private lateinit var comeEventsAdapter: ComeEventsAdapter
+    private lateinit var historyAdapter: WorkDayHistoryAdapter
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         comeEventsAdapter = ComeEventsAdapter(dateTimeUtils)
+        historyAdapter = WorkDayHistoryAdapter()
     }
 
     override fun onCreateView(
@@ -57,6 +60,9 @@ class WorkDayDetailsFragment : Fragment(), DeleteComeEventDialogListener,
             fillWorkDayUsingLocal(selectedWorkDayViewModel.selected)
             workDay.observe(viewLifecycleOwner) {
                 comeEventsAdapter.submitList(it.events)
+            }
+            history.observe(viewLifecycleOwner) { historyList ->
+                historyAdapter.submitList(historyList)
             }
         }
         selectedWorkDayViewModel.selected.observe(viewLifecycleOwner) { workDay ->
@@ -85,6 +91,13 @@ class WorkDayDetailsFragment : Fragment(), DeleteComeEventDialogListener,
                 (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
                 addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
             }
+
+            workDayDetailsHistoryEntries.apply {
+                adapter = historyAdapter
+                layoutManager = LinearLayoutManager(requireContext())
+                addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
+            }
+
             context?.let {
                 ComeEventsRecyclerViewSwipeLogic(
                     it
