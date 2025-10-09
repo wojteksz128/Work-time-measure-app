@@ -8,7 +8,7 @@ import net.wojteksz128.worktimemeasureapp.database.dayOff.DayOffMapper
 import net.wojteksz128.worktimemeasureapp.database.history.EntityHistoryDao
 import net.wojteksz128.worktimemeasureapp.database.history.HistoryService
 import net.wojteksz128.worktimemeasureapp.model.DayOff
-import org.threeten.bp.ZonedDateTime
+import org.threeten.bp.LocalDate
 
 class DayOffRepository(
     private val dayOffDao: DayOffDao,
@@ -19,9 +19,8 @@ class DayOffRepository(
 
     override suspend fun getById(id: Long): DayOffDto? = dayOffDao.findById(id)
 
-    suspend fun getDayOff(date: ZonedDateTime): DayOff? {
-        val localDate = date.toLocalDate()!!
-        val entity = dayOffDao.findByDate(localDate)
+    suspend fun getDayOff(date: LocalDate): DayOff? {
+        val entity = dayOffDao.findByDate(date)
         return entity?.let { mapper.mapToDomainModel(it) }
     }
 

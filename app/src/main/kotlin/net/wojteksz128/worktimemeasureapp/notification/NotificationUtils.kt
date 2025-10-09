@@ -4,12 +4,13 @@ import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import android.util.Log
+import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeNotificationFactory
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.TimerManager
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
-import net.wojteksz128.worktimemeasureapp.window.dashboard.WorkTimeData
+import net.wojteksz128.worktimemeasureapp.util.datetime.WorkTimeBalance
 import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.temporal.ChronoUnit
 
@@ -34,19 +35,17 @@ class NotificationUtils(
         }
     }
 
-    fun notifyUserAboutWorkTime(workTimeData: WorkTimeData) {
+    fun notifyUserAboutWorkTime(workDay: WorkDay, workTimeBalance: WorkTimeBalance) {
         val endOfWorkTimeExpired = dateTimeProvider.currentTime.apply {
-            val remainingTodayWorkTimeMillis = workTimeData.remainingTodayWorkTime?.toMillis() ?: 0L
+            val remainingTodayWorkTimeMillis = workTimeBalance.remainingTodayWorkTime.toMillis()
             this.plus(remainingTodayWorkTimeMillis, ChronoUnit.MILLIS)
         }
-        val expectedEndWorkDayTime =
-            workTimeData.expectedEndWorkDayTime ?: dateTimeProvider.currentTime
 
         scheduleEndOfWorkTimeNotification(endOfWorkTimeExpired)
         if (dateTimeProvider.currentTime.isBefore(endOfWorkTimeExpired))
             WorkTimeNotificationFactory.createWorkTimeInProgressNotification(
                 context,
-                expectedEndWorkDayTime,
+                endOfWorkTimeExpired,
                 dateTimeUtils
             ).notifyUser()
     }

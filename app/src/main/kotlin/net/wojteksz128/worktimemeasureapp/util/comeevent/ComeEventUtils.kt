@@ -19,18 +19,19 @@ class ComeEventUtils(
 
     // TODO: 07.07.2019 Move to separate action object.
     suspend fun registerNewEvent(): ComeEventType = withContext(Dispatchers.IO) {
-        val registerDate = dateTimeProvider.currentTime
+        val registerTime = dateTimeProvider.currentTime
         val workDay =
-            workDayRepository.getCurrentWorkDay(registerDate) ?: WorkDay(registerDate).let {
+            workDayRepository.getWorkDayByDate(registerTime.toLocalDate())
+                ?: WorkDay(registerTime.toLocalDate()).let {
                 workDayRepository.save(it)
-                workDayRepository.getCurrentWorkDay(registerDate)!!
+                    workDayRepository.getWorkDayByDate(registerTime.toLocalDate())!!
             }
         val comeEvent = workDay.events.lastOrNull { !it.isEnded }
 
         if (comeEvent != null) {
-            assignEndDateIntoCurrentEvent(comeEvent, registerDate)
+            assignEndDateIntoCurrentEvent(comeEvent, registerTime)
         } else {
-            createNewEvent(workDay, registerDate)
+            createNewEvent(workDay, registerTime)
         }
     }
 

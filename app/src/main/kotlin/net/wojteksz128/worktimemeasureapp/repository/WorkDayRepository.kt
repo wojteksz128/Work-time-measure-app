@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
 import androidx.paging.PagingSource
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import net.wojteksz128.worktimemeasureapp.database.history.EntityHistoryDao
 import net.wojteksz128.worktimemeasureapp.database.history.HistoryService
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayDao
@@ -11,8 +12,8 @@ import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayDto
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayMapper
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayWithEventsMapper
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
+import net.wojteksz128.worktimemeasureapp.util.datetime.LocalDateRange
 import org.threeten.bp.LocalDate
-import org.threeten.bp.ZonedDateTime
 
 class WorkDayRepository (
     private val workDayDao: WorkDayDao,
@@ -30,18 +31,17 @@ class WorkDayRepository (
             .mapByPage { workDayWithEventsMapper.mapToDomainModelList(it) }
             .asPagingSourceFactory(Dispatchers.IO)
 
-    suspend fun getCurrentWorkDay(currentDate: ZonedDateTime): WorkDay? {
-        val entity = workDayDao.findByIntervalContains(currentDate)
+    suspend fun getWorkDayByDate(currentDate: LocalDate): WorkDay? {
+        val entity = workDayDao.findByDate(currentDate)
         return entity?.let { workDayWithEventsMapper.mapToDomainModel(entity) }
     }
 
     // TODO: 09.10.2021 Czy oddzielne metody LiveData i normalne jest potrzebne?
-    fun getCurrentWorkDayInLiveData(currentDate: ZonedDateTime): LiveData<WorkDay?> =
-        workDayDao.findByIntervalContainsInLiveData(currentDate)
-            .map { workDayWithEventsDto ->
+    fun getWorkDayByDateInLiveData(date: LocalDate): LiveData<WorkDay> =
+        workDayDao.findByDateInLiveData(date).map { workDayWithEventsDto ->
                 workDayWithEventsDto?.let {
                     workDayWithEventsMapper.mapToDomainModel(it)
-                }
+                } ?: WorkDay(date)
             }
 
     suspend fun getWorkDayById(workDayId: Long): WorkDay? =
@@ -56,10 +56,10 @@ class WorkDayRepository (
             }
         }
 
-    fun getCurrentWeekWorkDaysInLiveData(
-        start: LocalDate,
-        end: LocalDate,
-    ): LiveData<List<WorkDay>> =
-        workDayDao.findBetweenDates(start, end)
-            .map { workDayWithEventsMapper.mapToDomainModelList(it) }
+    suspend fun getWorkDaysForRange(dateRange: LocalDateRange): List<WorkDay> =
+        withContext(Dispatchers.IO) {
+            workDayDao.findBetweenDates(dateRange.start, dateRange.endInclusive).map {
+                workDayWithEventsMapper.mapToDomainModel(it)
+            }
+        }
 }

@@ -12,6 +12,7 @@ import org.threeten.bp.ZoneId
 import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.jdk8.DefaultInterfaceTemporal
+import org.threeten.bp.temporal.ChronoUnit
 import kotlin.math.abs
 
 class DateTimeUtils (
@@ -59,6 +60,9 @@ class DateTimeUtils (
         } ?: defaultValue
     }
 
+    fun getDaysInMonthRangeToDate(date: LocalDate): LocalDateRange =
+        (date.withDayOfMonth(1)..date)
+
     val ComeEvent?.duration: Duration
         get() = this?.let {
             Duration.between(
@@ -66,6 +70,14 @@ class DateTimeUtils (
                 it.endDate ?: dateTimeProvider.currentTime
             )
         } ?: Duration.ZERO
+
+    companion object {
+        fun getStartDayTime(date: LocalDate): ZonedDateTime =
+            date.atStartOfDay(ZoneId.systemDefault())
+
+        fun getEndDayTime(date: LocalDate): ZonedDateTime =
+            date.atStartOfDay(ZoneId.systemDefault()).plusDays(1).minus(1, ChronoUnit.MILLIS)
+    }
 
 }
 

@@ -73,7 +73,6 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
             lifecycleOwner = this@DashboardActivity
             dateTimeUtils = this@DashboardActivity.dateTimeUtils
             viewModel = localViewModel
-            workTimeData = this@DashboardActivity.viewModel.liveWorkTimeData
             newEventRegisterListener = this@DashboardActivity
             dashboardCurrentDayEventsList.apply {
                 adapter = comeEventsAdapter
@@ -122,7 +121,10 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
             val message = when (comeEventUtils.registerNewEvent()) {
                 ComeEventType.COME_IN -> {
                     if (Settings.WorkTime.NotifyingEnabled.valueNullable == true) {
-                        notificationUtils.notifyUserAboutWorkTime(viewModel.workTimeData.value!!)
+                        notificationUtils.notifyUserAboutWorkTime(
+                            viewModel.workDay.value!!,
+                            viewModel.workTimeBalance.value!!
+                        )
                     }
                     getString(R.string.dashboard_snackbar_info_income_registered)
                 }

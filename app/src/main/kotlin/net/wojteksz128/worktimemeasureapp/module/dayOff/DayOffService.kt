@@ -9,6 +9,7 @@ import net.wojteksz128.worktimemeasureapp.repository.api.ExternalHolidayReposito
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import org.threeten.bp.DayOfWeek
+import org.threeten.bp.LocalDate
 import org.threeten.bp.ZonedDateTime
 
 class DayOffService(
@@ -17,7 +18,9 @@ class DayOffService(
     @Suppress("PrivatePropertyName") private val Settings: Settings,
 ) : ClassTagAware {
 
-    suspend fun getDayType(date: ZonedDateTime): DayType {
+    suspend fun getDayType(date: ZonedDateTime): DayType = getDayType(date.toLocalDate())
+
+    suspend fun getDayType(date: LocalDate): DayType {
         return getDayOffInDate(date)?.let {
             DayType.ofDayOff(it)
         } ?: if (isWorkingDay(date))
@@ -26,11 +29,11 @@ class DayOffService(
             DayType.Weekend
     }
 
-    private suspend fun getDayOffInDate(date: ZonedDateTime): DayOff? {
+    private suspend fun getDayOffInDate(date: LocalDate): DayOff? {
         return dayOffRepository.getDayOff(date)
     }
 
-    private fun isWorkingDay(date: ZonedDateTime): Boolean {
+    private fun isWorkingDay(date: LocalDate): Boolean {
         val dayOfWeek = date.dayOfWeek
         val daysOfWorkingWeek =
             Settings.WorkTime.Week.DaysOfWorkingWeek.value.map { DayOfWeek.valueOf(it) }

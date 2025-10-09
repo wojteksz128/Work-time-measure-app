@@ -40,7 +40,7 @@
     <string name="dashboard_activity_title">@string/app_name</string>
     <string name="dashboard_remaining_working_time">Pozostało do wypracowania</string>
     <string name="dashboard_today">Dzisiaj:</string>
-    <string name="dashboard_week">W tym tygodniu:</string>
+    <string name="dashboard_month_balance">Bilans miesięczny:</string>
     <string name="dashboard_today_work_time_label">Dzisiaj przepracowano:</string>
     <string name="dashboard_current_day_date_example">pn., 08.07.2019</string>
     <string name="dashboard_current_day_empty_events_message">Brak zdarzeń</string>
