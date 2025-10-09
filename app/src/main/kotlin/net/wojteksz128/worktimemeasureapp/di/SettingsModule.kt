@@ -10,8 +10,8 @@ import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.api.HolidayProvider
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.settings.converter.ConfigurationConverterFrom0To1
+import net.wojteksz128.worktimemeasureapp.settings.converter.ConfigurationConverterFrom1To2
 import net.wojteksz128.worktimemeasureapp.settings.converter.VersionedConfigurationConverter
-import net.wojteksz128.worktimemeasureapp.settings.item.AlarmStateSettingsItem
 import net.wojteksz128.worktimemeasureapp.settings.item.BooleanSettingsItem
 import net.wojteksz128.worktimemeasureapp.settings.item.DurationSettingsItem
 import net.wojteksz128.worktimemeasureapp.settings.item.EnumSettingsItem
@@ -37,7 +37,8 @@ object SettingsModule {
     fun provideSetOfVersionedConfigurationConverters(
         @ApplicationContext appContext: Context,
     ): Set<VersionedConfigurationConverter> = setOf(
-        ConfigurationConverterFrom0To1(appContext)
+        ConfigurationConverterFrom0To1(appContext),
+        ConfigurationConverterFrom1To2(appContext),
     )
 
     @Singleton
@@ -176,17 +177,10 @@ object SettingsModule {
     @Singleton
     @Provides
     fun provideInternal(
-        @Named("settings_internal_alarmState") alarmState: AlarmStateSettingsItem,
         @Named("settings_internal_firstRun") firstRun: BooleanSettingsItem,
         @Named("settings_internal_configurationVersion") configurationVersion: IntFromStringSettingsItem,
     ): Settings.InternalSettings =
-        Settings.InternalSettings(alarmState, firstRun, configurationVersion)
-
-    @Singleton
-    @Provides
-    @Named("settings_internal_alarmState")
-    fun provideSettingsInternalAlarmState(@ApplicationContext context: Context): AlarmStateSettingsItem =
-        AlarmStateSettingsItem(R.string.settings_key_internal_alarmSetTime, context)
+        Settings.InternalSettings(firstRun, configurationVersion)
 
     @Singleton
     @Provides

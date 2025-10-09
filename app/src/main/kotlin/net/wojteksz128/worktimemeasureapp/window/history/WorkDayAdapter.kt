@@ -106,7 +106,7 @@ class WorkDayAdapter(
             comeEventsAdapter.submitList(workDay.events)
 
             updateJob?.cancel()
-            if (!workDay.isAllEventsEnded()) {
+            if (!workDay.isWorkActive()) {
                 updateJob = lifecycleOwner.lifecycleScope.launch {
                     ticker.collectLatest {
                         binding.invalidateAll()

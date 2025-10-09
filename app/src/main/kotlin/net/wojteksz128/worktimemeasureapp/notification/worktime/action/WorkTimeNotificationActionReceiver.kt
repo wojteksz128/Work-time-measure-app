@@ -3,31 +3,46 @@ package net.wojteksz128.worktimemeasureapp.notification.worktime.action
 import android.content.Context
 import android.content.Intent
 import dagger.hilt.android.AndroidEntryPoint
-import net.wojteksz128.worktimemeasureapp.di.endOfWorkActionName
-import net.wojteksz128.worktimemeasureapp.di.ignoreReminderActionName
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import net.wojteksz128.worktimemeasureapp.notification.HiltBroadcastReceiver
-import net.wojteksz128.worktimemeasureapp.notification.NotificationActionImpl
+import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeNotificationService
+import net.wojteksz128.worktimemeasureapp.util.comeevent.ComeEventUtils
+import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import javax.inject.Inject
-import javax.inject.Named
 
 @AndroidEntryPoint
 class WorkTimeNotificationActionReceiver : HiltBroadcastReceiver() {
 
     @Inject
-    @Named(endOfWorkActionName)
-    lateinit var endOfWorkActionImpl: NotificationActionImpl
+    lateinit var dateTimeProvider: DateTimeProvider
 
     @Inject
-    @Named(ignoreReminderActionName)
-    lateinit var ignoreReminderActionImpl: NotificationActionImpl
+    lateinit var notificationService: WorkTimeNotificationService
 
+    @Inject
+    lateinit var comeEventUtils: ComeEventUtils
+
+
+    @DelicateCoroutinesApi
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
 
-        intent.action?.let { actionName ->
-            when(WorkTimeNotificationAction.valueOf(actionName)) {
-                WorkTimeNotificationAction.END_OF_WORK_ACTION -> endOfWorkActionImpl(context)
-                WorkTimeNotificationAction.IGNORE_REMINDER_ACTION -> ignoreReminderActionImpl(context)
+        when (intent.action) {
+            WorkTimeNotificationService.SNOOZE_ACTION -> {
+                val nextReminder = dateTimeProvider.currentTime.plusMinutes(10)
+                notificationService.scheduleEndOfWorkNotification(nextReminder)
+            }
+
+            WorkTimeNotificationService.STOP_WORK_ACTION -> {
+                GlobalScope.launch {
+                    comeEventUtils.registerNewEvent()
+                }
+            }
+
+            WorkTimeNotificationService.EXTEND -> {
+                // TODO implement this
             }
         }
     }

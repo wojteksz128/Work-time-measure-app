@@ -16,7 +16,7 @@ data class WorkDay(
     constructor(date: LocalDate)
             : this(null, date, getStartDayTime(date), getEndDayTime(date))
 
-    fun isAllEventsEnded() = events.all { it.isEnded }
+    fun isWorkActive() = events.all { it.isEnded }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

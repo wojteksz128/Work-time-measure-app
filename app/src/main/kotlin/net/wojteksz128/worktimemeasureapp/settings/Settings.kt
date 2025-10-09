@@ -3,7 +3,6 @@
 package net.wojteksz128.worktimemeasureapp.settings
 
 import net.wojteksz128.worktimemeasureapp.api.HolidayProvider
-import net.wojteksz128.worktimemeasureapp.settings.item.AlarmStateSettingsItem
 import net.wojteksz128.worktimemeasureapp.settings.item.BooleanSettingsItem
 import net.wojteksz128.worktimemeasureapp.settings.item.DurationSettingsItem
 import net.wojteksz128.worktimemeasureapp.settings.item.EnumSettingsItem
@@ -56,9 +55,8 @@ class Settings(
     }
 
     class InternalSettings(
-        val AlarmState: AlarmStateSettingsItem,
         val FirstRun: BooleanSettingsItem,
         val ConfigurationVersion: IntFromStringSettingsItem,
-    ) : SettingsNode(AlarmState, FirstRun, ConfigurationVersion)
+    ) : SettingsNode(FirstRun, ConfigurationVersion)
 }
 

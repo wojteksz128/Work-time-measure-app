@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
+import androidx.core.app.NotificationManagerCompat
 
 import net.wojteksz128.worktimemeasureapp.R
 
@@ -16,10 +17,17 @@ enum class Channel(
     @StringRes val description: Int,
     val importance: Int,
 ) {
-    WORK_TIME_CHANNEL("work-time-channel",
-        R.string.channel_work_time_name,
-        R.string.channel_work_time_description,
-        4/*NotificationManager.IMPORTANCE_HIGH*/
+    END_WORK_TIME_CHANNEL(
+        "end-work-time-channel",
+        R.string.channel_end_work_time_name,
+        R.string.channel_end_work_time_description,
+        NotificationManagerCompat.IMPORTANCE_HIGH
+    ),
+    WORK_TIME_IN_PROGRESS_CHANNEL(
+        "work-time-in-progress-channel",
+        R.string.channel_work_time_in_progress_name,
+        R.string.channel_work_time_in_progress_description,
+        NotificationManagerCompat.IMPORTANCE_DEFAULT
     );
 
     @RequiresApi(api = Build.VERSION_CODES.O)

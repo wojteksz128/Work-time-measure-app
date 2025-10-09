@@ -1,7 +1,7 @@
 package net.wojteksz128.worktimemeasureapp.notification
 
+import android.app.Notification
 import android.app.PendingIntent
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -14,11 +14,11 @@ import androidx.core.content.ContextCompat
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 
-abstract class AppNotification<T>(
+abstract class AppNotification(
     val channel: Channel,
     private val notificationId: Int,
     private val context: Context,
-) : ClassTagAware where T : BroadcastReceiver {
+) : ClassTagAware {
     protected val notificationBuilder: NotificationCompat.Builder
 
     init {
@@ -26,13 +26,15 @@ abstract class AppNotification<T>(
             .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setLargeIcon(largeIcon(context, R.drawable.ic_launcher_foreground))
-            .setAutoCancel(true)
     }
 
-    fun notifyUser() {
+    fun show() {
         Log.d(classTag, "notifyUser: AppNotification notifying ${this::class.java.simpleName}")
-        NotificationManagerCompat.from(context).notify(notificationId, notificationBuilder.build())
+        val notificationManager = NotificationManagerCompat.from(context)
+        notificationManager.notify(notificationId, build())
     }
+
+    abstract fun build(): Notification
 
     protected fun <T> getPendingIntentWithStack(
         context: Context,
@@ -51,26 +53,6 @@ abstract class AppNotification<T>(
             0,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )!!
-    }
-
-    protected inline fun <reified T : BroadcastReceiver> getAction(
-        context: Context,
-        action: NotificationAction<T>,
-    ): NotificationCompat.Action {
-        Log.v(classTag, "getAction: Create action ${action.name} for ${this.javaClass.simpleName}")
-        val intent = Intent(context, T::class.java).apply {
-            this.action = action.name
-        }
-        val pendingIntent =
-            PendingIntent.getBroadcast(
-                context,
-                0,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
-        return NotificationCompat.Action(action.icon,
-            context.getString(action.title),
-            pendingIntent)
     }
 
     private fun largeIcon(

@@ -11,8 +11,10 @@
     <!--<editor-fold desc="################ Channels ################">-->
 
     <!-- Work time channel description -->
-    <string name="channel_work_time_name">Powiadomienia o czasie pracy</string>
-    <string name="channel_work_time_description">Powiadomienia o czasie pracy, wyświetlają informacje o czasie trwania aktualnego dnia pracy.</string>
+    <string name="channel_end_work_time_name">Koniec dnia pracy</string>
+    <string name="channel_end_work_time_description">Powiadomienia wyświetlane są w momencie zakończenia czasu pracy.</string>
+    <string name="channel_work_time_in_progress_name">Podczas pracy</string>
+    <string name="channel_work_time_in_progress_description">Powiadomienia z informacją na temat dnia pracy.</string>
 
     <!--</editor-fold>-->
     <!--##########################################-->
@@ -20,16 +22,20 @@
     <!--##########################################-->
     <!--<editor-fold desc="############# Notifications ##############">-->
 
-    <!-- In work notification -->
-    <string name="notification_in_work_title">Obecny czas pracy</string>
-    <string name="notification_in_work_text">Oczekiwany czas końca pracy: %s</string>
-    <string name="notification_in_work_action_come_out">Wychodzę</string>
+    <string name="notification_time_format" translatable="false">HH:ss</string>
+
+    <!-- Work in progress notification -->
+    <string name="notification_work_in_progress_title">Obecny czas pracy</string>
+    <string name="notification_work_in_progress_text">Oczekiwany czas końca pracy: %s. Lepiej byłoby zakończyć pracę o %s.</string>
 
     <!-- End of work notification -->
     <string name="notification_end_of_work_title">Musisz wyjść!</string>
     <string name="notification_end_of_work_text">Przesiedziałeś już swoje. Czas wrócić do domu ;)</string>
-    <string name="notification_end_of_work_action_ignore">Wycisz</string>
-    <string name="notification_end_of_work_action_come_out">Wychodzę</string>
+
+    <!-- Actions -->
+    <string name="notification_action_stop_work">Wychodzę</string>
+    <string name="notification_action_snooze">Drzemka</string>
+    <string name="notification_action_extend">Pracuje dalej</string>
 
     <!--</editor-fold>-->
     <!--##########################################-->
@@ -326,7 +332,6 @@
     <!--<string name="settings_key_sync_timeSync_enable" translatable="false">settings_sync_timeSync_enable</string>-->
     <!--<string name="settings_key_sync_timeSync_server" translatable="false">settings_sync_timeSync_server</string>-->
 
-    <!--<string name="settings_key_internal_alarmSetTime" translatable="false">settings_internal_alarmSetTime</string>-->
     <!--<string name="settings_key_internal_firstRun" translatable="false">settings_internal_firstRun</string>-->
     <!--<string name="settings_key_internal_configurationVersion" translatable="false">settings_internal_configurationVersion</string>-->
 

@@ -10,7 +10,6 @@ import dagger.hilt.components.SingletonComponent
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.database.history.HistoryService
 import net.wojteksz128.worktimemeasureapp.module.dayOff.DayOffService
-import net.wojteksz128.worktimemeasureapp.notification.NotificationUtils
 import net.wojteksz128.worktimemeasureapp.repository.ComeEventRepository
 import net.wojteksz128.worktimemeasureapp.repository.DayOffRepository
 import net.wojteksz128.worktimemeasureapp.repository.WorkDayRepository
@@ -18,7 +17,6 @@ import net.wojteksz128.worktimemeasureapp.repository.api.ExternalHolidayReposito
 import net.wojteksz128.worktimemeasureapp.settings.InitialSettingsPreparer
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.settings.converter.ConfigurationConverterFactory
-import net.wojteksz128.worktimemeasureapp.util.TimerManager
 import net.wojteksz128.worktimemeasureapp.util.comeevent.ComeEventUtils
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
@@ -31,15 +29,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppUtilsModule {
-
-    @Singleton
-    @Provides
-    fun provideTimerManager(
-        @ApplicationContext context: Context,
-        settings: Settings,
-    ): TimerManager {
-        return TimerManager(context, settings)
-    }
 
     @Singleton
     @Provides
@@ -76,17 +65,6 @@ object AppUtilsModule {
             workDayRepository,
             dateTimeProvider
         )
-    }
-
-    @Singleton
-    @Provides
-    fun provideNotificationUtils(
-        @ApplicationContext context: Context,
-        dateTimeProvider: DateTimeProvider,
-        timerManager: TimerManager,
-        dateTimeUtils: DateTimeUtils,
-    ): NotificationUtils {
-        return NotificationUtils(context, dateTimeProvider, timerManager, dateTimeUtils)
     }
 
     @Singleton

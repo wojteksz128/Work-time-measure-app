@@ -15,7 +15,7 @@ import net.wojteksz128.worktimemeasureapp.databinding.ActivityDashboardBinding
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
 import net.wojteksz128.worktimemeasureapp.model.ComeEventType
 import net.wojteksz128.worktimemeasureapp.module.dayOff.DayOffService
-import net.wojteksz128.worktimemeasureapp.notification.NotificationUtils
+import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeNotificationService
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.TimerManager
 import net.wojteksz128.worktimemeasureapp.util.comeevent.ComeEventUtils
@@ -50,7 +50,8 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
     lateinit var dayOffService: DayOffService
 
     @Inject
-    lateinit var notificationUtils: NotificationUtils
+    lateinit var notificationService: WorkTimeNotificationService
+
 
     @Suppress("PropertyName")
     @Inject
@@ -121,7 +122,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
             val message = when (comeEventUtils.registerNewEvent()) {
                 ComeEventType.COME_IN -> {
                     if (Settings.WorkTime.NotifyingEnabled.valueNullable == true) {
-                        notificationUtils.notifyUserAboutWorkTime(
+                        notificationService.showWorkInProgressNotification(
                             viewModel.workDay.value!!,
                             viewModel.workTimeBalance.value!!
                         )
@@ -129,7 +130,8 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
                     getString(R.string.dashboard_snackbar_info_income_registered)
                 }
                 ComeEventType.COME_OUT -> {
-                    timerManager.removeAlarm()
+                    notificationService.cancelWorkInProgressNotification()
+                    notificationService.cancelEndOfWorkNotification()
                     getString(R.string.dashboard_snackbar_info_outcome_registered)
                 }
             }

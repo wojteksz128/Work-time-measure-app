@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
+import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeNotificationService
 import net.wojteksz128.worktimemeasureapp.repository.ComeEventRepository
 import net.wojteksz128.worktimemeasureapp.repository.WorkDayRepository
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
@@ -31,6 +32,7 @@ class DashboardViewModel @Inject constructor(
     dateTimeProvider: DateTimeProvider,
     private val workTimeBalanceCalculator: WorkTimeBalanceCalculator,
     tickerFactory: TickerFactory,
+    private val notificationService: WorkTimeNotificationService,
 ) : AndroidViewModel(application), ClassTagAware {
     val workDay: LiveData<WorkDay> =
         workDayRepository.getWorkDayByDateInLiveData(dateTimeProvider.currentDate)
@@ -47,6 +49,32 @@ class DashboardViewModel @Inject constructor(
     val ticker: SharedFlow<Unit> = tickerFactory.create(viewModelScope)
 
     val waitingFor = MutableLiveData(false)
+
+    init {
+        workDay.observeForever { workDay ->
+            val workTimeBalance = this@DashboardViewModel.workTimeBalance.value
+            if (workDay != null && workTimeBalance != null)
+                if (workDay.isWorkActive())
+                    notificationService.showWorkInProgressNotification(workDay, workTimeBalance)
+                else
+                    notificationService.cancelWorkInProgressNotification()
+        }
+
+        workTimeBalance.observeForever { workTimeBalance ->
+            val workDay = workDay.value
+            if (workDay != null)
+                if (workDay.isWorkActive()) {
+                    val startTime = workDay.events.lastOrNull()?.startDate
+                    if (startTime != null) {
+                        val balancedEndTime = startTime.plus(workTimeBalance.remainingTodayWorkTime)
+                            .minus(workTimeBalance.monthlyBalance)
+                        notificationService.scheduleEndOfWorkNotification(balancedEndTime)
+                    }
+                } else {
+                    notificationService.cancelEndOfWorkNotification()
+                }
+        }
+    }
 
     fun onComeEventDelete(comeEvent: ComeEvent?) = viewModelScope.launch {
         withContext(Dispatchers.IO) {

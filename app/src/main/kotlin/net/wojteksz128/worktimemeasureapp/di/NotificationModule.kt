@@ -1,31 +1,28 @@
 package net.wojteksz128.worktimemeasureapp.di
 
+import android.content.Context
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import net.wojteksz128.worktimemeasureapp.notification.NotificationActionImpl
-import net.wojteksz128.worktimemeasureapp.notification.worktime.action.EndOfWorkActionImpl
-import net.wojteksz128.worktimemeasureapp.notification.worktime.action.IgnoreReminderActionImpl
-import net.wojteksz128.worktimemeasureapp.util.comeevent.ComeEventUtils
-import javax.inject.Named
+import net.wojteksz128.worktimemeasureapp.notification.NotificationChannelCreator
+import net.wojteksz128.worktimemeasureapp.util.TimerManager
 import javax.inject.Singleton
-
-const val endOfWorkActionName = "EndOfWorkAction"
-const val ignoreReminderActionName = "IgnoreReminderAction"
 
 @Module
 @InstallIn(SingletonComponent::class)
 object NotificationModule {
 
-    @Singleton
     @Provides
-    @Named(endOfWorkActionName)
-    fun provideEndOfWorkAction(comeEventUtils: ComeEventUtils): NotificationActionImpl =
-        EndOfWorkActionImpl(comeEventUtils)
+    @Singleton
+    fun provideNotificationChannelCreator(@ApplicationContext context: Context): NotificationChannelCreator {
+        return NotificationChannelCreator(context)
+    }
 
-    @Singleton
     @Provides
-    @Named(ignoreReminderActionName)
-    fun provideIgnoreReminderAction(): NotificationActionImpl = IgnoreReminderActionImpl
+    @Singleton
+    fun provideTimerManager(@ApplicationContext context: Context): TimerManager {
+        return TimerManager(context)
+    }
 }

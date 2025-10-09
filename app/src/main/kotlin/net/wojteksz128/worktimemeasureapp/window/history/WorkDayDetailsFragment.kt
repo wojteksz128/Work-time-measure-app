@@ -77,7 +77,7 @@ class WorkDayDetailsFragment : Fragment(), DeleteComeEventDialogListener,
         }
         lifecycleScope.launch {
             viewModel.ticker.collectLatest {
-                if (viewModel.workDay.value?.isAllEventsEnded() == false)
+                if (viewModel.workDay.value?.isWorkActive() == false)
                     binding.invalidateAll()
             }
         }
