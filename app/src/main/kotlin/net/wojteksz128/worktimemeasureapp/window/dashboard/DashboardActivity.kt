@@ -13,13 +13,10 @@ import kotlinx.coroutines.launch
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.databinding.ActivityDashboardBinding
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
-import net.wojteksz128.worktimemeasureapp.model.ComeEventType
 import net.wojteksz128.worktimemeasureapp.module.dayOff.DayOffService
 import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeNotificationService
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.TimerManager
-import net.wojteksz128.worktimemeasureapp.util.comeevent.ComeEventUtils
-import net.wojteksz128.worktimemeasureapp.util.comeevent.NewEventRegisterListener
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import net.wojteksz128.worktimemeasureapp.window.BaseActivity
@@ -33,12 +30,9 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activity_dashboard),
-    NewEventRegisterListener, DeleteComeEventDialogListener, EditComeEventDialogListener {
+    DeleteComeEventDialogListener, EditComeEventDialogListener {
     private val viewModel: DashboardViewModel by viewModels()
     private val selectedComeEventViewModel: SelectedComeEventViewModel by viewModels()
-
-    @Inject
-    lateinit var comeEventUtils: ComeEventUtils
 
     @Inject
     lateinit var dateTimeProvider: DateTimeProvider
@@ -74,7 +68,6 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
             lifecycleOwner = this@DashboardActivity
             dateTimeUtils = this@DashboardActivity.dateTimeUtils
             viewModel = localViewModel
-            newEventRegisterListener = this@DashboardActivity
             dashboardCurrentDayEventsList.apply {
                 adapter = comeEventsAdapter
                 layoutManager = object : LinearLayoutManager(this@DashboardActivity) {
@@ -92,9 +85,16 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
             }
         }
 
-        viewModel.workDay.observe(this@DashboardActivity) { currentWorkDay ->
-            currentWorkDay?.let {
+        viewModel.workDay.observe(this@DashboardActivity) { workDay ->
+            workDay?.let {
                 comeEventsAdapter.submitList(it.events)
+            }
+        }
+
+        viewModel.snackbarMessage.observe(this) { message ->
+            if (message != null) {
+                Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG).show()
+                viewModel.onSnackbarShown()
             }
         }
     }
@@ -115,44 +115,8 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
         }
     }
 
-    override fun registerNewEvent() {
-        lifecycleScope.launch {
-            viewModel.waitingFor.value = true
-
-            val message = when (comeEventUtils.registerNewEvent()) {
-                ComeEventType.COME_IN -> {
-                    if (Settings.WorkTime.NotifyingEnabled.valueNullable == true) {
-                        notificationService.showWorkInProgressNotification(
-                            viewModel.workDay.value!!,
-                            viewModel.workTimeBalance.value!!
-                        )
-                    }
-                    getString(R.string.dashboard_snackbar_info_income_registered)
-                }
-                ComeEventType.COME_OUT -> {
-                    notificationService.cancelWorkInProgressNotification()
-                    notificationService.cancelEndOfWorkNotification()
-                    getString(R.string.dashboard_snackbar_info_outcome_registered)
-                }
-            }
-
-            viewModel.waitingFor.value = false
-
-            Snackbar.make(baseContainer, message, Snackbar.LENGTH_LONG).show()
-        }
-    }
-
     override fun onAcceptDeletionComeEventClick(dialog: DialogFragment) {
         viewModel.onComeEventDelete(selectedComeEventViewModel.selected.value)
-        Snackbar.make(
-            binding.root,
-            R.string.work_day_details_come_events_deleted_message,
-            Snackbar.LENGTH_LONG
-        ).show()
-    }
-
-    override fun onDeleteComeEventDialogDismiss(dialog: DialogFragment) {
-        comeEventsAdapter.notifyDataSetChanged()
     }
 
     override fun onAcceptModificationComeEventClick(
@@ -160,15 +124,6 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
         modifiedComeEvent: ComeEvent
     ) {
         viewModel.onComeEventModified(modifiedComeEvent)
-        Snackbar.make(
-            binding.root,
-            R.string.work_day_details_come_events_edited_message,
-            Snackbar.LENGTH_LONG
-        ).show()
-    }
-
-    override fun onEditComeEventDialogDismiss(dialog: DialogFragment) {
-        comeEventsAdapter.notifyDataSetChanged()
     }
 
     companion object {
