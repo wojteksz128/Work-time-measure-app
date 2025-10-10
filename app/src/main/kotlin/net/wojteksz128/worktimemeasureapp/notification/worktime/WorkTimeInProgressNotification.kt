@@ -2,6 +2,7 @@ package net.wojteksz128.worktimemeasureapp.notification.worktime
 
 import android.app.Notification
 import android.content.Context
+import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import net.wojteksz128.worktimemeasureapp.R
@@ -9,10 +10,12 @@ import net.wojteksz128.worktimemeasureapp.notification.AppNotification
 import net.wojteksz128.worktimemeasureapp.notification.Channel
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import net.wojteksz128.worktimemeasureapp.window.dashboard.DashboardActivity
+import org.threeten.bp.LocalDate
 import org.threeten.bp.ZonedDateTime
 
 class WorkTimeInProgressNotification(
     private val context: Context,
+    private val workDayDate: LocalDate,
     private val standardEndTime: ZonedDateTime,
     private val balancedEndTime: ZonedDateTime,
     private val dateTimeUtils: DateTimeUtils,
@@ -29,11 +32,11 @@ class WorkTimeInProgressNotification(
 
     override fun build(): Notification {
         val formattedStandardEnd = dateTimeUtils.formatDate(
-            context.getString(R.string.notification_time_format),
+            context.getString(getTimeFormatFor(standardEndTime)),
             standardEndTime
         )
         val formattedBalancedEnd = dateTimeUtils.formatDate(
-            context.getString(R.string.notification_time_format),
+            context.getString(getTimeFormatFor(balancedEndTime)),
             balancedEndTime
         )
 
@@ -51,4 +54,9 @@ class WorkTimeInProgressNotification(
             .setContentIntent(getPendingIntentWithStack(context, DashboardActivity::class.java))
             .build()
     }
+
+    @StringRes
+    private fun getTimeFormatFor(dateTime: ZonedDateTime): Int =
+        if (dateTime.toLocalDate() == workDayDate) R.string.notification_time_short_format
+        else R.string.notification_time_long_format
 }
