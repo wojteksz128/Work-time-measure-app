@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
@@ -37,8 +36,6 @@ class WorkDayDetailsViewModel @Inject constructor(
     @Named("entryHistoryDateTimeFormat") private val dateTimeFormat: String,
 ) : AndroidViewModel(application), ClassTagAware {
     val workDay = MediatorLiveData<WorkDay>()
-
-    val modifiedComeEventPosition = MutableLiveData<Int>()
 
     val history: LiveData<List<HistoryDisplayItem>> =
         workDay.switchMap { workDay ->

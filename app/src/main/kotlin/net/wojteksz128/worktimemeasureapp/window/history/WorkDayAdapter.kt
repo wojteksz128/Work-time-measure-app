@@ -4,12 +4,12 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
@@ -18,20 +18,19 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import net.wojteksz128.worktimemeasureapp.databinding.ListItemHistoryWorkDayBinding
-import net.wojteksz128.worktimemeasureapp.model.ComeEvent
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import net.wojteksz128.worktimemeasureapp.util.recyclerView.RecyclerViewItemClick
-import net.wojteksz128.worktimemeasureapp.util.recyclerView.ViewHolderInformation
+import net.wojteksz128.worktimemeasureapp.util.recyclerView.RecyclerViewSwipeCallback
 import net.wojteksz128.worktimemeasureapp.window.history.ComeEventsAdapter.ComeEventViewHolder
 import net.wojteksz128.worktimemeasureapp.window.util.button.ExpandViewModel
-import net.wojteksz128.worktimemeasureapp.window.util.recyclerView.ComeEventsRecyclerViewSwipeLogic
+import net.wojteksz128.worktimemeasureapp.window.util.recyclerView.ComeEventRecyclerLeftSwipeActionParams
+import net.wojteksz128.worktimemeasureapp.window.util.recyclerView.ComeEventRecyclerRightSwipeActionParams
 
 class WorkDayAdapter(
     private val context: Context,
     private val dateTimeUtils: DateTimeUtils,
-    private val fragmentManager: FragmentManager,
     private val lifecycleOwner: LifecycleOwner,
     private val ticker: Flow<Unit>,
     private val workDayItemListener: WorkDayItemListener,
@@ -49,7 +48,6 @@ class WorkDayAdapter(
         return WorkDayViewHolder(
             binding,
             context,
-            fragmentManager,
             lifecycleOwner,
             dateTimeUtils,
             ticker,
@@ -68,11 +66,10 @@ class WorkDayAdapter(
     class WorkDayViewHolder(
         val binding: ListItemHistoryWorkDayBinding,
         context: Context,
-        private val fragmentManager: FragmentManager,
         private val lifecycleOwner: LifecycleOwner,
         private val dateTimeUtils: DateTimeUtils,
         private val ticker: Flow<Unit>,
-        private val selectionUpdater: (ComeEvent, ViewHolderInformation<ComeEventViewHolder>) -> Unit,
+        private val onEventSwiped: (ComeEventViewHolder, RecyclerViewSwipeCallback.Direction) -> Unit,
     ) : RecyclerView.ViewHolder(binding.root), ClassTagAware {
         private val comeEventsAdapter = ComeEventsAdapter(dateTimeUtils, lifecycleOwner, ticker)
         private var updateJob: Job? = null
@@ -94,8 +91,14 @@ class WorkDayAdapter(
                         )
                     )
                 }
-                ComeEventsRecyclerViewSwipeLogic(context, selectionUpdater)
-                    .attach(dayEventsList, fragmentManager)
+                val rvTouchCallback = RecyclerViewSwipeCallback<ComeEventViewHolder>(
+                    ComeEventRecyclerLeftSwipeActionParams(context),
+                    ComeEventRecyclerRightSwipeActionParams(context),
+                ) { viewHolder, direction ->
+                    comeEventsAdapter.notifyItemChanged(viewHolder.bindingAdapterPosition)
+                    onEventSwiped(viewHolder, direction)
+                }
+                ItemTouchHelper(rvTouchCallback).attachToRecyclerView(dayEventsList)
             }
         }
 
@@ -106,7 +109,7 @@ class WorkDayAdapter(
             comeEventsAdapter.submitList(workDay.events)
 
             updateJob?.cancel()
-            if (!workDay.isWorkActive()) {
+            if (!workDay.isWorkFinished()) {
                 updateJob = lifecycleOwner.lifecycleScope.launch {
                     ticker.collectLatest {
                         binding.invalidateAll()
@@ -135,8 +138,8 @@ class WorkDayAdapter(
         fun onWorkDayItemViewModelRequires(workDay: WorkDay): WorkDayItemViewModel
 
         fun onWorkDayEventSelected(
-            comeEvent: ComeEvent,
-            viewHolderInformation: ViewHolderInformation<ComeEventViewHolder>
+            viewHolder: ComeEventViewHolder,
+            direction: RecyclerViewSwipeCallback.Direction,
         )
 
         fun onWorkDayClicked(workDay: WorkDay): (View) -> Unit = {}

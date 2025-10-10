@@ -65,16 +65,16 @@ class DashboardViewModel @Inject constructor(
         workDay.observeForever { workDay ->
             val workTimeBalance = this@DashboardViewModel.workTimeBalance.value
             if (workDay != null && workTimeBalance != null)
-                if (workDay.isWorkActive())
-                    notificationService.showWorkInProgressNotification(workDay, workTimeBalance)
-                else
+                if (workDay.isWorkFinished())
                     notificationService.cancelWorkInProgressNotification()
+                else
+                    notificationService.showWorkInProgressNotification(workDay, workTimeBalance)
         }
 
         workTimeBalance.observeForever { workTimeBalance ->
             val workDay = workDay.value
             if (workDay != null)
-                if (workDay.isWorkActive()) {
+                if (workDay.isWorkFinished()) {
                     val startTime = workDay.events.lastOrNull()?.startDate
                     if (startTime != null) {
                         val balancedEndTime = startTime.plus(workTimeBalance.remainingTodayWorkTime)

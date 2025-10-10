@@ -5,6 +5,7 @@ import androidx.activity.viewModels
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.google.android.material.snackbar.Snackbar
@@ -19,13 +20,18 @@ import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.TimerManager
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
+import net.wojteksz128.worktimemeasureapp.util.recyclerView.RecyclerViewSwipeCallback
 import net.wojteksz128.worktimemeasureapp.window.BaseActivity
+import net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.DeleteComeEventDialogFragment
 import net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.DeleteComeEventDialogFragment.DeleteComeEventDialogListener
+import net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.EditComeEventDialogFragment
 import net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.EditComeEventDialogFragment.EditComeEventDialogListener
 import net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.SelectedComeEventViewModel
 import net.wojteksz128.worktimemeasureapp.window.dialog.dayOff.TodayDayOffInformationDialogFragment
 import net.wojteksz128.worktimemeasureapp.window.history.ComeEventsAdapter
-import net.wojteksz128.worktimemeasureapp.window.util.recyclerView.ComeEventsRecyclerViewSwipeLogic
+import net.wojteksz128.worktimemeasureapp.window.history.ComeEventsAdapter.ComeEventViewHolder
+import net.wojteksz128.worktimemeasureapp.window.util.recyclerView.ComeEventRecyclerLeftSwipeActionParams
+import net.wojteksz128.worktimemeasureapp.window.util.recyclerView.ComeEventRecyclerRightSwipeActionParams
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -77,11 +83,12 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
                 addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
             }
             this@DashboardActivity.baseContext?.let {
-                ComeEventsRecyclerViewSwipeLogic(
-                    it
-                ) { comeEvent, _ ->
-                    selectedComeEventViewModel.select(comeEvent)
-                }.attach(dashboardCurrentDayEventsList, supportFragmentManager)
+                val rvTouchCallback = RecyclerViewSwipeCallback(
+                    ComeEventRecyclerLeftSwipeActionParams(it),
+                    ComeEventRecyclerRightSwipeActionParams(it),
+                    this@DashboardActivity::onEventSwiped
+                )
+                ItemTouchHelper(rvTouchCallback).attachToRecyclerView(dashboardCurrentDayEventsList)
             }
         }
 
@@ -97,6 +104,30 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
                 viewModel.onSnackbarShown()
             }
         }
+    }
+
+    private fun onEventSwiped(
+        viewHolder: ComeEventViewHolder,
+        direction: RecyclerViewSwipeCallback.Direction,
+    ) {
+        comeEventsAdapter.notifyItemChanged(viewHolder.bindingAdapterPosition)
+        viewHolder.binding.comeEvent?.let { comeEvent ->
+            selectedComeEventViewModel.select(comeEvent)
+        }
+        when (direction) {
+            RecyclerViewSwipeCallback.Direction.LEFT ->
+                showDialog(EditComeEventDialogFragment::class.java)
+
+            RecyclerViewSwipeCallback.Direction.RIGHT ->
+                showDialog(DeleteComeEventDialogFragment::class.java)
+
+            else -> {}
+        }
+    }
+
+    private fun <DF : DialogFragment> showDialog(dialogFragmentClass: Class<DF>) {
+        val dialog = dialogFragmentClass.getDeclaredConstructor().newInstance()
+        dialog.show(supportFragmentManager, dialogFragmentClass.toString())
     }
 
     override fun onResume() {
