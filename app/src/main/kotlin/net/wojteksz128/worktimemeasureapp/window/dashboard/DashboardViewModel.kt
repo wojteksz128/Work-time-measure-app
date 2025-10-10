@@ -3,6 +3,7 @@ package net.wojteksz128.worktimemeasureapp.window.dashboard
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.switchMap
@@ -54,6 +55,8 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
+    private val notificationTrigger = MediatorLiveData<Pair<WorkDay?, WorkTimeBalance?>>()
+
     private val mSnackbarMessage = MutableLiveData<String?>()
     val snackbarMessage: LiveData<String?> = mSnackbarMessage
 
@@ -62,28 +65,24 @@ class DashboardViewModel @Inject constructor(
     val waitingFor = MutableLiveData(false)
 
     init {
-        workDay.observeForever { workDay ->
-            val workTimeBalance = this@DashboardViewModel.workTimeBalance.value
-            if (workDay != null && workTimeBalance != null)
-                if (workDay.isWorkFinished())
-                    notificationService.cancelWorkInProgressNotification()
-                else
-                    notificationService.showWorkInProgressNotification(workDay, workTimeBalance)
+        notificationTrigger.apply {
+            addSource(workDay) { value = Pair(it, workTimeBalance.value) }
+            addSource(workTimeBalance) { value = Pair(workDay.value, it) }
+            observeForever { (workDay, workTimeBalance) ->
+                handleNotifications(workDay, workTimeBalance)
+            }
         }
+    }
 
-        workTimeBalance.observeForever { workTimeBalance ->
-            val workDay = workDay.value
-            if (workDay != null)
-                if (workDay.isWorkFinished()) {
-                    val startTime = workDay.events.lastOrNull()?.startDate
-                    if (startTime != null) {
-                        val balancedEndTime = startTime.plus(workTimeBalance.remainingTodayWorkTime)
-                            .minus(workTimeBalance.monthlyBalance)
-                        notificationService.scheduleEndOfWorkNotification(balancedEndTime)
-                    }
-                } else {
-                    notificationService.cancelEndOfWorkNotification()
-                }
+    private fun handleNotifications(workDay: WorkDay?, workTimeBalance: WorkTimeBalance?) {
+        if (workDay == null || workTimeBalance == null) return
+
+        if (workDay.isWorkFinished()) {
+            notificationService.cancelWorkInProgressNotification()
+            notificationService.cancelEndOfWorkNotification()
+        } else {
+            notificationService.showWorkInProgressNotification(workDay, workTimeBalance)
+            notificationService.scheduleEndOfWorkNotification(workDay, workTimeBalance)
         }
     }
 

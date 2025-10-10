@@ -22,8 +22,8 @@
     <!--##########################################-->
     <!--<editor-fold desc="############# Notifications ##############">-->
 
-    <!--<string name="notification_time_short_format" translatable="false">HH:ss</string>-->
-    <string name="notification_time_long_format">E, dd.MM.yyyy HH:mm:ss</string>
+    <!--<string name="notification_time_short_format" translatable="false">HH:mm</string>-->
+    <string name="notification_time_long_format">E, dd.MM.yyyy HH:mm</string>
 
     <!-- Work in progress notification -->
     <string name="notification_work_in_progress_title">Obecny czas pracy</string>

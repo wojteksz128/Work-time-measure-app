@@ -44,6 +44,13 @@ class WorkTimeNotificationService @Inject constructor(
         timerManager.setExactTimer(endTime, pendingIntent)
     }
 
+    fun scheduleEndOfWorkNotification(workDay: WorkDay, workTimeBalance: WorkTimeBalance) {
+        val startTime = workDay.events.lastOrNull()?.startDate
+        val balancedEndTime = startTime?.plus(workTimeBalance.remainingTodayWorkTime)
+            ?.plus(workTimeBalance.monthlyBalance)
+        balancedEndTime?.let { scheduleEndOfWorkNotification(it) }
+    }
+
     fun cancelEndOfWorkNotification() {
         val pendingIntent = createTimerExpiredPendingIntent()
         timerManager.removeAlarm(pendingIntent)
