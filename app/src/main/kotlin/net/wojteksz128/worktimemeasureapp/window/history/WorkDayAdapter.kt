@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.SimpleItemAnimator
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
@@ -83,7 +82,6 @@ class WorkDayAdapter(
                     layoutManager = object : LinearLayoutManager(context) {
                         override fun canScrollVertically() = false
                     }
-                    (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
                     addItemDecoration(
                         DividerItemDecoration(
                             context,
@@ -91,13 +89,11 @@ class WorkDayAdapter(
                         )
                     )
                 }
-                val rvTouchCallback = RecyclerViewSwipeCallback<ComeEventViewHolder>(
+                val rvTouchCallback = RecyclerViewSwipeCallback(
                     ComeEventRecyclerLeftSwipeActionParams(context),
                     ComeEventRecyclerRightSwipeActionParams(context),
-                ) { viewHolder, direction ->
-                    comeEventsAdapter.notifyItemChanged(viewHolder.bindingAdapterPosition)
-                    onEventSwiped(viewHolder, direction)
-                }
+                    onEventSwiped
+                )
                 ItemTouchHelper(rvTouchCallback).attachToRecyclerView(dayEventsList)
             }
         }

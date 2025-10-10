@@ -7,7 +7,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.SimpleItemAnimator
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -79,7 +78,6 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
                 layoutManager = object : LinearLayoutManager(this@DashboardActivity) {
                     override fun canScrollVertically() = false
                 }
-                (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
                 addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
             }
             this@DashboardActivity.baseContext?.let {
@@ -110,7 +108,6 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
         viewHolder: ComeEventViewHolder,
         direction: RecyclerViewSwipeCallback.Direction,
     ) {
-        comeEventsAdapter.notifyItemChanged(viewHolder.bindingAdapterPosition)
         viewHolder.binding.comeEvent?.let { comeEvent ->
             selectedComeEventViewModel.select(comeEvent)
         }
@@ -150,11 +147,39 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
         viewModel.onComeEventDelete(selectedComeEventViewModel.selected.value)
     }
 
+    override fun onDeleteComeEventDialogDismiss(dialog: DialogFragment) {
+        super.onDeleteComeEventDialogDismiss(dialog)
+        resetSwipedItemView()
+    }
+
     override fun onAcceptModificationComeEventClick(
         dialog: DialogFragment,
         modifiedComeEvent: ComeEvent
     ) {
         viewModel.onComeEventModified(modifiedComeEvent)
+        val position = comeEventsAdapter.currentList.indexOfFirst { it.id == modifiedComeEvent.id }
+        comeEventsAdapter.modifyCurrentList {
+            if (position >= 0 && position < this.size) {
+                selectedComeEventViewModel.changed =
+                    this[position] != modifiedComeEvent || this[position].endDate != modifiedComeEvent.endDate
+                this[position] = modifiedComeEvent
+            }
+        }
+    }
+
+    override fun onEditComeEventDialogDismiss(dialog: DialogFragment) {
+        super.onEditComeEventDialogDismiss(dialog)
+        if (!selectedComeEventViewModel.changed)
+            resetSwipedItemView()
+        selectedComeEventViewModel.changed = false
+    }
+
+    private fun resetSwipedItemView() {
+        selectedComeEventViewModel.selected.value?.let { selectedEvent ->
+            val position = comeEventsAdapter.currentList.indexOfFirst { it.id == selectedEvent.id }
+            if (position >= 0)
+                comeEventsAdapter.notifyItemChanged(position)
+        }
     }
 
     companion object {
