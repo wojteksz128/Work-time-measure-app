@@ -27,6 +27,7 @@ import net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.DeleteComeEven
 import net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.EditComeEventDialogFragment
 import net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.EditComeEventDialogFragment.EditComeEventDialogListener
 import net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.SelectedComeEventViewModel
+import net.wojteksz128.worktimemeasureapp.window.dialog.showDialogWithListener
 import net.wojteksz128.worktimemeasureapp.window.history.ComeEventsAdapter.ComeEventViewHolder
 import net.wojteksz128.worktimemeasureapp.window.util.recyclerView.ComeEventRecyclerLeftSwipeActionParams
 import net.wojteksz128.worktimemeasureapp.window.util.recyclerView.ComeEventRecyclerRightSwipeActionParams
@@ -131,19 +132,16 @@ class WorkDayDetailsFragment : Fragment(), DeleteComeEventDialogListener,
             selectedComeEventViewModel.select(comeEvent)
         }
         when (direction) {
-            RecyclerViewSwipeCallback.Direction.LEFT ->
-                showDialog(EditComeEventDialogFragment::class.java)
+            RecyclerViewSwipeCallback.Direction.LEFT -> showDialogWithListener(
+                EditComeEventDialogFragment::class.java, parentFragmentManager, this
+            )
 
-            RecyclerViewSwipeCallback.Direction.RIGHT ->
-                showDialog(DeleteComeEventDialogFragment::class.java)
+            RecyclerViewSwipeCallback.Direction.RIGHT -> showDialogWithListener(
+                DeleteComeEventDialogFragment::class.java, parentFragmentManager, this
+            )
 
             else -> {}
         }
-    }
-
-    private fun <DF : DialogFragment> showDialog(dialogFragmentClass: Class<DF>) {
-        val dialog = dialogFragmentClass.getDeclaredConstructor().newInstance()
-        dialog.show(parentFragmentManager, dialogFragmentClass.toString())
     }
 
     override fun onAcceptDeletionComeEventClick(dialog: DialogFragment) {

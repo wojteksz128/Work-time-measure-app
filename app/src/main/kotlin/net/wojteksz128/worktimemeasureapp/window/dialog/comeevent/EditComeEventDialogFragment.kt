@@ -1,7 +1,6 @@
 package net.wojteksz128.worktimemeasureapp.window.dialog.comeevent
 
 import android.app.Dialog
-import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
@@ -15,17 +14,17 @@ import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.databinding.DialogComeEventEditBinding
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
+import net.wojteksz128.worktimemeasureapp.window.dialog.DialogFragmentWithListener
+import net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.EditComeEventDialogFragment.EditComeEventDialogListener
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class EditComeEventDialogFragment : DialogFragment() {
+class EditComeEventDialogFragment : DialogFragmentWithListener<EditComeEventDialogListener>() {
     private val editDialogViewModel: EditComeEventDialogViewModel by viewModels()
     private val selectedComeEventViewModel: SelectedComeEventViewModel by activityViewModels()
 
     @Inject
     lateinit var dateTimeUtils: DateTimeUtils
-
-    internal lateinit var listener: EditComeEventDialogListener
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return AlertDialog.Builder(requireContext()).apply {
@@ -38,14 +37,14 @@ class EditComeEventDialogFragment : DialogFragment() {
             setView(dialogBinding.root)
             setTitle(R.string.edit_come_event_dialog_title)
             setPositiveButton(R.string.edit_come_event_dialog_action_edit) { dialog, _ ->
-                listener.onAcceptModificationComeEventClick(
+                listener?.onAcceptModificationComeEventClick(
                     this@EditComeEventDialogFragment,
                     editDialogViewModel.prepareModified()
                 )
                 dialog.dismiss()
             }
             setNegativeButton(R.string.edit_come_event_dialog_action_cancel) { dialog, _ ->
-                listener.onRejectModificationComeEventClick(this@EditComeEventDialogFragment)
+                listener?.onRejectModificationComeEventClick(this@EditComeEventDialogFragment)
                 dialog.dismiss()
             }
         }.create().apply {
@@ -62,24 +61,8 @@ class EditComeEventDialogFragment : DialogFragment() {
         }
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        listener = if (parentFragment != null)
-            try {
-                parentFragment as EditComeEventDialogListener
-            } catch (_: ClassCastException) {
-                throw ClassCastException("Fragment ${parentFragment.toString()} must implement EditComeEventDialogListener")
-            }
-        else
-            try {
-                context as EditComeEventDialogListener
-            } catch (_: ClassCastException) {
-                throw ClassCastException("Activity $context must implement EditComeEventDialogListener")
-            }
-    }
-
     override fun onDismiss(dialog: DialogInterface) {
-        listener.onEditComeEventDialogDismiss(this@EditComeEventDialogFragment)
+        listener?.onEditComeEventDialogDismiss(this@EditComeEventDialogFragment)
         super.onDismiss(dialog)
     }
 

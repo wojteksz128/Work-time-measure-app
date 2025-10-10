@@ -27,6 +27,7 @@ import net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.EditComeEventD
 import net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.EditComeEventDialogFragment.EditComeEventDialogListener
 import net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.SelectedComeEventViewModel
 import net.wojteksz128.worktimemeasureapp.window.dialog.dayOff.TodayDayOffInformationDialogFragment
+import net.wojteksz128.worktimemeasureapp.window.dialog.showDialogWithListener
 import net.wojteksz128.worktimemeasureapp.window.history.ComeEventsAdapter
 import net.wojteksz128.worktimemeasureapp.window.history.ComeEventsAdapter.ComeEventViewHolder
 import net.wojteksz128.worktimemeasureapp.window.util.recyclerView.ComeEventRecyclerLeftSwipeActionParams
@@ -112,19 +113,16 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
             selectedComeEventViewModel.select(comeEvent)
         }
         when (direction) {
-            RecyclerViewSwipeCallback.Direction.LEFT ->
-                showDialog(EditComeEventDialogFragment::class.java)
+            RecyclerViewSwipeCallback.Direction.LEFT -> showDialogWithListener(
+                EditComeEventDialogFragment::class.java, supportFragmentManager, this
+            )
 
-            RecyclerViewSwipeCallback.Direction.RIGHT ->
-                showDialog(DeleteComeEventDialogFragment::class.java)
+            RecyclerViewSwipeCallback.Direction.RIGHT -> showDialogWithListener(
+                DeleteComeEventDialogFragment::class.java, supportFragmentManager, this
+            )
 
             else -> {}
         }
-    }
-
-    private fun <DF : DialogFragment> showDialog(dialogFragmentClass: Class<DF>) {
-        val dialog = dialogFragmentClass.getDeclaredConstructor().newInstance()
-        dialog.show(supportFragmentManager, dialogFragmentClass.toString())
     }
 
     override fun onResume() {
