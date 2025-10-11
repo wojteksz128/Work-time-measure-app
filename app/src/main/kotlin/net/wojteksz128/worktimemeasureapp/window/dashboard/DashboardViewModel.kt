@@ -21,7 +21,6 @@ import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeNotificationService
 import net.wojteksz128.worktimemeasureapp.repository.ComeEventRepository
 import net.wojteksz128.worktimemeasureapp.repository.WorkDayRepository
-import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.comeevent.ComeEventUtils
 import net.wojteksz128.worktimemeasureapp.util.comeevent.NewEventRegisterListener
@@ -41,7 +40,6 @@ class DashboardViewModel @Inject constructor(
     tickerFactory: TickerFactory,
     private val notificationService: WorkTimeNotificationService,
     private val comeEventUtils: ComeEventUtils,
-    private val settings: Settings,
 ) : AndroidViewModel(application), NewEventRegisterListener, ClassTagAware {
     val workDay: LiveData<WorkDay> =
         workDayRepository.getWorkDayByDateInLiveData(dateTimeProvider.currentDate)
@@ -113,22 +111,8 @@ class DashboardViewModel @Inject constructor(
             waitingFor.value = true
 
             val messageKey = when (comeEventUtils.registerNewEvent()) {
-                ComeEventType.COME_IN -> {
-                    if (settings.WorkTime.NotifyingEnabled.valueNullable == true)
-                        workDay.value?.let { workDay ->
-                            workTimeBalance.value?.let { balance ->
-                                notificationService.showWorkInProgressNotification(workDay, balance)
-                            }
-                        }
-
-                    R.string.dashboard_snackbar_info_income_registered
-                }
-
-                ComeEventType.COME_OUT -> {
-                    notificationService.cancelWorkInProgressNotification()
-                    notificationService.cancelEndOfWorkNotification()
-                    R.string.dashboard_snackbar_info_outcome_registered
-                }
+                ComeEventType.COME_IN -> R.string.dashboard_snackbar_info_income_registered
+                ComeEventType.COME_OUT -> R.string.dashboard_snackbar_info_outcome_registered
             }
 
             val message = getApplication<WorkTimeMeasureApp>().getString(messageKey)
