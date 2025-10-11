@@ -1,5 +1,6 @@
 package net.wojteksz128.worktimemeasureapp.notification.worktime
 
+import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
@@ -22,33 +23,38 @@ class WorkTimeTrackerService : Service() {
     lateinit var workStateFlow: StateFlow<WorkState?>
 
     private var serviceJob: Job? = null
+    private var isForeground = false
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
-            ACTION_START -> {
-                serviceJob?.cancel()
+            ACTION_START -> if (serviceJob?.isActive != true)
                 serviceJob = CoroutineScope(Dispatchers.Main).launch {
                     workStateFlow.collect { workState ->
-                        if (workState != null && !workState.workDay.isWorkFinished()) {
-                            val notification = notificationFactory.createWorkInProgressNotification(
-                                workState.workDay,
-                                workState.workTimeBalance
-                            ).build()
-                            startForeground(
-                                WorkTimeInProgressNotification.NOTIFICATION_ID,
-                                notification
-                            )
-                        } else {
-                            stopSelf()
+                        workState?.let {
+                            if (!it.workDay.isWorkFinished()) updateNotification(it)
+                            else stopSelf()
                         }
                     }
                 }
-            }
-            ACTION_STOP -> {
-                stopSelf()
-            }
+
+            ACTION_STOP -> stopSelf()
         }
         return START_NOT_STICKY
+    }
+
+    private fun updateNotification(workState: WorkState) {
+        val notification = notificationFactory.createWorkInProgressNotification(
+            workState.workDay,
+            workState.workTimeBalance
+        ).build()
+
+        if (!isForeground) {
+            startForeground(WorkTimeInProgressNotification.NOTIFICATION_ID, notification)
+            isForeground = true
+        } else {
+            val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.notify(WorkTimeInProgressNotification.NOTIFICATION_ID, notification)
+        }
     }
 
     override fun onDestroy() {
