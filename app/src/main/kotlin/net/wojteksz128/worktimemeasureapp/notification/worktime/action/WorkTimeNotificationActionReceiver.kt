@@ -40,6 +40,7 @@ class WorkTimeNotificationActionReceiver : HiltBroadcastReceiver() {
             WorkTimeNotificationService.SNOOZE_ACTION -> {
                 val nextReminder = dateTimeProvider.currentTime.plusMinutes(10)
                 notificationService.scheduleEndOfWorkNotification(nextReminder)
+                notificationService.hideEndOfWorkNotification()
             }
 
             WorkTimeNotificationService.STOP_WORK_ACTION -> {
@@ -62,6 +63,7 @@ class WorkTimeNotificationActionReceiver : HiltBroadcastReceiver() {
                         standardEndTime,
                         balancedEndTime
                     )
+                    notificationService.hideEndOfWorkNotification()
                 }
             }
         }

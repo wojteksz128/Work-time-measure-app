@@ -85,6 +85,10 @@ class WorkTimeNotificationService @Inject constructor(
         EndOfWorkTimeNotification.cancel(context)
     }
 
+    fun hideEndOfWorkNotification() {
+        EndOfWorkTimeNotification.cancel(context)
+    }
+
     private fun createTimerExpiredPendingIntent(): PendingIntent {
         val intent = Intent(context, TimerExpiredReceiver::class.java)
         return PendingIntent.getBroadcast(
