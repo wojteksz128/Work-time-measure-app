@@ -22,7 +22,8 @@ class WorkTimeNotificationFactory @Inject constructor(
         context,
         workDay,
         workTimeBalance,
-        dateTimeUtils
+        dateTimeUtils,
+        dateTimeProvider,
     )
 
     fun createEndOfWorkNotification(
