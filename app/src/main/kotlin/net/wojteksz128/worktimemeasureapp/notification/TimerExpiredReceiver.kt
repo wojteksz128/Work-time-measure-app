@@ -1,14 +1,23 @@
 package net.wojteksz128.worktimemeasureapp.notification
 
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeNotificationFactory
+import dagger.hilt.android.AndroidEntryPoint
+import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeNotificationService
+import javax.inject.Inject
 
-class TimerExpiredReceiver : BroadcastReceiver() {
+@AndroidEntryPoint
+class TimerExpiredReceiver : HiltBroadcastReceiver() {
+    @Inject
+    lateinit var notificationService: WorkTimeNotificationService
+
+    companion object {
+        const val REQUEST_CODE = 12345
+    }
 
     // TODO: 21.09.2021 Register expired recipients
     override fun onReceive(context: Context, intent: Intent) {
-        WorkTimeNotificationFactory.createEndOfWorkTimeNotification(context).notifyUser()
+        super.onReceive(context, intent)
+        notificationService.showEndOfWorkNotification()
     }
 }

@@ -4,7 +4,7 @@ import android.app.Activity
 import android.app.Application
 import com.jakewharton.threetenabp.AndroidThreeTen
 import dagger.hilt.android.HiltAndroidApp
-import net.wojteksz128.worktimemeasureapp.notification.NotificationUtils
+import net.wojteksz128.worktimemeasureapp.notification.NotificationChannelCreator
 import net.wojteksz128.worktimemeasureapp.settings.InitialSettingsPreparer
 import javax.inject.Inject
 import kotlin.system.exitProcess
@@ -13,7 +13,7 @@ import kotlin.system.exitProcess
 class WorkTimeMeasureApp : Application() {
 
     @Inject
-    lateinit var notificationUtils: NotificationUtils
+    lateinit var notificationChannelCreator: NotificationChannelCreator
 
     @Inject
     lateinit var initialSettingsPreparer: InitialSettingsPreparer
@@ -23,7 +23,7 @@ class WorkTimeMeasureApp : Application() {
 
         AndroidThreeTen.init(this)
         initialSettingsPreparer.initSettings()
-        notificationUtils.initNotifications()
+        notificationChannelCreator.initNotifications()
     }
 
     fun closeApp(activity: Activity) {

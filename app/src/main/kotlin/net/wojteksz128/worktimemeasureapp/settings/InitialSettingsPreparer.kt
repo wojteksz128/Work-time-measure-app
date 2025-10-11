@@ -2,7 +2,6 @@ package net.wojteksz128.worktimemeasureapp.settings
 
 import net.wojteksz128.worktimemeasureapp.api.HolidayProvider
 import net.wojteksz128.worktimemeasureapp.settings.converter.ConfigurationConverterFactory
-import net.wojteksz128.worktimemeasureapp.util.TimerManager
 import org.threeten.bp.DayOfWeek
 import org.threeten.bp.Duration
 
@@ -45,7 +44,6 @@ class InitialSettingsPreparer(
         Settings.Sync.TimeSync.Enabled.value = false
         Settings.Sync.TimeSync.ServerAddress.value = null
 
-        Settings.Internal.AlarmState.value = TimerManager.AlarmState.NotSet
         Settings.Internal.FirstRun.value = false
         Settings.Internal.ConfigurationVersion.value = configurationVersion.toInt()
     }

@@ -1,43 +1,62 @@
 package net.wojteksz128.worktimemeasureapp.notification.worktime
 
+import android.app.Notification
 import android.content.Context
-import android.util.Log
+import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.notification.AppNotification
 import net.wojteksz128.worktimemeasureapp.notification.Channel
-import net.wojteksz128.worktimemeasureapp.notification.worktime.action.WorkTimeNotificationAction
-import net.wojteksz128.worktimemeasureapp.notification.worktime.action.WorkTimeNotificationActionReceiver
-import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import net.wojteksz128.worktimemeasureapp.window.dashboard.DashboardActivity
+import org.threeten.bp.LocalDate
 import org.threeten.bp.ZonedDateTime
 
 class WorkTimeInProgressNotification(
-    context: Context,
-    endOfWorkTime: ZonedDateTime,
-    dateTimeUtils: DateTimeUtils,
-) : AppNotification<WorkTimeNotificationActionReceiver>(
-    Channel.WORK_TIME_CHANNEL, NOTIFICATION_ID, context
-),
-    ClassTagAware {
-
-    init {
-        Log.d(classTag, "init: Init notification builder")
-        val contextText = context.getString(R.string.notification_in_work_text,
-            dateTimeUtils.formatDate("HH:mm", endOfWorkTime))
-        notificationBuilder.setContentTitle(context.getString(R.string.notification_in_work_title))
-            .setContentText(contextText)
-            .setStyle(NotificationCompat.BigTextStyle()
-                .bigText(contextText))
-            .setOngoing(true)
-            .setContentIntent(getPendingIntentWithStack(context, DashboardActivity::class.java))
-            .addAction(getAction(context, WorkTimeNotificationAction.END_OF_WORK_ACTION))
-
-        notificationBuilder.priority = channel.importance
-    }
+    private val context: Context,
+    private val workDayDate: LocalDate,
+    private val standardEndTime: ZonedDateTime,
+    private val balancedEndTime: ZonedDateTime,
+    private val dateTimeUtils: DateTimeUtils,
+) : AppNotification(Channel.WORK_TIME_IN_PROGRESS_CHANNEL, NOTIFICATION_ID, context) {
 
     companion object {
-        const val NOTIFICATION_ID = 251
+        private const val NOTIFICATION_ID = 11
+
+        fun cancel(context: Context) {
+            val notificationManager = NotificationManagerCompat.from(context)
+            notificationManager.cancel(NOTIFICATION_ID)
+        }
     }
+
+    override fun build(): Notification {
+        val formattedStandardEnd = dateTimeUtils.formatDate(
+            context.getString(getTimeFormatFor(standardEndTime)),
+            standardEndTime
+        )
+        val formattedBalancedEnd = dateTimeUtils.formatDate(
+            context.getString(getTimeFormatFor(balancedEndTime)),
+            balancedEndTime
+        )
+
+        val contentText = context.getString(
+            R.string.notification_work_in_progress_text,
+            formattedStandardEnd,
+            formattedBalancedEnd
+        )
+        return notificationBuilder.setContentTitle(context.getString(R.string.notification_work_in_progress_title))
+            .setContentText(contentText)
+            .setStyle(NotificationCompat.BigTextStyle()
+                .bigText(contentText)
+            )
+            .setOngoing(true)
+            .setContentIntent(getPendingIntentWithStack(context, DashboardActivity::class.java))
+            .build()
+    }
+
+    @StringRes
+    private fun getTimeFormatFor(dateTime: ZonedDateTime): Int =
+        if (dateTime.toLocalDate() == workDayDate) R.string.notification_time_short_format
+        else R.string.notification_time_long_format
 }

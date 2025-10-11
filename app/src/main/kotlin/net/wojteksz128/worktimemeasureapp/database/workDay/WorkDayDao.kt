@@ -11,7 +11,6 @@ import androidx.room.Transaction
 import androidx.room.Update
 import net.wojteksz128.worktimemeasureapp.database.EntityDao
 import org.threeten.bp.LocalDate
-import org.threeten.bp.ZonedDateTime
 
 @Dao
 @Suppress("unused")
@@ -34,16 +33,23 @@ interface WorkDayDao : EntityDao<WorkDayDto> {
     suspend fun findById(id: Int): WorkDayWithEventsDto
 
     @Transaction
-    @Query("SELECT * FROM work_day WHERE :date BETWEEN beginSlot AND endSlot")
-    suspend fun findByIntervalContains(date: ZonedDateTime): WorkDayWithEventsDto?
+    @Query("SELECT * FROM work_day WHERE date = :date")
+    suspend fun findByDate(date: LocalDate): WorkDayWithEventsDto?
 
     @Transaction
-    @Query("SELECT * FROM work_day WHERE :date BETWEEN beginSlot AND endSlot")
-    fun findByIntervalContainsInLiveData(date: ZonedDateTime): LiveData<WorkDayWithEventsDto?>
+    @Query("SELECT * FROM work_day WHERE date = :date")
+    fun findByDateInLiveData(date: LocalDate): LiveData<WorkDayWithEventsDto?>
 
     @Transaction
     @Query("SELECT * FROM work_day WHERE date BETWEEN :beginDate AND :endDate")
-    fun findBetweenDates(
+    suspend fun findBetweenDates(
+        beginDate: LocalDate,
+        endDate: LocalDate,
+    ): List<WorkDayWithEventsDto>
+
+    @Transaction
+    @Query("SELECT * FROM work_day WHERE date BETWEEN :beginDate AND :endDate")
+    fun findBetweenDatesInLiveData(
         beginDate: LocalDate,
         endDate: LocalDate,
     ): LiveData<List<WorkDayWithEventsDto>>

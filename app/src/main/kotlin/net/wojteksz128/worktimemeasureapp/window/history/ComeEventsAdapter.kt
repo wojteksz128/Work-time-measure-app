@@ -14,11 +14,13 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import net.wojteksz128.worktimemeasureapp.databinding.ListItemHistoryDayEventBinding
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
+import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import net.wojteksz128.worktimemeasureapp.util.datetime.isTheSameDay
 import net.wojteksz128.worktimemeasureapp.util.recyclerView.RecyclerViewItemClick
 
 class ComeEventsAdapter(
+    private val dateTimeProvider: DateTimeProvider,
     private val dateTimeUtils: DateTimeUtils,
     private val lifecycleOwner: LifecycleOwner,
     private val ticker: Flow<Unit>,
@@ -33,7 +35,7 @@ class ComeEventsAdapter(
                 dateTimeUtils = this@ComeEventsAdapter.dateTimeUtils
                 lifecycleOwner = this@ComeEventsAdapter.lifecycleOwner
             }
-        return ComeEventViewHolder(binding, ticker)
+        return ComeEventViewHolder(binding, dateTimeProvider, ticker)
     }
 
     override fun onBindViewHolder(holder: ComeEventViewHolder, position: Int) {
@@ -52,6 +54,7 @@ class ComeEventsAdapter(
 
     class ComeEventViewHolder(
         val binding: ListItemHistoryDayEventBinding,
+        private val dateTimeProvider: DateTimeProvider,
         private val ticker: Flow<Unit>,
     ) : RecyclerView.ViewHolder(binding.root) {
 
@@ -59,9 +62,10 @@ class ComeEventsAdapter(
 
         fun bind(comeEvent: ComeEvent) {
             binding.comeEvent = comeEvent
-            binding.endsAtTheSameDay = comeEvent.endDate?.let { endDate ->
-                comeEvent.startDate.isTheSameDay(endDate)
-            } ?: false
+            binding.endsAtTheSameDay =
+                (comeEvent.endDate ?: dateTimeProvider.currentTime).let { endDate ->
+                    comeEvent.startDate.isTheSameDay(endDate)
+                }
 
             updateJob?.cancel()
 

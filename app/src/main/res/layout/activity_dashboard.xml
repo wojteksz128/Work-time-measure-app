@@ -40,15 +40,15 @@
                         android:id="@+id/dashboard_remaining_day_time"
                         style="@style/dashboard_section_subcard_left"
                         android:layout_width="match_parent"
-                        app:duration="@{workTimeData.remainingTodayWorkTime}"
+                        app:duration="@{viewModel.workTimeBalance.remainingToday}"
                         app:title="@string/dashboard_today" /><!-- layout_height defined by style -->
 
                     <net.wojteksz128.worktimemeasureapp.util.view.DurationDisplay
                         android:id="@+id/dashboard_remaining_week_time"
                         style="@style/dashboard_section_subcard_right"
                         android:layout_width="match_parent"
-                        app:duration="@{workTimeData.remainingWeekWorkTime}"
-                        app:title="@string/dashboard_week" /><!-- layout_height defined by style -->
+                        app:duration="@{viewModel.workTimeBalance.monthlyBalance}"
+                        app:title="@string/dashboard_month_balance" /><!-- layout_height defined by style -->
 
                 </LinearLayout>
 
@@ -73,7 +73,7 @@
                     android:id="@+id/dashboard_today_work_time"
                     style="@style/dashboard_today_work_time"
                     android:layout_width="match_parent"
-                    app:duration="@{workTimeData.todayWorkTime}"
+                    app:duration="@{viewModel.workTimeBalance.todayWorkTime}"
                     app:title="@string/dashboard_today_work_time_label" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -87,7 +87,7 @@
                         style="@style/dashboard_current_day_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@{dateTimeUtils.formatDate(@string/history_work_day_label_format, workTimeData.currentDayDate)}"
+                        android:text="@{dateTimeUtils.formatDate(@string/history_work_day_label_format, viewModel.workDay.date)}"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -127,7 +127,7 @@
             style="@style/dashboard_enter_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="@{ () -> newEventRegisterListener.registerNewEvent() }"
+            android:onClick="@{ () -> viewModel.onRegisterNewEvent() }"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:contentDescription="@string/dashboard_enter_fab_description"
@@ -154,7 +154,6 @@
 
         <import type="android.view.View" />
         <import type="androidx.lifecycle.LiveData" />
-        <import type="net.wojteksz128.worktimemeasureapp.window.dashboard.WorkTimeData" />
 
         <variable
             name="dateTimeUtils"
@@ -162,11 +161,5 @@
         <variable
             name="viewModel"
             type="net.wojteksz128.worktimemeasureapp.window.dashboard.DashboardViewModel" />
-        <variable
-            name="workTimeData"
-            type="LiveData&lt;WorkTimeData>" />
-        <variable
-            name="newEventRegisterListener"
-            type="net.wojteksz128.worktimemeasureapp.util.comeevent.NewEventRegisterListener" />
     </data>
 </layout>

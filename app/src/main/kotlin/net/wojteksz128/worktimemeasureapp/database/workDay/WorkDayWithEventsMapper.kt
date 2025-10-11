@@ -23,7 +23,8 @@ class WorkDayWithEventsMapper @Inject constructor(
             date = entity.workDay.date,
             beginSlot = entity.workDay.beginSlot,
             endSlot = entity.workDay.endSlot,
-            events = comeEventMapper.mapToDomainModelList(entity.events).toMutableList()
+            events = comeEventMapper.mapToDomainModelList(entity.events.sortedBy { it.startDate })
+                .toMutableList()
         )
     }
 

@@ -1,16 +1,34 @@
 package net.wojteksz128.worktimemeasureapp.notification.worktime
 
 import android.content.Context
+import dagger.hilt.android.qualifiers.ApplicationContext
+import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
-import org.threeten.bp.ZonedDateTime
+import net.wojteksz128.worktimemeasureapp.util.datetime.WorkTimeBalance
+import javax.inject.Inject
 
-object WorkTimeNotificationFactory {
+class WorkTimeNotificationFactory @Inject constructor(
+    @ApplicationContext private val context: Context,
+    private val dateTimeUtils: DateTimeUtils,
+) {
 
-    fun createWorkTimeInProgressNotification(
-        context: Context,
-        endOfWorkTime: ZonedDateTime,
-        dateTimeUtils: DateTimeUtils,
-    ) = WorkTimeInProgressNotification(context, endOfWorkTime, dateTimeUtils)
+    fun createWorkInProgressNotification(
+        workDay: WorkDay,
+        workTimeBalance: WorkTimeBalance,
+    ): WorkTimeInProgressNotification {
+        val standardEndTime = workTimeBalance.getStandardEndTime(workDay)
+        val balancedEndTime = workTimeBalance.getBalancedEndTime(workDay)
 
-    fun createEndOfWorkTimeNotification(context: Context) = EndOfWorkTimeNotification(context)
+        return WorkTimeInProgressNotification(
+            context,
+            workDay.date,
+            standardEndTime,
+            balancedEndTime,
+            dateTimeUtils
+        )
+    }
+
+    fun createEndOfWorkNotification(): EndOfWorkTimeNotification {
+        return EndOfWorkTimeNotification(context)
+    }
 }

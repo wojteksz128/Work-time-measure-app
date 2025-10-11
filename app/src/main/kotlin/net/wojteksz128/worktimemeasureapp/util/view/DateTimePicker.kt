@@ -17,15 +17,12 @@ import net.wojteksz128.worktimemeasureapp.BR
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.databinding.ComponentDateTimePickerBinding
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
-import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.view.util.ObservableDelegate
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.Year
 import org.threeten.bp.YearMonth
-import org.threeten.bp.ZoneId
 import org.threeten.bp.temporal.ChronoUnit
-import javax.inject.Inject
 
 @BindingMethods(
     BindingMethod(type = DateTimePicker::class, attribute = "time", method = "setTime"),
@@ -53,12 +50,8 @@ class DateTimePicker(context: Context, attrs: AttributeSet?) : FrameLayout(conte
     private val model =
         ObservableModel(
             this::timeChangeListener,
-            dateTimeProvider.currentTimeZone,
             DateFormat.is24HourFormat(context)
         )
-
-    @Inject
-    lateinit var dateTimeProvider: DateTimeProvider
 
     init {
         if (isInEditMode) {
@@ -75,25 +68,24 @@ class DateTimePicker(context: Context, attrs: AttributeSet?) : FrameLayout(conte
     var time: LocalDateTime?
         get() = model.time
         set(value) {
-            model.time = value ?: LocalDateTime.now(dateTimeProvider.currentTimeZone)
+            model.time = value ?: LocalDateTime.now()
         }
 
     var workDayDate: LocalDate?
         get() = model.workDayDate
         set(value) {
-            model.workDayDate = value ?: LocalDate.now(dateTimeProvider.currentTimeZone)
+            model.workDayDate = value ?: LocalDate.now()
         }
 
     var timeChangeListener: InverseBindingListener? = null
 
     class ObservableModel(
         timeChangeListenerProvider: () -> InverseBindingListener?,
-        private val timeZone: ZoneId,
         val is24HourFormat: Boolean,
     ) :
         BaseObservable(), ClassTagAware {
-        private var mDateTime = LocalDateTime.now(timeZone).truncatedTo(ChronoUnit.SECONDS)
-        private var mWorkDayDate: LocalDate? = LocalDate.now(timeZone)
+        private var mDateTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
+        private var mWorkDayDate: LocalDate? = LocalDate.now()
 
         internal var workDayDate: LocalDate?
             get() = mWorkDayDate
@@ -215,7 +207,7 @@ class DateTimePicker(context: Context, attrs: AttributeSet?) : FrameLayout(conte
 
         fun getMinYear(): Int = 1970
 
-        fun getCurrentYear(): Int = Year.now(timeZone).value
+        fun getCurrentYear(): Int = Year.now().value
 
         fun getMaxMonthDay(): Int = YearMonth.of(year, month).lengthOfMonth()
 
@@ -232,7 +224,7 @@ class DateTimePicker(context: Context, attrs: AttributeSet?) : FrameLayout(conte
         fun onSelectDateClick() {
             isSelectDate = !isSelectDate
             if (isSelectDate) {
-                val currentDate = LocalDate.now(timeZone)
+                val currentDate = LocalDate.now()
                 year = workDayDate?.year ?: currentDate.year
                 month = workDayDate?.monthValue ?: currentDate.month.value
                 day = workDayDate?.dayOfMonth ?: currentDate.dayOfMonth

@@ -20,11 +20,15 @@ import net.wojteksz128.worktimemeasureapp.databinding.FragmentWorkDaysHistoryBin
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
+import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
-import net.wojteksz128.worktimemeasureapp.util.recyclerView.ViewHolderInformation
+import net.wojteksz128.worktimemeasureapp.util.recyclerView.RecyclerViewSwipeCallback
+import net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.DeleteComeEventDialogFragment
 import net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.DeleteComeEventDialogFragment.DeleteComeEventDialogListener
+import net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.EditComeEventDialogFragment
 import net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.EditComeEventDialogFragment.EditComeEventDialogListener
 import net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.SelectedComeEventViewModel
+import net.wojteksz128.worktimemeasureapp.window.dialog.showDialogWithListener
 import net.wojteksz128.worktimemeasureapp.window.history.ComeEventsAdapter.ComeEventViewHolder
 import net.wojteksz128.worktimemeasureapp.window.history.WorkDayAdapter.WorkDayItemListener
 import javax.inject.Inject
@@ -37,15 +41,19 @@ class WorkDaysHistoryFragment : Fragment(), ClassTagAware, WorkDayItemListener,
     private val selectedComeEventViewModel: SelectedComeEventViewModel by activityViewModels()
 
     @Inject
+    lateinit var dateTimeProvider: DateTimeProvider
+
+    @Inject
     lateinit var dateTimeUtils: DateTimeUtils
 
     private lateinit var binding: FragmentWorkDaysHistoryBinding
     private lateinit var workDayAdapter: WorkDayAdapter
+    var selectedEventAdapter: ComeEventsAdapter? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = FragmentWorkDaysHistoryBinding.inflate(layoutInflater, container, false)
 
@@ -53,8 +61,8 @@ class WorkDaysHistoryFragment : Fragment(), ClassTagAware, WorkDayItemListener,
             val workDayAdapter =
                 WorkDayAdapter(
                     requireContext(),
+                    dateTimeProvider,
                     dateTimeUtils,
-                    childFragmentManager,
                     viewLifecycleOwner,
                     viewModel.ticker,
                     this@WorkDaysHistoryFragment
@@ -76,10 +84,24 @@ class WorkDaysHistoryFragment : Fragment(), ClassTagAware, WorkDayItemListener,
     }
 
     override fun onWorkDayEventSelected(
-        comeEvent: ComeEvent,
-        viewHolderInformation: ViewHolderInformation<ComeEventViewHolder>
+        viewHolder: ComeEventViewHolder,
+        direction: RecyclerViewSwipeCallback.Direction,
     ) {
-        selectedComeEventViewModel.select(comeEvent, viewHolderInformation)
+        selectedEventAdapter = viewHolder.bindingAdapter as ComeEventsAdapter
+        viewHolder.binding.comeEvent?.let { comeEvent ->
+            selectedComeEventViewModel.select(comeEvent)
+        }
+        when (direction) {
+            RecyclerViewSwipeCallback.Direction.LEFT -> showDialogWithListener(
+                EditComeEventDialogFragment::class.java, parentFragmentManager, this
+            )
+
+            RecyclerViewSwipeCallback.Direction.RIGHT -> showDialogWithListener(
+                DeleteComeEventDialogFragment::class.java, parentFragmentManager, this
+            )
+
+            else -> {}
+        }
     }
 
     override fun onWorkDayClicked(workDay: WorkDay): (View) -> Unit = {
@@ -93,15 +115,6 @@ class WorkDaysHistoryFragment : Fragment(), ClassTagAware, WorkDayItemListener,
 
         viewModel.onComeEventDelete(selectedEvent)
 
-        selectedComeEventViewModel.viewHolderInformation?.let {
-            val comeEventsAdapter = it.adapter as ComeEventsAdapter
-            val position = it.position
-            comeEventsAdapter.modifyCurrentList {
-                if (position >= 0 && position < this.size) {
-                    this.removeAt(position)
-                }
-            }
-        }
         Snackbar.make(
             binding.root,
             R.string.history_come_events_deleted_message,
@@ -110,7 +123,8 @@ class WorkDaysHistoryFragment : Fragment(), ClassTagAware, WorkDayItemListener,
     }
 
     override fun onDeleteComeEventDialogDismiss(dialog: DialogFragment) {
-        selectedComeEventViewModel.viewHolderInformation?.adapter?.notifyDataSetChanged()
+        super.onDeleteComeEventDialogDismiss(dialog)
+        resetSwipedItemView()
     }
 
     override fun onAcceptModificationComeEventClick(
@@ -118,11 +132,13 @@ class WorkDaysHistoryFragment : Fragment(), ClassTagAware, WorkDayItemListener,
         modifiedComeEvent: ComeEvent
     ) {
         viewModel.onComeEventModified(modifiedComeEvent)
-        selectedComeEventViewModel.viewHolderInformation?.let {
-            val comeEventsAdapter = it.adapter as ComeEventsAdapter
-            val position = it.position
-            comeEventsAdapter.modifyCurrentList {
+        selectedEventAdapter?.let { comeEventAdapter ->
+            val position =
+                comeEventAdapter.currentList.indexOfFirst { it.id == modifiedComeEvent.id }
+            comeEventAdapter.modifyCurrentList {
                 if (position >= 0 && position < this.size) {
+                    selectedComeEventViewModel.changed =
+                        this[position] != modifiedComeEvent || this[position].endDate != modifiedComeEvent.endDate
                     this[position] = modifiedComeEvent
                 }
             }
@@ -135,6 +151,20 @@ class WorkDaysHistoryFragment : Fragment(), ClassTagAware, WorkDayItemListener,
     }
 
     override fun onEditComeEventDialogDismiss(dialog: DialogFragment) {
-        selectedComeEventViewModel.viewHolderInformation?.adapter?.notifyDataSetChanged()
+        super.onEditComeEventDialogDismiss(dialog)
+        if (!selectedComeEventViewModel.changed)
+            resetSwipedItemView()
+        selectedComeEventViewModel.changed = false
+    }
+
+    private fun resetSwipedItemView() {
+        selectedComeEventViewModel.selected.value?.let { selectedEvent ->
+            selectedEventAdapter?.let { comeEventsAdapter ->
+                val position =
+                    comeEventsAdapter.currentList.indexOfFirst { it.id == selectedEvent.id }
+                if (position >= 0)
+                    comeEventsAdapter.notifyItemChanged(position)
+            }
+        }
     }
 }

@@ -1,7 +1,7 @@
 package net.wojteksz128.worktimemeasureapp.model
 
-import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayUtils.calculateBeginSlot
-import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayUtils.calculateEndSlot
+import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils.Companion.getEndDayTime
+import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils.Companion.getStartDayTime
 import org.threeten.bp.LocalDate
 import org.threeten.bp.ZonedDateTime
 
@@ -13,10 +13,10 @@ data class WorkDay(
     val events: MutableList<ComeEvent> = mutableListOf(), // TODO: 30.09.2021 Change to set?!
 ) : DomainModel {
 
-    constructor(date: ZonedDateTime)
-            : this(null, date.toLocalDate(), calculateBeginSlot(date), calculateEndSlot(date))
+    constructor(date: LocalDate)
+            : this(null, date, getStartDayTime(date), getEndDayTime(date))
 
-    fun isAllEventsEnded() = events.all { it.isEnded }
+    fun isWorkFinished() = events.all { it.isEnded }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

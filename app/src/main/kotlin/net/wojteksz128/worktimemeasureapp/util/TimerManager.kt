@@ -3,58 +3,62 @@ package net.wojteksz128.worktimemeasureapp.util
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
 import android.os.Build
-import net.wojteksz128.worktimemeasureapp.notification.TimerExpiredReceiver
-import net.wojteksz128.worktimemeasureapp.settings.Settings
+import android.util.Log
+import dagger.hilt.android.qualifiers.ApplicationContext
 import org.threeten.bp.ZonedDateTime
+import javax.inject.Inject
 
-class TimerManager(
-    private val context: Context,
-    @Suppress("PrivatePropertyName") private val Settings: Settings,
-) {
+class TimerManager @Inject constructor(
+    @ApplicationContext private val context: Context,
+) : ClassTagAware {
+    private val alarmManager: AlarmManager =
+        context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-    enum class AlarmState {
-        NotSet, Set
-    }
 
-    fun setAlarm(wakeUpTime: ZonedDateTime): Long {
-        val epochMilli = wakeUpTime.toInstant().toEpochMilli()
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val pendingIntent = getTimerExpiredReceiverPendingIntent(context)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            if (alarmManager.canScheduleExactAlarms()) {
+    fun setExactTimer(wakeUpTime: ZonedDateTime, pendingIntent: PendingIntent) {
+        val triggerAtMillis = wakeUpTime.toInstant().toEpochMilli()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
+            Log.w(
+                classTag,
+                "setExactTimer: App not have permission to schedule exact alarms. Setting timer instead."
+            )
+            setTimer(wakeUpTime, pendingIntent)
+            return
+        }
+
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                Log.i(
+                    classTag,
+                    "setExactTimer: Scheduling exact alarm using setExactAndAllowWhileIdle."
+                )
                 alarmManager.setExactAndAllowWhileIdle(
                     AlarmManager.RTC_WAKEUP,
-                    epochMilli,
+                    triggerAtMillis,
                     pendingIntent
                 )
             } else {
-                alarmManager.setWindow(
-                    AlarmManager.RTC_WAKEUP,
-                    epochMilli,
-                    1000,
-                    pendingIntent
-                )
+                Log.i(classTag, "setExactTimer: Scheduling exact alarm using setExact.")
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent)
             }
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent)
-        } else {
-            alarmManager.set(AlarmManager.RTC_WAKEUP, epochMilli, pendingIntent)
+        } catch (e: SecurityException) {
+            Log.w(
+                classTag,
+                "setExactTimer: Error during scheduling exact alarm. Setting timer instead.",
+                e
+            )
+            setTimer(wakeUpTime, pendingIntent)
         }
-        Settings.Internal.AlarmState.value = AlarmState.Set
-        return epochMilli
     }
 
-    fun removeAlarm() {
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val pendingIntent = getTimerExpiredReceiverPendingIntent(context)
+    fun setTimer(wakeUpTime: ZonedDateTime, pendingIntent: PendingIntent) {
+        val triggerAtMillis = wakeUpTime.toInstant().toEpochMilli()
+        alarmManager.set(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent)
+    }
+
+    fun removeAlarm(pendingIntent: PendingIntent) {
         alarmManager.cancel(pendingIntent)
-        Settings.Internal.AlarmState.value = AlarmState.NotSet
-    }
-
-    private fun getTimerExpiredReceiverPendingIntent(context: Context): PendingIntent {
-        val intent = Intent(context, TimerExpiredReceiver::class.java)
-        return PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_IMMUTABLE)!!
     }
 }

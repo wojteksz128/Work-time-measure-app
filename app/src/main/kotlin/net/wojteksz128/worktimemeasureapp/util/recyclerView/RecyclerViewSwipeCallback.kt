@@ -11,18 +11,15 @@ import androidx.recyclerview.widget.ItemTouchHelper.LEFT
 import androidx.recyclerview.widget.ItemTouchHelper.RIGHT
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import net.wojteksz128.worktimemeasureapp.model.DomainModel
 
-class RecyclerSwipeHelper<Entity : DomainModel, VH : ViewHolder>(
-    private val swipeLeft: RecyclerLeftSwipeActionParam<Entity, VH>,
-    private val swipeRight: RecyclerRightSwipeActionParam<Entity, VH>,
-    private val entityExtractor: (VH) -> Entity
+class RecyclerViewSwipeCallback<VH : ViewHolder>(
+    private val swipeLeftParams: RecyclerLeftSwipeActionParams,
+    private val swipeRightParams: RecyclerRightSwipeActionParams,
+    private val swipeAction: (VH, Direction) -> Unit,
 ) : ItemTouchHelper.SimpleCallback(0, LEFT or RIGHT) {
-
     private val clearPaint = Paint().apply {
         xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
     }
-
     private val background = ColorDrawable()
 
     override fun onMove(
@@ -56,19 +53,19 @@ class RecyclerSwipeHelper<Entity : DomainModel, VH : ViewHolder>(
         }
 
         if (dX < 0) {
-            drawActionSlide(swipeLeft, itemView, dX, c)
+            drawActionSlide(swipeLeftParams, itemView, dX, c)
         } else {
-            drawActionSlide(swipeRight, itemView, dX, c)
+            drawActionSlide(swipeRightParams, itemView, dX, c)
         }
 
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
     }
 
     private fun drawActionSlide(
-        swipeActionParam: RecyclerSwipeActionParam<Entity, VH>,
+        swipeActionParam: RecyclerSwipeActionParams,
         itemView: View,
         dX: Float,
-        c: Canvas
+        c: Canvas,
     ) {
         background.apply {
             color = swipeActionParam.backgroundColor
@@ -87,20 +84,25 @@ class RecyclerSwipeHelper<Entity : DomainModel, VH : ViewHolder>(
         c.drawRect(left, top, right, bottom, clearPaint)
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun onSwiped(viewHolder: ViewHolder, direction: Int) {
-        val bindingAdapterPosition = viewHolder.bindingAdapterPosition
+        swipeAction(viewHolder as VH, Direction.of(direction))
+    }
 
-        @Suppress("UNCHECKED_CAST")
-        val viewHolderInformation = ViewHolderInformation(
-            viewHolder as VH,
-            bindingAdapterPosition,
-            viewHolder.bindingAdapter as RecyclerView.Adapter<VH>
-        )
-        val entity = entityExtractor(viewHolder)
+    enum class Direction {
+        LEFT,
+        RIGHT,
+        UP,
+        DOWN;
 
-        when (direction) {
-            LEFT -> swipeLeft.action(entity, viewHolderInformation)
-            RIGHT -> swipeRight.action(entity, viewHolderInformation)
+        companion object {
+            fun of(direction: Int): Direction = when (direction) {
+                ItemTouchHelper.LEFT -> LEFT
+                ItemTouchHelper.RIGHT -> RIGHT
+                ItemTouchHelper.UP -> UP
+                ItemTouchHelper.DOWN -> DOWN
+                else -> throw IllegalArgumentException("Unknown direction: $direction")
+            }
         }
     }
 }

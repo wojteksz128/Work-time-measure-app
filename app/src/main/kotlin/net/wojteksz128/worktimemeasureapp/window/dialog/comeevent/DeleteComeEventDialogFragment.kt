@@ -1,7 +1,6 @@
 package net.wojteksz128.worktimemeasureapp.window.dialog.comeevent
 
 import android.app.Dialog
-import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
@@ -11,27 +10,27 @@ import dagger.hilt.android.AndroidEntryPoint
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import net.wojteksz128.worktimemeasureapp.util.datetime.isTheSameDay
+import net.wojteksz128.worktimemeasureapp.window.dialog.DialogFragmentWithListener
+import net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.DeleteComeEventDialogFragment.DeleteComeEventDialogListener
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class DeleteComeEventDialogFragment : DialogFragment() {
+class DeleteComeEventDialogFragment : DialogFragmentWithListener<DeleteComeEventDialogListener>() {
     private val selectedComeEventViewModel: SelectedComeEventViewModel by activityViewModels()
 
     @Inject
     lateinit var dateTimeUtils: DateTimeUtils
-
-    internal lateinit var listener: DeleteComeEventDialogListener
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return AlertDialog.Builder(requireContext()).apply {
             setTitle(R.string.delete_come_event_dialog_title)
             setMessage(prepareDeleteMessage())
             setPositiveButton(R.string.delete_come_event_dialog_action_delete) { dialog, _ ->
-                listener.onAcceptDeletionComeEventClick(this@DeleteComeEventDialogFragment)
+                listener?.onAcceptDeletionComeEventClick(this@DeleteComeEventDialogFragment)
                 dialog.dismiss()
             }
             setNegativeButton(R.string.delete_come_event_dialog_action_cancel) { dialog, _ ->
-                listener.onRejectDeletionComeEventClick(this@DeleteComeEventDialogFragment)
+                listener?.onRejectDeletionComeEventClick(this@DeleteComeEventDialogFragment)
                 dialog.dismiss()
             }
         }.create()
@@ -58,24 +57,8 @@ class DeleteComeEventDialogFragment : DialogFragment() {
         } ?: throw IllegalStateException("Come event is not selected")
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        listener = if (parentFragment != null)
-            try {
-                parentFragment as DeleteComeEventDialogListener
-            } catch (_: ClassCastException) {
-                throw ClassCastException("Fragment ${parentFragment.toString()} must implement DeleteComeEventDialogListener")
-            }
-        else
-            try {
-                context as DeleteComeEventDialogListener
-            } catch (_: ClassCastException) {
-                throw ClassCastException("Activity $context must implement DeleteComeEventDialogListener")
-            }
-    }
-
     override fun onDismiss(dialog: DialogInterface) {
-        listener.onDeleteComeEventDialogDismiss(this@DeleteComeEventDialogFragment)
+        listener?.onDeleteComeEventDialogDismiss(this@DeleteComeEventDialogFragment)
         super.onDismiss(dialog)
     }
 

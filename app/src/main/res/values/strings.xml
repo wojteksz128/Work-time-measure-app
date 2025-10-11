@@ -11,8 +11,10 @@
     <!--<editor-fold desc="################ Channels ################">-->
 
     <!-- Work time channel description -->
-    <string name="channel_work_time_name">Working time notifications</string>
-    <string name="channel_work_time_description">Working time notifications display information about the duration of the current working day.</string>
+    <string name="channel_end_work_time_name">End of working time</string>
+    <string name="channel_end_work_time_description">Notifications showed at the end od working time.</string>
+    <string name="channel_work_time_in_progress_name">Work in progress</string>
+    <string name="channel_work_time_in_progress_description">Notifications with information about working day.</string>
 
     <!--</editor-fold>-->
     <!--##########################################-->
@@ -20,16 +22,21 @@
     <!--##########################################-->
     <!--<editor-fold desc="############# Notifications ##############">-->
 
-    <!-- In work notification -->
-    <string name="notification_in_work_title">Current work day duration</string>
-    <string name="notification_in_work_text">Expected end of work: %s</string>
-    <string name="notification_in_work_action_come_out">I\'m going out</string>
+    <string name="notification_time_short_format" translatable="false">HH:mm</string>
+    <string name="notification_time_long_format">E, yyyy-MM-dd HH:mm</string>
+
+    <!-- Work in progress notification -->
+    <string name="notification_work_in_progress_title">Current work day duration</string>
+    <string name="notification_work_in_progress_text">Expected end of work: %s. Will be better ending at: %s.</string>
 
     <!-- End of work notification -->
     <string name="notification_end_of_work_title">You must leave!</string>
     <string name="notification_end_of_work_text">You spent enough time at work. It\'s time to go home ;)</string>
-    <string name="notification_end_of_work_action_ignore">Mute</string>
-    <string name="notification_end_of_work_action_come_out">I\'m going out</string>
+
+    <!-- Actions -->
+    <string name="notification_action_stop_work">I\'m going out</string>
+    <string name="notification_action_snooze">Snooze</string>
+    <string name="notification_action_extend">I\' m still working</string>
 
     <!--</editor-fold>-->
     <!--##########################################-->
@@ -40,7 +47,7 @@
     <string name="dashboard_activity_title">@string/app_name</string>
     <string name="dashboard_remaining_working_time">Remaining working time</string>
     <string name="dashboard_today">Today:</string>
-    <string name="dashboard_week">In this week:</string>
+    <string name="dashboard_month_balance">Monthly balance:</string>
     <string name="dashboard_today_work_time_label">Today works:</string>
     <string name="dashboard_current_day_date_example">Mon., 08.07.2019</string>
     <string name="dashboard_current_day_empty_events_message">No events</string>
@@ -242,7 +249,7 @@
     <!--<editor-fold desc="############ Settings Activity ###########">-->
 
     <string name="settings_activity_title">Settings</string>
-    <string name="settings_configuration_version" translatable="false">1</string>
+    <string name="settings_configuration_version" translatable="false">2</string>
 
     <!-- Preference Titles -->
     <string name="settings_header_profile_title">Profile</string>
@@ -326,7 +333,6 @@
     <string name="settings_key_sync_timeSync_enable" translatable="false">settings_sync_timeSync_enable</string>
     <string name="settings_key_sync_timeSync_server" translatable="false">settings_sync_timeSync_server</string>
 
-    <string name="settings_key_internal_alarmSetTime" translatable="false">settings_internal_alarmSetTime</string>
     <string name="settings_key_internal_firstRun" translatable="false">settings_internal_firstRun</string>
     <string name="settings_key_internal_configurationVersion" translatable="false">settings_internal_configurationVersion</string>
 
