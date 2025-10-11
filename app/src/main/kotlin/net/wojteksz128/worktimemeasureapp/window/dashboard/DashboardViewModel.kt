@@ -3,7 +3,6 @@ package net.wojteksz128.worktimemeasureapp.window.dashboard
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.switchMap
@@ -46,14 +45,16 @@ class DashboardViewModel @Inject constructor(
 
     val workTimeBalance: LiveData<WorkTimeBalance> = workDay.switchMap { workDay ->
         liveData(viewModelScope.coroutineContext + Dispatchers.IO) {
-            emit(workTimeBalanceCalculator.calculateBalanceForWorkDay(workDay))
-            ticker.collect {
-                emit(workTimeBalanceCalculator.calculateBalanceForWorkDay(workDay))
-            }
+            val initialBalance = workTimeBalanceCalculator.calculateBalanceForWorkDay(workDay)
+
+            emit(initialBalance)
+
+            if (!workDay.isWorkFinished())
+                ticker.collect {
+                    emit(workTimeBalanceCalculator.updateTodayBalance(workDay, initialBalance))
+                }
         }
     }
-
-    private val notificationTrigger = MediatorLiveData<Pair<WorkDay?, WorkTimeBalance?>>()
 
     private val mSnackbarMessage = MutableLiveData<String?>()
     val snackbarMessage: LiveData<String?> = mSnackbarMessage
@@ -63,12 +64,8 @@ class DashboardViewModel @Inject constructor(
     val waitingFor = MutableLiveData(false)
 
     init {
-        notificationTrigger.apply {
-            addSource(workDay) { value = Pair(it, workTimeBalance.value) }
-            addSource(workTimeBalance) { value = Pair(workDay.value, it) }
-            observeForever { (workDay, workTimeBalance) ->
-                handleNotifications(workDay, workTimeBalance)
-            }
+        workDay.observeForever { workDay ->
+            handleNotifications(workDay, workTimeBalance.value)
         }
     }
 

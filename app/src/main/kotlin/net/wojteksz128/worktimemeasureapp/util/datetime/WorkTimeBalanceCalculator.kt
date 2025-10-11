@@ -21,12 +21,20 @@ class WorkTimeBalanceCalculator @Inject constructor(
         val requiredToday = calculateRequiredWorkTimeForWorkDay(workDay)
         val balanceBeforeToday = getBalanceOfMonthBeforeDate(workDay.date)
 
-        val remainingToday = requiredToday - todayWorkTime
+        return WorkTimeBalance(
+            todayWorkTime,
+            requiredToday,
+            balanceBeforeToday
+        )
+    }
+
+    fun updateTodayBalance(workDay: WorkDay, previousBalance: WorkTimeBalance): WorkTimeBalance {
+        val todayWorkTime = calculateWorkTimeForWorkDay(workDay)
 
         return WorkTimeBalance(
             todayWorkTime,
-            remainingToday,
-            balanceBeforeToday
+            previousBalance.requiredToday,
+            previousBalance.monthlyBalance
         )
     }
 
@@ -61,6 +69,12 @@ class WorkTimeBalanceCalculator @Inject constructor(
 
 data class WorkTimeBalance(
     val todayWorkTime: Duration,
-    val remainingTodayWorkTime: Duration,
+    val requiredToday: Duration,
     val monthlyBalance: Duration,
-)
+) {
+
+    val remainingToday: Duration
+        get() = requiredToday - todayWorkTime
+
+
+}

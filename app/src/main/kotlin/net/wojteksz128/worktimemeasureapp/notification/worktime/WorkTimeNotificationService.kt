@@ -54,7 +54,7 @@ class WorkTimeNotificationService @Inject constructor(
 
     fun scheduleEndOfWorkNotification(workDay: WorkDay, workTimeBalance: WorkTimeBalance) {
         val startTime = workDay.events.lastOrNull()?.startDate
-        val balancedEndTime = startTime?.plus(workTimeBalance.remainingTodayWorkTime)
+        val balancedEndTime = startTime?.plus(workTimeBalance.remainingToday)
             ?.plus(workTimeBalance.monthlyBalance)
         balancedEndTime?.let { scheduleEndOfWorkNotification(it) }
     }
