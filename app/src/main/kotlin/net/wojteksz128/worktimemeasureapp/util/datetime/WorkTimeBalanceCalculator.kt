@@ -58,7 +58,7 @@ class WorkTimeBalanceCalculator @Inject constructor(
                 acc + dateTimeUtils.mergeComeEventsDuration(workDay)
             }
         val totalRequired = calculateExpectedWorkTime(dateRange)
-        return totalRequired - totalWorked
+        return totalWorked - totalRequired
     }
 
     private suspend fun calculateExpectedWorkTime(dateRange: LocalDateRange): Duration =
@@ -86,7 +86,7 @@ data class WorkTimeBalance(
     fun getBalancedEndTime(workDay: WorkDay): ZonedDateTime {
         val startTime = workDay.events.lastOrNull()?.startDate
             ?: throw IllegalStateException("Cannot calculate end time for work day without start time")
-        return startTime.plus(remainingToday).plus(monthlyBalance)
+        return startTime.plus(remainingToday).minus(monthlyBalance)
 
     }
 }
