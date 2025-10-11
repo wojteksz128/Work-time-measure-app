@@ -5,6 +5,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.notification.AppNotification
 import net.wojteksz128.worktimemeasureapp.notification.Channel
@@ -17,6 +18,11 @@ class EndOfWorkTimeNotification(
 
     companion object {
         const val NOTIFICATION_ID = 251
+
+        fun cancel(context: Context) {
+            val notificationManager = NotificationManagerCompat.from(context)
+            notificationManager.cancel(NOTIFICATION_ID)
+        }
     }
 
     override fun build(): Notification {
