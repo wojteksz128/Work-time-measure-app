@@ -7,6 +7,7 @@ import net.wojteksz128.worktimemeasureapp.repository.WorkDayRepository
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import org.threeten.bp.Duration
 import org.threeten.bp.LocalDate
+import org.threeten.bp.ZonedDateTime
 import javax.inject.Inject
 
 class WorkTimeBalanceCalculator @Inject constructor(
@@ -76,5 +77,16 @@ data class WorkTimeBalance(
     val remainingToday: Duration
         get() = requiredToday - todayWorkTime
 
+    fun getStandardEndTime(workDay: WorkDay): ZonedDateTime {
+        val startTime = workDay.events.lastOrNull()?.startDate
+            ?: throw IllegalStateException("Cannot calculate end time for work day without start time")
+        return startTime.plus(remainingToday)
+    }
 
+    fun getBalancedEndTime(workDay: WorkDay): ZonedDateTime {
+        val startTime = workDay.events.lastOrNull()?.startDate
+            ?: throw IllegalStateException("Cannot calculate end time for work day without start time")
+        return startTime.plus(remainingToday).plus(monthlyBalance)
+
+    }
 }

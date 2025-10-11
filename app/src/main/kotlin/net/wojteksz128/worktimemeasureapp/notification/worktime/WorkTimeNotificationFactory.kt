@@ -16,11 +16,8 @@ class WorkTimeNotificationFactory @Inject constructor(
         workDay: WorkDay,
         workTimeBalance: WorkTimeBalance,
     ): WorkTimeInProgressNotification {
-        val startTime = workDay.events.lastOrNull()?.startDate
-            ?: throw IllegalStateException("Cannot create notification for work day without start time")
-
-        val standardEndTime = startTime.plus(workTimeBalance.remainingToday)
-        val balancedEndTime = standardEndTime.plus(workTimeBalance.monthlyBalance)
+        val standardEndTime = workTimeBalance.getStandardEndTime(workDay)
+        val balancedEndTime = workTimeBalance.getBalancedEndTime(workDay)
 
         return WorkTimeInProgressNotification(
             context,
