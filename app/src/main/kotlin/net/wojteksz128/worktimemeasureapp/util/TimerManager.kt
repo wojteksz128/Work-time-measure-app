@@ -6,6 +6,9 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
+import net.wojteksz128.worktimemeasureapp.util.android.before
+import net.wojteksz128.worktimemeasureapp.util.android.fromVersion
+import net.wojteksz128.worktimemeasureapp.util.android.onVersion
 import org.threeten.bp.ZonedDateTime
 import javax.inject.Inject
 
@@ -19,17 +22,19 @@ class TimerManager @Inject constructor(
     fun setExactTimer(wakeUpTime: ZonedDateTime, pendingIntent: PendingIntent) {
         val triggerAtMillis = wakeUpTime.toInstant().toEpochMilli()
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
-            Log.w(
-                classTag,
-                "setExactTimer: App not have permission to schedule exact alarms. Setting timer instead."
-            )
-            setTimer(wakeUpTime, pendingIntent)
-            return
+        onVersion(Build.VERSION_CODES.S) {
+            if (!alarmManager.canScheduleExactAlarms()) {
+                Log.w(
+                    classTag,
+                    "setExactTimer: App not have permission to schedule exact alarms. Setting timer instead."
+                )
+                setTimer(wakeUpTime, pendingIntent)
+                return@setExactTimer
+            }
         }
 
         try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            fromVersion(Build.VERSION_CODES.M) {
                 Log.i(
                     classTag,
                     "setExactTimer: Scheduling exact alarm using setExactAndAllowWhileIdle."
@@ -39,7 +44,7 @@ class TimerManager @Inject constructor(
                     triggerAtMillis,
                     pendingIntent
                 )
-            } else {
+            } before {
                 Log.i(classTag, "setExactTimer: Scheduling exact alarm using setExact.")
                 alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent)
             }
