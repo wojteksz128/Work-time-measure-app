@@ -27,7 +27,7 @@ class WorkTimeInProgressNotification(
         get() = WorkTimeNotificationActionReceiver::class.java
 
     companion object {
-        private const val NOTIFICATION_ID = 11
+        const val NOTIFICATION_ID = 11
 
         fun cancel(context: Context) {
             val notificationManager = NotificationManagerCompat.from(context)

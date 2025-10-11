@@ -1,6 +1,7 @@
 package net.wojteksz128.worktimemeasureapp.window.dashboard
 
 import android.app.Application
+import android.content.Intent
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -18,6 +19,9 @@ import net.wojteksz128.worktimemeasureapp.model.ComeEvent
 import net.wojteksz128.worktimemeasureapp.model.ComeEventType
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeNotificationService
+import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeTrackerService
+import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeTrackerService.Companion.EXTRA_WORK_DAY
+import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeTrackerService.Companion.EXTRA_WORK_TIME_BALANCE
 import net.wojteksz128.worktimemeasureapp.repository.ComeEventRepository
 import net.wojteksz128.worktimemeasureapp.repository.WorkDayRepository
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
@@ -73,12 +77,46 @@ class DashboardViewModel @Inject constructor(
         if (workDay == null || workTimeBalance == null) return
 
         if (workDay.isWorkFinished()) {
+            stopTrackingService()
             notificationService.cancelWorkInProgressNotification()
             notificationService.cancelEndOfWorkNotification()
         } else {
+            startTrackingService(workDay, workTimeBalance)
             notificationService.showWorkInProgressNotification(workDay, workTimeBalance)
             notificationService.scheduleEndOfWorkNotification(workDay, workTimeBalance)
         }
+    }
+
+    private fun startTrackingService(
+        workDay: WorkDay,
+        workTimeBalance: WorkTimeBalance,
+    ) {
+        doOnTrackingService(WorkTimeTrackerService.ACTION_START) {
+            putExtra(EXTRA_WORK_DAY, workDay)
+            putExtra(EXTRA_WORK_TIME_BALANCE, workTimeBalance)
+        }
+    }
+
+    private fun updateTrackingService(
+        workDay: WorkDay,
+        workTimeBalance: WorkTimeBalance,
+    ) {
+        doOnTrackingService(WorkTimeTrackerService.ACTION_UPDATE) {
+            putExtra(EXTRA_WORK_DAY, workDay)
+            putExtra(EXTRA_WORK_TIME_BALANCE, workTimeBalance)
+        }
+    }
+
+    private fun stopTrackingService() {
+        doOnTrackingService(WorkTimeTrackerService.ACTION_STOP)
+    }
+
+    private fun doOnTrackingService(action: String, block: (Intent.() -> Unit)? = null) {
+        val intent = Intent(getApplication(), WorkTimeTrackerService::class.java).apply {
+            this.action = action
+            block?.let { this.it() }
+        }
+        getApplication<WorkTimeMeasureApp>().startService(intent)
     }
 
     fun onComeEventDelete(comeEvent: ComeEvent?) = viewModelScope.launch {

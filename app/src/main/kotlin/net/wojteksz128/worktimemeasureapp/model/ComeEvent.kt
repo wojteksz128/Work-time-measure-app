@@ -1,13 +1,16 @@
 package net.wojteksz128.worktimemeasureapp.model
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 import org.threeten.bp.ZonedDateTime
 
+@Parcelize
 data class ComeEvent(
     val id: Long?,
     var startDate: ZonedDateTime,
     var endDate: ZonedDateTime?,
     val workDayId: Long,
-) : DomainModel {
+) : DomainModel, Parcelable {
     val isEnded: Boolean
         get() = endDate != null
 

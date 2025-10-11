@@ -1,5 +1,7 @@
 package net.wojteksz128.worktimemeasureapp.util.datetime
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import net.wojteksz128.worktimemeasureapp.model.fieldType.DayType
 import net.wojteksz128.worktimemeasureapp.module.dayOff.DayOffService
@@ -68,11 +70,12 @@ class WorkTimeBalanceCalculator @Inject constructor(
             }
 }
 
+@Parcelize
 data class WorkTimeBalance(
     val todayWorkTime: Duration,
     val requiredToday: Duration,
     val monthlyBalance: Duration,
-) {
+) : Parcelable {
 
     val remainingToday: Duration
         get() = requiredToday - todayWorkTime
