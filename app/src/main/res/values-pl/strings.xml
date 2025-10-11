@@ -36,7 +36,7 @@
     <!-- Actions -->
     <string name="notification_action_stop_work">Wychodzę</string>
     <string name="notification_action_snooze">Drzemka</string>
-    <string name="notification_action_extend">Pracuje dalej</string>
+    <string name="notification_action_snooze_to_next">Pracuje dalej</string>
 
     <!--</editor-fold>-->
     <!--##########################################-->

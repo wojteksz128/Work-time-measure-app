@@ -36,7 +36,7 @@
     <!-- Actions -->
     <string name="notification_action_stop_work">I\'m going out</string>
     <string name="notification_action_snooze">Snooze</string>
-    <string name="notification_action_extend">I\' m still working</string>
+    <string name="notification_action_snooze_to_next">I\' m still working</string>
 
     <!--</editor-fold>-->
     <!--##########################################-->
