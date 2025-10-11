@@ -20,6 +20,7 @@ import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.databinding.FragmentWorkDayDetailsBinding
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
 import net.wojteksz128.worktimemeasureapp.settings.Settings
+import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import net.wojteksz128.worktimemeasureapp.util.recyclerView.RecyclerViewSwipeCallback
 import net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.DeleteComeEventDialogFragment
@@ -39,6 +40,9 @@ class WorkDayDetailsFragment : Fragment(), DeleteComeEventDialogListener,
     private val viewModel: WorkDayDetailsViewModel by viewModels()
     private val selectedComeEventViewModel: SelectedComeEventViewModel by activityViewModels()
     private val selectedWorkDayViewModel: SelectedWorkDayViewModel by activityViewModels()
+
+    @Inject
+    lateinit var dateTimeProvider: DateTimeProvider
 
     @Inject
     lateinit var dateTimeUtils: DateTimeUtils
@@ -61,7 +65,8 @@ class WorkDayDetailsFragment : Fragment(), DeleteComeEventDialogListener,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        comeEventsAdapter = ComeEventsAdapter(dateTimeUtils, viewLifecycleOwner, viewModel.ticker)
+        comeEventsAdapter =
+            ComeEventsAdapter(dateTimeProvider, dateTimeUtils, viewLifecycleOwner, viewModel.ticker)
         binding = FragmentWorkDayDetailsBinding.inflate(layoutInflater, container, false)
         initializeLayoutData()
         viewModel.apply {

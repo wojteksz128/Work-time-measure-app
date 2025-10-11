@@ -20,6 +20,7 @@ import net.wojteksz128.worktimemeasureapp.databinding.FragmentWorkDaysHistoryBin
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
+import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import net.wojteksz128.worktimemeasureapp.util.recyclerView.RecyclerViewSwipeCallback
 import net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.DeleteComeEventDialogFragment
@@ -40,6 +41,9 @@ class WorkDaysHistoryFragment : Fragment(), ClassTagAware, WorkDayItemListener,
     private val selectedComeEventViewModel: SelectedComeEventViewModel by activityViewModels()
 
     @Inject
+    lateinit var dateTimeProvider: DateTimeProvider
+
+    @Inject
     lateinit var dateTimeUtils: DateTimeUtils
 
     private lateinit var binding: FragmentWorkDaysHistoryBinding
@@ -57,6 +61,7 @@ class WorkDaysHistoryFragment : Fragment(), ClassTagAware, WorkDayItemListener,
             val workDayAdapter =
                 WorkDayAdapter(
                     requireContext(),
+                    dateTimeProvider,
                     dateTimeUtils,
                     viewLifecycleOwner,
                     viewModel.ticker,
