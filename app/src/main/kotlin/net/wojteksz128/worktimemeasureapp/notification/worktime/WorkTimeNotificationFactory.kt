@@ -18,18 +18,13 @@ class WorkTimeNotificationFactory @Inject constructor(
     fun createWorkInProgressNotification(
         workDay: WorkDay,
         workTimeBalance: WorkTimeBalance,
-    ): WorkTimeInProgressNotification {
-        val standardEndTime = workTimeBalance.getStandardEndTime(workDay)
-        val balancedEndTime = workTimeBalance.getBalancedEndTime(workDay)
-
-        return WorkTimeInProgressNotification(
-            context,
-            workDay.date,
-            standardEndTime,
-            balancedEndTime,
-            dateTimeUtils
-        )
-    }
+    ): WorkTimeInProgressNotification = WorkTimeInProgressNotification(
+        context,
+        workDay,
+        workTimeBalance,
+        dateTimeUtils,
+        dateTimeProvider,
+    )
 
     fun createEndOfWorkNotification(
         standardEndTime: ZonedDateTime,

@@ -12,7 +12,14 @@ import androidx.databinding.BindingMethods
 import androidx.preference.Preference
 import androidx.preference.PreferenceViewHolder
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import net.wojteksz128.worktimemeasureapp.util.android.before
+import net.wojteksz128.worktimemeasureapp.util.android.fromVersion
+import net.wojteksz128.worktimemeasureapp.util.android.onVersion
 
 @BindingMethods
 class AsyncActionPreference(context: Context, attrs: AttributeSet) : Preference(context, attrs) {
@@ -27,10 +34,14 @@ class AsyncActionPreference(context: Context, attrs: AttributeSet) : Preference(
 
     @Suppress("DEPRECATION")
     private fun getCoverColorFilter() =
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+        fromVersion(Build.VERSION_CODES.Q) {
             BlendModeColorFilter(context.getColor(android.R.color.transparent), BlendMode.CLEAR)
-        else PorterDuffColorFilter(context.resources.getColor(android.R.color.transparent),
-            PorterDuff.Mode.CLEAR)
+        } before {
+            PorterDuffColorFilter(
+                context.resources.getColor(android.R.color.transparent),
+                PorterDuff.Mode.CLEAR
+            )
+        }
 
     override fun onBindViewHolder(holder: PreferenceViewHolder) {
         super.onBindViewHolder(holder)
@@ -49,7 +60,7 @@ class AsyncActionPreference(context: Context, attrs: AttributeSet) : Preference(
 
     private fun onStartAsyncAction() {
         icon?.clearColorFilter()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        onVersion(Build.VERSION_CODES.LOLLIPOP) {
             if (icon is AnimatedVectorDrawable) {
                 (icon as AnimatedVectorDrawable).start()
             }
@@ -61,7 +72,7 @@ class AsyncActionPreference(context: Context, attrs: AttributeSet) : Preference(
 
     private fun onStopAsyncAction() {
         icon?.colorFilter = coverColorFilter
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        onVersion(Build.VERSION_CODES.LOLLIPOP) {
             if (icon is AnimatedVectorDrawable) {
                 (icon as AnimatedVectorDrawable).stop()
             }

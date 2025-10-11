@@ -6,22 +6,24 @@ import android.os.Bundle
 import android.view.View
 import android.widget.TimePicker
 import androidx.preference.PreferenceDialogFragmentCompat
+import net.wojteksz128.worktimemeasureapp.util.android.before
+import net.wojteksz128.worktimemeasureapp.util.android.fromVersion
 
 class DayActionDurationPreferenceDialog private constructor(private val listener: DayActionDurationPreferenceDialogListener) :
     PreferenceDialogFragmentCompat() {
 
     @Suppress("DEPRECATION")
     private var durationInMinutes: Int
-        get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        get() = fromVersion(Build.VERSION_CODES.M) {
             (timepicker.hour * 60) + timepicker.minute
-        } else {
+        } before {
             (timepicker.currentHour * 60) + timepicker.currentMinute
         }
         set(value) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            fromVersion(Build.VERSION_CODES.M) {
                 timepicker.hour = value / 60
                 timepicker.minute = value % 60
-            } else {
+            } before {
                 timepicker.currentHour = value / 60
                 timepicker.currentMinute = value % 60
             }
@@ -31,6 +33,7 @@ class DayActionDurationPreferenceDialog private constructor(private val listener
 
     override fun onCreateDialogView(context: Context): View {
         timepicker = TimePicker(context).apply {
+            @Suppress("UsePropertyAccessSyntax")
             setIs24HourView(true)
         }
         return timepicker

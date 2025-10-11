@@ -9,46 +9,58 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
 import net.wojteksz128.worktimemeasureapp.database.EntityDao
 import org.threeten.bp.LocalDate
+
+private const val FIND_ALL_QUERY = "SELECT * FROM work_day ORDER BY date DESC"
+private const val FIND_BY_ID_QUERY = "SELECT * FROM work_day WHERE id = :id"
+private const val FIND_BY_DATE_QUERY = "SELECT * FROM work_day WHERE date = :date"
+private const val FIND_BETWEEN_DATES_QUERY =
+    "SELECT * FROM work_day WHERE date BETWEEN :beginDate AND :endDate"
+
 
 @Dao
 @Suppress("unused")
 interface WorkDayDao : EntityDao<WorkDayDto> {
 
     @Transaction
-    @Query("SELECT * FROM work_day ORDER BY date DESC")
+    @Query(FIND_ALL_QUERY)
     fun findAllInLiveData(): DataSource.Factory<Int, WorkDayWithEventsDto>
 
     @Transaction
-    @Query("SELECT * FROM work_day ORDER BY date DESC")
+    @Query(FIND_ALL_QUERY)
     suspend fun findAll(): List<WorkDayWithEventsDto>
 
     @Transaction
-    @Query("SELECT * FROM work_day WHERE id = :id")
+    @Query(FIND_BY_ID_QUERY)
     fun findByIdInLiveData(id: Int): LiveData<WorkDayWithEventsDto>
 
     @Transaction
-    @Query("SELECT * FROM work_day WHERE id = :id")
+    @Query(FIND_BY_ID_QUERY)
     suspend fun findById(id: Int): WorkDayWithEventsDto
 
     @Transaction
-    @Query("SELECT * FROM work_day WHERE date = :date")
+    @Query(FIND_BY_DATE_QUERY)
     suspend fun findByDate(date: LocalDate): WorkDayWithEventsDto?
 
     @Transaction
-    @Query("SELECT * FROM work_day WHERE date = :date")
+    @Query(FIND_BY_DATE_QUERY)
     fun findByDateInLiveData(date: LocalDate): LiveData<WorkDayWithEventsDto?>
 
     @Transaction
-    @Query("SELECT * FROM work_day WHERE date BETWEEN :beginDate AND :endDate")
+    @Query(FIND_BY_DATE_QUERY)
+    fun findByDateAsFlow(date: LocalDate): Flow<WorkDayWithEventsDto?>
+
+    @Transaction
+    @Query(FIND_BETWEEN_DATES_QUERY)
     suspend fun findBetweenDates(
         beginDate: LocalDate,
         endDate: LocalDate,
     ): List<WorkDayWithEventsDto>
 
     @Transaction
-    @Query("SELECT * FROM work_day WHERE date BETWEEN :beginDate AND :endDate")
+    @Query(FIND_BETWEEN_DATES_QUERY)
     fun findBetweenDatesInLiveData(
         beginDate: LocalDate,
         endDate: LocalDate,

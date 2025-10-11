@@ -1,17 +1,20 @@
 package net.wojteksz128.worktimemeasureapp.model
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils.Companion.getEndDayTime
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils.Companion.getStartDayTime
 import org.threeten.bp.LocalDate
 import org.threeten.bp.ZonedDateTime
 
+@Parcelize
 data class WorkDay(
     val id: Long?,
     var date: LocalDate,
     var beginSlot: ZonedDateTime,
     var endSlot: ZonedDateTime,
-    val events: MutableList<ComeEvent> = mutableListOf(), // TODO: 30.09.2021 Change to set?!
-) : DomainModel {
+    val events: MutableList<ComeEvent> = mutableListOf(),
+) : DomainModel, Parcelable {
 
     constructor(date: LocalDate)
             : this(null, date, getStartDayTime(date), getEndDayTime(date))
