@@ -1,6 +1,7 @@
 package net.wojteksz128.worktimemeasureapp.notification.worktime
 
 import android.app.Notification
+import android.content.BroadcastReceiver
 import android.content.Context
 import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
@@ -8,18 +9,22 @@ import androidx.core.app.NotificationManagerCompat
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.notification.AppNotification
 import net.wojteksz128.worktimemeasureapp.notification.Channel
+import net.wojteksz128.worktimemeasureapp.notification.worktime.action.WorkTimeNotificationActionReceiver
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import net.wojteksz128.worktimemeasureapp.window.dashboard.DashboardActivity
 import org.threeten.bp.LocalDate
 import org.threeten.bp.ZonedDateTime
 
 class WorkTimeInProgressNotification(
-    private val context: Context,
+    context: Context,
     private val workDayDate: LocalDate,
     private val standardEndTime: ZonedDateTime,
     private val balancedEndTime: ZonedDateTime,
     private val dateTimeUtils: DateTimeUtils,
 ) : AppNotification(Channel.WORK_TIME_IN_PROGRESS_CHANNEL, NOTIFICATION_ID, context) {
+
+    override val actionReceiver: Class<out BroadcastReceiver>
+        get() = WorkTimeNotificationActionReceiver::class.java
 
     companion object {
         private const val NOTIFICATION_ID = 11
@@ -51,7 +56,14 @@ class WorkTimeInProgressNotification(
                 .bigText(contentText)
             )
             .setOngoing(true)
-            .setContentIntent(getPendingIntentWithStack(context, DashboardActivity::class.java))
+            .setContentIntent(createNotificationIntent(context, DashboardActivity::class.java))
+            .addAction(
+                R.drawable.ic_baseline_work_off_24,
+                context.getString(R.string.notification_action_stop_work),
+                createActionIntent(
+                    WorkTimeNotificationService.STOP_WORK_ACTION
+                )
+            )
             .build()
     }
 
