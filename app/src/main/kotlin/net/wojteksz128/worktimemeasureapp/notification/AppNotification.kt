@@ -2,6 +2,7 @@ package net.wojteksz128.worktimemeasureapp.notification
 
 import android.app.Notification
 import android.app.PendingIntent
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -17,9 +18,10 @@ import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 abstract class AppNotification(
     val channel: Channel,
     private val notificationId: Int,
-    private val context: Context,
+    protected val context: Context,
 ) : ClassTagAware {
     protected val notificationBuilder: NotificationCompat.Builder
+    protected abstract val actionReceiver: Class<out BroadcastReceiver>
 
     init {
         notificationBuilder = NotificationCompat.Builder(context, channel.id)
@@ -36,7 +38,7 @@ abstract class AppNotification(
 
     abstract fun build(): Notification
 
-    protected fun <T> getPendingIntentWithStack(
+    protected fun <T> createNotificationIntent(
         context: Context,
         javaClass: Class<T>,
     ): PendingIntent {
@@ -53,6 +55,22 @@ abstract class AppNotification(
             0,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )!!
+    }
+
+    protected fun createActionIntent(
+        action: String,
+        intentConfig: (Intent.() -> Unit)? = null,
+    ): PendingIntent {
+        val intent = Intent(context, actionReceiver).apply {
+            this.action = action
+        }
+        intentConfig?.let { intent.it() }
+        return PendingIntent.getBroadcast(
+            context,
+            action.hashCode(),
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
     }
 
     private fun largeIcon(
