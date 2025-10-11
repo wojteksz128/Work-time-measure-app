@@ -6,6 +6,7 @@ import net.wojteksz128.worktimemeasureapp.database.history.EntityHistoryDao
 import net.wojteksz128.worktimemeasureapp.database.history.HistoryService
 import net.wojteksz128.worktimemeasureapp.model.DomainModel
 import net.wojteksz128.worktimemeasureapp.util.DomainModelMapper
+import net.wojteksz128.worktimemeasureapp.validation.DataValidator
 import java.util.UUID
 
 abstract class Repository<DM, E>(
@@ -13,11 +14,16 @@ abstract class Repository<DM, E>(
     protected val mapper: DomainModelMapper<DM, E>,
     private val historyService: HistoryService,
     private val historyDao: EntityHistoryDao,
+    private val validator: DataValidator<DM>,
 ) where DM : DomainModel, E : EntityDto {
 
     abstract suspend fun getById(id: Long): E?
 
     open suspend fun save(domainModel: DM) {
+        val validationResult = validator.validate(domainModel)
+        if (!validationResult.isValid)
+            throw DataValidationException(validationResult.errors)
+
         val newEntity = mapper.mapFromDomainModel(domainModel)
         val oldEntity = if (newEntity.id == null) null else getById(newEntity.id!!)
 
@@ -47,3 +53,6 @@ abstract class Repository<DM, E>(
         changes.forEach { historyDao.insert(it) }
     }
 }
+
+class DataValidationException(val errors: List<String>) :
+    Exception("Data validation error: ${errors.joinToString()}")

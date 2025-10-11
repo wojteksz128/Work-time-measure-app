@@ -27,6 +27,9 @@ import net.wojteksz128.worktimemeasureapp.repository.api.HolidayApiRepository
 import net.wojteksz128.worktimemeasureapp.repository.api.NagerDateApiV3Repository
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
+import net.wojteksz128.worktimemeasureapp.validation.ComeEventValidator
+import net.wojteksz128.worktimemeasureapp.validation.DayOffValidator
+import net.wojteksz128.worktimemeasureapp.validation.WorkDayValidator
 import net.wojteksz128.worktimemeasureapp.window.history.formatters.HistoryFormatterProvider
 import javax.inject.Singleton
 
@@ -42,13 +45,15 @@ object RepositoryModule {
         workDayWithEventsMapper: WorkDayWithEventsMapper,
         historyService: HistoryService,
         historyDao: EntityHistoryDao,
+        workDayValidator: WorkDayValidator,
     ): WorkDayRepository =
         WorkDayRepository(
             workDayDao,
             workDayMapper,
             workDayWithEventsMapper,
             historyService,
-            historyDao
+            historyDao,
+            workDayValidator
         )
 
     @Singleton
@@ -58,8 +63,10 @@ object RepositoryModule {
         comeEventMapper: ComeEventMapper,
         historyService: HistoryService,
         historyDao: EntityHistoryDao,
-    ): ComeEventRepository =
-        ComeEventRepository(comeEventDao, comeEventMapper, historyService, historyDao)
+        comeEventValidator: ComeEventValidator,
+    ): ComeEventRepository = ComeEventRepository(
+        comeEventDao, comeEventMapper, historyService, historyDao, comeEventValidator
+    )
 
     @Singleton
     @Provides
@@ -68,7 +75,10 @@ object RepositoryModule {
         dayOffMapper: DayOffMapper,
         historyService: HistoryService,
         historyDao: EntityHistoryDao,
-    ): DayOffRepository = DayOffRepository(dayOffDao, dayOffMapper, historyService, historyDao)
+        dayOffValidator: DayOffValidator,
+    ): DayOffRepository = DayOffRepository(
+        dayOffDao, dayOffMapper, historyService, historyDao, dayOffValidator
+    )
 
     @Singleton
     @Provides

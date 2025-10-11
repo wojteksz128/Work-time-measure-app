@@ -8,6 +8,7 @@ import net.wojteksz128.worktimemeasureapp.database.dayOff.DayOffMapper
 import net.wojteksz128.worktimemeasureapp.database.history.EntityHistoryDao
 import net.wojteksz128.worktimemeasureapp.database.history.HistoryService
 import net.wojteksz128.worktimemeasureapp.model.DayOff
+import net.wojteksz128.worktimemeasureapp.validation.DayOffValidator
 import org.threeten.bp.LocalDate
 
 class DayOffRepository(
@@ -15,7 +16,14 @@ class DayOffRepository(
     dayOffMapper: DayOffMapper,
     historyService: HistoryService,
     historyDao: EntityHistoryDao,
-) : Repository<DayOff, DayOffDto>(dayOffDao, dayOffMapper, historyService, historyDao) {
+    dayOffValidator: DayOffValidator,
+) : Repository<DayOff, DayOffDto>(
+    dayOffDao,
+    dayOffMapper,
+    historyService,
+    historyDao,
+    dayOffValidator
+) {
 
     override suspend fun getById(id: Long): DayOffDto? = dayOffDao.findById(id)
 

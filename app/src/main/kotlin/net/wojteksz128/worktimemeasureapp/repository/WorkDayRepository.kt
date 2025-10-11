@@ -15,6 +15,7 @@ import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayMapper
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayWithEventsMapper
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import net.wojteksz128.worktimemeasureapp.util.datetime.LocalDateRange
+import net.wojteksz128.worktimemeasureapp.validation.WorkDayValidator
 import org.threeten.bp.LocalDate
 
 class WorkDayRepository (
@@ -23,9 +24,18 @@ class WorkDayRepository (
     private val workDayWithEventsMapper: WorkDayWithEventsMapper,
     historyService: HistoryService,
     historyDao: EntityHistoryDao,
-) : Repository<WorkDay, WorkDayDto>(workDayDao, workDayMapper, historyService, historyDao) {
-
+    workDayValidator: WorkDayValidator,
+) : Repository<WorkDay, WorkDayDto>(
+    workDayDao,
+    workDayMapper,
+    historyService,
+    historyDao,
+    workDayValidator
+) {
     override suspend fun getById(id: Long): WorkDayDto? = workDayDao.findById(id.toInt()).workDay
+
+    suspend fun getAll() = workDayWithEventsMapper.mapToDomainModelList(workDayDao.findAll())
+
 
     // TODO: 09.10.2021 Key z Int do Long
     fun getAllPaged(): () -> PagingSource<Int, WorkDay> =
