@@ -56,6 +56,7 @@ class WorkTimeInProgressNotification(
                 .bigText(contentText)
             )
             .setOngoing(true)
+            .setOnlyAlertOnce(true)
             .setContentIntent(createNotificationIntent(context, DashboardActivity::class.java))
             .addAction(
                 R.drawable.ic_baseline_work_off_24,

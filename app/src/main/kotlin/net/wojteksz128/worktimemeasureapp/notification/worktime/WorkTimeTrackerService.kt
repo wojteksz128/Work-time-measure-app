@@ -23,7 +23,7 @@ class WorkTimeTrackerService : Service() {
     lateinit var workStateFlow: StateFlow<WorkState?>
 
     private var serviceJob: Job? = null
-    private var isForeground = false
+    private var isServiceRunning = false
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
@@ -48,9 +48,9 @@ class WorkTimeTrackerService : Service() {
             workState.workTimeBalance
         ).build()
 
-        if (!isForeground) {
+        if (!isServiceRunning) {
             startForeground(WorkTimeInProgressNotification.NOTIFICATION_ID, notification)
-            isForeground = true
+            isServiceRunning = true
         } else {
             val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.notify(WorkTimeInProgressNotification.NOTIFICATION_ID, notification)
