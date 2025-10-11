@@ -6,6 +6,7 @@ import android.content.Intent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import net.wojteksz128.worktimemeasureapp.notification.TimerExpiredReceiver
+import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.TimerManager
 import net.wojteksz128.worktimemeasureapp.util.datetime.WorkTimeBalance
 import org.threeten.bp.ZonedDateTime
@@ -17,6 +18,7 @@ class WorkTimeNotificationService @Inject constructor(
     @ApplicationContext private val context: Context,
     private val timerManager: TimerManager,
     private val notificationFactory: WorkTimeNotificationFactory,
+    private val settings: Settings,
 ) {
     companion object {
         const val SNOOZE_ACTION = "net.wojteksz128.worktimemeasureapp.SNOOZE_ACTION"
@@ -25,6 +27,9 @@ class WorkTimeNotificationService @Inject constructor(
     }
 
     fun showWorkInProgressNotification(workDay: WorkDay, workTimeBalance: WorkTimeBalance) {
+        val isEnabled = settings.WorkTime.NotifyingEnabled.value
+        if (!isEnabled) return
+
         val notification =
             notificationFactory.createWorkInProgressNotification(workDay, workTimeBalance)
         notification.show()
@@ -40,6 +45,9 @@ class WorkTimeNotificationService @Inject constructor(
     }
 
     fun scheduleEndOfWorkNotification(endTime: ZonedDateTime) {
+        val isEnabled = settings.WorkTime.NotifyingEnabled.value
+        if (!isEnabled) return
+
         val pendingIntent = createTimerExpiredPendingIntent()
         timerManager.setExactTimer(endTime, pendingIntent)
     }
