@@ -5,12 +5,13 @@ import android.content.Intent
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.liveData
-import androidx.lifecycle.switchMap
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.wojteksz128.worktimemeasureapp.R
@@ -18,47 +19,29 @@ import net.wojteksz128.worktimemeasureapp.WorkTimeMeasureApp
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
 import net.wojteksz128.worktimemeasureapp.model.ComeEventType
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
+import net.wojteksz128.worktimemeasureapp.model.WorkState
 import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeNotificationService
 import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeTrackerService
-import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeTrackerService.Companion.EXTRA_WORK_DAY
-import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeTrackerService.Companion.EXTRA_WORK_TIME_BALANCE
 import net.wojteksz128.worktimemeasureapp.repository.ComeEventRepository
-import net.wojteksz128.worktimemeasureapp.repository.WorkDayRepository
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.comeevent.ComeEventUtils
 import net.wojteksz128.worktimemeasureapp.util.comeevent.NewEventRegisterListener
 import net.wojteksz128.worktimemeasureapp.util.coroutines.TickerFactory
-import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.datetime.WorkTimeBalance
-import net.wojteksz128.worktimemeasureapp.util.datetime.WorkTimeBalanceCalculator
 import javax.inject.Inject
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
     application: Application,
-    workDayRepository: WorkDayRepository,
+    workStateFlow: StateFlow<WorkState?>,
     private val comeEventRepository: ComeEventRepository,
-    dateTimeProvider: DateTimeProvider,
-    private val workTimeBalanceCalculator: WorkTimeBalanceCalculator,
     tickerFactory: TickerFactory,
     private val notificationService: WorkTimeNotificationService,
     private val comeEventUtils: ComeEventUtils,
 ) : AndroidViewModel(application), NewEventRegisterListener, ClassTagAware {
-    val workDay: LiveData<WorkDay> =
-        workDayRepository.getWorkDayByDateInLiveData(dateTimeProvider.currentDate)
-
-    val workTimeBalance: LiveData<WorkTimeBalance> = workDay.switchMap { workDay ->
-        liveData(viewModelScope.coroutineContext + Dispatchers.IO) {
-            val initialBalance = workTimeBalanceCalculator.calculateBalanceForWorkDay(workDay)
-
-            emit(initialBalance)
-
-            if (!workDay.isWorkFinished())
-                ticker.collect {
-                    emit(workTimeBalanceCalculator.updateTodayBalance(workDay, initialBalance))
-                }
-        }
-    }
+    val workState: LiveData<WorkState?> = workStateFlow.asLiveData()
+    val workDay: LiveData<WorkDay?> = workState.map { it?.workDay }
+    val workTimeBalance: LiveData<WorkTimeBalance?> = workState.map { it?.workTimeBalance }
 
     private val mSnackbarMessage = MutableLiveData<String?>()
     val snackbarMessage: LiveData<String?> = mSnackbarMessage
@@ -67,54 +50,46 @@ class DashboardViewModel @Inject constructor(
 
     val waitingFor = MutableLiveData(false)
 
+    private var wasWorkFinished: Boolean? = null
+
     init {
-        workDay.observeForever { workDay ->
-            handleNotifications(workDay, workTimeBalance.value)
+        workState.observeForever { workState ->
+            handleServiceAndNotifications(workState)
         }
     }
 
-    private fun handleNotifications(workDay: WorkDay?, workTimeBalance: WorkTimeBalance?) {
-        if (workDay == null || workTimeBalance == null) return
+    private fun handleServiceAndNotifications(workState: WorkState?) {
+        val isWorkFinished = workState?.workDay?.isWorkFinished() ?: true
 
-        if (workDay.isWorkFinished()) {
+        if (isWorkFinished == wasWorkFinished) return
+
+        if (isWorkFinished) {
             stopTrackingService()
-            notificationService.cancelWorkInProgressNotification()
             notificationService.cancelEndOfWorkNotification()
         } else {
-            startTrackingService(workDay, workTimeBalance)
-            notificationService.showWorkInProgressNotification(workDay, workTimeBalance)
-            notificationService.scheduleEndOfWorkNotification(workDay, workTimeBalance)
+            startTrackingService()
+            workState?.let { workState ->
+                notificationService.scheduleEndOfWorkNotification(
+                    workState.workDay,
+                    workState.workTimeBalance
+                )
+            }
         }
+
+        wasWorkFinished = isWorkFinished
     }
 
-    private fun startTrackingService(
-        workDay: WorkDay,
-        workTimeBalance: WorkTimeBalance,
-    ) {
-        doOnTrackingService(WorkTimeTrackerService.ACTION_START) {
-            putExtra(EXTRA_WORK_DAY, workDay)
-            putExtra(EXTRA_WORK_TIME_BALANCE, workTimeBalance)
-        }
-    }
-
-    private fun updateTrackingService(
-        workDay: WorkDay,
-        workTimeBalance: WorkTimeBalance,
-    ) {
-        doOnTrackingService(WorkTimeTrackerService.ACTION_UPDATE) {
-            putExtra(EXTRA_WORK_DAY, workDay)
-            putExtra(EXTRA_WORK_TIME_BALANCE, workTimeBalance)
-        }
+    private fun startTrackingService() {
+        doOnTrackingService(WorkTimeTrackerService.ACTION_START)
     }
 
     private fun stopTrackingService() {
         doOnTrackingService(WorkTimeTrackerService.ACTION_STOP)
     }
 
-    private fun doOnTrackingService(action: String, block: (Intent.() -> Unit)? = null) {
+    private fun doOnTrackingService(action: String) {
         val intent = Intent(getApplication(), WorkTimeTrackerService::class.java).apply {
             this.action = action
-            block?.let { this.it() }
         }
         getApplication<WorkTimeMeasureApp>().startService(intent)
     }

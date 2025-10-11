@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
 import androidx.paging.PagingSource
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import net.wojteksz128.worktimemeasureapp.database.history.EntityHistoryDao
 import net.wojteksz128.worktimemeasureapp.database.history.HistoryService
@@ -59,6 +61,13 @@ class WorkDayRepository (
     suspend fun getWorkDaysForRange(dateRange: LocalDateRange): List<WorkDay> =
         withContext(Dispatchers.IO) {
             workDayDao.findBetweenDates(dateRange.start, dateRange.endInclusive).map {
+                workDayWithEventsMapper.mapToDomainModel(it)
+            }
+        }
+
+    fun getWorkDayByDateAsFlow(date: LocalDate): Flow<WorkDay?> =
+        workDayDao.findByDateAsFlow(date).map { workDayWithEventsDto ->
+            workDayWithEventsDto?.let {
                 workDayWithEventsMapper.mapToDomainModel(it)
             }
         }
