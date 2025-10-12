@@ -17,7 +17,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class WorkTimeNotificationService @Inject constructor(
+open class WorkTimeNotificationService @Inject constructor(
     @ApplicationContext private val context: Context,
     private val dateTimeProvider: DateTimeProvider,
     private val timerManager: TimerManager,
@@ -30,7 +30,7 @@ class WorkTimeNotificationService @Inject constructor(
         const val SNOOZE_TO_NEXT_ACTION = "net.wojteksz128.worktimemeasureapp.SNOOZE_TO_NEXT_ACTION"
     }
 
-    fun showWorkInProgressNotification(workDay: WorkDay, workTimeBalance: WorkTimeBalance) {
+    open fun showWorkInProgressNotification(workDay: WorkDay, workTimeBalance: WorkTimeBalance) {
         val isEnabled = settings.WorkTime.NotifyingEnabled.value
         if (!isEnabled) return
 
@@ -39,26 +39,29 @@ class WorkTimeNotificationService @Inject constructor(
         notification.show()
     }
 
-    fun cancelWorkInProgressNotification() {
+    open fun cancelWorkInProgressNotification() {
         WorkTimeInProgressNotification.cancel(context)
     }
 
-    fun showEndOfWorkNotification() {
+    open fun showEndOfWorkNotification() {
         val notification = notificationFactory.createEndOfWorkNotification()
         notification.show()
     }
 
-    fun showEndOfWorkNotification(standardEndTime: ZonedDateTime, balancedEndTime: ZonedDateTime) {
+    open fun showEndOfWorkNotification(
+        standardEndTime: ZonedDateTime,
+        balancedEndTime: ZonedDateTime,
+    ) {
         val notification =
             notificationFactory.createEndOfWorkNotification(standardEndTime, balancedEndTime)
         notification.show()
     }
 
-    fun scheduleEndOfWorkNotification(endTime: ZonedDateTime) {
+    open fun scheduleEndOfWorkNotification(endTime: ZonedDateTime) {
         scheduleEndOfWorkNotification(endTime, null, null)
     }
 
-    fun scheduleEndOfWorkNotification(
+    open fun scheduleEndOfWorkNotification(
         endTime: ZonedDateTime,
         standardEndTime: ZonedDateTime?,
         balancedEndTime: ZonedDateTime?,
@@ -70,7 +73,7 @@ class WorkTimeNotificationService @Inject constructor(
         timerManager.setExactTimer(endTime, pendingIntent)
     }
 
-    fun scheduleEndOfWorkNotification(workDay: WorkDay, workTimeBalance: WorkTimeBalance) {
+    open fun scheduleEndOfWorkNotification(workDay: WorkDay, workTimeBalance: WorkTimeBalance) {
         val standardEndTime = workTimeBalance.getStandardEndTime(workDay)
         val balancedEndTime = workTimeBalance.getBalancedEndTime(workDay)
         val notificationTime = listOf(standardEndTime, balancedEndTime)
@@ -79,13 +82,13 @@ class WorkTimeNotificationService @Inject constructor(
         scheduleEndOfWorkNotification(notificationTime, standardEndTime, balancedEndTime)
     }
 
-    fun cancelEndOfWorkNotification() {
+    open fun cancelEndOfWorkNotification() {
         val pendingIntent = createTimerExpiredPendingIntent()
         timerManager.removeAlarm(pendingIntent)
         EndOfWorkTimeNotification.cancel(context)
     }
 
-    fun hideEndOfWorkNotification() {
+    open fun hideEndOfWorkNotification() {
         EndOfWorkTimeNotification.cancel(context)
     }
 

@@ -15,7 +15,7 @@ import org.threeten.bp.jdk8.DefaultInterfaceTemporal
 import org.threeten.bp.temporal.ChronoUnit
 import kotlin.math.abs
 
-class DateTimeUtils (
+open class DateTimeUtils(
     private val context: Context,
     private val dateTimeProvider: DateTimeProvider,
 ) {

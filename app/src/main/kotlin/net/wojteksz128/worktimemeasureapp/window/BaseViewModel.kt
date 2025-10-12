@@ -12,7 +12,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.wojteksz128.worktimemeasureapp.R
-import net.wojteksz128.worktimemeasureapp.WorkTimeMeasureApp
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.settings.item.StringSettingsItem
 import javax.inject.Inject
@@ -69,7 +68,8 @@ open class BaseViewModel @Inject constructor(
             imageBitmap = if (imagePath != null) {
                 BitmapFactory.decodeFile(imagePath)
             } else {
-                BitmapFactory.decodeResource(getApplication<WorkTimeMeasureApp>().applicationContext.resources,
+                BitmapFactory.decodeResource(
+                    getApplication<Application>().applicationContext.resources,
                     R.mipmap.ic_launcher_round)
             }
         }
@@ -87,7 +87,7 @@ open class BaseViewModel @Inject constructor(
         val profileUsernameNullable = settingsItem.valueNullable
         textUpdate(
                 profileUsernameNullable
-                        ?: getApplication<WorkTimeMeasureApp>().getString(
+                    ?: getApplication<Application>().getString(
                                 defaultMessageResId
                         )
         )

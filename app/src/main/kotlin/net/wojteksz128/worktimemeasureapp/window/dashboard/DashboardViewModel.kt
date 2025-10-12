@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.wojteksz128.worktimemeasureapp.R
-import net.wojteksz128.worktimemeasureapp.WorkTimeMeasureApp
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
 import net.wojteksz128.worktimemeasureapp.model.ComeEventType
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
@@ -91,14 +90,14 @@ class DashboardViewModel @Inject constructor(
         val intent = Intent(getApplication(), WorkTimeTrackerService::class.java).apply {
             this.action = action
         }
-        getApplication<WorkTimeMeasureApp>().startService(intent)
+        getApplication<Application>().startService(intent)
     }
 
     fun onComeEventDelete(comeEvent: ComeEvent?) = viewModelScope.launch {
         withContext(Dispatchers.IO) {
             comeEvent?.let { comeEventRepository.delete(it) }
             val message =
-                getApplication<WorkTimeMeasureApp>().getString(R.string.work_day_details_come_events_deleted_message)
+                getApplication<Application>().getString(R.string.work_day_details_come_events_deleted_message)
             viewModelScope.launch { mSnackbarMessage.value = message }
         }
     }
@@ -107,7 +106,7 @@ class DashboardViewModel @Inject constructor(
         withContext(Dispatchers.IO) {
             comeEventRepository.save(modifiedComeEvent)
             val message =
-                getApplication<WorkTimeMeasureApp>().getString(R.string.work_day_details_come_events_edited_message)
+                getApplication<Application>().getString(R.string.work_day_details_come_events_edited_message)
             viewModelScope.launch { mSnackbarMessage.value = message }
         }
     }
@@ -125,7 +124,7 @@ class DashboardViewModel @Inject constructor(
                 ComeEventType.COME_OUT -> R.string.dashboard_snackbar_info_outcome_registered
             }
 
-            val message = getApplication<WorkTimeMeasureApp>().getString(messageKey)
+            val message = getApplication<Application>().getString(messageKey)
             mSnackbarMessage.value = message
 
             waitingFor.value = false

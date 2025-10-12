@@ -12,15 +12,15 @@ import org.threeten.bp.DayOfWeek
 import org.threeten.bp.LocalDate
 import org.threeten.bp.ZonedDateTime
 
-class DayOffService(
+open class DayOffService(
     private val dayOffRepository: DayOffRepository,
     private val externalHolidayRepositoriesFacade: ExternalHolidayRepositoriesFacade,
     @Suppress("PrivatePropertyName") private val Settings: Settings,
 ) : ClassTagAware {
 
-    suspend fun getDayType(date: ZonedDateTime): DayType = getDayType(date.toLocalDate())
+    open suspend fun getDayType(date: ZonedDateTime): DayType = getDayType(date.toLocalDate())
 
-    suspend fun getDayType(date: LocalDate): DayType {
+    open suspend fun getDayType(date: LocalDate): DayType {
         return getDayOffInDate(date)?.let {
             DayType.ofDayOff(it)
         } ?: if (isWorkingDay(date))
