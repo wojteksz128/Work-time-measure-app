@@ -10,6 +10,7 @@ import dagger.hilt.testing.TestInstallIn
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.database.history.HistoryService
 import net.wojteksz128.worktimemeasureapp.module.dayOff.DayOffService
+import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeNotificationFactory
 import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeNotificationService
 import net.wojteksz128.worktimemeasureapp.repository.ComeEventRepository
 import net.wojteksz128.worktimemeasureapp.repository.WorkDayRepository
@@ -51,6 +52,12 @@ object TestAppModule {
     @Singleton
     @Provides
     fun provideWorkTimeNotificationService(): WorkTimeNotificationService {
+        return mock()
+    }
+
+    @Singleton
+    @Provides
+    fun provideWorkTimeNotificationFactory(): WorkTimeNotificationFactory {
         return mock()
     }
 

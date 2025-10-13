@@ -17,7 +17,7 @@ import net.wojteksz128.worktimemeasureapp.window.dashboard.DashboardActivity
 import org.threeten.bp.Duration
 import org.threeten.bp.ZonedDateTime
 
-class WorkTimeInProgressNotification(
+open class WorkTimeInProgressNotification(
     context: Context,
     private val workDay: WorkDay,
     private val workTimeBalance: WorkTimeBalance,
