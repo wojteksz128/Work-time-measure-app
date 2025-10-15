@@ -8,6 +8,7 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.swipeLeft
 import androidx.test.espresso.action.ViewActions.swipeRight
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.DrawerActions
@@ -258,5 +259,28 @@ class DashboardActivityTest {
 
         // Check if the delete dialog is displayed
         onView(withText(R.string.delete_come_event_dialog_title)).check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun test_swipeLeftOnComeEvent_opensEditDialog() {
+        // Start the work day
+        onView(withId(R.id.dashboard_enter_fab)).perform(click())
+
+        // Wait for the work to be started
+        awaitState(workStateFlow) { state ->
+            state?.workDay?.isWorkFinished() == false
+        }
+
+        // Swipe right on the first item in the RecyclerView
+        onView(withId(R.id.dashboard_current_day_events_list))
+            .perform(
+                RecyclerViewActions.actionOnItemAtPosition<ComeEventsAdapter.ComeEventViewHolder>(
+                    0,
+                    swipeLeft()
+                )
+            )
+
+        // Check if the delete dialog is displayed
+        onView(withText(R.string.edit_come_event_dialog_title)).check(matches(isDisplayed()))
     }
 }
