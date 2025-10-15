@@ -164,6 +164,10 @@ class DashboardActivityTest {
 
     @Test
     fun test_uiUpdatesCorrectlyAfterFabClick() {
+        // Get the expected snackbar message from resources
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        val expectedMessage = context.getString(R.string.dashboard_snackbar_info_income_registered)
+
         // Click the FAB to start work
         onView(withId(R.id.dashboard_enter_fab)).perform(click())
 
@@ -183,6 +187,7 @@ class DashboardActivityTest {
         )
         onView(withId(R.id.dashboard_current_day_events_list)).check(matches(isDisplayed()))
         onView(withId(R.id.dashboard_current_day_events_list)).check(matches(withItemCount(1)))
+        onView(withText(expectedMessage)).check(matches(isDisplayed()))
 
         // One second after clicking, values should change
         Thread.sleep(1000)
@@ -193,6 +198,7 @@ class DashboardActivityTest {
 
         // Verify that the notification factory was called to create the notification.
         // This confirms that the WorkTimeTrackerService was started and is working correctly.
+        // Use atLeastOnce() because the ticker will cause multiple emissions.
         verify(notificationFactory, timeout(1000).atLeastOnce()).createWorkInProgressNotification(
             any<WorkDay>(),
             any<WorkTimeBalance>()
