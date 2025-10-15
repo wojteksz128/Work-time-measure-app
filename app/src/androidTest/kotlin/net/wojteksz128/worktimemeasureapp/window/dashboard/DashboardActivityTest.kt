@@ -8,9 +8,11 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.swipeRight
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.DrawerActions
 import androidx.test.espresso.contrib.NavigationViewActions
+import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
@@ -35,6 +37,7 @@ import net.wojteksz128.worktimemeasureapp.util.comeevent.ComeEventUtils
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.datetime.WorkTimeBalance
 import net.wojteksz128.worktimemeasureapp.util.withItemCount
+import net.wojteksz128.worktimemeasureapp.window.history.ComeEventsAdapter
 import org.hamcrest.CoreMatchers.not
 import org.junit.After
 import org.junit.Before
@@ -232,5 +235,28 @@ class DashboardActivityTest {
         onView(withId(R.id.base_nav_view)).perform(NavigationViewActions.navigateTo(R.id.nav_settings))
         // Verifies that the SettingsActivity layout is visible
         onView(withId(R.id.settings)).check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun test_swipeRightOnComeEvent_opensDeleteDialog() {
+        // Start the work day
+        onView(withId(R.id.dashboard_enter_fab)).perform(click())
+
+        // Wait for the work to be started
+        awaitState(workStateFlow) { state ->
+            state?.workDay?.isWorkFinished() == false
+        }
+
+        // Swipe right on the first item in the RecyclerView
+        onView(withId(R.id.dashboard_current_day_events_list))
+            .perform(
+                RecyclerViewActions.actionOnItemAtPosition<ComeEventsAdapter.ComeEventViewHolder>(
+                    0,
+                    swipeRight()
+                )
+            )
+
+        // Check if the delete dialog is displayed
+        onView(withText(R.string.delete_come_event_dialog_title)).check(matches(isDisplayed()))
     }
 }
