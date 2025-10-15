@@ -11,20 +11,31 @@ import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.DrawerActions
 import androidx.test.espresso.contrib.NavigationViewActions
+import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.runBlocking
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
+import net.wojteksz128.worktimemeasureapp.model.WorkState
 import net.wojteksz128.worktimemeasureapp.model.fieldType.DayType
 import net.wojteksz128.worktimemeasureapp.module.dayOff.DayOffService
 import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeInProgressNotification
 import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeNotificationFactory
 import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeNotificationService
+import net.wojteksz128.worktimemeasureapp.repository.WorkDayRepository
+import net.wojteksz128.worktimemeasureapp.settings.InitialSettingsPreparer
+import net.wojteksz128.worktimemeasureapp.util.awaitState
+import net.wojteksz128.worktimemeasureapp.util.comeevent.ComeEventUtils
+import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.datetime.WorkTimeBalance
+import net.wojteksz128.worktimemeasureapp.util.withItemCount
+import org.hamcrest.CoreMatchers.not
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -35,6 +46,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
+import org.mockito.kotlin.verifyBlocking
 import org.mockito.kotlin.whenever
 import org.threeten.bp.LocalDate
 import org.threeten.bp.ZonedDateTime
@@ -56,14 +68,31 @@ class DashboardActivityTest {
     @Inject
     lateinit var notificationFactory: WorkTimeNotificationFactory
 
+    @Inject
+    lateinit var workDayRepository: WorkDayRepository
+
+    @Inject
+    lateinit var dateTimeProvider: DateTimeProvider
+
+    @Inject
+    lateinit var comeEventUtils: ComeEventUtils
+
+    @Inject
+    lateinit var initialSettingsPreparer: InitialSettingsPreparer
+
+    @Inject
+    lateinit var workStateFlow: StateFlow<WorkState?>
+
     private lateinit var scenario: ActivityScenario<DashboardActivity>
 
     @Before
     fun setup() {
         hiltRule.inject()
 
+        // Initialize application settings first to ensure correct values are loaded
+        initialSettingsPreparer.initSettings()
+
         runBlocking {
-            // Mocking DayOffService BEFORE the activity is launched is crucial
             doAnswer { DayType.WorkDay }.whenever(dayOffService).getDayType(any<ZonedDateTime>())
             doAnswer { DayType.WorkDay }.whenever(dayOffService).getDayType(any<LocalDate>())
         }
@@ -117,11 +146,54 @@ class DashboardActivityTest {
         // Clicks the FAB
         onView(withId(R.id.dashboard_enter_fab)).perform(click())
 
-        // Use timeout to wait for async operations to complete. This is crucial.
+        // Verify that onRegisterNewEvent() was called on the ViewModel by checking
+        // if it triggered a call on its dependency, ComeEventUtils.
+        verifyBlocking(comeEventUtils) { registerNewEvent() }
+    }
+
+    @Test
+    fun test_initialStateIsCorrect() {
+        // Verify initial visibility
+        onView(withId(R.id.dashboard_current_day_empty_events_message)).check(matches(isDisplayed()))
+        onView(withId(R.id.dashboard_current_day_events_list)).check(matches(not(isDisplayed())))
+
+        // Verify initial timer values
+        onView(withId(R.id.dashboard_remaining_day_time)).check(matches(hasDescendant(withText("8:00:00"))))
+        onView(withId(R.id.dashboard_today_work_time)).check(matches(hasDescendant(withText("0:00:00"))))
+    }
+
+    @Test
+    fun test_uiUpdatesCorrectlyAfterFabClick() {
+        // Click the FAB to start work
+        onView(withId(R.id.dashboard_enter_fab)).perform(click())
+
+        // ----- AFTER -----
+        // Wait for the work to be started
+        awaitState(workStateFlow) { state ->
+            state?.workDay?.isWorkFinished() == false
+        }
+
+        // After clicking, the empty message should disappear and the list should appear with one item
+        onView(withId(R.id.dashboard_current_day_empty_events_message)).check(
+            matches(
+                not(
+                    isDisplayed()
+                )
+            )
+        )
+        onView(withId(R.id.dashboard_current_day_events_list)).check(matches(isDisplayed()))
+        onView(withId(R.id.dashboard_current_day_events_list)).check(matches(withItemCount(1)))
+
+        // One second after clicking, values should change
+        Thread.sleep(1000)
+
+        // Verify that timers have started and their values have changed
+        onView(withId(R.id.dashboard_remaining_day_time)).check(matches(not(hasDescendant(withText("8:00:00")))))
+        onView(withId(R.id.dashboard_today_work_time)).check(matches(not(hasDescendant(withText("0:00:00")))))
 
         // Verify that the notification factory was called to create the notification.
         // This confirms that the WorkTimeTrackerService was started and is working correctly.
-        verify(notificationFactory, timeout(1000)).createWorkInProgressNotification(
+        verify(notificationFactory, timeout(1000).atLeastOnce()).createWorkInProgressNotification(
             any<WorkDay>(),
             any<WorkTimeBalance>()
         )

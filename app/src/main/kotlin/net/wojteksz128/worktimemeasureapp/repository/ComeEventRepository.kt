@@ -7,7 +7,7 @@ import net.wojteksz128.worktimemeasureapp.database.history.EntityHistoryDao
 import net.wojteksz128.worktimemeasureapp.database.history.HistoryService
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
 
-class ComeEventRepository(
+open class ComeEventRepository(
     private val comeEventDao: ComeEventDao,
     comeEventMapper: ComeEventMapper,
     historyService: HistoryService,

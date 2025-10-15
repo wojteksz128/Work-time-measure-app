@@ -17,7 +17,7 @@ import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import net.wojteksz128.worktimemeasureapp.util.datetime.LocalDateRange
 import org.threeten.bp.LocalDate
 
-class WorkDayRepository (
+open class WorkDayRepository(
     private val workDayDao: WorkDayDao,
     workDayMapper: WorkDayMapper,
     private val workDayWithEventsMapper: WorkDayWithEventsMapper,
@@ -28,46 +28,46 @@ class WorkDayRepository (
     override suspend fun getById(id: Long): WorkDayDto? = workDayDao.findById(id.toInt()).workDay
 
     // TODO: 09.10.2021 Key z Int do Long
-    fun getAllPaged(): () -> PagingSource<Int, WorkDay> =
+    open fun getAllPaged(): () -> PagingSource<Int, WorkDay> =
         workDayDao.findAllInLiveData()
             .mapByPage { workDayWithEventsMapper.mapToDomainModelList(it) }
             .asPagingSourceFactory(Dispatchers.IO)
 
-    suspend fun getWorkDayByDate(currentDate: LocalDate): WorkDay? {
+    open suspend fun getWorkDayByDate(currentDate: LocalDate): WorkDay? {
         val entity = workDayDao.findByDate(currentDate)
         return entity?.let { workDayWithEventsMapper.mapToDomainModel(entity) }
     }
 
     // TODO: 09.10.2021 Czy oddzielne metody LiveData i normalne jest potrzebne?
-    fun getWorkDayByDateInLiveData(date: LocalDate): LiveData<WorkDay> =
+    open fun getWorkDayByDateInLiveData(date: LocalDate): LiveData<WorkDay> =
         workDayDao.findByDateInLiveData(date).map { workDayWithEventsDto ->
                 workDayWithEventsDto?.let {
                     workDayWithEventsMapper.mapToDomainModel(it)
                 } ?: WorkDay(date)
             }
 
-    suspend fun getWorkDayById(workDayId: Long): WorkDay? =
+    open fun getWorkDayByDateAsFlow(date: LocalDate): Flow<WorkDay?> =
+        workDayDao.findByDateAsFlow(date).map { workDayWithEventsDto ->
+            workDayWithEventsDto?.let {
+                workDayWithEventsMapper.mapToDomainModel(it)
+            }
+        }
+
+    open suspend fun getWorkDayById(workDayId: Long): WorkDay? =
         workDayDao.findById(workDayId.toInt()).let { workDayWithEventsDto ->
             workDayWithEventsMapper.mapToDomainModel(workDayWithEventsDto)
         }
 
-    fun getWorkDayByIdInLiveData(workDayId: Long): LiveData<WorkDay?> =
+    open fun getWorkDayByIdInLiveData(workDayId: Long): LiveData<WorkDay?> =
         workDayDao.findByIdInLiveData(workDayId.toInt()).map { workDayWithEventsDto ->
             workDayWithEventsDto.let {
                 workDayWithEventsMapper.mapToDomainModel(it)
             }
         }
 
-    suspend fun getWorkDaysForRange(dateRange: LocalDateRange): List<WorkDay> =
+    open suspend fun getWorkDaysForRange(dateRange: LocalDateRange): List<WorkDay> =
         withContext(Dispatchers.IO) {
             workDayDao.findBetweenDates(dateRange.start, dateRange.endInclusive).map {
-                workDayWithEventsMapper.mapToDomainModel(it)
-            }
-        }
-
-    fun getWorkDayByDateAsFlow(date: LocalDate): Flow<WorkDay?> =
-        workDayDao.findByDateAsFlow(date).map { workDayWithEventsDto ->
-            workDayWithEventsDto?.let {
                 workDayWithEventsMapper.mapToDomainModel(it)
             }
         }

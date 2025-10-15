@@ -31,6 +31,8 @@ data class WorkDay(
         if (date != other.date) return false
         if (beginSlot != other.beginSlot) return false
         if (endSlot != other.endSlot) return false
+        // TODO: Is it creates new problems? Earlier I do not compare events
+        if (events != other.events) return false
 
         return true
     }
@@ -40,6 +42,7 @@ data class WorkDay(
         result = 31 * result + date.hashCode()
         result = 31 * result + beginSlot.hashCode()
         result = 31 * result + endSlot.hashCode()
+        result = 31 * result + events.hashCode()
         return result
     }
 }

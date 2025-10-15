@@ -37,7 +37,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activity_dashboard),
     DeleteComeEventDialogListener, EditComeEventDialogListener {
-    private val viewModel: DashboardViewModel by viewModels()
+    val viewModel: DashboardViewModel by viewModels()
     private val selectedComeEventViewModel: SelectedComeEventViewModel by viewModels()
 
     @Inject
