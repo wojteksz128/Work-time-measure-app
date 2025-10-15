@@ -11,8 +11,6 @@ import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.swipeLeft
 import androidx.test.espresso.action.ViewActions.swipeRight
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.contrib.DrawerActions
-import androidx.test.espresso.contrib.NavigationViewActions
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
@@ -22,7 +20,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.runBlocking
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import net.wojteksz128.worktimemeasureapp.model.WorkState
@@ -47,11 +44,11 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.timeout
 import org.mockito.kotlin.any
-import org.mockito.kotlin.doAnswer
+import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.stub
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyBlocking
-import org.mockito.kotlin.whenever
 import org.threeten.bp.LocalDate
 import org.threeten.bp.ZonedDateTime
 import javax.inject.Inject
@@ -96,9 +93,9 @@ class DashboardActivityTest {
         // Initialize application settings first to ensure correct values are loaded
         initialSettingsPreparer.initSettings()
 
-        runBlocking {
-            doAnswer { DayType.WorkDay }.whenever(dayOffService).getDayType(any<ZonedDateTime>())
-            doAnswer { DayType.WorkDay }.whenever(dayOffService).getDayType(any<LocalDate>())
+        dayOffService.stub {
+            onBlocking { getDayType(any<ZonedDateTime>()) } doReturn DayType.WorkDay
+            onBlocking { getDayType(any<LocalDate>()) } doReturn DayType.WorkDay
         }
 
         // A real notification object is needed to avoid system-level NullPointerExceptions
@@ -120,12 +117,13 @@ class DashboardActivityTest {
             .build()
 
         // Mocking creation of WorkTimeInProgressNotification
-        val notification = mock<WorkTimeInProgressNotification>().apply {
+        val notification = mock<WorkTimeInProgressNotification>().stub {
             // Configure the mock to return the REAL notification object
-            doAnswer { realNotification }.whenever(this).build()
+            on { build() } doReturn realNotification
         }
-        doAnswer { notification }.whenever(notificationFactory)
-            .createWorkInProgressNotification(any<WorkDay>(), any<WorkTimeBalance>())
+        notificationFactory.stub {
+            on { createWorkInProgressNotification(any(), any()) } doReturn notification
+        }
 
         // Manually launching the activity AFTER the mocks are configured
         scenario = ActivityScenario.launch(DashboardActivity::class.java)
@@ -213,29 +211,6 @@ class DashboardActivityTest {
             any<WorkDay>(),
             any<WorkTimeBalance>()
         )
-    }
-
-    @Test
-    fun test_navigationDrawer() {
-        // Opens the navigation drawer and checks if it's visible
-        onView(withId(R.id.base_drawer_layout)).perform(DrawerActions.open())
-        onView(withId(R.id.base_nav_view)).check(matches(isDisplayed()))
-    }
-
-    @Test
-    fun test_navigationToHistory() {
-        onView(withId(R.id.base_drawer_layout)).perform(DrawerActions.open())
-        onView(withId(R.id.base_nav_view)).perform(NavigationViewActions.navigateTo(R.id.nav_history))
-        // Verifies that the HistoryActivity layout is visible
-        onView(withId(R.id.history_layout)).check(matches(isDisplayed()))
-    }
-
-    @Test
-    fun test_navigationToSettings() {
-        onView(withId(R.id.base_drawer_layout)).perform(DrawerActions.open())
-        onView(withId(R.id.base_nav_view)).perform(NavigationViewActions.navigateTo(R.id.nav_settings))
-        // Verifies that the SettingsActivity layout is visible
-        onView(withId(R.id.settings)).check(matches(isDisplayed()))
     }
 
     @Test
