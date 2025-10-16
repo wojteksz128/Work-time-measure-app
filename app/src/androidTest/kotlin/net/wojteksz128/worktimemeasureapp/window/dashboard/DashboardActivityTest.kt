@@ -20,6 +20,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.runBlocking
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import net.wojteksz128.worktimemeasureapp.model.WorkState
@@ -49,6 +50,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.stub
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyBlocking
+import org.threeten.bp.Duration
 import org.threeten.bp.LocalDate
 import org.threeten.bp.ZonedDateTime
 import javax.inject.Inject
@@ -165,19 +167,12 @@ class DashboardActivityTest {
     }
 
     @Test
-    fun test_uiUpdatesCorrectlyAfterFabClick() {
+    fun test_uiUpdatesCorrectlyAfterFabClick() = runBlocking {
         // Get the expected snackbar message from resources
         val context = ApplicationProvider.getApplicationContext<Context>()
         val expectedMessage = context.getString(R.string.dashboard_snackbar_info_income_registered)
 
-        // Click the FAB to start work
-        onView(withId(R.id.dashboard_enter_fab)).perform(click())
-
-        // ----- AFTER -----
-        // Wait for the work to be started
-        awaitState(workStateFlow) { state ->
-            state?.workDay?.isWorkFinished() == false
-        }
+        startWorkDay()
 
         // After clicking, the empty message should disappear and the list should appear with one item
         onView(withId(R.id.dashboard_current_day_empty_events_message)).check(
@@ -191,8 +186,7 @@ class DashboardActivityTest {
         onView(withId(R.id.dashboard_current_day_events_list)).check(matches(withItemCount(1)))
         onView(withText(expectedMessage)).check(matches(isDisplayed()))
 
-        // One second after clicking, values should change
-        Thread.sleep(1000)
+        awaitState(workStateFlow) { it!!.workTimeBalance.todayWorkTime >= Duration.ofSeconds(1L) }
 
         // Verify that timers have started and their values have changed
         onView(withId(R.id.dashboard_remaining_day_time)).check(matches(not(hasDescendant(withText("8:00:00")))))
@@ -215,13 +209,7 @@ class DashboardActivityTest {
 
     @Test
     fun test_swipeRightOnComeEvent_opensDeleteDialog() {
-        // Start the work day
-        onView(withId(R.id.dashboard_enter_fab)).perform(click())
-
-        // Wait for the work to be started
-        awaitState(workStateFlow) { state ->
-            state?.workDay?.isWorkFinished() == false
-        }
+        startWorkDay()
 
         // Swipe right on the first item in the RecyclerView
         onView(withId(R.id.dashboard_current_day_events_list))
@@ -238,13 +226,7 @@ class DashboardActivityTest {
 
     @Test
     fun test_swipeLeftOnComeEvent_opensEditDialog() {
-        // Start the work day
-        onView(withId(R.id.dashboard_enter_fab)).perform(click())
-
-        // Wait for the work to be started
-        awaitState(workStateFlow) { state ->
-            state?.workDay?.isWorkFinished() == false
-        }
+        startWorkDay()
 
         // Swipe right on the first item in the RecyclerView
         onView(withId(R.id.dashboard_current_day_events_list))
@@ -257,5 +239,16 @@ class DashboardActivityTest {
 
         // Check if the delete dialog is displayed
         onView(withText(R.string.edit_come_event_dialog_title)).check(matches(isDisplayed()))
+    }
+
+    /**
+     * Helper function to start a work day by clicking the FAB and waiting for the state to update.
+     */
+    private fun startWorkDay() {
+        // Click the FAB to start work
+        onView(withId(R.id.dashboard_enter_fab)).perform(click())
+
+        // Wait for the work to be started
+        awaitState(workStateFlow) { it?.workDay?.isWorkFinished() == false }
     }
 }
