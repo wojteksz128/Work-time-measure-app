@@ -265,6 +265,9 @@ class DashboardActivityTest {
                 .toMutableList()
         )
 
+        // Wait for the RecyclerView to update
+        Thread.sleep(1000)
+
         // Verify that the RecyclerView now has 100 items
         onView(withId(R.id.dashboard_current_day_events_list)).check(matches(withItemCount(100)))
 
