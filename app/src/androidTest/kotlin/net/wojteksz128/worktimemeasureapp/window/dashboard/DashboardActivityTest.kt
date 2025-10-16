@@ -19,9 +19,12 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.runBlocking
 import net.wojteksz128.worktimemeasureapp.R
+import net.wojteksz128.worktimemeasureapp.di.DUMMY_ID
+import net.wojteksz128.worktimemeasureapp.model.ComeEvent
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import net.wojteksz128.worktimemeasureapp.model.WorkState
 import net.wojteksz128.worktimemeasureapp.model.fieldType.DayType
@@ -29,11 +32,12 @@ import net.wojteksz128.worktimemeasureapp.module.dayOff.DayOffService
 import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeInProgressNotification
 import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeNotificationFactory
 import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeNotificationService
-import net.wojteksz128.worktimemeasureapp.repository.WorkDayRepository
 import net.wojteksz128.worktimemeasureapp.settings.InitialSettingsPreparer
 import net.wojteksz128.worktimemeasureapp.util.awaitState
 import net.wojteksz128.worktimemeasureapp.util.comeevent.ComeEventUtils
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
+import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils.Companion.getEndDayTime
+import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils.Companion.getStartDayTime
 import net.wojteksz128.worktimemeasureapp.util.datetime.WorkTimeBalance
 import net.wojteksz128.worktimemeasureapp.util.withItemCount
 import net.wojteksz128.worktimemeasureapp.window.history.ComeEventsAdapter
@@ -72,19 +76,19 @@ class DashboardActivityTest {
     lateinit var notificationFactory: WorkTimeNotificationFactory
 
     @Inject
-    lateinit var workDayRepository: WorkDayRepository
-
-    @Inject
-    lateinit var dateTimeProvider: DateTimeProvider
-
-    @Inject
     lateinit var comeEventUtils: ComeEventUtils
 
     @Inject
     lateinit var initialSettingsPreparer: InitialSettingsPreparer
 
     @Inject
+    lateinit var dateTimeProvider: DateTimeProvider
+
+    @Inject
     lateinit var workStateFlow: StateFlow<WorkState?>
+
+    @Inject
+    lateinit var workDayFlow: MutableStateFlow<WorkDay?>
 
     private lateinit var scenario: ActivityScenario<DashboardActivity>
 
@@ -239,6 +243,34 @@ class DashboardActivityTest {
 
         // Check if the delete dialog is displayed
         onView(withText(R.string.edit_come_event_dialog_title)).check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun test_largeNumberOfComeEvents_isDisplayedCorrectly() {
+        workDayFlow.value = WorkDay(
+            DUMMY_ID,
+            dateTimeProvider.currentDate,
+            getStartDayTime(dateTimeProvider.currentDate),
+            getEndDayTime(dateTimeProvider.currentDate),
+            (1L..100L)
+                .reversed()
+                .map {
+                    ComeEvent(
+                        it,
+                        dateTimeProvider.currentTime.minusSeconds(2 * it),
+                        dateTimeProvider.currentTime.minusSeconds(2 * it + 1),
+                        DUMMY_ID
+                    )
+                }
+                .toMutableList()
+        )
+
+        // Verify that the RecyclerView now has 100 items
+        onView(withId(R.id.dashboard_current_day_events_list)).check(matches(withItemCount(100)))
+
+        // Verify that we can scroll to the last item
+        onView(withId(R.id.dashboard_current_day_events_list))
+            .perform(RecyclerViewActions.scrollToPosition<ComeEventsAdapter.ComeEventViewHolder>(99))
     }
 
     /**
