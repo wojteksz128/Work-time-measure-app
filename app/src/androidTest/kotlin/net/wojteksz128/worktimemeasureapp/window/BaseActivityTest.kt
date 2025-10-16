@@ -1,5 +1,8 @@
 package net.wojteksz128.worktimemeasureapp.window
 
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.junit4.createEmptyComposeRule
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
@@ -34,8 +37,11 @@ import javax.inject.Inject
 @HiltAndroidTest
 class BaseActivityTest {
 
-    @get:Rule
+    @get:Rule(order = 0)
     var hiltRule = HiltAndroidRule(this)
+
+    @get:Rule(order = 1)
+    val composeTestRule = createEmptyComposeRule()
 
     @Inject
     lateinit var dayOffService: DayOffService
@@ -49,7 +55,6 @@ class BaseActivityTest {
     fun setup() {
         hiltRule.inject()
 
-        // Initialize application settings first to ensure correct values are loaded
         initialSettingsPreparer.initSettings()
 
         dayOffService.stub {
@@ -79,35 +84,36 @@ class BaseActivityTest {
 
     @Test
     fun test_navigationToHome() {
-        onView(withId(R.id.base_drawer_layout)).perform(DrawerActions.open())
-        onView(withId(R.id.base_nav_view)).perform(NavigationViewActions.navigateTo(R.id.nav_home))
+        navigateTo(R.id.nav_home)
         onView(withId(R.id.dashboard_content)).check(matches(isDisplayed()))
     }
 
     @Test
     fun test_navigationToHistory() {
-        onView(withId(R.id.base_drawer_layout)).perform(DrawerActions.open())
-        onView(withId(R.id.base_nav_view)).perform(NavigationViewActions.navigateTo(R.id.nav_history))
+        navigateTo(R.id.nav_history)
         onView(withId(R.id.history_layout)).check(matches(isDisplayed()))
     }
 
     @Test
     fun test_navigationToDaysOffList() {
-        onView(withId(R.id.base_drawer_layout)).perform(DrawerActions.open())
-        onView(withId(R.id.base_nav_view)).perform(NavigationViewActions.navigateTo(R.id.nav_days_off_list))
+        navigateTo(R.id.nav_days_off_list)
+        composeTestRule.onNodeWithTag("days_off_list_layout").assertIsDisplayed()
     }
 
     @Test
     fun test_navigationToSettings() {
-        onView(withId(R.id.base_drawer_layout)).perform(DrawerActions.open())
-        onView(withId(R.id.base_nav_view)).perform(NavigationViewActions.navigateTo(R.id.nav_settings))
+        navigateTo(R.id.nav_settings)
         onView(withId(R.id.settings)).check(matches(isDisplayed()))
     }
 
     @Test
     fun test_aboutSnackbar() {
-        onView(withId(R.id.base_drawer_layout)).perform(DrawerActions.open())
-        onView(withId(R.id.base_nav_view)).perform(NavigationViewActions.navigateTo(R.id.nav_about))
+        navigateTo(R.id.nav_about)
         onView(withText(R.string.about)).check(matches(isDisplayed()))
+    }
+
+    private fun navigateTo(navId: Int) {
+        onView(withId(R.id.base_drawer_layout)).perform(DrawerActions.open())
+        onView(withId(R.id.base_nav_view)).perform(NavigationViewActions.navigateTo(navId))
     }
 }
