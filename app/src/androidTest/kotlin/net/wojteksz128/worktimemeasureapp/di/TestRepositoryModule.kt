@@ -106,16 +106,20 @@ object TestRepositoryMockModule {
     @Provides
     fun provideComeEventRepository(workDayFlow: MutableStateFlow<WorkDay?>): ComeEventRepository {
         return mock<ComeEventRepository>().stub {
-            onBlocking { save(any()) } doAnswer { invocation ->
-                val comeEvent = invocation.getArgument<ComeEvent>(0)
-                val currentWorkDay = workDayFlow.value
+            onBlocking { save(any()) }.doAnswer { invocation ->
+                val eventToSave = invocation.getArgument<ComeEvent>(0)
+                workDayFlow.value?.let { workDay ->
+                    val events = workDay.events.toMutableList()
+                    val existingIx =
+                        if (eventToSave.id != null) events.indexOfFirst { it.id == eventToSave.id } else -1
 
-                currentWorkDay?.let { day ->
-                    val updatedEvents = day.events + comeEvent.copy(id = DUMMY_ID)
-                    val updatedWorkDay = day.copy(events = updatedEvents.toMutableList())
-                    workDayFlow.value = updatedWorkDay
+                    if (existingIx != -1) { // It's an update
+                        events[existingIx] = eventToSave
+                    } else { // It's a new event
+                        events.add(eventToSave.copy(id = DUMMY_ID))
+                    }
+                    workDayFlow.value = workDay.copy(events = events)
                 }
-                return@doAnswer
             }
         }
     }

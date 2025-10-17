@@ -22,12 +22,12 @@ import org.threeten.bp.ZoneId
 import org.threeten.bp.ZonedDateTime
 import javax.inject.Inject
 
-class DateTimeProvider @Inject constructor(
+open class DateTimeProvider @Inject constructor(
     @Suppress("PrivatePropertyName") private val Settings: Settings,
     @ApplicationContext private val context: Context,
 ) : ClassTagAware {
 
-    val currentTime: ZonedDateTime
+    open val currentTime: ZonedDateTime
         get() = getCorrectedTime()
 
     val currentDate: LocalDate
