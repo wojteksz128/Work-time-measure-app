@@ -14,7 +14,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.whenever
 import org.threeten.bp.ZonedDateTime
 import javax.inject.Inject
 
@@ -30,21 +30,33 @@ class EndOfWorkTimeNotificationTest {
 
     private lateinit var context: Context
 
+    companion object {
+        private val NOW = ZonedDateTime.parse("2024-01-01T12:00:00Z")
+    }
+
     @Before
     fun setUp() {
         hiltRule.inject()
         context = ApplicationProvider.getApplicationContext()
+        whenever(dateTimeProvider.currentTime).thenReturn(NOW)
+    }
+
+    private fun buildNotification(
+        standardEndTime: ZonedDateTime? = null,
+        balancedEndTime: ZonedDateTime? = null,
+    ): Notification {
+        return EndOfWorkTimeNotification(
+            context,
+            dateTimeProvider,
+            standardEndTime,
+            balancedEndTime
+        ).build()
     }
 
     @Test
     fun build_whenNoEndTimes_showsBasicNotification() {
-        // Given
-        val notification = EndOfWorkTimeNotification(context, dateTimeProvider)
+        val builtNotification = buildNotification()
 
-        // When
-        val builtNotification = notification.build()
-
-        // Then
         assertEquals(
             context.getString(R.string.notification_end_of_work_title),
             builtNotification.extras.getString(Notification.EXTRA_TITLE)
@@ -66,19 +78,11 @@ class EndOfWorkTimeNotificationTest {
 
     @Test
     fun build_whenEndTimesInFuture_showsSnoozeToNextAction() {
-        // Given
-        val now = ZonedDateTime.now()
-        doReturn(now).`when`(dateTimeProvider).currentTime
-        val standardEndTime = now.plusMinutes(30)
-        val balancedEndTime = now.plusHours(1)
+        val standardEndTime = NOW.plusMinutes(30)
+        val balancedEndTime = NOW.plusHours(1)
 
-        val notification =
-            EndOfWorkTimeNotification(context, dateTimeProvider, standardEndTime, balancedEndTime)
+        val builtNotification = buildNotification(standardEndTime, balancedEndTime)
 
-        // When
-        val builtNotification = notification.build()
-
-        // Then
         assertEquals(3, builtNotification.actions.size)
         assertEquals(
             context.getString(R.string.notification_action_snooze_to_next),
@@ -88,18 +92,10 @@ class EndOfWorkTimeNotificationTest {
 
     @Test
     fun build_whenOneEndTimeIsNull_hidesSnoozeToNextAction() {
-        // Given
-        val now = ZonedDateTime.now()
-        doReturn(now).`when`(dateTimeProvider).currentTime
-        val standardEndTime = now.plusMinutes(30)
+        val standardEndTime = NOW.plusMinutes(30)
 
-        val notification =
-            EndOfWorkTimeNotification(context, dateTimeProvider, standardEndTime, null)
+        val builtNotification = buildNotification(standardEndTime)
 
-        // When
-        val builtNotification = notification.build()
-
-        // Then
         assertEquals(2, builtNotification.actions.size)
         val titles = builtNotification.actions.map { it.title.toString() }
         assertFalse(titles.contains(context.getString(R.string.notification_action_snooze_to_next)))
@@ -107,19 +103,11 @@ class EndOfWorkTimeNotificationTest {
 
     @Test
     fun build_whenEndTimesInPast_hidesSnoozeToNextAction() {
-        // Given
-        val now = ZonedDateTime.now()
-        doReturn(now).`when`(dateTimeProvider).currentTime
-        val standardEndTime = now.minusMinutes(30)
-        val balancedEndTime = now.minusHours(1)
+        val standardEndTime = NOW.minusMinutes(30)
+        val balancedEndTime = NOW.minusHours(1)
 
-        val notification =
-            EndOfWorkTimeNotification(context, dateTimeProvider, standardEndTime, balancedEndTime)
+        val builtNotification = buildNotification(standardEndTime, balancedEndTime)
 
-        // When
-        val builtNotification = notification.build()
-
-        // Then
         assertEquals(2, builtNotification.actions.size)
         val titles = builtNotification.actions.map { it.title.toString() }
         assertFalse(titles.contains(context.getString(R.string.notification_action_snooze_to_next)))
@@ -127,19 +115,11 @@ class EndOfWorkTimeNotificationTest {
 
     @Test
     fun build_whenOneEndTimeInFuture_showsSnoozeToNextAction() {
-        // Given
-        val now = ZonedDateTime.now()
-        doReturn(now).`when`(dateTimeProvider).currentTime
-        val standardEndTime = now.plusMinutes(30)
-        val balancedEndTime = now.minusHours(1)
+        val standardEndTime = NOW.plusMinutes(30)
+        val balancedEndTime = NOW.minusHours(1)
 
-        val notification =
-            EndOfWorkTimeNotification(context, dateTimeProvider, standardEndTime, balancedEndTime)
+        val builtNotification = buildNotification(standardEndTime, balancedEndTime)
 
-        // When
-        val builtNotification = notification.build()
-
-        // Then
         assertEquals(3, builtNotification.actions.size)
         assertEquals(
             context.getString(R.string.notification_action_snooze_to_next),
