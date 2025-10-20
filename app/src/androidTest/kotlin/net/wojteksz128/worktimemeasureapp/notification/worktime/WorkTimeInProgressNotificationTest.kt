@@ -5,6 +5,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
@@ -69,11 +70,21 @@ class WorkTimeInProgressNotificationTest {
         val builtNotification = notification.build()
 
         val contentText = builtNotification.extras.getCharSequence("android.text").toString()
+        val title = builtNotification.extras.getCharSequence("android.title").toString()
 
         // Standard End: 8:00 + 8h = 16:00
         // Balanced End: 16:00 - 1h = 15:00
         assertTrue(contentText.contains("16:00"))
         assertTrue(contentText.contains("15:00"))
+
+        // Verify title, ongoing flag and action
+        assertEquals(context.getString(R.string.notification_work_in_progress_title), title)
+        assertTrue(builtNotification.flags and android.app.Notification.FLAG_ONGOING_EVENT != 0)
+        assertEquals(1, builtNotification.actions.size)
+        assertEquals(
+            context.getString(R.string.notification_action_stop_work),
+            builtNotification.actions[0].title
+        )
     }
 
     @Test
@@ -142,13 +153,6 @@ class WorkTimeInProgressNotificationTest {
         var progressBar = builtNotification.extras.getInt("android.progressMax")
         var progress = builtNotification.extras.getInt("android.progress")
 
-        // start time is 8:00, target is 15:00. Total is 7 hours.
-        // current time is 14:00, elapsed is 6 hours (since start of work day, not from last event).
-        // Today work time is 0 at start, plus duration from 8:00 to 14:00 is 6 hours.
-        // But the progress is calculated differently, it's based on time elapsed from last start time vs target end time.
-        // Let's re-verify the logic in WorkTimeInProgressNotification.
-        // maxProgress = Duration.between(startTime, targetEndTime).seconds
-        // currentProgress = Duration.between(startTime, now).seconds
         // startTime = 08:00, targetEndTime = 15:00. max = 7 hours.
         // now = 14:00. current = 6 hours.
         assertEquals(7 * 3600, progressBar)
@@ -172,5 +176,73 @@ class WorkTimeInProgressNotificationTest {
         // elapsed is 6.5 hours
         assertEquals(7 * 3600, progressBar)
         assertEquals((6.5 * 3600).toInt(), progress)
+    }
+
+    @Test
+    fun testLongWorkDay_TimeFormatChangesToLong() {
+        val workDayId = 1L
+        val startTime = ZonedDateTime.parse("2024-01-01T20:00:00Z") // Start late
+        val event = ComeEvent(id = 1L, startDate = startTime, endDate = null, workDayId = workDayId)
+        val workDay =
+            WorkDay(date = workDayDate).copy(id = workDayId, events = mutableListOf(event))
+
+        val workTimeBalance = WorkTimeBalance(
+            todayWorkTime = Duration.ZERO,
+            requiredToday = Duration.ofHours(8),
+            monthlyBalance = Duration.ZERO // No balance for simplicity
+        )
+
+        val notification = WorkTimeInProgressNotification(
+            context,
+            workDay,
+            workTimeBalance,
+            dateTimeUtils,
+            dateTimeProvider
+        )
+        val builtNotification = notification.build()
+
+        val contentText = builtNotification.extras.getCharSequence("android.text").toString()
+
+        // Standard End: 20:00 + 8h = 04:00 next day (02.01)
+        // Check if the date "02.01" is present in the text, indicating the long format was used.
+        val expectedStandardEndTimeStr = dateTimeUtils.formatDate(
+            context.getString(R.string.notification_time_long_format),
+            startTime.plusHours(8)
+        )
+        assertTrue(contentText.contains(expectedStandardEndTimeStr))
+    }
+
+    @Test
+    fun testProgressBar_FallbackToTodayWorkTime() {
+        val workDayId = 1L
+        val startTime = ZonedDateTime.parse("2024-01-01T08:00:00Z")
+        val event = ComeEvent(id = 1L, startDate = startTime, endDate = null, workDayId = workDayId)
+        val workDay =
+            WorkDay(date = workDayDate).copy(id = workDayId, events = mutableListOf(event))
+
+        // Work time already passed
+        val workTimeBalance = WorkTimeBalance(
+            todayWorkTime = Duration.ofHours(8),
+            requiredToday = Duration.ofHours(8),
+            monthlyBalance = Duration.ZERO
+        )
+
+        // Current time is after the end of work
+        whenever(dateTimeProvider.currentTime).thenReturn(ZonedDateTime.parse("2024-01-01T18:00:00Z"))
+
+        val notification = WorkTimeInProgressNotification(
+            context,
+            workDay,
+            workTimeBalance,
+            dateTimeUtils,
+            dateTimeProvider
+        )
+        val builtNotification = notification.build()
+        val progressBar = builtNotification.extras.getInt("android.progressMax")
+        val progress = builtNotification.extras.getInt("android.progress")
+
+        // Progress should fall back to todayWorkTime / requiredToday
+        assertEquals(workTimeBalance.requiredToday.seconds.toInt(), progressBar)
+        assertEquals(workTimeBalance.todayWorkTime.seconds.toInt(), progress)
     }
 }
