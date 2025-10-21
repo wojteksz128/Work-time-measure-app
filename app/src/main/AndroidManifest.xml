@@ -56,6 +56,11 @@
                 android:value=".window.dashboard.DashboardActivity" />
         </activity>
 
+        <!-- For Instrumentation tests -->
+        <activity
+            android:name=".HiltTestActivity"
+            android:exported="false" />
+
         <receiver
             android:name=".notification.worktime.action.WorkTimeNotificationActionReceiver"
             android:enabled="true" />
