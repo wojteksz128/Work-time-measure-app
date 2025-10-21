@@ -190,7 +190,7 @@ class DashboardActivityTest {
         onView(withId(R.id.dashboard_current_day_events_list)).check(matches(withItemCount(1)))
         onView(withText(expectedMessage)).check(matches(isDisplayed()))
 
-        awaitState(workStateFlow) { it!!.workTimeBalance.todayWorkTime >= Duration.ofSeconds(1L) }
+        awaitState(workStateFlow) { it!!.workTimeBalance.todayWorkTime >= Duration.ofSeconds(2L) }
 
         // Verify that timers have started and their values have changed
         onView(withId(R.id.dashboard_remaining_day_time)).check(matches(not(hasDescendant(withText("8:00:00")))))
