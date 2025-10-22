@@ -1,5 +1,6 @@
 package net.wojteksz128.worktimemeasureapp.window.dialog.comeevent
 
+import android.text.format.DateFormat
 import android.view.View
 import android.widget.NumberPicker
 import androidx.annotation.IdRes
@@ -22,10 +23,13 @@ import androidx.test.espresso.matcher.ViewMatchers.isEnabled
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
+import net.wojteksz128.worktimemeasureapp.util.datetime.AmPm
+import net.wojteksz128.worktimemeasureapp.util.datetime.convert24To12HourFormat
 import net.wojteksz128.worktimemeasureapp.util.launchFragmentInHiltContainer
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
@@ -65,6 +69,9 @@ class EditComeEventDialogFragmentTest {
         ),
         workDayId = 1
     )
+    private val is24HourFormat by lazy {
+        DateFormat.is24HourFormat(InstrumentationRegistry.getInstrumentation().targetContext)
+    }
 
     @Before
     fun setUp() {
@@ -317,19 +324,37 @@ class EditComeEventDialogFragmentTest {
 
             override fun perform(uiController: UiController, view: View) {
                 val numberPicker = view as NumberPicker
+                val numberPickerValueRangeSize = numberPicker.maxValue - numberPicker.minValue + 1
 
                 while (numberPicker.value != value) {
-                    val delta = abs(value - numberPicker.value)
+                    val normalDelta = abs(value - numberPicker.value)
+                    val reverseDelta = numberPickerValueRangeSize - normalDelta
+
+                    val (delta, reverse) =
+                        if (normalDelta <= reverseDelta) Pair(normalDelta, false)
+                        else Pair(reverseDelta, true)
+
                     if (delta >= ROWS_PER_SWIPE) {
-                        val directionFrom =
-                            if (value > numberPicker.value) GeneralLocation.BOTTOM_CENTER else GeneralLocation.TOP_CENTER
-                        val directionTo =
-                            if (value > numberPicker.value) GeneralLocation.TOP_CENTER else GeneralLocation.BOTTOM_CENTER
+                        val (directionFrom, directionTo) =
+                            if (value > numberPicker.value)
+                                if (reverse)
+                                    Pair(GeneralLocation.TOP_CENTER, GeneralLocation.BOTTOM_CENTER)
+                                else
+                                    Pair(GeneralLocation.BOTTOM_CENTER, GeneralLocation.TOP_CENTER)
+                            else
+                                if (reverse)
+                                    Pair(GeneralLocation.BOTTOM_CENTER, GeneralLocation.TOP_CENTER)
+                                else
+                                    Pair(GeneralLocation.TOP_CENTER, GeneralLocation.BOTTOM_CENTER)
+
                         GeneralSwipeAction(Swipe.FAST, directionFrom, directionTo, Press.FINGER)
                             .perform(uiController, view)
                     } else {
                         val direction =
-                            if (value > numberPicker.value) GeneralLocation.BOTTOM_CENTER else GeneralLocation.TOP_CENTER
+                            if (value > numberPicker.value)
+                                if (reverse) GeneralLocation.TOP_CENTER else GeneralLocation.BOTTOM_CENTER
+                            else
+                                if (reverse) GeneralLocation.BOTTOM_CENTER else GeneralLocation.TOP_CENTER
                         GeneralClickAction(Tap.SINGLE, direction, Press.FINGER, 0, 0)
                             .perform(uiController, view)
                     }
@@ -353,9 +378,20 @@ class EditComeEventDialogFragmentTest {
             .inRoot(isDialog())
             .perform(click())
 
-        onView(allOf(withId(R.id.date_time_picker_hour), isDescendantOfA(withId(editorId))))
-            .inRoot(isDialog())
-            .perform(setNumberOnNumberPicker(hour))
+        if (is24HourFormat)
+            onView(allOf(withId(R.id.date_time_picker_hour), isDescendantOfA(withId(editorId))))
+                .inRoot(isDialog())
+                .perform(setNumberOnNumberPicker(hour))
+        else {
+            val (hour12Format, amPm) = convert24To12HourFormat(hour)
+            val amPmId = if (amPm == AmPm.AM) R.id.date_time_picker_am else R.id.date_time_picker_pm
+            onView(allOf(withId(R.id.date_time_picker_hour), isDescendantOfA(withId(editorId))))
+                .inRoot(isDialog())
+                .perform(setNumberOnNumberPicker(hour12Format))
+            onView(allOf(withId(amPmId), isDescendantOfA(withId(editorId))))
+                .inRoot(isDialog())
+                .perform(click())
+        }
         onView(allOf(withId(R.id.date_time_picker_minute), isDescendantOfA(withId(editorId))))
             .inRoot(isDialog())
             .perform(setNumberOnNumberPicker(minute))
