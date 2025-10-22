@@ -16,6 +16,7 @@
             android:paddingHorizontal="@dimen/extra_large_padding">
 
             <net.wojteksz128.worktimemeasureapp.util.view.TimeEditor
+                android:id="@+id/component_time_editor_start"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:time="@={viewModel.startTime}"
@@ -25,6 +26,7 @@
                 app:useFullFormat="@{viewModel.useFullFormat}" />
 
             <net.wojteksz128.worktimemeasureapp.util.view.TimeEditor
+                android:id="@+id/component_time_editor_finish"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:time="@={viewModel.finishTime}"
