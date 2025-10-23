@@ -173,6 +173,7 @@ dependencies {
     // This is last version compatible with mockito 5.*
     androidTestImplementation 'org.mockito.kotlin:mockito-kotlin:5.2.1'
     androidTestImplementation "androidx.fragment:fragment-testing:1.8.9"
+    androidTestImplementation "androidx.arch.core:core-testing:2.2.0"
 }
 repositories {
     mavenCentral()

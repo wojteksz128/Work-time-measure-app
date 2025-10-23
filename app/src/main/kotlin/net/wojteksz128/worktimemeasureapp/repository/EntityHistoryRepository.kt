@@ -19,13 +19,13 @@ private val Any?.isPrimitive: Boolean
         else -> false
     }
 
-class EntityHistoryRepository @Inject constructor(
+open class EntityHistoryRepository @Inject constructor(
     private val entityHistoryDao: EntityHistoryDao,
     private val gson: Gson,
     private val formatterProvider: HistoryFormatterProvider,
 ) : ClassTagAware {
 
-    fun getGroupedHistoryForWorkDay(workDayId: Long): LiveData<List<GroupedHistoryItem>> {
+    open fun getGroupedHistoryForWorkDay(workDayId: Long): LiveData<List<GroupedHistoryItem>> {
         val rawHistory = entityHistoryDao.findHistoryForWorkDay(workDayId)
 
         return rawHistory.map { historyList ->

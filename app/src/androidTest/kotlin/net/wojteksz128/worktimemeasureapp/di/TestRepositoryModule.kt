@@ -28,7 +28,6 @@ import net.wojteksz128.worktimemeasureapp.repository.api.HolidayApiRepository
 import net.wojteksz128.worktimemeasureapp.repository.api.NagerDateApiV3Repository
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
-import net.wojteksz128.worktimemeasureapp.window.history.formatters.HistoryFormatterProvider
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.mock
@@ -76,7 +75,7 @@ object TestRepositoryMockModule {
     }
 
     private fun mockSingleWorkDayByIdMethods(
-        id: Long,
+        @Suppress("SameParameterValue") id: Long,
         workDayFlow: MutableStateFlow<WorkDay?>,
         workDayRepository: WorkDayRepository,
     ) {
@@ -118,6 +117,14 @@ object TestRepositoryMockModule {
                     } else { // It's a new event
                         events.add(eventToSave.copy(id = DUMMY_ID))
                     }
+                    workDayFlow.value = workDay.copy(events = events)
+                }
+            }
+            onBlocking { delete(any()) }.doAnswer { invocation ->
+                val eventToDelete = invocation.getArgument<ComeEvent>(0)
+                workDayFlow.value?.let { workDay ->
+                    val events = workDay.events.toMutableList()
+                    events.remove(eventToDelete)
                     workDayFlow.value = workDay.copy(events = events)
                 }
             }
@@ -163,9 +170,5 @@ object TestRepositoryMockModule {
 
     @Singleton
     @Provides
-    fun provideEntityHistoryRepository(
-        entityHistoryDao: EntityHistoryDao,
-        gson: Gson,
-        formatterProvider: HistoryFormatterProvider,
-    ): EntityHistoryRepository = EntityHistoryRepository(entityHistoryDao, gson, formatterProvider)
+    fun provideEntityHistoryRepository(): EntityHistoryRepository = mock()
 }
