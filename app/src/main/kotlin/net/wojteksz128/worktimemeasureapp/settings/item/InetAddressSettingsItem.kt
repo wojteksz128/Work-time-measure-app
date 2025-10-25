@@ -6,9 +6,5 @@ import java.net.InetAddress
 open class InetAddressSettingsItem(name: Int, context: Context) : SettingsItem<InetAddress?>(
     name,
     context,
-    { sharedPreferences, key ->
-        sharedPreferences.getString(key, null)
-            ?.let { InetAddress.getByName(it) }
-    },
-    { editor, key, value -> editor.putString(key, value?.hostAddress).apply() }
-)
+    { key -> getString(key, null)?.let { InetAddress.getByName(it) } },
+    { key, value -> putString(key, value?.hostAddress) })

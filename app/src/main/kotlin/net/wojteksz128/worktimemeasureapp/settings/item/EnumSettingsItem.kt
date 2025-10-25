@@ -7,11 +7,5 @@ class EnumSettingsItem<T : Enum<T>>(@StringRes name: Int, context: Context, enum
     SettingsItem<T>(
         name,
         context,
-        { sharedPreferences, key ->
-            enumValues.firstOrNull {
-                it.name == sharedPreferences.getString(key,
-                    null)
-            }
-        },
-        { editor, key, value -> editor.putString(key, value.name) }
-    )
+        { key -> enumValues.firstOrNull { it.name == getString(key, null) } },
+        { key, value -> putString(key, value.name) })

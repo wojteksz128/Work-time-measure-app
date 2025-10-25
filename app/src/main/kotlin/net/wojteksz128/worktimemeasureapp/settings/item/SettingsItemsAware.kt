@@ -13,9 +13,9 @@ abstract class SettingsItemsAware(vararg childItems: SettingsNode) {
         items[settingsItem.keyResourceId] = settingsItem
     }
 
-    fun notifyItem(key: String?, context: Context?) {
-        if (context != null) {
-            items.filterKeys { context.getString(it) == key }.values.forEach { it.changed = true }
+    fun notifyItemChanged(key: String?, context: Context?) {
+        if (key != null && context != null) {
+            items.filterKeys { context.getString(it) == key }.values.forEach { it.invalidate() }
         }
     }
 }

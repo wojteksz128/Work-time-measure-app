@@ -4,94 +4,48 @@ import android.app.Application
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.MediatorLiveData
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.settings.Settings
-import net.wojteksz128.worktimemeasureapp.settings.item.StringSettingsItem
 import javax.inject.Inject
-import kotlin.reflect.KFunction1
 
 @HiltViewModel
 open class BaseViewModel @Inject constructor(
     application: Application,
-    private val Settings: Settings
+    @Suppress("PrivatePropertyName") private val Settings: Settings,
 ) : AndroidViewModel(application) {
-    val profileImageBitmap: LiveData<Bitmap>
-        get() = _profileImageBitmap
-    val profileUsername: LiveData<String>
-        get() = _profileUsername
-    val isProfileUsernameDefined: LiveData<Boolean>
-        get() = _isProfileUsernameDefined
-    val profileEmail: LiveData<String>
-        get() = _profileEmail
-    val isProfileEmailDefined: LiveData<Boolean>
-        get() = _isProfileEmailDefined
-
-    private val _profileImageBitmap = MutableLiveData<Bitmap>()
-    private val _profileUsername = MutableLiveData<String>()
-    private val _isProfileUsernameDefined = MutableLiveData(false)
-    private val _profileEmail = MutableLiveData<String>()
-    private val _isProfileEmailDefined = MutableLiveData(false)
-
-    init {
-        viewModelScope.launch {
-            loadImage()
-
-            setStringField(
-                    Settings.Profile.Username,
-                    _profileUsername::setValue,
-                    R.string.base_navbar_header_profile_username_notSetMessage,
-                    _isProfileUsernameDefined::setValue
+    val profileImageBitmap = MediatorLiveData<Bitmap>().apply {
+        addSource(Settings.Profile.ImagePath.valueLiveData) { imagePath ->
+            value = imagePath?.let { BitmapFactory.decodeFile(it) } ?: BitmapFactory.decodeResource(
+                getApplication<Application>().applicationContext.resources,
+                R.mipmap.ic_launcher_round
             )
-            setStringField(
-                    Settings.Profile.Email,
-                    _profileEmail::setValue,
-                    R.string.base_navbar_header_profile_email_notSetMessage,
-                    _isProfileEmailDefined::setValue
-            )
-
         }
     }
-
-
-    private suspend fun loadImage() {
-        var imageBitmap: Bitmap?
-        var imagePath: String?
-        withContext(Dispatchers.IO) {
-            imagePath = Settings.Profile.ImagePath.valueNullable
-            imageBitmap = if (imagePath != null) {
-                BitmapFactory.decodeFile(imagePath)
-            } else {
-                BitmapFactory.decodeResource(
-                    getApplication<Application>().applicationContext.resources,
-                    R.mipmap.ic_launcher_round)
-            }
-        }
-        imageBitmap?.let {
-            _profileImageBitmap.value = it
+    val profileUsername = MediatorLiveData<String>().apply {
+        addSource(Settings.Profile.Username.valueLiveData) { username ->
+            value = username ?: getApplication<Application>().getString(
+                R.string.base_navbar_header_profile_username_notSetMessage
+            )
         }
     }
-
-    private fun setStringField(
-            settingsItem: StringSettingsItem,
-            textUpdate: KFunction1<String, Unit>,
-            defaultMessageResId: Int,
-            textDefinedUpdate: KFunction1<Boolean, Unit>
-    ) {
-        val profileUsernameNullable = settingsItem.valueNullable
-        textUpdate(
-                profileUsernameNullable
-                    ?: getApplication<Application>().getString(
-                                defaultMessageResId
-                        )
-        )
-        textDefinedUpdate(profileUsernameNullable != null)
+    val isProfileUsernameDefined = MediatorLiveData<Boolean>().apply {
+        addSource(Settings.Profile.Username.valueLiveData) { username ->
+            value = username != null
+        }
+    }
+    val profileEmail = MediatorLiveData<String>().apply {
+        addSource(Settings.Profile.Email.valueLiveData) { email ->
+            value = email ?: getApplication<Application>().getString(
+                R.string.base_navbar_header_profile_email_notSetMessage
+            )
+        }
+    }
+    val isProfileEmailDefined = MediatorLiveData<Boolean>().apply {
+        addSource(Settings.Profile.Email.valueLiveData) { email ->
+            value = email != null
+        }
     }
 }
 
