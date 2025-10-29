@@ -92,7 +92,7 @@ open class WorkTimeNotificationService @Inject constructor(
         EndOfWorkTimeNotification.cancel(context)
     }
 
-    private fun createTimerExpiredPendingIntent(): PendingIntent {
+    internal open fun createTimerExpiredPendingIntent(): PendingIntent {
         val intent = Intent(context, TimerExpiredReceiver::class.java)
         return PendingIntent.getBroadcast(
             context,
@@ -102,7 +102,7 @@ open class WorkTimeNotificationService @Inject constructor(
         )
     }
 
-    private fun createTimerExpiredPendingIntent(
+    internal open fun createTimerExpiredPendingIntent(
         standardEndTime: ZonedDateTime?,
         balancedEndTime: ZonedDateTime?,
     ): PendingIntent {
