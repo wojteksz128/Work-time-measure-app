@@ -24,6 +24,7 @@ import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.settings.InitialSettingsPreparer
+import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.createTestImageUri
 import net.wojteksz128.worktimemeasureapp.util.getInternalImageUri
 import net.wojteksz128.worktimemeasureapp.util.launchFragmentInHiltContainer
@@ -45,6 +46,10 @@ class ProfileFragmentTest {
 
     @Inject
     lateinit var initialSettingsPreparer: InitialSettingsPreparer
+
+    @Suppress("PropertyName")
+    @Inject
+    lateinit var Settings: Settings
 
     private lateinit var context: Context
 
@@ -85,10 +90,12 @@ class ProfileFragmentTest {
         intended(hasAction(Intent.ACTION_GET_CONTENT))
 
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+        val expectedImagePath = getInternalImageUri(context, testImageUri)
         assertEquals(
-            getInternalImageUri(context, testImageUri),
+            expectedImagePath,
             sharedPreferences.getString(context.getString(R.string.settings_key_profile_image), "")
         )
+        assertEquals(expectedImagePath, Settings.Profile.ImagePath.valueNullable)
     }
 
     @Test
@@ -112,6 +119,7 @@ class ProfileFragmentTest {
                 ""
             )
         )
+        assertEquals(newUsername, Settings.Profile.Username.valueNullable)
     }
 
     @Test
@@ -132,6 +140,7 @@ class ProfileFragmentTest {
             newEmail,
             sharedPreferences.getString(context.getString(R.string.settings_key_profile_email), "")
         )
+        assertEquals(newEmail, Settings.Profile.Email.valueNullable)
     }
 
     @Test
