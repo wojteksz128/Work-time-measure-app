@@ -10,7 +10,7 @@ import net.wojteksz128.worktimemeasureapp.database.history.HistoryService
 import net.wojteksz128.worktimemeasureapp.model.DayOff
 import org.threeten.bp.LocalDate
 
-class DayOffRepository(
+open class DayOffRepository(
     private val dayOffDao: DayOffDao,
     dayOffMapper: DayOffMapper,
     historyService: HistoryService,
@@ -19,20 +19,20 @@ class DayOffRepository(
 
     override suspend fun getById(id: Long): DayOffDto? = dayOffDao.findById(id)
 
-    suspend fun getDayOff(date: LocalDate): DayOff? {
+    open suspend fun getDayOff(date: LocalDate): DayOff? {
         val entity = dayOffDao.findByDate(date)
         return entity?.let { mapper.mapToDomainModel(it) }
     }
 
-    suspend fun getSimilarDaysOff(dayOff: DayOff): Collection<DayOff> =
+    open suspend fun getSimilarDaysOff(dayOff: DayOff): Collection<DayOff> =
         dayOffDao.findAllInDateRange(dayOff.startDate, dayOff.finishDate)
             .map { mapper.mapToDomainModel(it) }
 
-    fun getAllInLiveData(): LiveData<List<DayOff>> =
+    open fun getAllInLiveData(): LiveData<List<DayOff>> =
         dayOffDao.findAllInLiveData().map { dayOffDtoList ->
             dayOffDtoList.map { mapper.mapToDomainModel(it) }
         }
 
-    suspend fun getAll(): List<DayOff> =
+    open suspend fun getAll(): List<DayOff> =
         dayOffDao.findAll().map { mapper.mapToDomainModel(it) }
 }

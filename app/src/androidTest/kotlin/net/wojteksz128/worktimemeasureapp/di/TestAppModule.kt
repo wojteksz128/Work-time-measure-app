@@ -13,7 +13,9 @@ import net.wojteksz128.worktimemeasureapp.module.dayOff.DayOffService
 import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeNotificationFactory
 import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeNotificationService
 import net.wojteksz128.worktimemeasureapp.repository.ComeEventRepository
+import net.wojteksz128.worktimemeasureapp.repository.DayOffRepository
 import net.wojteksz128.worktimemeasureapp.repository.WorkDayRepository
+import net.wojteksz128.worktimemeasureapp.repository.api.ExternalHolidayRepositoriesFacade
 import net.wojteksz128.worktimemeasureapp.settings.InitialSettingsPreparer
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.settings.converter.ConfigurationConverterFactory
@@ -40,22 +42,22 @@ object TestAppModule {
     fun provideDateTimeProvider(
         @ApplicationContext context: Context,
         @Suppress("LocalVariableName") Settings: Settings,
-    ): DateTimeProvider {
-        return spy(DateTimeProvider(Settings, context))
-    }
+    ) = spy(DateTimeProvider(Settings, context))
 
     @Singleton
     @Provides
     fun provideDateTimeUtils(
         @ApplicationContext context: Context,
         dateTimeProvider: DateTimeProvider,
-    ): DateTimeUtils {
-        return DateTimeUtils(context, dateTimeProvider)
-    }
+    ) = DateTimeUtils(context, dateTimeProvider)
 
     @Singleton
     @Provides
-    fun provideDayOffService(): DayOffService = mock()
+    fun provideDayOffService(
+        dayOffRepository: DayOffRepository,
+        externalHolidayRepositoriesFacade: ExternalHolidayRepositoriesFacade,
+        @Suppress("LocalVariableName") Settings: Settings,
+    ) = spy(DayOffService(dayOffRepository, externalHolidayRepositoriesFacade, Settings))
 
     @Singleton
     @Provides

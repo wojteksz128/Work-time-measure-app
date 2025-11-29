@@ -1,29 +1,23 @@
 package net.wojteksz128.worktimemeasureapp.di
 
-import android.content.Context
 import androidx.lifecycle.asLiveData
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
 import kotlinx.coroutines.flow.MutableStateFlow
-import net.wojteksz128.worktimemeasureapp.api.holidayapi.HolidayApiService
-import net.wojteksz128.worktimemeasureapp.api.nagerDate.NagerDateApiV3Service
-import net.wojteksz128.worktimemeasureapp.database.dayOff.DayOffDao
-import net.wojteksz128.worktimemeasureapp.database.dayOff.DayOffMapper
-import net.wojteksz128.worktimemeasureapp.database.history.EntityHistoryDao
-import net.wojteksz128.worktimemeasureapp.database.history.HistoryService
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
+import net.wojteksz128.worktimemeasureapp.model.Country
+import net.wojteksz128.worktimemeasureapp.model.DayOff
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import net.wojteksz128.worktimemeasureapp.repository.ComeEventRepository
 import net.wojteksz128.worktimemeasureapp.repository.DayOffRepository
 import net.wojteksz128.worktimemeasureapp.repository.EntityHistoryRepository
 import net.wojteksz128.worktimemeasureapp.repository.WorkDayRepository
 import net.wojteksz128.worktimemeasureapp.repository.api.ExternalHolidayRepositoriesFacade
+import net.wojteksz128.worktimemeasureapp.repository.api.ExternalHolidayRepository
 import net.wojteksz128.worktimemeasureapp.repository.api.HolidayApiRepository
 import net.wojteksz128.worktimemeasureapp.repository.api.NagerDateApiV3Repository
 import net.wojteksz128.worktimemeasureapp.settings.Settings
@@ -34,14 +28,18 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.stub
 import javax.inject.Singleton
 
-const val DUMMY_ID = 1L
-
 @Module
 @TestInstallIn(
     components = [SingletonComponent::class],
     replaces = [RepositoryModule::class]
 )
-object TestRepositoryMockModule {
+object TestRepositoryModule {
+
+    const val DUMMY_ID = 1L
+    val DUMMY_COUNTRIES = listOf(
+        Country("US", "United States"),
+        Country("PL", "Poland")
+    )
 
     @Singleton
     @Provides
@@ -133,40 +131,46 @@ object TestRepositoryMockModule {
 
     @Singleton
     @Provides
-    fun provideDayOffRepository(
-        dayOffDao: DayOffDao,
-        dayOffMapper: DayOffMapper,
-        historyService: HistoryService,
-        historyDao: EntityHistoryDao,
-    ): DayOffRepository = DayOffRepository(dayOffDao, dayOffMapper, historyService, historyDao)
+    fun provideDayOffRepository() = mock<DayOffRepository>().stub {
+        onBlocking { getAll() } doAnswer { listOf() }
+    }
 
     @Singleton
     @Provides
     fun provideExternalHolidayRepositoriesFacade(
         holidayApiRepository: HolidayApiRepository,
         nagerDateApiV3Repository: NagerDateApiV3Repository,
-    ): ExternalHolidayRepositoriesFacade =
-        ExternalHolidayRepositoriesFacade(holidayApiRepository, nagerDateApiV3Repository)
+    ) = ExternalHolidayRepositoriesFacade(holidayApiRepository, nagerDateApiV3Repository)
 
     @Singleton
     @Provides
     fun provideHolidayApiRepository(
-        holidayApiService: HolidayApiService,
         @Suppress("LocalVariableName") Settings: Settings,
         dateTimeProvider: DateTimeProvider,
-        gson: Gson,
-    ): HolidayApiRepository =
-        HolidayApiRepository(holidayApiService, Settings, dateTimeProvider, gson)
+    ) = mock<HolidayApiRepository>().assignMocks(Settings, dateTimeProvider)
 
     @Singleton
     @Provides
     fun provideNagerDateApiV4Repository(
-        nagerDateApiV3Service: NagerDateApiV3Service,
         @Suppress("LocalVariableName") Settings: Settings,
         dateTimeProvider: DateTimeProvider,
-        @ApplicationContext context: Context,
-    ): NagerDateApiV3Repository =
-        NagerDateApiV3Repository(nagerDateApiV3Service, Settings, dateTimeProvider, context)
+    ) = mock<NagerDateApiV3Repository>().assignMocks(Settings, dateTimeProvider)
+
+    private fun <T : ExternalHolidayRepository> T.assignMocks(
+        @Suppress("LocalVariableName") Settings: Settings,
+        dateTimeProvider: DateTimeProvider,
+    ) = stub {
+        this.on { this@assignMocks.Settings } doAnswer { Settings }
+        this.on { this@assignMocks.dateTimeProvider } doAnswer { dateTimeProvider }
+
+        onBlocking { this@assignMocks.getAvailableCountries() } doAnswer { DUMMY_COUNTRIES }
+        onBlocking {
+            this@assignMocks.getHolidays(
+                any<String>(),
+                any<Int>()
+            )
+        } doAnswer { listOf<DayOff>() }
+    }
 
     @Singleton
     @Provides
