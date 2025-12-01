@@ -11,6 +11,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import org.apache.commons.net.ntp.NTPUDPClient
@@ -42,7 +43,9 @@ open class DateTimeProvider @Inject constructor(
         val lastElapsedTime = sharedPreferences.getLong("last_elapsed_time", 0L)
 
         if (lastNtpTime == 0L || lastSystemTime == 0L || lastElapsedTime == 0L) {
-            return getNtpTime() ?: ZonedDateTime.now()
+            runBlocking {
+                return@runBlocking getNtpTime() ?: ZonedDateTime.now()
+            }
         }
 
         val currentElapsedTime = SystemClock.elapsedRealtime()
@@ -94,7 +97,7 @@ open class DateTimeProvider @Inject constructor(
         }
     }
 
-    private fun getNtpTime(): ZonedDateTime? {
+    private suspend fun getNtpTime(): ZonedDateTime? {
         if (!Settings.Sync.TimeSync.Enabled.value)
             return null
 
@@ -103,7 +106,7 @@ open class DateTimeProvider @Inject constructor(
         client.defaultTimeout = Duration.ofSeconds(5).toMillis().toInt()
         try {
             client.open()
-            val address = Settings.Sync.TimeSync.ServerAddress.value
+            val address = Settings.Sync.TimeSync.ServerAddress.getValueAsync()
             val info = client.getTime(address)
             info.computeDetails()
             val ntpTime = info.returnTime

@@ -42,7 +42,7 @@ class InitialSettingsPreparer(
         // TODO: Synchronize with external API on first run
 
         Settings.Sync.TimeSync.Enabled.value = false
-        Settings.Sync.TimeSync.ServerAddress.value = null
+        Settings.Sync.TimeSync.ServerAddress.setValue(null)
 
         Settings.Internal.FirstRun.value = false
         Settings.Internal.ConfigurationVersion.value = configurationVersion.toInt()
