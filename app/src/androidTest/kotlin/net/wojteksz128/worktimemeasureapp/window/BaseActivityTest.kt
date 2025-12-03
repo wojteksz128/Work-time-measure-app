@@ -32,6 +32,7 @@ import net.wojteksz128.worktimemeasureapp.model.fieldType.DayType
 import net.wojteksz128.worktimemeasureapp.module.dayOff.DayOffService
 import net.wojteksz128.worktimemeasureapp.settings.InitialSettingsPreparer
 import net.wojteksz128.worktimemeasureapp.util.createTestImageUri
+import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.isDefaultImage
 import net.wojteksz128.worktimemeasureapp.window.dashboard.DashboardActivity
 import org.hamcrest.Matchers.not
@@ -40,11 +41,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.stub
-import org.threeten.bp.LocalDate
-import org.threeten.bp.ZonedDateTime
 import javax.inject.Inject
 
 @RunWith(AndroidJUnit4::class)
@@ -61,6 +59,9 @@ class BaseActivityTest {
     lateinit var dayOffService: DayOffService
 
     @Inject
+    lateinit var dateTimeProvider: DateTimeProvider
+
+    @Inject
     lateinit var initialSettingsPreparer: InitialSettingsPreparer
 
     private lateinit var scenario: ActivityScenario<DashboardActivity>
@@ -73,8 +74,8 @@ class BaseActivityTest {
         initialSettingsPreparer.initSettings()
 
         dayOffService.stub {
-            onBlocking { getDayType(any<ZonedDateTime>()) } doReturn DayType.WorkDay
-            onBlocking { getDayType(any<LocalDate>()) } doReturn DayType.WorkDay
+            onBlocking { getDayType(dateTimeProvider.currentTime) } doReturn DayType.WorkDay
+            onBlocking { getDayType(dateTimeProvider.currentDate) } doReturn DayType.WorkDay
         }
 
         scenario = ActivityScenario.launch(DashboardActivity::class.java)

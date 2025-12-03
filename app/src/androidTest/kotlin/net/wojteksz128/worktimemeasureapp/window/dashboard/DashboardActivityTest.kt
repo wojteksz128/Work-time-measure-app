@@ -33,6 +33,7 @@ import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeInProgre
 import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeNotificationFactory
 import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeNotificationService
 import net.wojteksz128.worktimemeasureapp.settings.InitialSettingsPreparer
+import net.wojteksz128.worktimemeasureapp.util.FakeDateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.awaitState
 import net.wojteksz128.worktimemeasureapp.util.comeevent.ComeEventUtils
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
@@ -55,8 +56,6 @@ import org.mockito.kotlin.stub
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyBlocking
 import org.threeten.bp.Duration
-import org.threeten.bp.LocalDate
-import org.threeten.bp.ZonedDateTime
 import javax.inject.Inject
 
 @RunWith(AndroidJUnit4::class)
@@ -100,8 +99,8 @@ class DashboardActivityTest {
         initialSettingsPreparer.initSettings()
 
         dayOffService.stub {
-            onBlocking { getDayType(any<ZonedDateTime>()) } doReturn DayType.WorkDay
-            onBlocking { getDayType(any<LocalDate>()) } doReturn DayType.WorkDay
+            onBlocking { getDayType(dateTimeProvider.currentTime) } doReturn DayType.WorkDay
+            onBlocking { getDayType(dateTimeProvider.currentDate) } doReturn DayType.WorkDay
         }
 
         // A real notification object is needed to avoid system-level NullPointerExceptions
@@ -190,7 +189,8 @@ class DashboardActivityTest {
         onView(withId(R.id.dashboard_current_day_events_list)).check(matches(withItemCount(1)))
         onView(withText(expectedMessage)).check(matches(isDisplayed()))
 
-        awaitState(workStateFlow) { it!!.workTimeBalance.todayWorkTime >= Duration.ofSeconds(2L) }
+        (dateTimeProvider as FakeDateTimeProvider).advanceTimeBy(Duration.ofSeconds(5))
+        Thread.sleep(1000)
 
         // Verify that timers have started and their values have changed
         onView(withId(R.id.dashboard_remaining_day_time)).check(matches(not(hasDescendant(withText("8:00:00")))))

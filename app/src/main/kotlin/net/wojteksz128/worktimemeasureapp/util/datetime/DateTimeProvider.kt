@@ -31,10 +31,10 @@ open class DateTimeProvider @Inject constructor(
     open val currentTime: ZonedDateTime
         get() = getCorrectedTime()
 
-    val currentDate: LocalDate
+    open val currentDate: LocalDate
         get() = currentTime.toLocalDate()
 
-    val currentTimeZone: ZoneId
+    open val currentTimeZone: ZoneId
         get() = ZoneId.systemDefault()
 
     private fun getCorrectedTime(): ZonedDateTime {
@@ -55,12 +55,12 @@ open class DateTimeProvider @Inject constructor(
         return Instant.ofEpochMilli(correctedNtpTime).atZone(ZoneId.systemDefault())
     }
 
-    val weekEndDay: LocalDate
+    open val weekEndDay: LocalDate
         get() {
             return weekBeginDay.plusWeeks(1).minusDays(1)
         }
 
-    val weekBeginDay: LocalDate
+    open val weekBeginDay: LocalDate
         get() {
             val firstWeekDay =
                 Settings.WorkTime.Week.FirstWeekDay.valueNullable?.let { DayOfWeek.valueOf(it) }
@@ -77,7 +77,7 @@ open class DateTimeProvider @Inject constructor(
     private val sharedPreferences = context.getSharedPreferences("time_prefs", MODE_PRIVATE)
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
-    fun updateOffset() {
+    open fun updateOffset() {
         val timeSyncEnabled = Settings.Sync.TimeSync.Enabled.value
         if (timeSyncEnabled) {
             coroutineScope.launch {

@@ -7,6 +7,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import net.wojteksz128.worktimemeasureapp.R
+import net.wojteksz128.worktimemeasureapp.util.FakeDateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -14,7 +15,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.kotlin.whenever
 import org.threeten.bp.ZonedDateTime
 import javax.inject.Inject
 
@@ -38,7 +38,7 @@ class EndOfWorkTimeNotificationTest {
     fun setUp() {
         hiltRule.inject()
         context = ApplicationProvider.getApplicationContext()
-        whenever(dateTimeProvider.currentTime).thenReturn(NOW)
+        (dateTimeProvider as FakeDateTimeProvider).setCurrentTime(NOW)
     }
 
     private fun buildNotification(

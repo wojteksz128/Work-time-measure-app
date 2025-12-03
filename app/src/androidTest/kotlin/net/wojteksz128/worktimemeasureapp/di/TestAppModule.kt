@@ -39,13 +39,6 @@ object TestAppModule {
 
     @Singleton
     @Provides
-    fun provideDateTimeProvider(
-        @ApplicationContext context: Context,
-        @Suppress("LocalVariableName") Settings: Settings,
-    ) = spy(DateTimeProvider(Settings, context))
-
-    @Singleton
-    @Provides
     fun provideDateTimeUtils(
         @ApplicationContext context: Context,
         dateTimeProvider: DateTimeProvider,

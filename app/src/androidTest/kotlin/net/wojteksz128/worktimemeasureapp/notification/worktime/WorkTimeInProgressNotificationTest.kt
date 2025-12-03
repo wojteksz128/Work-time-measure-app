@@ -9,6 +9,7 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
+import net.wojteksz128.worktimemeasureapp.util.FakeDateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import net.wojteksz128.worktimemeasureapp.util.datetime.WorkTimeBalance
@@ -18,7 +19,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.kotlin.whenever
 import org.threeten.bp.Duration
 import org.threeten.bp.LocalDate
 import org.threeten.bp.ZonedDateTime
@@ -67,7 +67,7 @@ class WorkTimeInProgressNotificationTest {
         )
 
         mockCurrentTime?.let {
-            whenever(dateTimeProvider.currentTime).thenReturn(it)
+            (dateTimeProvider as FakeDateTimeProvider).setCurrentTime(it)
         }
 
         return WorkTimeInProgressNotification(

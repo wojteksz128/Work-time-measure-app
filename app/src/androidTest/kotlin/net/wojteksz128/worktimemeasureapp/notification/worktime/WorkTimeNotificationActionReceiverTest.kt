@@ -16,6 +16,7 @@ import net.wojteksz128.worktimemeasureapp.notification.worktime.action.WorkTimeN
 import net.wojteksz128.worktimemeasureapp.notification.worktime.action.WorkTimeNotificationActionReceiver.Companion.BALANCED_END_TIME
 import net.wojteksz128.worktimemeasureapp.notification.worktime.action.WorkTimeNotificationActionReceiver.Companion.NEXT_NOTIFICATION_TIME
 import net.wojteksz128.worktimemeasureapp.notification.worktime.action.WorkTimeNotificationActionReceiver.Companion.STANDARD_END_TIME
+import net.wojteksz128.worktimemeasureapp.util.FakeDateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.comeevent.ComeEventUtils
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import org.junit.Assert.assertEquals
@@ -28,7 +29,6 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
 import org.threeten.bp.ZonedDateTime
 import javax.inject.Inject
 
@@ -73,8 +73,7 @@ class WorkTimeNotificationActionReceiverTest {
                 this@WorkTimeNotificationActionReceiverTest.notificationService
         }
 
-        // Mock current time for snooze tests
-        whenever(dateTimeProvider.currentTime).thenReturn(NOW)
+        (dateTimeProvider as FakeDateTimeProvider).setCurrentTime(NOW)
     }
 
     private fun sendActionIntent(action: String, intentConfig: (Intent.() -> Unit)? = null) {
@@ -88,12 +87,12 @@ class WorkTimeNotificationActionReceiverTest {
     @Test
     fun stop_work_action_updates_end_time_for_last_event(): Unit = runBlocking {
         // Arrange: Start work first
-        whenever(dateTimeProvider.currentTime).thenReturn(START_TIME)
+        (dateTimeProvider as FakeDateTimeProvider).setCurrentTime(START_TIME)
         comeEventUtils.registerNewEvent() // This starts the work
         assertNotNull("WorkDay should be created", workDayFlow.value)
 
         // Arrange: Prepare for stop action
-        whenever(dateTimeProvider.currentTime).thenReturn(NOW)
+        (dateTimeProvider as FakeDateTimeProvider).setCurrentTime(NOW)
 
         // Act
         sendActionIntent(WorkTimeNotificationService.STOP_WORK_ACTION)

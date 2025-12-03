@@ -1,6 +1,7 @@
 package net.wojteksz128.worktimemeasureapp.di
 
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.liveData
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import dagger.Module
@@ -22,6 +23,7 @@ import net.wojteksz128.worktimemeasureapp.repository.api.HolidayApiRepository
 import net.wojteksz128.worktimemeasureapp.repository.api.NagerDateApiV3Repository
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
+import org.mockito.kotlin.KStubbing
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.mock
@@ -47,53 +49,42 @@ object TestRepositoryModule {
 
     @Singleton
     @Provides
-    fun provideWorkDayRepository(workDayFlow: MutableStateFlow<WorkDay?>): WorkDayRepository {
-        val workDayRepository = mock<WorkDayRepository>()
-
-        mockSingleWorkDayByDateMethods(workDayFlow, workDayRepository)
-        mockSingleWorkDayByIdMethods(DUMMY_ID, workDayFlow, workDayRepository)
-        mockMultipleWorkDays(workDayRepository)
-
-        return workDayRepository
+    fun provideWorkDayRepository(workDayFlow: MutableStateFlow<WorkDay?>) =
+        mock<WorkDayRepository>().stub {
+            mockSingleWorkDayByDateMethods(workDayFlow)
+            mockSingleWorkDayByIdMethods(DUMMY_ID, workDayFlow)
+            mockMultipleWorkDays()
     }
 
-    private fun mockSingleWorkDayByDateMethods(
+    private fun KStubbing<WorkDayRepository>.mockSingleWorkDayByDateMethods(
         workDayFlow: MutableStateFlow<WorkDay?>,
-        workDayRepository: WorkDayRepository,
     ) {
-        workDayRepository.stub {
-            on { getWorkDayByDateAsFlow(any()) } doAnswer { workDayFlow }
-            onBlocking { getWorkDayByDate(any()) } doAnswer { workDayFlow.value }
-            onBlocking { save(any()) } doAnswer { invocation ->
-                val workDayToSave = invocation.getArgument<WorkDay>(0)
-                workDayFlow.value = workDayToSave.copy(id = DUMMY_ID)
-                return@doAnswer
-            }
+        on { getWorkDayByDateAsFlow(any()) } doAnswer { workDayFlow }
+        onBlocking { getWorkDayByDate(any()) } doAnswer { workDayFlow.value }
+        onBlocking { save(any()) } doAnswer { invocation ->
+            val workDayToSave = invocation.getArgument<WorkDay>(0)
+            workDayFlow.value = workDayToSave.copy(id = DUMMY_ID)
+            return@doAnswer
         }
     }
 
-    private fun mockSingleWorkDayByIdMethods(
+    private fun KStubbing<WorkDayRepository>.mockSingleWorkDayByIdMethods(
         @Suppress("SameParameterValue") id: Long,
         workDayFlow: MutableStateFlow<WorkDay?>,
-        workDayRepository: WorkDayRepository,
     ) {
-        workDayRepository.stub {
-            onBlocking { getWorkDayById(id) } doAnswer { workDayFlow.value }
-            on { getWorkDayByIdInLiveData(any()) } doAnswer { workDayFlow.asLiveData() }
-        }
+        onBlocking { getWorkDayById(id) } doAnswer { workDayFlow.value }
+        on { getWorkDayByIdInLiveData(any()) } doAnswer { workDayFlow.asLiveData() }
     }
 
-    private fun mockMultipleWorkDays(workDayRepository: WorkDayRepository) {
-        workDayRepository.stub {
-            onBlocking { getWorkDaysForRange(any()) } doAnswer { listOf() }
-            on { getAllPaged() } doAnswer {
-                {
-                    object : PagingSource<Int, WorkDay>() {
-                        override suspend fun load(params: LoadParams<Int>): LoadResult<Int, WorkDay> =
-                            LoadResult.Page(listOf(), null, null)
+    private fun KStubbing<WorkDayRepository>.mockMultipleWorkDays() {
+        onBlocking { getWorkDaysForRange(any()) } doAnswer { listOf() }
+        on { getAllPaged() } doAnswer {
+            {
+                object : PagingSource<Int, WorkDay>() {
+                    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, WorkDay> =
+                        LoadResult.Page(listOf(), null, null)
 
-                        override fun getRefreshKey(state: PagingState<Int, WorkDay>): Int? = null
-                    }
+                    override fun getRefreshKey(state: PagingState<Int, WorkDay>): Int? = null
                 }
             }
         }
@@ -101,8 +92,8 @@ object TestRepositoryModule {
 
     @Singleton
     @Provides
-    fun provideComeEventRepository(workDayFlow: MutableStateFlow<WorkDay?>): ComeEventRepository {
-        return mock<ComeEventRepository>().stub {
+    fun provideComeEventRepository(workDayFlow: MutableStateFlow<WorkDay?>) =
+        mock<ComeEventRepository>().stub {
             onBlocking { save(any()) }.doAnswer { invocation ->
                 val eventToSave = invocation.getArgument<ComeEvent>(0)
                 workDayFlow.value?.let { workDay ->
@@ -124,7 +115,6 @@ object TestRepositoryModule {
                     val events = workDay.events.toMutableList()
                     events.remove(eventToDelete)
                     workDayFlow.value = workDay.copy(events = events)
-                }
             }
         }
     }
@@ -133,6 +123,7 @@ object TestRepositoryModule {
     @Provides
     fun provideDayOffRepository() = mock<DayOffRepository>().stub {
         onBlocking { getAll() } doAnswer { listOf() }
+        on { getAllInLiveData() } doAnswer { liveData { listOf<DayOff>() } }
     }
 
     @Singleton

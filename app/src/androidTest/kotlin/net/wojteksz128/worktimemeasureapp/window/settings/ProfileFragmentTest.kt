@@ -124,6 +124,7 @@ class ProfileFragmentTest {
 
     @Test
     fun whenValidEmailChanged_thenValueIsSaved() {
+        Settings.Profile.Email.valueNullable
         val newEmail = "test@example.com"
         launchFragmentInHiltContainer<ProfileFragment>()
 
@@ -145,6 +146,7 @@ class ProfileFragmentTest {
 
     @Test
     fun whenInvalidEmailChanged_thenErrorIsShownAndValueIsNotSaved() {
+        val oldEmail = Settings.Profile.Email.valueNullable
         val invalidEmail = "invalid-email"
         launchFragmentInHiltContainer<ProfileFragment>()
 
@@ -165,8 +167,11 @@ class ProfileFragmentTest {
         // Verify that the preference was not saved
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         assertEquals(
-            "",
-            sharedPreferences.getString(context.getString(R.string.settings_key_profile_email), "")
+            oldEmail,
+            sharedPreferences.getString(
+                context.getString(R.string.settings_key_profile_email),
+                null
+            )
         )
     }
 }
