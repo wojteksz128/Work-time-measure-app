@@ -3,13 +3,6 @@ package net.wojteksz128.worktimemeasureapp.window.settings
 import android.content.Context
 import androidx.preference.PreferenceManager
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.contrib.PickerActions
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.withClassName
-import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -17,7 +10,6 @@ import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.settings.InitialSettingsPreparer
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.launchFragmentInHiltContainer
-import org.hamcrest.Matchers.equalTo
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
@@ -49,23 +41,14 @@ class WeekWorkTimeFragmentTest {
         hiltRule.inject()
         context = ApplicationProvider.getApplicationContext()
         initialSettingsPreparer.initSettings()
+        launchFragmentInHiltContainer<WeekWorkTimeFragment>()
     }
 
     @Test
     fun givenFragmentStarted_thenDisplaysWeekWorkTimePreferences() {
-        launchFragmentInHiltContainer<WeekWorkTimeFragment>()
-
-        onView(withText(R.string.settings_workTime_week_firstWeekDay_title)).check(
-            matches(
-                isDisplayed()
-            )
-        )
-        onView(withText(R.string.settings_workTime_week_daysOfWorkingWeek_title)).check(
-            matches(
-                isDisplayed()
-            )
-        )
-        onView(withText(R.string.settings_workTime_week_duration_title)).check(matches(isDisplayed()))
+        weekWorkTimeSettings {
+            verifyIsDisplayed()
+        }
     }
 
     @Test
@@ -74,10 +57,9 @@ class WeekWorkTimeFragmentTest {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         val initialValue = sharedPreferences.getString(key, null)
 
-        launchFragmentInHiltContainer<WeekWorkTimeFragment>()
-
-        onView(withText(R.string.settings_workTime_week_firstWeekDay_title)).perform(click())
-        onView(withText(R.string.settings_workTime_week_firstWeekDay_sundayEntry)).perform(click())
+        weekWorkTimeSettings {
+            changeFirstDayOfWeek(R.string.settings_workTime_week_firstWeekDay_sundayEntry)
+        }
 
         val newValue = sharedPreferences.getString(key, null)
         assertNotEquals(initialValue, newValue)
@@ -91,12 +73,12 @@ class WeekWorkTimeFragmentTest {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         val initialValue = sharedPreferences.getStringSet(key, emptySet())
 
-        launchFragmentInHiltContainer<WeekWorkTimeFragment>()
-
-        onView(withText(R.string.settings_workTime_week_daysOfWorkingWeek_title)).perform(click())
-        onView(withText(R.string.settings_workTime_week_firstWeekDay_mondayEntry)).perform(click())
-        onView(withText(R.string.settings_workTime_week_firstWeekDay_wednesdayEntry)).perform(click())
-        onView(withText(android.R.string.ok)).perform(click())
+        weekWorkTimeSettings {
+            changeDaysOfWorkingWeek(
+                R.string.settings_workTime_week_firstWeekDay_mondayEntry,
+                R.string.settings_workTime_week_firstWeekDay_wednesdayEntry
+            )
+        }
 
         val newValue = sharedPreferences.getStringSet(key, emptySet())
         assertNotEquals(initialValue, newValue)
@@ -113,17 +95,9 @@ class WeekWorkTimeFragmentTest {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         val initialValue = sharedPreferences.getInt(key, 0)
 
-        launchFragmentInHiltContainer<WeekWorkTimeFragment>()
-
-        onView(withText(R.string.settings_workTime_week_duration_title)).perform(click())
-
-        onView(withClassName(equalTo("android.widget.TimePicker"))).perform(
-            PickerActions.setTime(
-                10,
-                15
-            )
-        )
-        onView(withText(android.R.string.ok)).perform(click())
+        weekWorkTimeSettings {
+            changeWorkTimeInDay(10, 15)
+        }
 
         val newValue = sharedPreferences.getInt(key, 0)
 
