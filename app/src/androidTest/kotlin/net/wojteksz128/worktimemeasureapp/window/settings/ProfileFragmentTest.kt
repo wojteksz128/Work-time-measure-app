@@ -72,7 +72,9 @@ class ProfileFragmentTest {
         intending(hasAction(Intent.ACTION_GET_CONTENT)).respondWith(result)
 
         profileSettings {
-            clickImagePreference()
+            editProfileImage {
+                selectTestImage()
+            }
         }
 
         intended(hasAction(Intent.ACTION_GET_CONTENT))
@@ -91,9 +93,10 @@ class ProfileFragmentTest {
         val newUsername = "John Doe"
 
         profileSettings {
-            clickUsernamePreference()
-            typeText(newUsername)
-            clickOk()
+            editUsername {
+                enterText(newUsername)
+                clickOk()
+            }
         }
 
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
@@ -112,9 +115,10 @@ class ProfileFragmentTest {
         val newEmail = "test@example.com"
 
         profileSettings {
-            clickEmailPreference()
-            typeText(newEmail)
-            clickOk()
+            editEmail {
+                enterText(newEmail)
+                clickOk()
+            }
         }
 
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
@@ -131,11 +135,12 @@ class ProfileFragmentTest {
         val invalidEmail = "invalid-email"
 
         profileSettings {
-            clickEmailPreference()
-            typeText(invalidEmail)
-            verifyErrorIsDisplayed(context.getString(R.string.settings_profile_mail_error))
-            verifyOkButtonIsNotEnabled()
-            clickCancel()
+            editEmail {
+                enterText(invalidEmail)
+                verifyErrorIsDisplayed(context.getString(R.string.settings_profile_mail_error))
+                verifyOkButtonIsNotEnabled()
+                clickCancel()
+            }
         }
 
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)

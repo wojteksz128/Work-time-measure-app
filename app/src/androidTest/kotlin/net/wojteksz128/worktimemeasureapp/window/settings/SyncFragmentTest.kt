@@ -75,7 +75,10 @@ class SyncFragmentTest {
 
         syncSettings {
             setTimeSync(true)
-            changeServer(newServerAddress)
+            editServer {
+                enterText(newServerAddress)
+                clickOk()
+            }
         }
 
         val newValue = runBlocking { Settings.Sync.TimeSync.ServerAddress.getValueAsync() }
