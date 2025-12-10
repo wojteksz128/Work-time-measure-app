@@ -28,11 +28,12 @@ class SyncFragmentTest {
     @Before
     fun setup() {
         hiltRule.inject()
-        launchFragmentInHiltContainer<SyncFragment>()
     }
 
     @Test
     fun givenFragmentStartedWithDisabledSync_thenDisplaysSyncPreferences() {
+        launchFragmentInHiltContainer<SyncFragment>()
+
         syncSettings {
             setTimeSync(false)
             verifySyncDisabled()
@@ -41,6 +42,8 @@ class SyncFragmentTest {
 
     @Test
     fun givenFragmentStartedWithEnabledSync_thenDisplaysSyncPreferences() {
+        launchFragmentInHiltContainer<SyncFragment>()
+
         syncSettings {
             setTimeSync(true)
             verifySyncEnabled()
@@ -50,6 +53,8 @@ class SyncFragmentTest {
     @Test
     fun whenTimeSyncSwitchIsToggled_thenValueIsSaved() {
         val initialValue = Settings.Sync.TimeSync.Enabled.valueNullable ?: false
+
+        launchFragmentInHiltContainer<SyncFragment>()
 
         syncSettings {
             toggleTimeSync()
@@ -65,6 +70,8 @@ class SyncFragmentTest {
         val initialValue =
             runBlocking { Settings.Sync.TimeSync.ServerAddress.getValueAsync() ?: "" }
         val newServerAddress = "time.google.com"
+
+        launchFragmentInHiltContainer<SyncFragment>()
 
         syncSettings {
             setTimeSync(true)
