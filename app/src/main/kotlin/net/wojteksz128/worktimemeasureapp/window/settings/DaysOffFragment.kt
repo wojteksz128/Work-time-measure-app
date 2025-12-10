@@ -45,9 +45,8 @@ class DaysOffFragment : BasePreferenceFragment(R.xml.days_off_preferences), Clas
 
     private fun initHolidayProviderList() {
         findPreference<ListPreference>(getString(R.string.settings_key_daysOff_public_provider))?.apply {
-            entryValues = HolidayProvider.values().map { it.name }.toTypedArray()
-            entries = HolidayProvider.values().map { it.displayName }.toTypedArray()
-            setDefaultValue(HolidayProvider.NagerDateAPI.name)
+            entryValues = HolidayProvider.entries.map { it.name }.toTypedArray()
+            entries = HolidayProvider.entries.map { it.displayName }.toTypedArray()
             onPreferenceChangeListener =
                 Preference.OnPreferenceChangeListener { _, newValue ->
                     val holidayProvider = HolidayProvider.valueOf(newValue as String)
@@ -59,7 +58,7 @@ class DaysOffFragment : BasePreferenceFragment(R.xml.days_off_preferences), Clas
 
     private fun onChangeHolidayProvider(newHolidayProvider: HolidayProvider) {
         changeSyncWithApiSwitchSummaryProvider(newHolidayProvider)
-        initCountriesList()
+        initCountriesList(newHolidayProvider)
     }
 
     private fun changeSyncWithApiSwitchSummaryProvider(holidayProvider: HolidayProvider) {
@@ -67,13 +66,13 @@ class DaysOffFragment : BasePreferenceFragment(R.xml.days_off_preferences), Clas
             SyncWithAPISwitchSummaryProvider(holidayProvider)
     }
 
-    private fun initCountriesList() {
+    private fun initCountriesList(newHolidayProvider: HolidayProvider) {
         val countriesPreference =
             findPreference<ListPreference>(getString(R.string.settings_key_daysOff_public_country))!!
         lifecycleScope.launch {
             try {
                 val countries =
-                    externalHolidayRepositoriesFacade.forAPI(Settings.DaysOff.Provider.value)
+                    externalHolidayRepositoriesFacade.forAPI(newHolidayProvider)
                         .getAvailableCountries()
                 countriesPreference.entryValues = countries.map { it.code }.toTypedArray()
                 countriesPreference.entries = countries.map { it.name }.toTypedArray()

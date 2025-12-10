@@ -17,6 +17,8 @@ import net.wojteksz128.worktimemeasureapp.BR
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.databinding.ComponentDateTimePickerBinding
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
+import net.wojteksz128.worktimemeasureapp.util.datetime.AmPm
+import net.wojteksz128.worktimemeasureapp.util.datetime.withAmPm
 import net.wojteksz128.worktimemeasureapp.util.view.util.ObservableDelegate
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalDateTime
@@ -169,32 +171,16 @@ class DateTimePicker(context: Context, attrs: AttributeSet?) : FrameLayout(conte
 
         @get:Bindable
         var isAm by ObservableDelegate(BR.am, true) { oldValue, newValue ->
-            if (oldValue != newValue) {
-                if (newValue) {
-                    val hour = mDateTime.hour
-                    mDateTime = mDateTime.withHour(
-                        if (is24HourFormat) hour else when (hour) {
-                            in 0..11 -> hour
-                            else -> hour % 12
-                        }
-                    )
-                }
+            if (oldValue != newValue && newValue) {
+                mDateTime = mDateTime.withAmPm(AmPm.AM)
                 timeChangeListenerProvider()?.onChange()
             }
         }
 
         @get:Bindable
         var isPm by ObservableDelegate(BR.pm, false) { oldValue, newValue ->
-            if (oldValue != newValue) {
-                if (newValue) {
-                    val hour = mDateTime.hour
-                    mDateTime = mDateTime.withHour(
-                        if (is24HourFormat) hour else when (hour) {
-                            in 0..11 -> hour + 12
-                            else -> hour
-                        }
-                    )
-                }
+            if (oldValue != newValue && newValue) {
+                mDateTime = mDateTime.withAmPm(AmPm.PM)
                 timeChangeListenerProvider()?.onChange()
             }
         }

@@ -11,6 +11,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import org.apache.commons.net.ntp.NTPUDPClient
@@ -22,18 +23,18 @@ import org.threeten.bp.ZoneId
 import org.threeten.bp.ZonedDateTime
 import javax.inject.Inject
 
-class DateTimeProvider @Inject constructor(
+open class DateTimeProvider @Inject constructor(
     @Suppress("PrivatePropertyName") private val Settings: Settings,
     @ApplicationContext private val context: Context,
 ) : ClassTagAware {
 
-    val currentTime: ZonedDateTime
+    open val currentTime: ZonedDateTime
         get() = getCorrectedTime()
 
-    val currentDate: LocalDate
+    open val currentDate: LocalDate
         get() = currentTime.toLocalDate()
 
-    val currentTimeZone: ZoneId
+    open val currentTimeZone: ZoneId
         get() = ZoneId.systemDefault()
 
     private fun getCorrectedTime(): ZonedDateTime {
@@ -42,7 +43,9 @@ class DateTimeProvider @Inject constructor(
         val lastElapsedTime = sharedPreferences.getLong("last_elapsed_time", 0L)
 
         if (lastNtpTime == 0L || lastSystemTime == 0L || lastElapsedTime == 0L) {
-            return getNtpTime() ?: ZonedDateTime.now()
+            runBlocking {
+                return@runBlocking getNtpTime() ?: ZonedDateTime.now()
+            }
         }
 
         val currentElapsedTime = SystemClock.elapsedRealtime()
@@ -52,12 +55,12 @@ class DateTimeProvider @Inject constructor(
         return Instant.ofEpochMilli(correctedNtpTime).atZone(ZoneId.systemDefault())
     }
 
-    val weekEndDay: LocalDate
+    open val weekEndDay: LocalDate
         get() {
             return weekBeginDay.plusWeeks(1).minusDays(1)
         }
 
-    val weekBeginDay: LocalDate
+    open val weekBeginDay: LocalDate
         get() {
             val firstWeekDay =
                 Settings.WorkTime.Week.FirstWeekDay.valueNullable?.let { DayOfWeek.valueOf(it) }
@@ -74,7 +77,7 @@ class DateTimeProvider @Inject constructor(
     private val sharedPreferences = context.getSharedPreferences("time_prefs", MODE_PRIVATE)
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
-    fun updateOffset() {
+    open fun updateOffset() {
         val timeSyncEnabled = Settings.Sync.TimeSync.Enabled.value
         if (timeSyncEnabled) {
             coroutineScope.launch {
@@ -94,7 +97,7 @@ class DateTimeProvider @Inject constructor(
         }
     }
 
-    private fun getNtpTime(): ZonedDateTime? {
+    private suspend fun getNtpTime(): ZonedDateTime? {
         if (!Settings.Sync.TimeSync.Enabled.value)
             return null
 
@@ -103,7 +106,7 @@ class DateTimeProvider @Inject constructor(
         client.defaultTimeout = Duration.ofSeconds(5).toMillis().toInt()
         try {
             client.open()
-            val address = Settings.Sync.TimeSync.ServerAddress.value
+            val address = Settings.Sync.TimeSync.ServerAddress.getValueAsync()
             val info = client.getTime(address)
             info.computeDetails()
             val ntpTime = info.returnTime

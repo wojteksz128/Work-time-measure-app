@@ -153,7 +153,7 @@ class TimeEditor(context: Context, attrs: AttributeSet?) : FrameLayout(context, 
         var useFullFormat by ObservableDelegate(BR.useFullFormat, false)
 
         fun onSetTimeClick() {
-            editedTime = time
+            editedTime = time?.let { LocalDateTime.from(it) }
             editMode = true
         }
 

@@ -9,7 +9,7 @@ import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import retrofit2.Response
 
-class NagerDateApiV3Repository(
+open class NagerDateApiV3Repository(
     private val nagerDateApiV3Service: NagerDateApiV3Service,
     override val Settings: Settings,
     override val dateTimeProvider: DateTimeProvider,

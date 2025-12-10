@@ -29,6 +29,19 @@ class EditComeEventDialogViewModel @Inject constructor(
     val finishTime = MutableLiveData<LocalDateTime?>()
     val finishTimeInEditMode = MutableLiveData(false)
 
+    val rangeIsIncorrect = MediatorLiveData<Boolean>().apply {
+        val updater = {
+            val start = startTime.value
+            val finish = finishTime.value
+            value =
+                if (start != null && finish != null) start.isAfter(finish)
+                else start == null
+        }
+
+        addSource(startTime) { updater() }
+        addSource(finishTime) { updater() }
+    }
+
     val workDayDate = MutableLiveData<LocalDate?>()
 
     val useFullFormat = MediatorLiveData<Boolean>().apply {
@@ -44,7 +57,8 @@ class EditComeEventDialogViewModel @Inject constructor(
         addSource(finishTime) { updater() }
     }
 
-    val positiveButtonEnabled = SemaphoreLiveData(1, startTimeInEditMode, finishTimeInEditMode)
+    val positiveButtonEnabled =
+        SemaphoreLiveData(1, startTimeInEditMode, finishTimeInEditMode, rangeIsIncorrect)
 
     suspend fun fill(comeEvent: ComeEvent) {
         Log.d(

@@ -9,7 +9,6 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import dagger.hilt.android.AndroidEntryPoint
 import net.wojteksz128.worktimemeasureapp.R
-import net.wojteksz128.worktimemeasureapp.WorkTimeMeasureApp
 import net.wojteksz128.worktimemeasureapp.model.fieldType.DayType
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
@@ -31,9 +30,7 @@ class TodayDayOffInformationDialogFragment(private val dayType: DayType) : Dialo
             val formattedMessage = getMessage(dayType)
             setMessage(formattedMessage)
             setPositiveButton(R.string.today_day_off_information_dialog_action_yes) { _, _ ->
-                val requireActivity = requireActivity()
-                val workTimeMeasureApp = requireActivity.application as WorkTimeMeasureApp
-                workTimeMeasureApp.closeApp(requireActivity)
+                requireActivity().finishAffinity()
             }
             setNegativeButton(R.string.today_day_off_information_dialog_action_no) { dialog, _ ->
                 dialog.cancel()

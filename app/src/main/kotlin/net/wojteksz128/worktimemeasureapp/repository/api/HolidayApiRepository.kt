@@ -11,7 +11,7 @@ import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import retrofit2.Response
 import java.util.Locale
 
-class HolidayApiRepository(
+open class HolidayApiRepository(
     private val holidayApiService: HolidayApiService,
     override val Settings: Settings,
     override val dateTimeProvider: DateTimeProvider,

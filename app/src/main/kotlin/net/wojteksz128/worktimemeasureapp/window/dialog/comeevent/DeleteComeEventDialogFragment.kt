@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class DeleteComeEventDialogFragment : DialogFragmentWithListener<DeleteComeEventDialogListener>() {
-    private val selectedComeEventViewModel: SelectedComeEventViewModel by activityViewModels()
+    internal val selectedComeEventViewModel: SelectedComeEventViewModel by activityViewModels()
 
     @Inject
     lateinit var dateTimeUtils: DateTimeUtils

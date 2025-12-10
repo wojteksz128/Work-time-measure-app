@@ -3,12 +3,10 @@ package net.wojteksz128.worktimemeasureapp.settings.item
 import android.content.Context
 import java.net.InetAddress
 
-open class InetAddressSettingsItem(name: Int, context: Context) : SettingsItem<InetAddress?>(
+open class InetAddressSettingsItem(name: Int, context: Context) :
+    AsyncSettingsItem<InetAddress, String>(
     name,
     context,
-    { sharedPreferences, key ->
-        sharedPreferences.getString(key, null)
-            ?.let { InetAddress.getByName(it) }
-    },
-    { editor, key, value -> editor.putString(key, value?.hostAddress).apply() }
-)
+        { hostname -> InetAddress.getByName(hostname) },
+        { key -> getString(key, null) },
+        { key, value -> putString(key, value.hostName) })

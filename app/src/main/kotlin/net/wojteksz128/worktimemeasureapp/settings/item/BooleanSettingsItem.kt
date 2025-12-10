@@ -9,5 +9,5 @@ open class BooleanSettingsItem(
 ) : SettingsItem<Boolean>(
     keyResourceId,
     context,
-    { sharedPreferences, key -> sharedPreferences.getBoolean(key, defaultValue) },
-    { editor, key, value -> editor.putBoolean(key, value) })
+    { key -> getBoolean(key, defaultValue) },
+    { key, value -> putBoolean(key, value) })

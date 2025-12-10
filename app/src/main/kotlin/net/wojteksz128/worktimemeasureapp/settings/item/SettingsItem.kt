@@ -2,48 +2,56 @@ package net.wojteksz128.worktimemeasureapp.settings.item
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.core.content.edit
+import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
 
 open class SettingsItem<R>(
-    val keyResourceId: Int,
-    private val appContext: Context,
-    private val valueGettingMethod: (SharedPreferences, String) -> R?,
-    private val valueSettingMethod: (SharedPreferences.Editor, String, R) -> Unit,
-) : SettingsNode() {
-    override val childNodes: Set<SettingsItem<*>>
-        get() = setOf(this)
+    keyResourceId: Int,
+    appContext: Context,
+    private val valueGetter: SharedPreferences.(String) -> R?,
+    private val valueSetter: SharedPreferences.Editor.(String, R) -> Unit,
+) : BaseSettingsItem<R>(keyResourceId, appContext) {
 
-    internal var changed: Boolean = false
-    private var readValue: R? = null
+    protected val preferences: SharedPreferences by lazy {
+        PreferenceManager.getDefaultSharedPreferences(
+            appContext
+        )
+    }
 
-    val key: String
-        get() = appContext.getString(keyResourceId)
+    private var cachedValue: R? = null
+    private var isCached = false
 
-    var value: R
+    open var value: R
         get() = valueNullable
             ?: throw NullPointerException("Cannot read '$key' from Settings (maybe it's null)")
         set(value) {
             valueNullable = value
         }
 
-
-    var valueNullable: R?
+    open var valueNullable: R?
         get() {
-            if (changed || readValue == null) {
-                val preferences = PreferenceManager.getDefaultSharedPreferences(appContext)
-                readValue = valueGettingMethod(preferences, key)
-                changed = false
+            if (!isCached) {
+                cachedValue = preferences.valueGetter(key)
+                isCached = true
             }
-            return readValue
+            return cachedValue
         }
         set(value) {
-            val editor = PreferenceManager.getDefaultSharedPreferences(appContext).edit()
-            if (value == null)
-                editor.remove(key)
-            else
-                valueSettingMethod(editor, key, value)
-
-            editor.apply()
-            changed = true
+            if (isCached && cachedValue == value) return
+            cachedValue = value
+            isCached = true
+            preferences.edit {
+                if (value == null) remove(key) else valueSetter(key, value)
+            }
+            _valueLiveData.postValue(value)
         }
+
+    private val _valueLiveData by lazy { MutableLiveData<R?>() }
+    override val valueLiveData = _valueLiveData
+
+    override fun invalidate() {
+        isCached = false
+        _valueLiveData.postValue(valueNullable)
+    }
 }

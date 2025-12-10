@@ -27,6 +27,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -58,7 +59,9 @@ class DaysOffListActivity : AppCompatActivity(), ClassTagAware {
 @Composable
 private fun Content(daysOff: List<DayOff>) {
     Surface(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .testTag("days_off_list_layout"),
         color = colorResource(R.color.background)
     ) {
         LazyColumn(
