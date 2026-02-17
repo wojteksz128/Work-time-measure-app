@@ -43,7 +43,7 @@ open class DateTimeProvider @Inject constructor(
         val lastElapsedTime = sharedPreferences.getLong("last_elapsed_time", 0L)
 
         if (lastNtpTime == 0L || lastSystemTime == 0L || lastElapsedTime == 0L) {
-            runBlocking {
+            return runBlocking {
                 return@runBlocking getNtpTime() ?: ZonedDateTime.now()
             }
         }
