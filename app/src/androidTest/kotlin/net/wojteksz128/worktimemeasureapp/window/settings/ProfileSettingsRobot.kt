@@ -33,6 +33,7 @@ class ProfileSettingsRobot : BaseScreenRobot() {
 
     fun goBack() {
         pressBack()
+        Thread.sleep(500)
     }
 
     override fun verifyIsDisplayed() {
