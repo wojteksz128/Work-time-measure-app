@@ -3,9 +3,11 @@ package net.wojteksz128.worktimemeasureapp.backup
 import android.content.Context
 import android.util.Log
 import com.google.gson.Gson
+import com.google.gson.JsonParser
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import net.wojteksz128.worktimemeasureapp.backup.migration.BackupMigrationRunner
 import net.wojteksz128.worktimemeasureapp.database.AppDatabase
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventDao
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventDto
@@ -26,10 +28,12 @@ class BackupService @Inject constructor(
     private val database: AppDatabase,
     private val baseGson: Gson,
     private val settings: Settings,
+    private val migrationRunner: BackupMigrationRunner,
 ) : ClassTagAware {
     companion object {
         private const val BACKUP_DIR = "backups"
         private const val BACKUP_EXTENSION = ".wtm_backup.json"
+        private const val CURRENT_BACKUP_VERSION = 1
     }
 
     private val gson: Gson by lazy {
@@ -98,7 +102,16 @@ class BackupService @Inject constructor(
             }
 
             val json = backupFile.readText()
-            val backupData = gson.fromJson(json, BackupData::class.java)
+            val jsonObject = JsonParser.parseString(json).asJsonObject
+            val fileVersion = jsonObject.get("backupVersion")?.asInt ?: 1
+            if (fileVersion < CURRENT_BACKUP_VERSION) {
+                Log.d(
+                    classTag,
+                    "Backup file version $fileVersion is older than current $CURRENT_BACKUP_VERSION — migrating"
+                )
+                migrationRunner.migrate(jsonObject, fileVersion, CURRENT_BACKUP_VERSION)
+            }
+            val backupData = gson.fromJson(jsonObject, BackupData::class.java)
 
             val workDayDtoList = backupData.workDays.map { it.toWorkDayDto() }
             val comeEventDtoList = backupData.comeEvents.map { it.toComeEventDto() }

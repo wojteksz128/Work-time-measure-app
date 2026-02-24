@@ -9,7 +9,7 @@ import net.wojteksz128.worktimemeasureapp.model.fieldType.DayOffType
 import org.threeten.bp.LocalDate
 import org.threeten.bp.ZonedDateTime
 
-private const val CURRENT_BACKUP_VERSION = "1.0"
+private const val CURRENT_BACKUP_VERSION = 1
 
 data class BackupData(
     val comeEvents: List<ComeEventBackup> = emptyList(),
@@ -17,7 +17,12 @@ data class BackupData(
     val daysOff: List<DayOffBackup> = emptyList(),
     val history: List<EntityHistoryBackup> = emptyList(),
     val settings: Map<String, String?> = emptyMap(),
-    val backupVersion: String = CURRENT_BACKUP_VERSION,
+    /**
+     * Version of the backup file format.
+     * Used to detect schema changes and apply migrations during import.
+     * See [net.wojteksz128.worktimemeasureapp.backup.migration.BackupMigration] and [net.wojteksz128.worktimemeasureapp.backup.migration.BackupMigrationRunner] for details.
+     */
+    val backupVersion: Int = CURRENT_BACKUP_VERSION,
     val backupTimestamp: Long = System.currentTimeMillis(),
 )
 
