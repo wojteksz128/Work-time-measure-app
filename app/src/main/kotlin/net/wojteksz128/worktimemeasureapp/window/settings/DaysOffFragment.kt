@@ -90,9 +90,13 @@ class DaysOffFragment : BasePreferenceFragment(R.xml.days_off_preferences), Clas
                 countryPreference.entryValues = countries.map { it.code }.toTypedArray()
                 countryPreference.entries = countries.map { it.name }.toTypedArray()
                 val currentlySelectedCountry = countryPreference.value
+                countryPreference.value = null
                 if (currentlySelectedCountry.isNullOrEmpty() || countryPreference.entryValues.none { it == currentlySelectedCountry }) {
                     countryPreference.value = null
                     countryPreference.callChangeListener(null)
+                } else {
+                    countryPreference.value = currentlySelectedCountry
+                    countryPreference.callChangeListener(currentlySelectedCountry)
                 }
             } catch (e: ApiErrorResponse) {
                 Snackbar.make(requireContext(), requireView(), e.message!!, Snackbar.LENGTH_LONG)
