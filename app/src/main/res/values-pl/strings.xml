@@ -322,6 +322,11 @@
     <string name="settings_backup_import_summary">Przywróć bazę danych z pliku kopii zapasowej</string>
     <string name="settings_backup_import_success">Kopia zapasowa została pomyślnie zaimportowana</string>
     <string name="settings_backup_import_error">Nie udało się zaimportować kopii zapasowej</string>
+    <string name="settings_backup_import_strategy_title">Baza danych nie jest pusta.\nCo zrobić z istniejącymi danymi?</string>
+    <string name="settings_backup_import_action_import">Importuj</string>
+    <string name="settings_backup_import_strategy_merge">Scal (nadpisz istniejące, dodaj brakujące)</string>
+    <string name="settings_backup_import_strategy_replace">Zastąp (najpierw usuń wszystkie istniejące dane)</string>
+    <string name="settings_backup_import_strategy_skip">Pomiń (dodaj tylko rekordy, których jeszcze nie ma)</string>
 
     <string name="settings_backup_sharing">Udostępnianie</string>
     <string name="settings_backup_share_title">Udostępnij kopię zapasową</string>

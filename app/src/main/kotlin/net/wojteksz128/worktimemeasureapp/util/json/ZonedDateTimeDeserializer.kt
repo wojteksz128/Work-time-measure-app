@@ -4,11 +4,20 @@ import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import com.google.gson.JsonParseException
+import com.google.gson.JsonPrimitive
+import com.google.gson.JsonSerializationContext
+import com.google.gson.JsonSerializer
 import org.threeten.bp.ZoneId
 import org.threeten.bp.ZonedDateTime
 import java.lang.reflect.Type
 
-class ZonedDateTimeDeserializer : JsonDeserializer<ZonedDateTime> {
+class ZonedDateTimeDeserializer : JsonDeserializer<ZonedDateTime>, JsonSerializer<ZonedDateTime> {
+
+    override fun serialize(
+        src: ZonedDateTime?,
+        typeOfSrc: Type,
+        context: JsonSerializationContext,
+    ): JsonElement = JsonPrimitive(src?.toString())
 
     override fun deserialize(
         json: JsonElement,

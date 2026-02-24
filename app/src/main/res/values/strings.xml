@@ -322,6 +322,11 @@
     <string name="settings_backup_import_summary">Restore database from a backup file</string>
     <string name="settings_backup_import_success">Backup imported successfully</string>
     <string name="settings_backup_import_error">Failed to import backup</string>
+    <string name="settings_backup_import_strategy_title">Database is not empty.\nChoose how to handle existing data:</string>
+    <string name="settings_backup_import_action_import">Import</string>
+    <string name="settings_backup_import_strategy_merge">Merge (overwrite existing, add missing)</string>
+    <string name="settings_backup_import_strategy_replace">Replace (delete all existing data first)</string>
+    <string name="settings_backup_import_strategy_skip">Skip (add only records that do not exist)</string>
 
     <string name="settings_backup_sharing">Sharing</string>
     <string name="settings_backup_share_title">Share backup</string>

@@ -40,6 +40,9 @@ interface WorkDayDao : EntityDao<WorkDayDto> {
     @Query(FIND_BY_ID_QUERY)
     suspend fun findById(id: Int): WorkDayWithEventsDto
 
+    @Query(FIND_BY_ID_QUERY)
+    suspend fun findByIdOrNull(id: Int): WorkDayDto?
+
     @Transaction
     @Query(FIND_BY_DATE_QUERY)
     suspend fun findByDate(date: LocalDate): WorkDayWithEventsDto?

@@ -3,7 +3,6 @@ package net.wojteksz128.worktimemeasureapp.backup
 import android.content.Context
 import android.util.Log
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -21,14 +20,16 @@ import javax.inject.Singleton
 class BackupService @Inject constructor(
     @ApplicationContext private val context: Context,
     private val database: AppDatabase,
+    private val baseGson: Gson,
 ) {
     companion object {
         private const val TAG = "BackupService"
         private const val BACKUP_DIR = "backups"
         private const val BACKUP_EXTENSION = ".wtm_backup.json"
-        private val gson: Gson = GsonBuilder()
-            .setPrettyPrinting()
-            .create()
+    }
+
+    private val gson: Gson by lazy {
+        baseGson.newBuilder().setPrettyPrinting().create()
     }
 
     suspend fun exportBackup(fileName: String? = null): Result {
@@ -93,7 +94,16 @@ class BackupService @Inject constructor(
         }
     }
 
-    suspend fun importBackup(backupFile: File): Result {
+    suspend fun isDatabaseEmpty(): Boolean = withContext(Dispatchers.IO) {
+        database.workDayDao().findAll().isEmpty() &&
+                database.comeEventDao().findAll().isEmpty() &&
+                database.dayOffDao().findAll().isEmpty()
+    }
+
+    suspend fun importBackup(
+        backupFile: File,
+        strategy: ImportStrategy = ImportStrategy.MERGE,
+    ): Result {
         return withContext(Dispatchers.IO) {
             try {
                 if (!backupFile.exists()) {
@@ -103,21 +113,21 @@ class BackupService @Inject constructor(
                 val json = backupFile.readText()
                 val backupData: BackupData = gson.fromJson(json, BackupData::class.java)
 
-                val comeEventDtos = backupData.comeEvents.map { backup ->
-                    ComeEventDto(
-                        id = backup.id,
-                        startDate = backup.startDate,
-                        endDate = backup.endDate,
-                        workDayId = backup.workDayId
-                    )
-                }
-
                 val workDayDtos = backupData.workDays.map { backup ->
                     WorkDayDto(
                         id = backup.id,
                         date = backup.date,
                         beginSlot = backup.beginSlot,
                         endSlot = backup.endSlot
+                    )
+                }
+
+                val comeEventDtos = backupData.comeEvents.map { backup ->
+                    ComeEventDto(
+                        id = backup.id,
+                        startDate = backup.startDate,
+                        endDate = backup.endDate,
+                        workDayId = backup.workDayId
                     )
                 }
 
@@ -133,11 +143,62 @@ class BackupService @Inject constructor(
                     )
                 }
 
-                workDayDtos.forEach { database.workDayDao().insert(it) }
-                comeEventDtos.forEach { database.comeEventDao().insert(it) }
-                dayOffDtos.forEach { database.dayOffDao().insert(it) }
+                val workDayDao = database.workDayDao()
+                val comeEventDao = database.comeEventDao()
+                val dayOffDao = database.dayOffDao()
 
-                Log.d(TAG, "Backup imported successfully from: ${backupFile.absolutePath}")
+                when (strategy) {
+                    ImportStrategy.REPLACE -> {
+                        Log.d(TAG, "Import strategy: REPLACE — clearing existing data")
+                        comeEventDao.findAll().forEach { comeEventDao.delete(it) }
+                        workDayDao.findAll().forEach { workDayDao.delete(it.workDay) }
+                        dayOffDao.findAll().forEach { dayOffDao.delete(it) }
+                        workDayDtos.forEach { workDayDao.insert(it) }
+                        comeEventDtos.forEach { comeEventDao.insert(it) }
+                        dayOffDtos.forEach { dayOffDao.insert(it) }
+                    }
+
+                    ImportStrategy.MERGE -> {
+                        workDayDtos.forEach { dto ->
+                            if (dto.id != null && workDayDao.findByIdOrNull(dto.id.toInt()) != null)
+                                workDayDao.update(dto)
+                            else
+                                workDayDao.insert(dto)
+                        }
+                        comeEventDtos.forEach { dto ->
+                            if (dto.id != null && comeEventDao.findById(dto.id.toInt()) != null)
+                                comeEventDao.update(dto)
+                            else
+                                comeEventDao.insert(dto)
+                        }
+                        dayOffDtos.forEach { dto ->
+                            if (dto.id != null && dayOffDao.findByIdOrNull(dto.id!!) != null)
+                                dayOffDao.update(dto)
+                            else
+                                dayOffDao.insert(dto)
+                        }
+                    }
+
+                    ImportStrategy.SKIP -> {
+                        workDayDtos.forEach { dto ->
+                            if (dto.id == null || workDayDao.findByIdOrNull(dto.id.toInt()) == null)
+                                workDayDao.insert(dto)
+                        }
+                        comeEventDtos.forEach { dto ->
+                            if (dto.id == null || comeEventDao.findById(dto.id.toInt()) == null)
+                                comeEventDao.insert(dto)
+                        }
+                        dayOffDtos.forEach { dto ->
+                            if (dto.id == null || dayOffDao.findByIdOrNull(dto.id!!) == null)
+                                dayOffDao.insert(dto)
+                        }
+                    }
+                }
+
+                Log.d(
+                    TAG,
+                    "Backup imported successfully (strategy=$strategy) from: ${backupFile.absolutePath}"
+                )
                 Result.Success(backupFile)
             } catch (e: Exception) {
                 Log.e(TAG, "Import backup failed", e)
@@ -164,13 +225,14 @@ class BackupService @Inject constructor(
         }
     }
 
+    enum class ImportStrategy {
+        REPLACE,
+        MERGE,
+        SKIP,
+    }
+
     sealed class Result {
         data class Success(val file: File) : Result()
         data class Error(val exception: Exception) : Result()
     }
 }
-
-
-
-
-

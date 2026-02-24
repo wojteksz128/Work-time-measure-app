@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.Preference
@@ -98,20 +99,59 @@ class BackupFragment : BasePreferenceFragment(R.xml.backup_preferences) {
                     outputStream.close()
                     inputStream.close()
 
-                    when (val result = backupService.importBackup(tempFile)) {
-                        is BackupService.Result.Success -> {
-                            showToast(getString(R.string.settings_backup_import_success))
-                            tempFile.delete()
-                        }
-
-                        is BackupService.Result.Error -> {
-                            showToast(getString(R.string.settings_backup_import_error) + ": " + result.exception.message)
-                            tempFile.delete()
-                        }
+                    val isEmpty = backupService.isDatabaseEmpty()
+                    if (isEmpty) {
+                        doImport(tempFile, BackupService.ImportStrategy.MERGE)
+                    } else {
+                        showImportStrategyDialog(tempFile)
                     }
                 }
             } catch (e: Exception) {
                 showToast(getString(R.string.settings_backup_import_error) + ": " + e.message)
+            }
+        }
+    }
+
+    private fun showImportStrategyDialog(tempFile: File) {
+        val strategies = arrayOf(
+            getString(R.string.settings_backup_import_strategy_merge),
+            getString(R.string.settings_backup_import_strategy_replace),
+            getString(R.string.settings_backup_import_strategy_skip),
+        )
+        var selectedIndex = 0
+        AlertDialog.Builder(requireContext()).apply {
+            setTitle(R.string.settings_backup_import_strategy_title)
+            setSingleChoiceItems(
+                strategies,
+                selectedIndex
+            ) { _: android.content.DialogInterface, which: Int ->
+                selectedIndex = which
+            }
+            setPositiveButton(R.string.settings_backup_import_action_import) { _: android.content.DialogInterface, _: Int ->
+                val strategy = when (selectedIndex) {
+                    1 -> BackupService.ImportStrategy.REPLACE
+                    2 -> BackupService.ImportStrategy.SKIP
+                    else -> BackupService.ImportStrategy.MERGE
+                }
+                lifecycleScope.launch { doImport(tempFile, strategy) }
+            }
+            setNegativeButton(android.R.string.cancel) { _: android.content.DialogInterface, _: Int ->
+                tempFile.delete()
+            }
+            setOnCancelListener { tempFile.delete() }
+        }.show()
+    }
+
+    private suspend fun doImport(tempFile: File, strategy: BackupService.ImportStrategy) {
+        when (val result = backupService.importBackup(tempFile, strategy)) {
+            is BackupService.Result.Success -> {
+                showToast(getString(R.string.settings_backup_import_success))
+                tempFile.delete()
+            }
+
+            is BackupService.Result.Error -> {
+                showToast(getString(R.string.settings_backup_import_error) + ": " + result.exception.message)
+                tempFile.delete()
             }
         }
     }
