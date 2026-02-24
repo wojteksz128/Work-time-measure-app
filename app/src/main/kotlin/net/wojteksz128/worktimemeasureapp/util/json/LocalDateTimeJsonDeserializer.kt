@@ -7,7 +7,7 @@ import org.threeten.bp.LocalDateTime
 import org.threeten.bp.format.DateTimeFormatter
 import java.lang.reflect.Type
 
-class LocalDateTimeJsonAdapter : JsonDeserializer<LocalDateTime> {
+class LocalDateTimeJsonDeserializer : JsonDeserializer<LocalDateTime> {
     private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
     override fun deserialize(

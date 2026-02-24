@@ -3,7 +3,6 @@ package net.wojteksz128.worktimemeasureapp.api.holidayapi
 import com.google.gson.annotations.JsonAdapter
 import com.google.gson.annotations.SerializedName
 import net.wojteksz128.worktimemeasureapp.util.json.IntStringJsonAdapter
-import net.wojteksz128.worktimemeasureapp.util.json.LocalDateTimeJsonAdapter
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalDateTime
 
@@ -115,6 +114,5 @@ interface HolidayApiResponse {
 data class HolidayApiUsage(
     val available: Int,
     val used: Int,
-    @JsonAdapter(LocalDateTimeJsonAdapter::class)
     val resets: LocalDateTime,
 )
