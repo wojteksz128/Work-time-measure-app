@@ -256,6 +256,7 @@
     <string name="settings_header_work_title">Work time</string>
     <string name="settings_header_daysOff_title">Days off</string>
     <string name="settings_header_sync_title">Sync</string>
+    <string name="settings_header_backup_title">Backup</string>
 
     <!-- Profile Preferences -->
     <string name="settings_profile_username_title">First and last name</string>
@@ -310,6 +311,24 @@
     <string name="settings_sync_timeSync_server_title">NTP server address</string>
     <string name="settings_sync_timeSync_server_summary">Address of NTP server, used for time synchronization in app.</string>
 
+    <!-- Backup Preferences -->
+    <string name="settings_backup_export_import">Export and Import</string>
+    <string name="settings_backup_export_title">Export backup</string>
+    <string name="settings_backup_export_summary">Save database to a file that can be shared</string>
+    <string name="settings_backup_export_success">Backup exported successfully</string>
+    <string name="settings_backup_export_error">Failed to export backup</string>
+
+    <string name="settings_backup_import_title">Import backup</string>
+    <string name="settings_backup_import_summary">Restore database from a backup file</string>
+    <string name="settings_backup_import_success">Backup imported successfully</string>
+    <string name="settings_backup_import_error">Failed to import backup</string>
+
+    <string name="settings_backup_sharing">Sharing</string>
+    <string name="settings_backup_share_title">Share backup</string>
+    <string name="settings_backup_share_summary">Share backup file with other users</string>
+    <string name="settings_backup_share">Share backup</string>
+    <string name="settings_backup_share_error">Failed to share backup</string>
+
     <!-- Settings keys -->
     <string name="settings_key_profile" translatable="false">settings_profile</string>
     <string name="settings_key_profile_image" translatable="false">settings_profile_image</string>
@@ -332,6 +351,11 @@
     <string name="settings_key_sync" translatable="false">settings_sync</string>
     <string name="settings_key_sync_timeSync_enable" translatable="false">settings_sync_timeSync_enable</string>
     <string name="settings_key_sync_timeSync_server" translatable="false">settings_sync_timeSync_server</string>
+
+    <string name="settings_key_backup" translatable="false">settings_backup</string>
+    <string name="settings_key_backup_export" translatable="false">settings_backup_export</string>
+    <string name="settings_key_backup_import" translatable="false">settings_backup_import</string>
+    <string name="settings_key_backup_share" translatable="false">settings_backup_share</string>
 
     <string name="settings_key_internal_firstRun" translatable="false">settings_internal_firstRun</string>
     <string name="settings_key_internal_configurationVersion" translatable="false">settings_internal_configurationVersion</string>
