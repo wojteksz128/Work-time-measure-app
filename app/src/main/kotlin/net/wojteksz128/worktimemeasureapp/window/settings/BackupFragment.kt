@@ -3,8 +3,8 @@ package net.wojteksz128.worktimemeasureapp.window.settings
 import android.content.Intent
 import android.net.Uri
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.Preference
 import com.google.android.material.snackbar.Snackbar
@@ -12,54 +12,52 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.backup.BackupService
+import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
+import net.wojteksz128.worktimemeasureapp.window.dialog.backup.ImportStrategyDialogFragment
+import net.wojteksz128.worktimemeasureapp.window.dialog.backup.ImportStrategyDialogFragment.ImportStrategyDialogListener
+import net.wojteksz128.worktimemeasureapp.window.dialog.showDialogWithListener
 import java.io.File
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class BackupFragment : BasePreferenceFragment(R.xml.backup_preferences) {
+class BackupFragment : BasePreferenceFragment(R.xml.backup_preferences), ClassTagAware {
 
     @Inject
     lateinit var backupService: BackupService
 
+    private var pendingImportFile: File? = null
+
     private val exportBackupLauncher = registerForActivityResult(
         ActivityResultContracts.CreateDocument("application/json")
     ) { uri ->
-        if (uri != null) {
-            performExportBackup(uri)
-        }
+        if (uri != null) performExportBackup(uri)
     }
 
     private val importBackupLauncher = registerForActivityResult(
         ActivityResultContracts.GetContent()
     ) { uri ->
-        if (uri != null) {
-            performImportBackup(uri)
-        }
+        if (uri != null) performImportBackup(uri)
     }
 
     override fun onPreferencesInit() {
-        super.onPreferencesInit()
+        findPreference<Preference>(getString(R.string.settings_key_backup_export))
+            ?.setOnPreferenceClickListener {
+                val fileName = "wtm_backup_${System.currentTimeMillis()}.wtm_backup.json"
+                exportBackupLauncher.launch(fileName)
+                true
+            }
 
-        findPreference<Preference>("backup_export")?.setOnPreferenceClickListener {
-            showExportDialog()
-            true
-        }
+        findPreference<Preference>(getString(R.string.settings_key_backup_import))
+            ?.setOnPreferenceClickListener {
+                importBackupLauncher.launch("application/json")
+                true
+            }
 
-        findPreference<Preference>("backup_import")?.setOnPreferenceClickListener {
-            importBackupLauncher.launch("application/json")
-            true
-        }
-
-        findPreference<Preference>("backup_share")?.setOnPreferenceClickListener {
-            showShareDialog()
-            true
-        }
-    }
-
-    private fun showExportDialog() {
-        val timestamp = System.currentTimeMillis()
-        val fileName = "wtm_backup_${timestamp}.wtm_backup.json"
-        exportBackupLauncher.launch(fileName)
+        findPreference<Preference>(getString(R.string.settings_key_backup_share))
+            ?.setOnPreferenceClickListener {
+                performShareBackup()
+                true
+            }
     }
 
     private fun performExportBackup(uri: Uri) {
@@ -76,10 +74,8 @@ class BackupFragment : BasePreferenceFragment(R.xml.backup_preferences) {
                             showMessage(getString(R.string.settings_backup_export_success))
                         }
                     }
-
-                    is BackupService.Result.Error -> {
+                    is BackupService.Result.Error ->
                         showMessage(getString(R.string.settings_backup_export_error) + ": " + result.exception.message)
-                    }
                 }
             } catch (e: Exception) {
                 showMessage(getString(R.string.settings_backup_export_error) + ": " + e.message)
@@ -92,19 +88,18 @@ class BackupFragment : BasePreferenceFragment(R.xml.backup_preferences) {
             try {
                 val tempFile =
                     File.createTempFile("backup_import", ".json", requireContext().cacheDir)
-                val inputStream = requireContext().contentResolver.openInputStream(uri)
-                val outputStream = tempFile.outputStream()
-                if (inputStream != null) {
-                    inputStream.copyTo(outputStream)
-                    outputStream.close()
-                    inputStream.close()
-
-                    val isEmpty = backupService.isDatabaseEmpty()
-                    if (isEmpty) {
-                        doImport(tempFile, BackupService.ImportStrategy.MERGE)
-                    } else {
-                        showImportStrategyDialog(tempFile)
-                    }
+                requireContext().contentResolver.openInputStream(uri)?.use { input ->
+                    tempFile.outputStream().use { output -> input.copyTo(output) }
+                }
+                if (backupService.isDatabaseEmpty()) {
+                    doImport(tempFile, BackupService.ImportStrategy.MERGE)
+                } else {
+                    pendingImportFile = tempFile
+                    showDialogWithListener(
+                        ImportStrategyDialogFragment::class.java,
+                        parentFragmentManager,
+                        ImportStrategyListener()
+                    )
                 }
             } catch (e: Exception) {
                 showMessage(getString(R.string.settings_backup_import_error) + ": " + e.message)
@@ -112,51 +107,19 @@ class BackupFragment : BasePreferenceFragment(R.xml.backup_preferences) {
         }
     }
 
-    private fun showImportStrategyDialog(tempFile: File) {
-        val strategies = arrayOf(
-            getString(R.string.settings_backup_import_strategy_merge),
-            getString(R.string.settings_backup_import_strategy_replace),
-            getString(R.string.settings_backup_import_strategy_skip),
-        )
-        var selectedIndex = 0
-        AlertDialog.Builder(requireContext()).apply {
-            setTitle(R.string.settings_backup_import_strategy_title)
-            setSingleChoiceItems(
-                strategies,
-                selectedIndex
-            ) { _: android.content.DialogInterface, which: Int ->
-                selectedIndex = which
-            }
-            setPositiveButton(R.string.settings_backup_import_action_import) { _: android.content.DialogInterface, _: Int ->
-                val strategy = when (selectedIndex) {
-                    1 -> BackupService.ImportStrategy.REPLACE
-                    2 -> BackupService.ImportStrategy.SKIP
-                    else -> BackupService.ImportStrategy.MERGE
-                }
-                lifecycleScope.launch { doImport(tempFile, strategy) }
-            }
-            setNegativeButton(android.R.string.cancel) { _: android.content.DialogInterface, _: Int ->
-                tempFile.delete()
-            }
-            setOnCancelListener { tempFile.delete() }
-        }.show()
-    }
-
     private suspend fun doImport(tempFile: File, strategy: BackupService.ImportStrategy) {
         when (val result = backupService.importBackup(tempFile, strategy)) {
-            is BackupService.Result.Success -> {
+            is BackupService.Result.Success ->
                 showMessage(getString(R.string.settings_backup_import_success))
-                tempFile.delete()
-            }
 
-            is BackupService.Result.Error -> {
+            is BackupService.Result.Error ->
                 showMessage(getString(R.string.settings_backup_import_error) + ": " + result.exception.message)
-                tempFile.delete()
-            }
         }
+        tempFile.delete()
+        pendingImportFile = null
     }
 
-    private fun showShareDialog() {
+    private fun performShareBackup() {
         lifecycleScope.launch {
             try {
                 when (val result = backupService.exportBackup()) {
@@ -166,23 +129,20 @@ class BackupFragment : BasePreferenceFragment(R.xml.backup_preferences) {
                             "net.wojteksz128.worktimemeasureapp.provider",
                             result.file
                         )
-
-                        val shareIntent = Intent().apply {
-                            action = Intent.ACTION_SEND
-                            putExtra(Intent.EXTRA_STREAM, backupUri)
-                            type = "application/json"
-                        }
                         startActivity(
                             Intent.createChooser(
-                                shareIntent,
+                                Intent().apply {
+                                    action = Intent.ACTION_SEND
+                                    putExtra(Intent.EXTRA_STREAM, backupUri)
+                                    type = "application/json"
+                                },
                                 getString(R.string.settings_backup_share)
                             )
                         )
                     }
 
-                    is BackupService.Result.Error -> {
+                    is BackupService.Result.Error ->
                         showMessage(getString(R.string.settings_backup_share_error) + ": " + result.exception.message)
-                    }
                 }
             } catch (e: Exception) {
                 showMessage(getString(R.string.settings_backup_share_error) + ": " + e.message)
@@ -192,5 +152,20 @@ class BackupFragment : BasePreferenceFragment(R.xml.backup_preferences) {
 
     private fun showMessage(message: String) {
         Snackbar.make(requireContext(), requireView(), message, Snackbar.LENGTH_LONG).show()
+    }
+
+    private inner class ImportStrategyListener : ImportStrategyDialogListener {
+        override fun onImportStrategySelected(
+            dialog: DialogFragment,
+            strategy: BackupService.ImportStrategy,
+        ) {
+            val file = pendingImportFile ?: return
+            lifecycleScope.launch { doImport(file, strategy) }
+        }
+
+        override fun onImportStrategyCancelled(dialog: DialogFragment) {
+            pendingImportFile?.delete()
+            pendingImportFile = null
+        }
     }
 }

@@ -1,59 +1,91 @@
 package net.wojteksz128.worktimemeasureapp.backup
 
-import com.google.gson.annotations.SerializedName
+import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventDto
+import net.wojteksz128.worktimemeasureapp.database.dayOff.DayOffDto
+import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayDto
+import net.wojteksz128.worktimemeasureapp.model.fieldType.DayOffSource
+import net.wojteksz128.worktimemeasureapp.model.fieldType.DayOffType
 import org.threeten.bp.LocalDate
 import org.threeten.bp.ZonedDateTime
 
+private const val CURRENT_BACKUP_VERSION = "1.0"
+
 data class BackupData(
-    @SerializedName("comeEvents")
     val comeEvents: List<ComeEventBackup> = emptyList(),
-    @SerializedName("workDays")
     val workDays: List<WorkDayBackup> = emptyList(),
-    @SerializedName("daysOff")
     val daysOff: List<DayOffBackup> = emptyList(),
-    @SerializedName("backupVersion")
-    val backupVersion: String = "1.0",
-    @SerializedName("backupTimestamp")
+    val backupVersion: String = CURRENT_BACKUP_VERSION,
     val backupTimestamp: Long = System.currentTimeMillis(),
 )
 
 data class ComeEventBackup(
-    @SerializedName("id")
     val id: Long?,
-    @SerializedName("startDate")
     val startDate: ZonedDateTime,
-    @SerializedName("endDate")
     val endDate: ZonedDateTime?,
-    @SerializedName("workDayId")
     val workDayId: Long,
-)
+) {
+    constructor(comeEventDto: ComeEventDto) : this(
+        id = comeEventDto.id,
+        startDate = comeEventDto.startDate,
+        endDate = comeEventDto.endDate,
+        workDayId = comeEventDto.workDayId
+    )
+
+    fun toComeEventDto() = ComeEventDto(
+        id = id,
+        startDate = startDate,
+        endDate = endDate,
+        workDayId = workDayId
+    )
+}
 
 data class WorkDayBackup(
-    @SerializedName("id")
     val id: Long?,
-    @SerializedName("date")
     val date: LocalDate,
-    @SerializedName("beginSlot")
     val beginSlot: ZonedDateTime,
-    @SerializedName("endSlot")
     val endSlot: ZonedDateTime,
-)
+) {
+    constructor(workDay: WorkDayDto) : this(
+        id = workDay.id,
+        date = workDay.date,
+        beginSlot = workDay.beginSlot,
+        endSlot = workDay.endSlot
+    )
+
+    fun toWorkDayDto() = WorkDayDto(
+        id = id,
+        date = date,
+        beginSlot = beginSlot,
+        endSlot = endSlot
+    )
+}
 
 data class DayOffBackup(
-    @SerializedName("id")
     val id: Long?,
-    @SerializedName("uuid")
     val uuid: String?,
-    @SerializedName("type")
     val type: String,
-    @SerializedName("name")
     val name: String,
-    @SerializedName("startDate")
     val startDate: LocalDate,
-    @SerializedName("finishDate")
     val finishDate: LocalDate,
-    @SerializedName("source")
     val source: String,
-)
+) {
+    constructor(dayOff: DayOffDto) : this(
+        id = dayOff.id,
+        uuid = dayOff.uuid,
+        type = dayOff.type.name,
+        name = dayOff.name,
+        startDate = dayOff.startDate,
+        finishDate = dayOff.finishDate,
+        source = dayOff.source.name
+    )
 
-
+    fun toDayOffDto() = DayOffDto(
+        id = id,
+        uuid = uuid,
+        type = DayOffType.valueOf(type),
+        name = name,
+        startDate = startDate,
+        finishDate = finishDate,
+        source = DayOffSource.valueOf(source)
+    )
+}
