@@ -16,14 +16,17 @@ class EditTextDialogRobot : BaseDialogRobot() {
 
     fun enterText(text: String) {
         onViewInDialog(editText).perform(replaceText(text))
+        Thread.sleep(500)
     }
 
     fun clickOk() {
         onViewInDialog(okButton).perform(click())
+        Thread.sleep(500)
     }
 
     fun clickCancel() {
         onViewInDialog(cancelButton).perform(click())
+        Thread.sleep(500)
     }
 
     override fun verifyIsDisplayed() {

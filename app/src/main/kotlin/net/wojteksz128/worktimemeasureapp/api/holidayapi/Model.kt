@@ -4,6 +4,7 @@ import com.google.gson.annotations.JsonAdapter
 import com.google.gson.annotations.SerializedName
 import net.wojteksz128.worktimemeasureapp.util.json.IntStringJsonAdapter
 import org.threeten.bp.LocalDate
+import org.threeten.bp.LocalDateTime
 
 data class HolidayApiHolidaysResponse(
     val holidays: Set<HolidayApiHoliday>,
@@ -53,11 +54,11 @@ data class HolidayApiCountry(
 
 data class HolidayApiCountryCodes(
     @SerializedName("alpha-2")
-    val alpha_2: String,
+    val alpha2: String,
     @SerializedName("alpha-3")
-    val alpha_3: String,
+    val alpha3: String,
     @JsonAdapter(IntStringJsonAdapter::class)
-    val numeric: Int
+    val numeric: Int,
 )
 
 data class HolidayApiSubdivision(
@@ -113,5 +114,5 @@ interface HolidayApiResponse {
 data class HolidayApiUsage(
     val available: Int,
     val used: Int,
-    val resets: LocalDate,
+    val resets: LocalDateTime,
 )

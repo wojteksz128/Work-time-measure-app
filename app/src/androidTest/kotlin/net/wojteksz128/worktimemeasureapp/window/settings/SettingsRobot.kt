@@ -47,5 +47,6 @@ class SettingsRobot : BaseScreenRobot() {
 
     fun goBack() {
         pressBack()
+        Thread.sleep(500)
     }
 }
