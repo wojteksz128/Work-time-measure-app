@@ -32,7 +32,7 @@ open class NagerDateApiV3Repository(
 
     override suspend fun getHolidays(countryCode: String, year: Int): Collection<DayOff> {
         val getUpcomingPublicHolidaysResponse =
-            nagerDateApiV3Service.getUpcomingPublicHolidays(countryCode)
+            nagerDateApiV3Service.getPublicHolidays(year, countryCode)
         when (getUpcomingPublicHolidaysResponse.isSuccessful) {
             true -> {
                 val upcomingPublicHolidays = getUpcomingPublicHolidaysResponse.body()!!
