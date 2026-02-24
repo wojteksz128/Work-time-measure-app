@@ -2,12 +2,12 @@ package net.wojteksz128.worktimemeasureapp.window.settings
 
 import android.content.Intent
 import android.net.Uri
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.Preference
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import net.wojteksz128.worktimemeasureapp.R
@@ -73,16 +73,16 @@ class BackupFragment : BasePreferenceFragment(R.xml.backup_preferences) {
                             inputStream.copyTo(outputStream)
                             outputStream.close()
                             inputStream.close()
-                            showToast(getString(R.string.settings_backup_export_success))
+                            showMessage(getString(R.string.settings_backup_export_success))
                         }
                     }
 
                     is BackupService.Result.Error -> {
-                        showToast(getString(R.string.settings_backup_export_error) + ": " + result.exception.message)
+                        showMessage(getString(R.string.settings_backup_export_error) + ": " + result.exception.message)
                     }
                 }
             } catch (e: Exception) {
-                showToast(getString(R.string.settings_backup_export_error) + ": " + e.message)
+                showMessage(getString(R.string.settings_backup_export_error) + ": " + e.message)
             }
         }
     }
@@ -107,7 +107,7 @@ class BackupFragment : BasePreferenceFragment(R.xml.backup_preferences) {
                     }
                 }
             } catch (e: Exception) {
-                showToast(getString(R.string.settings_backup_import_error) + ": " + e.message)
+                showMessage(getString(R.string.settings_backup_import_error) + ": " + e.message)
             }
         }
     }
@@ -145,12 +145,12 @@ class BackupFragment : BasePreferenceFragment(R.xml.backup_preferences) {
     private suspend fun doImport(tempFile: File, strategy: BackupService.ImportStrategy) {
         when (val result = backupService.importBackup(tempFile, strategy)) {
             is BackupService.Result.Success -> {
-                showToast(getString(R.string.settings_backup_import_success))
+                showMessage(getString(R.string.settings_backup_import_success))
                 tempFile.delete()
             }
 
             is BackupService.Result.Error -> {
-                showToast(getString(R.string.settings_backup_import_error) + ": " + result.exception.message)
+                showMessage(getString(R.string.settings_backup_import_error) + ": " + result.exception.message)
                 tempFile.delete()
             }
         }
@@ -181,20 +181,16 @@ class BackupFragment : BasePreferenceFragment(R.xml.backup_preferences) {
                     }
 
                     is BackupService.Result.Error -> {
-                        showToast(getString(R.string.settings_backup_share_error) + ": " + result.exception.message)
+                        showMessage(getString(R.string.settings_backup_share_error) + ": " + result.exception.message)
                     }
                 }
             } catch (e: Exception) {
-                showToast(getString(R.string.settings_backup_share_error) + ": " + e.message)
+                showMessage(getString(R.string.settings_backup_share_error) + ": " + e.message)
             }
         }
     }
 
-    private fun showToast(message: String) {
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    private fun showMessage(message: String) {
+        Snackbar.make(requireContext(), requireView(), message, Snackbar.LENGTH_LONG).show()
     }
 }
-
-
-
-
