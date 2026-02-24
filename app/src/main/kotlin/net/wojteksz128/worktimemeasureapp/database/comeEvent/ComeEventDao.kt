@@ -9,20 +9,24 @@ import androidx.room.Query
 import androidx.room.Update
 import net.wojteksz128.worktimemeasureapp.database.EntityDao
 
+private const val FIND_ALL_QUERY = "SELECT * FROM come_event ORDER BY startDate DESC"
+private const val FIND_BY_ID_QUERY = "SELECT * FROM come_event WHERE id = :id"
+private const val DELETE_ALL_QUERY = "DELETE FROM come_event"
+
 @Dao
 @Suppress("unused")
 interface ComeEventDao : EntityDao<ComeEventDto> {
 
-    @Query("SELECT * FROM come_event ORDER BY startDate DESC")
+    @Query(FIND_ALL_QUERY)
     fun findAllInLiveData(): LiveData<List<ComeEventDto>>
 
-    @Query("SELECT * FROM come_event ORDER BY startDate DESC")
+    @Query(FIND_ALL_QUERY)
     suspend fun findAll(): List<ComeEventDto>
 
-    @Query("SELECT * FROM come_event WHERE id = :id")
+    @Query(FIND_BY_ID_QUERY)
     fun findByIdInLiveData(id: Int): LiveData<ComeEventDto>
 
-    @Query("SELECT * FROM come_event WHERE id = :id")
+    @Query(FIND_BY_ID_QUERY)
     suspend fun findById(id: Int): ComeEventDto?
 
     @Insert
@@ -33,4 +37,7 @@ interface ComeEventDao : EntityDao<ComeEventDto> {
 
     @Delete
     override suspend fun delete(entity: ComeEventDto)
+
+    @Query(DELETE_ALL_QUERY)
+    suspend fun deleteAll()
 }

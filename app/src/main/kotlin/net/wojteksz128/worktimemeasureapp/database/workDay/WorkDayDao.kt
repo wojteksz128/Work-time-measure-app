@@ -18,6 +18,7 @@ private const val FIND_BY_ID_QUERY = "SELECT * FROM work_day WHERE id = :id"
 private const val FIND_BY_DATE_QUERY = "SELECT * FROM work_day WHERE date = :date"
 private const val FIND_BETWEEN_DATES_QUERY =
     "SELECT * FROM work_day WHERE date BETWEEN :beginDate AND :endDate"
+private const val DELETE_ALL_QUERY = "DELETE FROM work_day"
 
 
 @Dao
@@ -77,4 +78,7 @@ interface WorkDayDao : EntityDao<WorkDayDto> {
 
     @Delete
     override suspend fun delete(entity: WorkDayDto)
+
+    @Query(DELETE_ALL_QUERY)
+    suspend fun deleteAll()
 }

@@ -65,12 +65,8 @@ class BackupFragment : BasePreferenceFragment(R.xml.backup_preferences), ClassTa
             try {
                 when (val result = backupService.exportBackup()) {
                     is BackupService.Result.Success -> {
-                        val inputStream = result.file.inputStream()
-                        val outputStream = requireContext().contentResolver.openOutputStream(uri)
-                        if (outputStream != null) {
-                            inputStream.copyTo(outputStream)
-                            outputStream.close()
-                            inputStream.close()
+                        requireContext().contentResolver.openOutputStream(uri)?.use { output ->
+                            result.file.inputStream().use { input -> input.copyTo(output) }
                             showMessage(getString(R.string.settings_backup_export_success))
                         }
                     }

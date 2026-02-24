@@ -11,8 +11,10 @@ import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventDao
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventDto
 import net.wojteksz128.worktimemeasureapp.database.dayOff.DayOffDao
 import net.wojteksz128.worktimemeasureapp.database.dayOff.DayOffDto
+import net.wojteksz128.worktimemeasureapp.database.history.EntityHistoryDto
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayDao
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayDto
+import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import java.io.File
 import javax.inject.Inject
@@ -23,6 +25,7 @@ class BackupService @Inject constructor(
     @param:ApplicationContext private val context: Context,
     private val database: AppDatabase,
     private val baseGson: Gson,
+    private val settings: Settings,
 ) : ClassTagAware {
     companion object {
         private const val BACKUP_DIR = "backups"
@@ -56,24 +59,33 @@ class BackupService @Inject constructor(
     private suspend fun createBackupData(): BackupData {
         val workDaysWithEvents = database.workDayDao().findAll()
         val daysOff = database.dayOffDao().findAll()
+        val history = database.entityHistoryDao().findAll()
 
-        val comeEventsBackup = workDaysWithEvents.flatMap { workDayWithEvents ->
-            workDayWithEvents.events.map { ComeEventBackup(it) }
-        }
+        val comeEventsBackup =
+            workDaysWithEvents.flatMap { it.events.map { e -> ComeEventBackup(e) } }
         val workDaysBackup = workDaysWithEvents.map { WorkDayBackup(it.workDay) }
-        val daysOffBackup = daysOff.map { dto -> DayOffBackup(dto) }
+        val daysOffBackup = daysOff.map { DayOffBackup(it) }
+        val historyBackup = history.map { EntityHistoryBackup(it) }
+        val settingsBackup = buildMap {
+            listOf(settings.Profile, settings.WorkTime, settings.DaysOff, settings.Sync)
+                .flatMap { it.childNodes }
+                .forEach { item -> put(item.key, item.valueNullable?.toString()) }
+        }
 
         return BackupData(
             comeEvents = comeEventsBackup,
             workDays = workDaysBackup,
-            daysOff = daysOffBackup
+            daysOff = daysOffBackup,
+            history = historyBackup,
+            settings = settingsBackup,
         )
     }
 
     suspend fun isDatabaseEmpty(): Boolean = withContext(Dispatchers.IO) {
         database.workDayDao().findAll().isEmpty() &&
                 database.comeEventDao().findAll().isEmpty() &&
-                database.dayOffDao().findAll().isEmpty()
+                database.dayOffDao().findAll().isEmpty() &&
+                database.entityHistoryDao().findAll().isEmpty()
     }
 
     suspend fun importBackup(
@@ -91,21 +103,33 @@ class BackupService @Inject constructor(
             val workDayDtoList = backupData.workDays.map { it.toWorkDayDto() }
             val comeEventDtoList = backupData.comeEvents.map { it.toComeEventDto() }
             val dayOffDtoList = backupData.daysOff.map { it.toDayOffDto() }
+            val historyDtoList = backupData.history.map { it.toEntityHistoryDto() }
 
             when (strategy) {
                 ImportStrategy.REPLACE ->
                     importBackupUsingReplaceStrategy(
                         workDayDtoList,
                         comeEventDtoList,
-                        dayOffDtoList
+                        dayOffDtoList,
+                        historyDtoList
                     )
-
                 ImportStrategy.MERGE ->
-                    importBackupUsingMergeStrategy(workDayDtoList, comeEventDtoList, dayOffDtoList)
-
+                    importBackupUsingMergeStrategy(
+                        workDayDtoList,
+                        comeEventDtoList,
+                        dayOffDtoList,
+                        historyDtoList
+                    )
                 ImportStrategy.SKIP ->
-                    importBackupUsingSkipStrategy(workDayDtoList, comeEventDtoList, dayOffDtoList)
+                    importBackupUsingSkipStrategy(
+                        workDayDtoList,
+                        comeEventDtoList,
+                        dayOffDtoList,
+                        historyDtoList
+                    )
             }
+
+            restoreSettings(backupData.settings)
 
             Log.d(
                 classTag,
@@ -122,41 +146,44 @@ class BackupService @Inject constructor(
         workDayDtoList: List<WorkDayDto>,
         comeEventDtoList: List<ComeEventDto>,
         dayOffDtoList: List<DayOffDto>,
+        historyDtoList: List<EntityHistoryDto>,
     ) {
-        val workDayDao = database.workDayDao()
-        val comeEventDao = database.comeEventDao()
-        val dayOffDao = database.dayOffDao()
-
         Log.d(classTag, "Import strategy: REPLACE — clearing existing data")
-        comeEventDao.findAll().forEach { comeEventDao.delete(it) }
-        workDayDao.findAll().forEach { workDayDao.delete(it.workDay) }
-        dayOffDao.findAll().forEach { dayOffDao.delete(it) }
+        database.entityHistoryDao().deleteAll()
+        database.comeEventDao().deleteAll()
+        database.workDayDao().deleteAll()
+        database.dayOffDao().deleteAll()
 
-        workDayDtoList.forEach { workDayDao.insert(it) }
-        comeEventDtoList.forEach { comeEventDao.insert(it) }
-        dayOffDtoList.forEach { dayOffDao.insert(it) }
+        workDayDtoList.forEach { database.workDayDao().insert(it) }
+        comeEventDtoList.forEach { database.comeEventDao().insert(it) }
+        dayOffDtoList.forEach { database.dayOffDao().insert(it) }
+        historyDtoList.forEach { database.entityHistoryDao().insert(it) }
     }
 
     private suspend fun importBackupUsingMergeStrategy(
         workDayDtoList: List<WorkDayDto>,
         comeEventDtoList: List<ComeEventDto>,
         dayOffDtoList: List<DayOffDto>,
+        historyDtoList: List<EntityHistoryDto>,
     ) {
         Log.d(classTag, "Import strategy: MERGE — updating existing data")
         importWorkDays(workDayDtoList) { dao, dto -> dao.update(dto) }
         importComeEvents(comeEventDtoList) { dao, dto -> dao.update(dto) }
         importDayOffs(dayOffDtoList) { dao, dto -> dao.update(dto) }
+        importHistory(historyDtoList)
     }
 
     private suspend fun importBackupUsingSkipStrategy(
         workDayDtoList: List<WorkDayDto>,
         comeEventDtoList: List<ComeEventDto>,
         dayOffDtoList: List<DayOffDto>,
+        historyDtoList: List<EntityHistoryDto>,
     ) {
         Log.d(classTag, "Import strategy: SKIP — skipping existing data")
         importWorkDays(workDayDtoList)
         importComeEvents(comeEventDtoList)
         importDayOffs(dayOffDtoList)
+        importHistory(historyDtoList)
     }
 
     private suspend fun importWorkDays(
@@ -166,13 +193,10 @@ class BackupService @Inject constructor(
         val workDayDao = database.workDayDao()
 
         Log.d(classTag, "Importing work days")
-        val existingWorkDaysIds = workDayDao.findAll().map { it.workDay.id }
-        workDayDtoList.forEach { importedWorkDay ->
-            if (importedWorkDay.id == null || importedWorkDay.id !in existingWorkDaysIds) {
-                workDayDao.insert(importedWorkDay)
-            } else {
-                actionIfExists(workDayDao, importedWorkDay)
-            }
+        val existingIds = workDayDao.findAll().map { it.workDay.id }
+        workDayDtoList.forEach { dto ->
+            if (dto.id == null || dto.id !in existingIds) workDayDao.insert(dto)
+            else actionIfExists(workDayDao, dto)
         }
     }
 
@@ -183,13 +207,10 @@ class BackupService @Inject constructor(
         val comeEventDao = database.comeEventDao()
 
         Log.d(classTag, "Importing come events")
-        val existingComeEventsIds = comeEventDao.findAll().map { it.id }
-        comeEventDtoList.forEach { importedComeEvent ->
-            if (importedComeEvent.id == null || importedComeEvent.id !in existingComeEventsIds) {
-                comeEventDao.insert(importedComeEvent)
-            } else {
-                actionIfExists(comeEventDao, importedComeEvent)
-            }
+        val existingIds = comeEventDao.findAll().map { it.id }
+        comeEventDtoList.forEach { dto ->
+            if (dto.id == null || dto.id !in existingIds) comeEventDao.insert(dto)
+            else actionIfExists(comeEventDao, dto)
         }
     }
 
@@ -200,13 +221,33 @@ class BackupService @Inject constructor(
         val dayOffDao = database.dayOffDao()
 
         Log.d(classTag, "Importing days off")
-        val existingDayOffsIds = dayOffDao.findAll().map { it.id }
-        dayOffDtoList.forEach { importedDayOff ->
-            if (importedDayOff.id == null || importedDayOff.id !in existingDayOffsIds) {
-                dayOffDao.insert(importedDayOff)
-            } else {
-                actionIfExists(dayOffDao, importedDayOff)
-            }
+        val existingIds = dayOffDao.findAll().map { it.id }
+        dayOffDtoList.forEach { dto ->
+            if (dto.id == null || dto.id !in existingIds) dayOffDao.insert(dto)
+            else actionIfExists(dayOffDao, dto)
+        }
+    }
+
+    private suspend fun importHistory(historyDtoList: List<EntityHistoryDto>) {
+        val historyDao = database.entityHistoryDao()
+
+        Log.d(classTag, "Importing history")
+        val existingIds = historyDao.findAll().mapNotNull { it.id }.toSet()
+        historyDtoList.forEach { dto ->
+            if (dto.id == null || dto.id !in existingIds) historyDao.insert(dto)
+        }
+    }
+
+    private fun restoreSettings(settingsMap: Map<String, String?>) {
+        if (settingsMap.isEmpty()) return
+
+        Log.d(classTag, "Restoring settings")
+        val knownItems =
+            listOf(settings.Profile, settings.WorkTime, settings.DaysOff, settings.Sync)
+                .flatMap { it.childNodes }
+                .associateBy { it.key }
+        settingsMap.forEach { (key, rawValue) ->
+            knownItems[key]?.restoreValue(rawValue)
         }
     }
 

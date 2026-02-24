@@ -19,6 +19,7 @@ private const val FIND_BY_DATE_QUERY =
     "SELECT * FROM day_off WHERE :localDate BETWEEN startDate AND finishDate"
 private const val FIND_ALL_IN_DATE_RANGE_QUERY =
     "SELECT * FROM day_off WHERE :startDate BETWEEN startDate AND finishDate OR :finishDate BETWEEN startDate AND finishDate OR startDate BETWEEN :startDate AND :finishDate"
+private const val DELETE_ALL_QUERY = "DELETE FROM day_off"
 
 @Dao
 interface DayOffDao : EntityDao<DayOffDto> {
@@ -59,4 +60,7 @@ interface DayOffDao : EntityDao<DayOffDto> {
 
     @Delete
     override suspend fun delete(entity: DayOffDto)
+
+    @Query(DELETE_ALL_QUERY)
+    suspend fun deleteAll()
 }

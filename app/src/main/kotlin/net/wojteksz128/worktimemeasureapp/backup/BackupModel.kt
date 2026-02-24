@@ -2,6 +2,7 @@ package net.wojteksz128.worktimemeasureapp.backup
 
 import net.wojteksz128.worktimemeasureapp.database.comeEvent.ComeEventDto
 import net.wojteksz128.worktimemeasureapp.database.dayOff.DayOffDto
+import net.wojteksz128.worktimemeasureapp.database.history.EntityHistoryDto
 import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayDto
 import net.wojteksz128.worktimemeasureapp.model.fieldType.DayOffSource
 import net.wojteksz128.worktimemeasureapp.model.fieldType.DayOffType
@@ -14,6 +15,8 @@ data class BackupData(
     val comeEvents: List<ComeEventBackup> = emptyList(),
     val workDays: List<WorkDayBackup> = emptyList(),
     val daysOff: List<DayOffBackup> = emptyList(),
+    val history: List<EntityHistoryBackup> = emptyList(),
+    val settings: Map<String, String?> = emptyMap(),
     val backupVersion: String = CURRENT_BACKUP_VERSION,
     val backupTimestamp: Long = System.currentTimeMillis(),
 )
@@ -89,3 +92,40 @@ data class DayOffBackup(
         source = DayOffSource.valueOf(source)
     )
 }
+
+data class EntityHistoryBackup(
+    val id: Long?,
+    val changeGroupId: String,
+    val entityType: String,
+    val entityId: Long,
+    val actionType: String,
+    val fieldName: String,
+    val oldValue: String?,
+    val newValue: String?,
+    val timestamp: ZonedDateTime,
+) {
+    constructor(dto: EntityHistoryDto) : this(
+        id = dto.id,
+        changeGroupId = dto.changeGroupId,
+        entityType = dto.entityType,
+        entityId = dto.entityId,
+        actionType = dto.actionType,
+        fieldName = dto.fieldName,
+        oldValue = dto.oldValue,
+        newValue = dto.newValue,
+        timestamp = dto.timestamp,
+    )
+
+    fun toEntityHistoryDto() = EntityHistoryDto(
+        id = id,
+        changeGroupId = changeGroupId,
+        entityType = entityType,
+        entityId = entityId,
+        actionType = actionType,
+        fieldName = fieldName,
+        oldValue = oldValue,
+        newValue = newValue,
+        timestamp = timestamp,
+    )
+}
+
