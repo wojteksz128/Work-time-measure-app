@@ -56,7 +56,13 @@ class DaysOffSettingsRobot : BaseScreenRobot() {
         onView(syncNowTitle).check(isDisplayedAndNotEnabled)
     }
 
-    fun verifySyncEnabled() {
+    fun verifySyncEnabledButNotFulfilled() {
+        onView(providerTitle).check(isDisplayedAndEnabled)
+        onView(countryTitle).check(isDisplayedAndEnabled)
+        onView(syncNowTitle).check(isDisplayedAndNotEnabled)
+    }
+
+    fun verifySyncEnabledAndFulfilled() {
         onView(providerTitle).check(isDisplayedAndEnabled)
         onView(countryTitle).check(isDisplayedAndEnabled)
         onView(syncNowTitle).check(isDisplayedAndEnabled)

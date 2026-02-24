@@ -70,7 +70,7 @@ class DaysOffFragmentTest {
     fun givenFragmentStartedWithEnabledSync_thenElementsAreEnabled() {
         daysOffSettings {
             setSyncWithApi(true)
-            verifySyncEnabled()
+            verifySyncEnabledButNotFulfilled()
         }
     }
 
@@ -122,6 +122,16 @@ class DaysOffFragmentTest {
         val newValue = Settings.DaysOff.Country.value
         assertNotEquals(initialValue, newValue)
         assertEquals(newValue, Settings.DaysOff.Country.value)
+    }
+
+    @Test
+    fun whenCountryWasSelected_thenSyncNowIsAvailable() {
+        daysOffSettings {
+            setSyncWithApi(true)
+            changeProvider(HolidayProvider.HolidayAPI)
+            changeCountry(DUMMY_COUNTRIES[0].name)
+            verifySyncEnabledAndFulfilled()
+        }
     }
 
     // TODO: Needs to be tested with all implementations of ExternalHolidayRepository
