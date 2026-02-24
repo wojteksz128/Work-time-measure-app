@@ -8,5 +8,5 @@ open class DurationSettingsItem(name: Int, context: Context) : SettingsItem<Dura
     context,
     { key -> Duration.ofMinutes(getInt(key, 0).toLong()) },
     { key, duration -> putInt(key, duration.toMinutes().toInt()) },
-    fromString = { Duration.ofMinutes(it.toLongOrNull() ?: 0) },
+    fromString = { Duration.parse(it) },
 )
