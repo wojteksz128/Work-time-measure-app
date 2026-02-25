@@ -20,6 +20,7 @@ import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.json.LocalDateJsonAdapter
 import net.wojteksz128.worktimemeasureapp.util.json.ZonedDateTimeDeserializer
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
@@ -65,10 +66,18 @@ class BackupServiceTest {
 
     private lateinit var backupService: BackupService
 
-    private val profileSettings: Settings.ProfileSettings = mock()
-    private val workTimeSettings: Settings.WorkTimeSettings = mock()
-    private val daysOffSettings: Settings.DaysOffSettings = mock()
-    private val syncSettings: Settings.SyncSettings = mock()
+    private val profileSettings: Settings.ProfileSettings = mock {
+        on { childNodes } doReturn emptySet()
+    }
+    private val workTimeSettings: Settings.WorkTimeSettings = mock {
+        on { childNodes } doReturn emptySet()
+    }
+    private val daysOffSettings: Settings.DaysOffSettings = mock {
+        on { childNodes } doReturn emptySet()
+    }
+    private val syncSettings: Settings.SyncSettings = mock {
+        on { childNodes } doReturn emptySet()
+    }
 
     @Before
     fun setUp() {
@@ -77,16 +86,10 @@ class BackupServiceTest {
         whenever(database.comeEventDao()).thenReturn(comeEventDao)
         whenever(database.dayOffDao()).thenReturn(dayOffDao)
         whenever(database.entityHistoryDao()).thenReturn(entityHistoryDao)
-
         whenever(settings.Profile).thenReturn(profileSettings)
         whenever(settings.WorkTime).thenReturn(workTimeSettings)
         whenever(settings.DaysOff).thenReturn(daysOffSettings)
         whenever(settings.Sync).thenReturn(syncSettings)
-
-        whenever(profileSettings.childNodes).thenReturn(emptySet())
-        whenever(workTimeSettings.childNodes).thenReturn(emptySet())
-        whenever(daysOffSettings.childNodes).thenReturn(emptySet())
-        whenever(syncSettings.childNodes).thenReturn(emptySet())
 
         backupService = BackupService(context, database, gson, settings, migrationRunner)
     }
@@ -94,7 +97,7 @@ class BackupServiceTest {
     // ──────────────────────────── exportBackup ────────────────────────────
 
     @Test
-    fun `givenEmptyDatabase, whenExportBackup, thenReturnsSuccess`() = runBlocking<Unit> {
+    fun `givenEmptyDatabase, whenExportBackup, thenReturnsSuccess`() = runBlocking {
         stubEmptyDatabase()
 
         val result = backupService.exportBackup()
@@ -103,10 +106,10 @@ class BackupServiceTest {
     }
 
     @Test
-    fun `givenEmptyDatabase, whenExportBackup, thenCreatesJsonFile`() = runBlocking<Unit> {
+    fun `givenEmptyDatabase, whenExportBackup, thenCreatesJsonFile`() = runBlocking {
         stubEmptyDatabase()
 
-        val result = backupService.exportBackup() as BackupService.Result.Success
+        val result = backupService.exportBackup().asSuccess()
 
         assertTrue(result.file.exists())
         assertTrue(result.file.name.endsWith(".wtm_backup.json"))
@@ -114,52 +117,31 @@ class BackupServiceTest {
 
     @Test
     fun `givenWorkDaysInDatabase, whenExportBackup, thenBackupContainsWorkDays`() =
-        runBlocking<Unit> {
-            val workDay = WorkDayDto(
-                id = 1L,
-                date = testDate,
-                beginSlot = testTime,
-                endSlot = testTime.plusHours(8)
-            )
-            val workDayWithEvents = WorkDayWithEventsDto(workDay, emptyList())
-            stubDatabase(workDays = listOf(workDayWithEvents))
+        runBlocking {
+            stubDatabase(workDays = listOf(aWorkDayWithEvents(id = 1L)))
 
-            val result = backupService.exportBackup() as BackupService.Result.Success
+            val json = backupService.exportBackup().asSuccess().file.readText()
 
-            val json = result.file.readText()
             assertTrue(json.contains("workDays"))
         }
 
     @Test
     fun `givenDatabaseWithEvents, whenExportBackup, thenBackupContainsComeEvents`() =
-        runBlocking<Unit> {
-            val workDay = WorkDayDto(
-                id = 1L,
-                date = testDate,
-                beginSlot = testTime,
-                endSlot = testTime.plusHours(8)
-            )
-            val comeEvent = ComeEventDto(
-                id = 1L,
-                startDate = testTime,
-                endDate = testTime.plusHours(8),
-                workDayId = 1L
-            )
-            val workDayWithEvents = WorkDayWithEventsDto(workDay, listOf(comeEvent))
-            stubDatabase(workDays = listOf(workDayWithEvents))
+        runBlocking {
+            val comeEvent = aComeEvent()
+            stubDatabase(workDays = listOf(aWorkDayWithEvents(events = listOf(comeEvent))))
 
-            val result = backupService.exportBackup() as BackupService.Result.Success
+            val json = backupService.exportBackup().asSuccess().file.readText()
 
-            val json = result.file.readText()
             assertTrue(json.contains("comeEvents"))
         }
 
     @Test
-    fun `givenCustomFileName, whenExportBackup, thenFileHasGivenName`() = runBlocking<Unit> {
+    fun `givenCustomFileName, whenExportBackup, thenFileHasGivenName`() = runBlocking {
         stubEmptyDatabase()
         val customName = "my_custom_backup.json"
 
-        val result = backupService.exportBackup(customName) as BackupService.Result.Success
+        val result = backupService.exportBackup(customName).asSuccess()
 
         assertEquals(customName, result.file.name)
     }
@@ -167,34 +149,24 @@ class BackupServiceTest {
     // ──────────────────────────── isDatabaseEmpty ────────────────────────────
 
     @Test
-    fun `givenEmptyDatabase, whenIsDatabaseEmpty, thenReturnsTrue`() = runBlocking<Unit> {
+    fun `givenEmptyDatabase, whenIsDatabaseEmpty, thenReturnsTrue`() = runBlocking {
         stubEmptyDatabase()
 
-        val isEmpty = backupService.isDatabaseEmpty()
-
-        assertTrue(isEmpty)
+        assertTrue(backupService.isDatabaseEmpty())
     }
 
     @Test
-    fun `givenWorkDaysPresent, whenIsDatabaseEmpty, thenReturnsFalse`() = runBlocking<Unit> {
-        val workDay = WorkDayDto(
-            id = 1L,
-            date = testDate,
-            beginSlot = testTime,
-            endSlot = testTime.plusHours(8)
-        )
-        stubDatabase(workDays = listOf(WorkDayWithEventsDto(workDay, emptyList())))
+    fun `givenWorkDaysPresent, whenIsDatabaseEmpty, thenReturnsFalse`() = runBlocking {
+        stubDatabase(workDays = listOf(aWorkDayWithEvents(id = 1L)))
 
-        val isEmpty = backupService.isDatabaseEmpty()
-
-        assertTrue(!isEmpty)
+        assertFalse(backupService.isDatabaseEmpty())
     }
 
     // ──────────────────────────── importBackup — REPLACE ────────────────────────────
 
     @Test
     fun `givenValidBackupFile, whenImportWithReplaceStrategy, thenDeletesAllAndInsertsData`() =
-        runBlocking<Unit> {
+        runBlocking {
             val backupFile = createBackupFile(workDays = 1, comeEvents = 1)
             stubEmptyDatabase()
 
@@ -202,17 +174,14 @@ class BackupServiceTest {
                 backupService.importBackup(backupFile, BackupService.ImportStrategy.REPLACE)
 
             assertTrue(result is BackupService.Result.Success)
-            verifyBlocking(entityHistoryDao) { deleteAll() }
-            verifyBlocking(comeEventDao) { deleteAll() }
-            verifyBlocking(workDayDao) { deleteAll() }
-            verifyBlocking(dayOffDao) { deleteAll() }
+            verifyAllTablesCleared()
             verifyBlocking(workDayDao) { insert(any()) }
             verifyBlocking(comeEventDao) { insert(any()) }
         }
 
     @Test
     fun `givenValidBackupFile, whenImportWithReplaceStrategy, thenInsertsWorkDays`() =
-        runBlocking<Unit> {
+        runBlocking {
             val backupFile = createBackupFile(workDays = 2)
             stubEmptyDatabase()
 
@@ -225,21 +194,18 @@ class BackupServiceTest {
 
     @Test
     fun `givenValidBackupFile, whenImportWithMergeStrategy, thenDoesNotDeleteExistingData`() =
-        runBlocking<Unit> {
+        runBlocking {
             val backupFile = createBackupFile(workDays = 1)
             stubEmptyDatabase()
 
             backupService.importBackup(backupFile, BackupService.ImportStrategy.MERGE)
 
-            verifyBlocking(workDayDao, never()) { deleteAll() }
-            verifyBlocking(comeEventDao, never()) { deleteAll() }
-            verifyBlocking(dayOffDao, never()) { deleteAll() }
-            verifyBlocking(entityHistoryDao, never()) { deleteAll() }
+            verifyNoTablesCleared()
         }
 
     @Test
     fun `givenNewWorkDayInBackup, whenImportWithMergeStrategy, thenInsertsNewWorkDay`() =
-        runBlocking<Unit> {
+        runBlocking {
             val backupFile = createBackupFile(workDays = 1)
             stubEmptyDatabase()
 
@@ -250,15 +216,9 @@ class BackupServiceTest {
 
     @Test
     fun `givenExistingWorkDayInBackup, whenImportWithMergeStrategy, thenUpdatesExistingWorkDay`() =
-        runBlocking<Unit> {
+        runBlocking {
             val existingId = 1L
-            val workDay = WorkDayDto(
-                id = existingId,
-                date = testDate,
-                beginSlot = testTime,
-                endSlot = testTime.plusHours(8)
-            )
-            stubDatabase(workDays = listOf(WorkDayWithEventsDto(workDay, emptyList())))
+            stubDatabase(workDays = listOf(aWorkDayWithEvents(id = existingId)))
 
             val backupFile = createBackupFile(workDays = 1, existingWorkDayId = existingId)
 
@@ -272,27 +232,20 @@ class BackupServiceTest {
 
     @Test
     fun `givenValidBackupFile, whenImportWithSkipStrategy, thenDoesNotDeleteExistingData`() =
-        runBlocking<Unit> {
+        runBlocking {
             val backupFile = createBackupFile(workDays = 1)
             stubEmptyDatabase()
 
             backupService.importBackup(backupFile, BackupService.ImportStrategy.SKIP)
 
-            verifyBlocking(workDayDao, never()) { deleteAll() }
-            verifyBlocking(comeEventDao, never()) { deleteAll() }
+            verifyNoTablesCleared()
         }
 
     @Test
     fun `givenExistingWorkDayInBackup, whenImportWithSkipStrategy, thenSkipsExistingWorkDay`() =
-        runBlocking<Unit> {
+        runBlocking {
             val existingId = 1L
-            val workDay = WorkDayDto(
-                id = existingId,
-                date = testDate,
-                beginSlot = testTime,
-                endSlot = testTime.plusHours(8)
-            )
-            stubDatabase(workDays = listOf(WorkDayWithEventsDto(workDay, emptyList())))
+            stubDatabase(workDays = listOf(aWorkDayWithEvents(id = existingId)))
 
             val backupFile = createBackupFile(workDays = 1, existingWorkDayId = existingId)
 
@@ -304,7 +257,7 @@ class BackupServiceTest {
 
     @Test
     fun `givenNewWorkDayInBackup, whenImportWithSkipStrategy, thenInsertsNewWorkDay`() =
-        runBlocking<Unit> {
+        runBlocking {
             val backupFile = createBackupFile(workDays = 1)
             stubEmptyDatabase()
 
@@ -316,7 +269,7 @@ class BackupServiceTest {
     // ──────────────────────────── importBackup — errors ────────────────────────────
 
     @Test
-    fun `givenNonExistentFile, whenImportBackup, thenReturnsError`() = runBlocking<Unit> {
+    fun `givenNonExistentFile, whenImportBackup, thenReturnsError`() = runBlocking {
         val nonExistentFile = tempFolder.root.resolve("nonexistent.json")
 
         val result = backupService.importBackup(nonExistentFile)
@@ -326,19 +279,19 @@ class BackupServiceTest {
 
     @Test
     fun `givenNonExistentFile, whenImportBackup, thenErrorContainsIllegalArgumentException`() =
-        runBlocking<Unit> {
+        runBlocking {
             val nonExistentFile = tempFolder.root.resolve("nonexistent.json")
 
-            val result = backupService.importBackup(nonExistentFile) as BackupService.Result.Error
+            val exception = backupService.importBackup(nonExistentFile).asError().exception
 
-            assertTrue(result.exception is IllegalArgumentException)
+            assertTrue(exception is IllegalArgumentException)
         }
 
     // ──────────────────────────── history in backup ────────────────────────────
 
     @Test
     fun `givenHistoryInBackup, whenImportWithReplaceStrategy, thenInsertsHistory`() =
-        runBlocking<Unit> {
+        runBlocking {
             val backupFile = createBackupFile(historyEntries = 2)
             stubEmptyDatabase()
 
@@ -349,32 +302,18 @@ class BackupServiceTest {
 
     @Test
     fun `givenHistoryInDatabase, whenExportBackup, thenBackupContainsHistory`() =
-        runBlocking<Unit> {
-            val historyEntry = EntityHistoryDto(
-                id = 1L,
-                changeGroupId = "group-1",
-                entityType = "WorkDayDto",
-                entityId = 1L,
-                actionType = "INSERT",
-                fieldName = "date",
-                oldValue = null,
-                newValue = "2024-01-10",
-                timestamp = testTime,
-            )
-            stubDatabase(historyEntries = listOf(historyEntry))
+        runBlocking {
+            stubDatabase(historyEntries = listOf(aHistoryEntry(changeGroupId = "group-1")))
 
-            val result = backupService.exportBackup() as BackupService.Result.Success
+            val json = backupService.exportBackup().asSuccess().file.readText()
 
-            val json = result.file.readText()
             assertTrue(json.contains("history"))
             assertTrue(json.contains("group-1"))
         }
 
-    // ──────────────────────────── helpers ────────────────────────────
+    // ──────────────────────────── helpers — stubs ────────────────────────────
 
-    private fun stubEmptyDatabase() {
-        stubDatabase()
-    }
+    private fun stubEmptyDatabase() = stubDatabase()
 
     private fun stubDatabase(
         workDays: List<WorkDayWithEventsDto> = emptyList(),
@@ -387,6 +326,71 @@ class BackupServiceTest {
         entityHistoryDao.stub { onBlocking { findAll() } doReturn historyEntries }
     }
 
+    // ──────────────────────────── helpers — verifications ────────────────────────────
+
+    private fun verifyAllTablesCleared() {
+        verifyBlocking(entityHistoryDao) { deleteAll() }
+        verifyBlocking(workDayDao) { deleteAll() }
+        verifyBlocking(comeEventDao) { deleteAll() }
+        verifyBlocking(dayOffDao) { deleteAll() }
+    }
+
+    private fun verifyNoTablesCleared() {
+        verifyBlocking(workDayDao, never()) { deleteAll() }
+        verifyBlocking(comeEventDao, never()) { deleteAll() }
+        verifyBlocking(dayOffDao, never()) { deleteAll() }
+        verifyBlocking(entityHistoryDao, never()) { deleteAll() }
+    }
+
+    // ──────────────────────────── helpers — result unwrappers ────────────────────────────
+
+    private fun BackupService.Result.asSuccess() =
+        this as? BackupService.Result.Success
+            ?: error("Expected Result.Success but was $this")
+
+    private fun BackupService.Result.asError() =
+        this as? BackupService.Result.Error
+            ?: error("Expected Result.Error but was $this")
+
+    // ──────────────────────────── helpers — object builders ────────────────────────────
+
+    private fun aWorkDay(id: Long = 1L, date: LocalDate = testDate) = WorkDayDto(
+        id = id,
+        date = date,
+        beginSlot = testTime,
+        endSlot = testTime.plusHours(8),
+    )
+
+    private fun aWorkDayWithEvents(
+        id: Long = 1L,
+        events: List<ComeEventDto> = emptyList(),
+    ) = WorkDayWithEventsDto(aWorkDay(id = id), events)
+
+    private fun aComeEvent(id: Long = 1L, workDayId: Long = 1L) = ComeEventDto(
+        id = id,
+        startDate = testTime,
+        endDate = testTime.plusHours(8),
+        workDayId = workDayId,
+    )
+
+    private fun aHistoryEntry(
+        id: Long = 1L,
+        changeGroupId: String = "group-$id",
+    ) = EntityHistoryDto(
+        id = id,
+        changeGroupId = changeGroupId,
+        entityType = "WorkDayDto",
+        entityId = 1L,
+        actionType = "INSERT",
+        fieldName = "date",
+        oldValue = null,
+        newValue = "2024-01-10",
+        timestamp = testTime,
+    )
+
+    // ──────────────────────────── helpers — backup file factory ────────────────────────────
+
+    @Suppress("EmptyRange")
     private fun createBackupFile(
         workDays: Int = 0,
         comeEvents: Int = 0,
@@ -394,57 +398,50 @@ class BackupServiceTest {
         historyEntries: Int = 0,
         existingWorkDayId: Long? = null,
     ): java.io.File {
-        val workDayList = (1..workDays).map { i ->
-            WorkDayBackup(
-                id = existingWorkDayId ?: i.toLong(),
-                date = testDate.plusDays(i.toLong() - 1),
-                beginSlot = testTime,
-                endSlot = testTime.plusHours(8),
-            )
-        }
-        val comeEventList = (1..comeEvents).map { i ->
-            ComeEventBackup(
-                id = i.toLong(),
-                startDate = testTime,
-                endDate = testTime.plusHours(8),
-                workDayId = existingWorkDayId ?: 1L,
-            )
-        }
-        val dayOffList = (1..daysOff).map { i ->
-            DayOffBackup(
-                id = i.toLong(),
-                uuid = "uuid-$i",
-                type = DayOffType.PublicHoliday.name,
-                name = "Holiday $i",
-                startDate = testDate,
-                finishDate = testDate,
-                source = DayOffSource.ExternalAPI.name,
-            )
-        }
-        val historyList = (1..historyEntries).map { i ->
-            EntityHistoryBackup(
-                id = i.toLong(),
-                changeGroupId = "group-$i",
-                entityType = "WorkDayDto",
-                entityId = 1L,
-                actionType = "INSERT",
-                fieldName = "date",
-                oldValue = null,
-                newValue = "2024-01-10",
-                timestamp = testTime,
-            )
-        }
-
         val backupData = BackupData(
-            workDays = workDayList,
-            comeEvents = comeEventList,
-            daysOff = dayOffList,
-            history = historyList,
+            workDays = (1..workDays).map { i ->
+                WorkDayBackup(
+                    id = existingWorkDayId ?: i.toLong(),
+                    date = testDate.plusDays(i.toLong() - 1),
+                    beginSlot = testTime,
+                    endSlot = testTime.plusHours(8),
+                )
+            },
+            comeEvents = (1..comeEvents).map { i ->
+                ComeEventBackup(
+                    id = i.toLong(),
+                    startDate = testTime,
+                    endDate = testTime.plusHours(8),
+                    workDayId = existingWorkDayId ?: 1L,
+                )
+            },
+            daysOff = (1..daysOff).map { i ->
+                DayOffBackup(
+                    id = i.toLong(),
+                    uuid = "uuid-$i",
+                    type = DayOffType.PublicHoliday.name,
+                    name = "Holiday $i",
+                    startDate = testDate,
+                    finishDate = testDate,
+                    source = DayOffSource.ExternalAPI.name,
+                )
+            },
+            history = (1..historyEntries).map { i ->
+                EntityHistoryBackup(
+                    id = i.toLong(),
+                    changeGroupId = "group-$i",
+                    entityType = "WorkDayDto",
+                    entityId = 1L,
+                    actionType = "INSERT",
+                    fieldName = "date",
+                    oldValue = null,
+                    newValue = "2024-01-10",
+                    timestamp = testTime,
+                )
+            },
         )
-
-        val file = tempFolder.newFile("backup_test_${System.nanoTime()}.json")
-        file.writeText(gson.toJson(backupData))
-        return file
+        return tempFolder.newFile("backup_test_${System.nanoTime()}.json")
+            .also { it.writeText(gson.toJson(backupData)) }
     }
 }
 

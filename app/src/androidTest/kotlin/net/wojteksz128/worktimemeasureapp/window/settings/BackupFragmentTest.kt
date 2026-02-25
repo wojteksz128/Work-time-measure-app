@@ -55,15 +55,7 @@ class BackupFragmentTest {
         context = ApplicationProvider.getApplicationContext()
         PreferenceManager.getDefaultSharedPreferences(context).edit().clear().apply()
         initialSettingsPreparer.initSettings()
-        backupService.stub {
-            onBlocking { isDatabaseEmpty() } doAnswer { true }
-            onBlocking { exportBackup() } doAnswer {
-                BackupService.Result.Error(RuntimeException("Not stubbed"))
-            }
-            onBlocking { importBackup(any(), any()) } doAnswer {
-                BackupService.Result.Error(RuntimeException("Not stubbed"))
-            }
-        }
+        stubBackupServiceDefaults()
         launchFragmentInHiltContainer<BackupFragment>()
     }
 
@@ -81,10 +73,7 @@ class BackupFragmentTest {
 
     @Test
     fun whenExportClicked_thenLaunchesCreateDocumentIntent() {
-        val fakeUri = Uri.parse("content://fake/backup.json")
-        val resultData = Intent().setData(fakeUri)
-        val result = Instrumentation.ActivityResult(Activity.RESULT_OK, resultData)
-        intending(hasAction(Intent.ACTION_CREATE_DOCUMENT)).respondWith(result)
+        stubCreateDocumentResult()
 
         backupSettings {
             clickExport()
@@ -95,10 +84,7 @@ class BackupFragmentTest {
 
     @Test
     fun whenImportClicked_thenLaunchesGetContentIntent() {
-        val fakeUri = Uri.parse("content://fake/backup.json")
-        val resultData = Intent().setData(fakeUri)
-        val result = Instrumentation.ActivityResult(Activity.RESULT_OK, resultData)
-        intending(hasAction(Intent.ACTION_GET_CONTENT)).respondWith(result)
+        stubGetContentResult()
 
         backupSettings {
             clickImport()
@@ -109,10 +95,7 @@ class BackupFragmentTest {
 
     @Test
     fun whenShareClicked_thenLaunchesChooserIntent() {
-        val tempFile = File(context.cacheDir, "backup_share_test.json").also { it.writeText("{}") }
-        backupService.stub {
-            onBlocking { exportBackup() } doAnswer { BackupService.Result.Success(tempFile) }
-        }
+        stubExportSuccess()
 
         backupSettings {
             clickShare()
@@ -123,16 +106,8 @@ class BackupFragmentTest {
 
     @Test
     fun whenExportSucceeds_thenSnackbarWithSuccessMessageIsShown() {
-        val tempFile = File(context.cacheDir, "backup_export_test.json").also { it.writeText("{}") }
-        backupService.stub {
-            onBlocking { exportBackup() } doAnswer { BackupService.Result.Success(tempFile) }
-        }
-
-        val destFile = File(context.cacheDir, "backup_dest.json")
-        val destUri = Uri.fromFile(destFile)
-        val resultData = Intent().setData(destUri)
-        val result = Instrumentation.ActivityResult(Activity.RESULT_OK, resultData)
-        intending(hasAction(Intent.ACTION_CREATE_DOCUMENT)).respondWith(result)
+        stubExportSuccess()
+        stubCreateDocumentResult()
 
         backupSettings {
             clickExport()
@@ -143,20 +118,8 @@ class BackupFragmentTest {
 
     @Test
     fun whenImportWithEmptyDatabase_thenImportIsPerformedDirectly() {
-        val importFile =
-            File(context.cacheDir, "backup_import_test.json").also { it.writeText("{}") }
-        val importUri = Uri.fromFile(importFile)
-
-        backupService.stub {
-            onBlocking { isDatabaseEmpty() } doAnswer { true }
-            onBlocking { importBackup(any(), any()) } doAnswer {
-                BackupService.Result.Success(importFile)
-            }
-        }
-
-        val resultData = Intent().setData(importUri)
-        val result = Instrumentation.ActivityResult(Activity.RESULT_OK, resultData)
-        intending(hasAction(Intent.ACTION_GET_CONTENT)).respondWith(result)
+        stubBackupServiceWithEmptyDatabase()
+        stubGetContentResult()
 
         backupSettings {
             clickImport()
@@ -169,17 +132,8 @@ class BackupFragmentTest {
 
     @Test
     fun whenImportWithNonEmptyDatabase_thenStrategyDialogIsShown() {
-        val importFile =
-            File(context.cacheDir, "backup_import_nonempty.json").also { it.writeText("{}") }
-        val importUri = Uri.fromFile(importFile)
-
-        backupService.stub {
-            onBlocking { isDatabaseEmpty() } doAnswer { false }
-        }
-
-        val resultData = Intent().setData(importUri)
-        val result = Instrumentation.ActivityResult(Activity.RESULT_OK, resultData)
-        intending(hasAction(Intent.ACTION_GET_CONTENT)).respondWith(result)
+        stubBackupServiceWithNonEmptyDatabase()
+        stubGetContentResult()
 
         backupSettings {
             clickImport()
@@ -189,17 +143,8 @@ class BackupFragmentTest {
 
     @Test
     fun whenImportStrategyDialogCancelled_thenImportIsNotPerformed() {
-        val importFile =
-            File(context.cacheDir, "backup_import_cancel.json").also { it.writeText("{}") }
-        val importUri = Uri.fromFile(importFile)
-
-        backupService.stub {
-            onBlocking { isDatabaseEmpty() } doAnswer { false }
-        }
-
-        val resultData = Intent().setData(importUri)
-        val result = Instrumentation.ActivityResult(Activity.RESULT_OK, resultData)
-        intending(hasAction(Intent.ACTION_GET_CONTENT)).respondWith(result)
+        stubBackupServiceWithNonEmptyDatabase()
+        stubGetContentResult()
 
         backupSettings {
             clickImport()
@@ -215,20 +160,14 @@ class BackupFragmentTest {
 
     @Test
     fun whenImportStrategyMergeSelected_thenImportBackupCalledWithMergeStrategy() {
-        val importFile =
-            File(context.cacheDir, "backup_import_merge.json").also { it.writeText("{}") }
-        val importUri = Uri.fromFile(importFile)
-
-        backupService.stub {
-            onBlocking { isDatabaseEmpty() } doAnswer { false }
-            onBlocking { importBackup(any(), any()) } doAnswer {
-                BackupService.Result.Success(importFile)
-            }
-        }
-
-        val resultData = Intent().setData(importUri)
-        val result = Instrumentation.ActivityResult(Activity.RESULT_OK, resultData)
-        intending(hasAction(Intent.ACTION_GET_CONTENT)).respondWith(result)
+        stubBackupServiceWithNonEmptyDatabase(
+            importResult = BackupService.Result.Success(
+                aTempFile(
+                    "merge"
+                )
+            )
+        )
+        stubGetContentResult()
 
         backupSettings {
             clickImport()
@@ -245,20 +184,14 @@ class BackupFragmentTest {
 
     @Test
     fun whenImportStrategyReplaceSelected_thenImportBackupCalledWithReplaceStrategy() {
-        val importFile =
-            File(context.cacheDir, "backup_import_replace.json").also { it.writeText("{}") }
-        val importUri = Uri.fromFile(importFile)
-
-        backupService.stub {
-            onBlocking { isDatabaseEmpty() } doAnswer { false }
-            onBlocking { importBackup(any(), any()) } doAnswer {
-                BackupService.Result.Success(importFile)
-            }
-        }
-
-        val resultData = Intent().setData(importUri)
-        val result = Instrumentation.ActivityResult(Activity.RESULT_OK, resultData)
-        intending(hasAction(Intent.ACTION_GET_CONTENT)).respondWith(result)
+        stubBackupServiceWithNonEmptyDatabase(
+            importResult = BackupService.Result.Success(
+                aTempFile(
+                    "replace"
+                )
+            )
+        )
+        stubGetContentResult()
 
         backupSettings {
             clickImport()
@@ -275,20 +208,14 @@ class BackupFragmentTest {
 
     @Test
     fun whenImportStrategySkipSelected_thenImportBackupCalledWithSkipStrategy() {
-        val importFile =
-            File(context.cacheDir, "backup_import_skip.json").also { it.writeText("{}") }
-        val importUri = Uri.fromFile(importFile)
-
-        backupService.stub {
-            onBlocking { isDatabaseEmpty() } doAnswer { false }
-            onBlocking { importBackup(any(), any()) } doAnswer {
-                BackupService.Result.Success(importFile)
-            }
-        }
-
-        val resultData = Intent().setData(importUri)
-        val result = Instrumentation.ActivityResult(Activity.RESULT_OK, resultData)
-        intending(hasAction(Intent.ACTION_GET_CONTENT)).respondWith(result)
+        stubBackupServiceWithNonEmptyDatabase(
+            importResult = BackupService.Result.Success(
+                aTempFile(
+                    "skip"
+                )
+            )
+        )
+        stubGetContentResult()
 
         backupSettings {
             clickImport()
@@ -302,4 +229,61 @@ class BackupFragmentTest {
             importBackup(any(), eq(BackupService.ImportStrategy.SKIP))
         }
     }
+
+    // ──────────────────────────── helpers — stubs ────────────────────────────
+
+    private fun stubBackupServiceDefaults() {
+        backupService.stub {
+            onBlocking { isDatabaseEmpty() } doAnswer { true }
+            onBlocking { exportBackup() } doAnswer {
+                BackupService.Result.Error(RuntimeException("Not stubbed"))
+            }
+            onBlocking { importBackup(any(), any()) } doAnswer {
+                BackupService.Result.Error(RuntimeException("Not stubbed"))
+            }
+        }
+    }
+
+    private fun stubExportSuccess() {
+        backupService.stub {
+            onBlocking { exportBackup() } doAnswer { BackupService.Result.Success(aTempFile("export")) }
+        }
+    }
+
+    private fun stubBackupServiceWithEmptyDatabase(
+        importResult: BackupService.Result = BackupService.Result.Success(aTempFile("import_empty")),
+    ) {
+        backupService.stub {
+            onBlocking { isDatabaseEmpty() } doAnswer { true }
+            onBlocking { importBackup(any(), any()) } doAnswer { importResult }
+        }
+    }
+
+    private fun stubBackupServiceWithNonEmptyDatabase(
+        importResult: BackupService.Result = BackupService.Result.Error(RuntimeException("Not stubbed")),
+    ) {
+        backupService.stub {
+            onBlocking { isDatabaseEmpty() } doAnswer { false }
+            onBlocking { importBackup(any(), any()) } doAnswer { importResult }
+        }
+    }
+
+    // ──────────────────────────── helpers — intent stubs ────────────────────────────
+
+    private fun stubCreateDocumentResult(uri: Uri = Uri.fromFile(aTempFile("dest"))) {
+        val resultData = Intent().setData(uri)
+        val result = Instrumentation.ActivityResult(Activity.RESULT_OK, resultData)
+        intending(hasAction(Intent.ACTION_CREATE_DOCUMENT)).respondWith(result)
+    }
+
+    private fun stubGetContentResult(uri: Uri = Uri.fromFile(aTempFile("import"))) {
+        val resultData = Intent().setData(uri)
+        val result = Instrumentation.ActivityResult(Activity.RESULT_OK, resultData)
+        intending(hasAction(Intent.ACTION_GET_CONTENT)).respondWith(result)
+    }
+
+    // ──────────────────────────── helpers — factories ────────────────────────────
+
+    private fun aTempFile(tag: String): File =
+        File(context.cacheDir, "backup_${tag}_test.json").also { it.writeText("{}") }
 }
