@@ -21,14 +21,17 @@ class SyncSettingsRobot : BaseScreenRobot() {
 
     fun setTimeSync(enabled: Boolean) {
         onView(enableClickable).perform(setSwitchTo(enabled))
+        Thread.sleep(500)
     }
 
     fun toggleTimeSync() {
         onView(enableTitle).perform(click())
+        Thread.sleep(500)
     }
 
     fun editServer(func: EditTextDialogRobot.() -> Unit) {
         onView(serverTitle).perform(click())
+        Thread.sleep(500)
         EditTextDialogRobot().apply { func() }
     }
 

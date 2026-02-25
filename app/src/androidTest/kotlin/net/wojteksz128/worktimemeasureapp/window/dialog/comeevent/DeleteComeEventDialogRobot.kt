@@ -28,10 +28,12 @@ class DeleteComeEventDialogRobot : BaseDialogRobot() {
 
     fun clickDelete() {
         onViewInDialog(deleteButton).perform(click())
+        Thread.sleep(500)
     }
 
     fun clickCancel() {
         onViewInDialog(cancelButton).perform(click())
+        Thread.sleep(500)
     }
 
     fun verifyDeleteDialogIsDismissed() {

@@ -19,6 +19,7 @@ class ComeEventsListRobot(recyclerViewId: Int) {
                 position, swipeLeft()
             )
         )
+        Thread.sleep(500)
         EditComeEventDialogRobot().apply { func() }
     }
 
@@ -28,6 +29,7 @@ class ComeEventsListRobot(recyclerViewId: Int) {
                 position, swipeRight()
             )
         )
+        Thread.sleep(500)
         DeleteComeEventDialogRobot().apply { func() }
     }
 }

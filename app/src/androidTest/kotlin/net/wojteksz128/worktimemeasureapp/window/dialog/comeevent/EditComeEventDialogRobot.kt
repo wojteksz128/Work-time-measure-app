@@ -53,14 +53,17 @@ class EditComeEventDialogRobot : BaseDialogRobot() {
 
     fun clearFinishTime() {
         onViewInDialog(clearButton).perform(click())
+        Thread.sleep(500)
     }
 
     fun clickOk() {
         onViewInDialog(okButton).perform(click())
+        Thread.sleep(500)
     }
 
     fun clickCancel() {
         onViewInDialog(cancelButton).perform(click())
+        Thread.sleep(500)
     }
 
     override fun verifyIsDisplayed() {
@@ -85,11 +88,13 @@ class EditComeEventDialogRobot : BaseDialogRobot() {
 
     fun openStartTimeEditor(func: TimeEditorRobot.() -> Unit) {
         onViewInDialog(setStartTimeEditor).perform(click())
+        Thread.sleep(500)
         TimeEditorRobot(startTimeEditor).apply { func() }
     }
 
     fun openFinishTimeEditor(func: TimeEditorRobot.() -> Unit) {
         onViewInDialog(setFinishTimeEditor).perform(click())
+        Thread.sleep(500)
         TimeEditorRobot(finishTimeEditor).apply { func() }
     }
 

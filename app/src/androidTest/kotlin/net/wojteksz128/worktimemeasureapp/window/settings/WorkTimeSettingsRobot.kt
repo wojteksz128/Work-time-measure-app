@@ -15,10 +15,12 @@ class WorkTimeSettingsRobot : BaseScreenRobot() {
 
     fun toggleNotify() {
         onView(notifyPreference).perform(click())
+        Thread.sleep(500)
     }
 
     fun openWeekSettings(func: WeekWorkTimeSettingsRobot.() -> Unit) {
         onView(weekPreference).perform(click())
+        Thread.sleep(500)
         WeekWorkTimeSettingsRobot().apply { func() }
     }
 

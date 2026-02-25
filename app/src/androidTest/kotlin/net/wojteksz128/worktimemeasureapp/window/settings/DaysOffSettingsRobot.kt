@@ -25,24 +25,31 @@ class DaysOffSettingsRobot : BaseScreenRobot() {
 
     fun setSyncWithApi(enabled: Boolean) {
         onView(syncWithApiClickable).perform(setSwitchTo(enabled))
+        Thread.sleep(500)
     }
 
     fun toggleSyncWithApi() {
         onView(syncWithApiTitle).perform(click())
+        Thread.sleep(500)
     }
 
     fun changeProvider(provider: HolidayProvider) {
         onView(providerTitle).perform(click())
+        Thread.sleep(500)
         onView(withText(provider.displayName)).perform(click())
+        Thread.sleep(500)
     }
 
     fun changeCountry(countryName: String) {
         onView(countryTitle).perform(click())
+        Thread.sleep(500)
         onView(withText(countryName)).perform(click())
+        Thread.sleep(500)
     }
 
     fun syncNow() {
         onView(syncNowTitle).perform(click())
+        Thread.sleep(500)
     }
 
     override fun verifyIsDisplayed() {

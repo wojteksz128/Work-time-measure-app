@@ -21,29 +21,36 @@ class TimeEditorRobot(editor: Matcher<View?>) {
 
     fun setHour(hour: Int) {
         onView(hourDateTimePicker).inRoot(isDialog()).perform(setNumberOnNumberPicker(hour))
+        Thread.sleep(500)
     }
 
     fun setMinute(minute: Int) {
         onView(minuteDateTimePicker).inRoot(isDialog()).perform(setNumberOnNumberPicker(minute))
+        Thread.sleep(500)
     }
 
     fun setSecond(second: Int) {
         onView(secondDateTimePicker).inRoot(isDialog()).perform(setNumberOnNumberPicker(second))
+        Thread.sleep(500)
     }
 
     fun clickAccept() {
         onView(acceptButton).inRoot(isDialog()).perform(click())
+        Thread.sleep(500)
     }
 
     fun clickAm() {
         onView(amButton).inRoot(isDialog()).perform(click())
+        Thread.sleep(500)
     }
 
     fun clickDismiss() {
         onView(dismissButton).inRoot(isDialog()).perform(click())
+        Thread.sleep(500)
     }
 
     fun clickPm() {
         onView(pmButton).inRoot(isDialog()).perform(click())
+        Thread.sleep(500)
     }
 }

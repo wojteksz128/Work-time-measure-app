@@ -22,19 +22,29 @@ class WeekWorkTimeSettingsRobot : BaseScreenRobot() {
 
     fun changeFirstDayOfWeek(entry: Int) {
         onView(firstWeekDayTitle).perform(click())
+        Thread.sleep(500)
         onView(withText(entry)).perform(click())
+        Thread.sleep(500)
     }
 
     fun changeDaysOfWorkingWeek(vararg entries: Int) {
         onView(daysOfWorkingWeekTitle).perform(click())
-        entries.forEach { onView(withText(it)).perform(click()) }
+        Thread.sleep(500)
+        entries.forEach {
+            onView(withText(it)).perform(click())
+            Thread.sleep(500)
+        }
         onView(okButton).perform(click())
+        Thread.sleep(500)
     }
 
     fun changeWorkTimeInDay(hour: Int, minute: Int) {
         onView(durationTitle).perform(click())
+        Thread.sleep(500)
         onView(timePicker).perform(PickerActions.setTime(hour, minute))
+        Thread.sleep(500)
         onView(okButton).perform(click())
+        Thread.sleep(500)
     }
 
     override fun verifyIsDisplayed() {

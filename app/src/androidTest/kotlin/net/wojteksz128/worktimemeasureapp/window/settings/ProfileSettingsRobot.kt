@@ -18,16 +18,19 @@ class ProfileSettingsRobot : BaseScreenRobot() {
 
     fun editUsername(func: EditTextDialogRobot.() -> Unit) {
         onView(usernamePreference).perform(click())
+        Thread.sleep(500)
         EditTextDialogRobot().apply { func() }
     }
 
     fun editEmail(func: EditTextDialogRobot.() -> Unit) {
         onView(emailPreference).perform(click())
+        Thread.sleep(500)
         EditTextDialogRobot().apply { func() }
     }
 
     fun editProfileImage(func: EditImageRobot.() -> Unit) {
         onView(imagePreference).perform(click())
+        Thread.sleep(500)
         EditImageRobot().apply { func() }
     }
 

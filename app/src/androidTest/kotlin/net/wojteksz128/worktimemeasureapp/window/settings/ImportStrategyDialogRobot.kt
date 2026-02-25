@@ -8,6 +8,7 @@ import net.wojteksz128.worktimemeasureapp.robot.base.BaseScreenRobot
 
 class ImportStrategyDialogRobot : BaseScreenRobot() {
 
+    private val dialogTitle = withText(R.string.settings_backup_import_strategy_title)
     private val strategyMergeText = withText(R.string.settings_backup_import_strategy_merge)
     private val strategyReplaceText = withText(R.string.settings_backup_import_strategy_replace)
     private val strategySkipText = withText(R.string.settings_backup_import_strategy_skip)
@@ -15,7 +16,7 @@ class ImportStrategyDialogRobot : BaseScreenRobot() {
     private val cancelButton = withText(android.R.string.cancel)
 
     override fun verifyIsDisplayed() {
-        onView(withText(R.string.settings_backup_import_strategy_title)).check(isDisplayed)
+        onView(dialogTitle).check(isDisplayed)
         onView(strategyMergeText).check(isDisplayed)
         onView(strategyReplaceText).check(isDisplayed)
         onView(strategySkipText).check(isDisplayed)
@@ -23,22 +24,27 @@ class ImportStrategyDialogRobot : BaseScreenRobot() {
 
     fun selectMerge() {
         onView(strategyMergeText).perform(click())
+        Thread.sleep(500)
     }
 
     fun selectReplace() {
         onView(strategyReplaceText).perform(click())
+        Thread.sleep(500)
     }
 
     fun selectSkip() {
         onView(strategySkipText).perform(click())
+        Thread.sleep(500)
     }
 
     fun confirmImport() {
         onView(importButton).perform(click())
+        Thread.sleep(500)
     }
 
     fun cancelImport() {
         onView(cancelButton).perform(click())
+        Thread.sleep(500)
     }
 }
 
