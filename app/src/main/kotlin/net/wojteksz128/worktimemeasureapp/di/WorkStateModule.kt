@@ -37,33 +37,36 @@ object WorkStateModule {
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
         val ticker = tickerFactory.create(scope)
 
-        val workDayFlow = workDayRepository.getWorkDayByDateAsFlow(dateTimeProvider.currentDate)
+        return dateTimeProvider.currentDateFlow
+            .flatMapLatest { currentDate ->
+                val workDayFlow = workDayRepository.getWorkDayByDateAsFlow(currentDate)
+                workDayFlow.flatMapLatest { workDay ->
+                    if (workDay == null || workDay.isWorkFinished()) {
+                        flow {
+                            val day = workDay ?: WorkDay(currentDate)
+                            val balance = workTimeBalanceCalculator.calculateBalanceForWorkDay(day)
+                            emit(WorkState(day, balance))
+                        }
+                    } else {
+                        flow {
+                            val initialBalance =
+                                workTimeBalanceCalculator.calculateBalanceForWorkDay(workDay)
+                            var lastState = WorkState(workDay, initialBalance)
+                            emit(lastState)
 
-        return workDayFlow.flatMapLatest { workDay ->
-            if (workDay == null || workDay.isWorkFinished()) {
-                flow {
-                    val workDay = workDay ?: WorkDay(dateTimeProvider.currentDate)
-                    val balance = workTimeBalanceCalculator.calculateBalanceForWorkDay(workDay)
-                    emit(WorkState(workDay, balance))
-                }
-            } else {
-                flow {
-                    val initialBalance =
-                        workTimeBalanceCalculator.calculateBalanceForWorkDay(workDay)
-                    var lastState = WorkState(workDay, initialBalance)
-                    emit(lastState)
-
-                    ticker.collect {
-                        val updatedBalance =
-                            workTimeBalanceCalculator.updateTodayBalance(
-                                workDay,
-                                lastState.workTimeBalance
-                            )
-                        lastState = WorkState(workDay, updatedBalance)
-                        emit(lastState)
+                            ticker.collect {
+                                val updatedBalance =
+                                    workTimeBalanceCalculator.updateTodayBalance(
+                                        workDay,
+                                        lastState.workTimeBalance
+                                    )
+                                lastState = WorkState(workDay, updatedBalance)
+                                emit(lastState)
+                            }
+                        }
                     }
                 }
             }
-        }.stateIn(scope, SharingStarted.WhileSubscribed(5000), null)
+            .stateIn(scope, SharingStarted.WhileSubscribed(5000), null)
     }
 }

@@ -4,18 +4,21 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.Intent
-import android.os.SystemClock
 import android.util.Log
 import androidx.core.content.edit
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import org.apache.commons.net.ntp.NTPUDPClient
-import org.threeten.bp.DayOfWeek
 import org.threeten.bp.Duration
 import org.threeten.bp.Instant
 import org.threeten.bp.LocalDate
@@ -23,9 +26,11 @@ import org.threeten.bp.ZoneId
 import org.threeten.bp.ZonedDateTime
 import javax.inject.Inject
 
+private const val KEY_NTP_OFFSET = "ntp_offset"
+
 open class DateTimeProvider @Inject constructor(
     @Suppress("PrivatePropertyName") private val Settings: Settings,
-    @ApplicationContext private val context: Context,
+    @param:ApplicationContext private val context: Context,
 ) : ClassTagAware {
 
     open val currentTime: ZonedDateTime
@@ -37,42 +42,44 @@ open class DateTimeProvider @Inject constructor(
     open val currentTimeZone: ZoneId
         get() = ZoneId.systemDefault()
 
-    private fun getCorrectedTime(): ZonedDateTime {
-        val lastNtpTime = sharedPreferences.getLong("last_ntp_time", 0L)
-        val lastSystemTime = sharedPreferences.getLong("last_system_time", 0L)
-        val lastElapsedTime = sharedPreferences.getLong("last_elapsed_time", 0L)
-
-        if (lastNtpTime == 0L || lastSystemTime == 0L || lastElapsedTime == 0L) {
-            return runBlocking {
-                return@runBlocking getNtpTime() ?: ZonedDateTime.now()
+    /**
+     * Flow emitting the current date. Reacts to system date change events:
+     * - [Intent.ACTION_DATE_CHANGED] – date change in settings or at midnight,
+     * - [Intent.ACTION_TIME_CHANGED] – manual time change, which may also shift the date.
+     *
+     * Thanks to [distinctUntilChanged], a new value is emitted only when the date actually changes
+     * (e.g. a time change without crossing midnight will not trigger unnecessary refresh).
+     */
+    open val currentDateFlow: Flow<LocalDate>
+        get() = callbackFlow {
+            val receiver = object : BroadcastReceiver() {
+                override fun onReceive(context: Context?, intent: Intent?) {
+                    Log.d(classTag, "Date/time broadcast received: ${intent?.action}")
+                    updateOffset()
+                    trySend(currentDate.apply { Log.d(classTag, "Current date: $this") })
+                }
             }
+            val filter = android.content.IntentFilter().apply {
+                addAction(Intent.ACTION_DATE_CHANGED)
+                addAction(Intent.ACTION_TIME_CHANGED)
+            }
+            context.registerReceiver(receiver, filter)
+            awaitClose { context.unregisterReceiver(receiver) }
         }
+            .onStart { emit(currentDate) }
+            .map { currentDate }
+            .distinctUntilChanged()
 
-        val currentElapsedTime = SystemClock.elapsedRealtime()
-        val elapsedTimeDiff = currentElapsedTime - lastElapsedTime
-        val correctedNtpTime = lastNtpTime + elapsedTimeDiff
-
-        return Instant.ofEpochMilli(correctedNtpTime).atZone(ZoneId.systemDefault())
+    private fun getCorrectedTime(): ZonedDateTime {
+        val ntpOffset = sharedPreferences.getLong(KEY_NTP_OFFSET, Long.MIN_VALUE)
+        return Instant.now().plusMillis(
+            if (Settings.Sync.TimeSync.Enabled.value && ntpOffset != Long.MIN_VALUE) {
+                ntpOffset
+            } else {
+                0
+            }
+        ).atZone(ZoneId.systemDefault())
     }
-
-    open val weekEndDay: LocalDate
-        get() {
-            return weekBeginDay.plusWeeks(1).minusDays(1)
-        }
-
-    open val weekBeginDay: LocalDate
-        get() {
-            val firstWeekDay =
-                Settings.WorkTime.Week.FirstWeekDay.valueNullable?.let { DayOfWeek.valueOf(it) }
-                    ?: DayOfWeek.MONDAY
-            val currentDate = currentTime.toLocalDate()
-            val currentDayOfWeek = currentDate.dayOfWeek
-            val previousFirstDayOfWeekDiff =
-                if (currentDayOfWeek >= firstWeekDay) currentDayOfWeek.value - firstWeekDay.value
-                else DayOfWeek.entries.size - firstWeekDay.value + currentDayOfWeek.value
-
-            return currentDate.minusDays(previousFirstDayOfWeekDiff.toLong())
-        }
 
     private val sharedPreferences = context.getSharedPreferences("time_prefs", MODE_PRIVATE)
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
@@ -81,39 +88,38 @@ open class DateTimeProvider @Inject constructor(
         val timeSyncEnabled = Settings.Sync.TimeSync.Enabled.value
         if (timeSyncEnabled) {
             coroutineScope.launch {
-                val ntpTime = getNtpTime()
-                ntpTime?.let {
-                    val ntpTimeMillis = it.toInstant().toEpochMilli()
-                    val systemTimeMillis = System.currentTimeMillis()
-                    val elapsedTime = SystemClock.elapsedRealtime()
-
-                    sharedPreferences.edit {
-                        putLong("last_ntp_time", ntpTimeMillis)
-                            .putLong("last_system_time", systemTimeMillis)
-                            .putLong("last_elapsed_time", elapsedTime)
-                    }
+                getNtpOffset()?.let {
+                    Log.d(classTag, "NTP offset updated: ${it}ms")
+                    sharedPreferences.edit { putLong(KEY_NTP_OFFSET, it) }
                 }
             }
         }
     }
 
-    private suspend fun getNtpTime(): ZonedDateTime? {
+    /**
+     * Returns the offset in ms: (NTP time) − (system time).
+     *
+     * Uses [org.apache.commons.net.ntp.TimeInfo.offset], computed by
+     * [org.apache.commons.net.ntp.TimeInfo.computeDetails] as:
+     *   offset = ((receiveTime - originateTime) + (transmitTime - destinationTime)) / 2
+     * in accordance with RFC 5905.
+     */
+    private suspend fun getNtpOffset(): Long? {
         if (!Settings.Sync.TimeSync.Enabled.value)
             return null
 
         val client = NTPUDPClient()
         @Suppress("DEPRECATION")
         client.defaultTimeout = Duration.ofSeconds(5).toMillis().toInt()
-        try {
+        return try {
             client.open()
             val address = Settings.Sync.TimeSync.ServerAddress.getValueAsync()
             val info = client.getTime(address)
             info.computeDetails()
-            val ntpTime = info.returnTime
-            return Instant.ofEpochMilli(ntpTime).atZone(ZoneId.systemDefault())
+            info.offset
         } catch (e: Exception) {
-            Log.e(classTag, "Failed to get the actual time.", e)
-            return null
+            Log.e(classTag, "Failed to get the NTP time.", e)
+            null
         } finally {
             client.close()
         }
