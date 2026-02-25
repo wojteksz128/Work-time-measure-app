@@ -78,8 +78,9 @@ open class DateTimeUtils(
         fun getEndDayTime(date: LocalDate): ZonedDateTime =
             date.atStartOfDay(ZoneId.systemDefault()).plusDays(1).minus(1, ChronoUnit.MILLIS)
     }
-
 }
+
+fun min(a: Duration, b: Duration) = if (a < b) a else b
 
 fun LocalDateTime.isTheSameDay(other: LocalDateTime?): Boolean =
     other?.let { this.toLocalDate() == it.toLocalDate() }

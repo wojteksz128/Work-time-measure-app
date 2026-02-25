@@ -69,7 +69,6 @@ class DashboardViewModel @Inject constructor(
             startTrackingService()
             workState?.let { workState ->
                 notificationService.scheduleEndOfWorkNotification(
-                    workState.workDay,
                     workState.workTimeBalance
                 )
             }

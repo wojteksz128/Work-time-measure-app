@@ -8,7 +8,6 @@ import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
-import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import net.wojteksz128.worktimemeasureapp.util.FakeDateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
@@ -42,7 +41,6 @@ class WorkTimeInProgressNotificationTest {
     companion object {
         private const val WORK_DAY_ID = 1L
         private val WORK_DAY_DATE = LocalDate.of(2024, 1, 1)
-        private val START_TIME_08_00 = ZonedDateTime.parse("2024-01-01T08:00:00Z")
     }
 
     @Before
@@ -52,17 +50,14 @@ class WorkTimeInProgressNotificationTest {
     }
 
     private fun createAndBuildNotification(
-        events: List<ComeEvent>,
         todayWorkTime: Duration = Duration.ZERO,
         requiredToday: Duration = Duration.ofHours(8),
         monthlyBalance: Duration = Duration.ZERO,
         mockCurrentTime: ZonedDateTime? = null,
     ): Notification {
-        val workDay =
-            WorkDay(date = WORK_DAY_DATE).copy(id = WORK_DAY_ID, events = events.toMutableList())
         val workTimeBalance = WorkTimeBalance(
             todayWorkTime = todayWorkTime,
-            requiredToday = requiredToday,
+            standardRequiredToday = requiredToday,
             monthlyBalance = monthlyBalance
         )
 
@@ -72,23 +67,15 @@ class WorkTimeInProgressNotificationTest {
 
         return WorkTimeInProgressNotification(
             context,
-            workDay,
+            WORK_DAY_DATE,
             workTimeBalance,
-            dateTimeUtils,
-            dateTimeProvider
+            dateTimeUtils
         ).build()
     }
 
     @Test
     fun testStandardAndBalancedTime_SingleEvent() {
-        val event = ComeEvent(
-            id = 1L,
-            startDate = START_TIME_08_00,
-            endDate = null,
-            workDayId = WORK_DAY_ID
-        )
         val builtNotification = createAndBuildNotification(
-            events = listOf(event),
             monthlyBalance = Duration.ofHours(1)
         )
 
@@ -108,21 +95,7 @@ class WorkTimeInProgressNotificationTest {
 
     @Test
     fun testStandardAndBalancedTime_TwoEvents() {
-        val event1 = ComeEvent(
-            id = 1L,
-            startDate = START_TIME_08_00,
-            endDate = ZonedDateTime.parse("2024-01-01T12:00:00Z"),
-            workDayId = WORK_DAY_ID
-        )
-        val event2 = ComeEvent(
-            id = 2L,
-            startDate = ZonedDateTime.parse("2024-01-01T13:00:00Z"),
-            endDate = null,
-            workDayId = WORK_DAY_ID
-        )
-
         val builtNotification = createAndBuildNotification(
-            events = listOf(event1, event2),
             todayWorkTime = Duration.ofHours(4),
             monthlyBalance = Duration.ofHours(1)
         )
@@ -134,15 +107,7 @@ class WorkTimeInProgressNotificationTest {
 
     @Test
     fun testProgressBarIsUpdated() {
-        val event = ComeEvent(
-            id = 1L,
-            startDate = START_TIME_08_00,
-            endDate = null,
-            workDayId = WORK_DAY_ID
-        )
-
         var builtNotification = createAndBuildNotification(
-            events = listOf(event),
             monthlyBalance = Duration.ofHours(1),
             mockCurrentTime = ZonedDateTime.parse("2024-01-01T14:00:00Z")
         )
@@ -152,7 +117,6 @@ class WorkTimeInProgressNotificationTest {
         assertEquals(6 * 3600, progress)
 
         builtNotification = createAndBuildNotification(
-            events = listOf(event),
             monthlyBalance = Duration.ofHours(1),
             mockCurrentTime = ZonedDateTime.parse("2024-01-01T14:30:00Z")
         )
@@ -170,7 +134,7 @@ class WorkTimeInProgressNotificationTest {
             endDate = null,
             workDayId = WORK_DAY_ID
         )
-        val builtNotification = createAndBuildNotification(events = listOf(event))
+        val builtNotification = createAndBuildNotification()
 
         val contentText = builtNotification.extras.getCharSequence("android.text").toString()
         val expectedStandardEndTimeStr = dateTimeUtils.formatDate(
@@ -182,14 +146,7 @@ class WorkTimeInProgressNotificationTest {
 
     @Test
     fun testProgressBar_FallbackToTodayWorkTime() {
-        val event = ComeEvent(
-            id = 1L,
-            startDate = START_TIME_08_00,
-            endDate = null,
-            workDayId = WORK_DAY_ID
-        )
         val builtNotification = createAndBuildNotification(
-            events = listOf(event),
             todayWorkTime = Duration.ofHours(8),
             mockCurrentTime = ZonedDateTime.parse("2024-01-01T18:00:00Z")
         )

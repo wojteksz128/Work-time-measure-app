@@ -170,7 +170,6 @@ class DashboardActivityTest {
         )
 
         verify(notificationService, timeout(1000)).scheduleEndOfWorkNotification(
-            any<WorkDay>(),
             any<WorkTimeBalance>()
         )
 

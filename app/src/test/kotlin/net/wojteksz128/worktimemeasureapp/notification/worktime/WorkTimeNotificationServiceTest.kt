@@ -121,20 +121,19 @@ class WorkTimeNotificationServiceTest {
     @Test
     fun `givenNotifyingEnabled, whenScheduleEndOfWorkNotification with workday, thenTimerIsScheduled`() {
         // Arrange
-        val workDay = mock<WorkDay>()
         val workTimeBalance = mock<WorkTimeBalance>()
         val now = testTime // Use fixed time
         val later = now.plusHours(1)
         whenever(dateTimeProvider.currentTime).thenReturn(now)
-        whenever(workTimeBalance.getStandardEndTime(workDay)).thenReturn(later)
-        whenever(workTimeBalance.getBalancedEndTime(workDay)).thenReturn(later)
+        whenever(workTimeBalance.standardEndTime).thenReturn(later)
+        whenever(workTimeBalance.balancedEndTime).thenReturn(later)
         whenever(notifyingEnabledItem.value).thenReturn(true)
         val pendingIntentMock = mock<PendingIntent>()
         doReturn(pendingIntentMock).whenever(workTimeNotificationService)
             .createTimerExpiredPendingIntent(anyOrNull(), anyOrNull())
 
         // Act
-        workTimeNotificationService.scheduleEndOfWorkNotification(workDay, workTimeBalance)
+        workTimeNotificationService.scheduleEndOfWorkNotification(workTimeBalance)
 
         // Assert
         verify(timerManager).setExactTimer(any(), any())
@@ -143,7 +142,6 @@ class WorkTimeNotificationServiceTest {
     @Test
     fun `givenNotifyingDisabled, whenScheduleEndOfWorkNotification with workday, thenTimerIsNotScheduled`() {
         // Arrange
-        val workDay = mock<WorkDay>()
         val workTimeBalance = mock<WorkTimeBalance>()
         whenever(notifyingEnabledItem.value).thenReturn(false)
 
@@ -151,11 +149,11 @@ class WorkTimeNotificationServiceTest {
         val now = testTime
         val later = now.plusHours(1)
         whenever(dateTimeProvider.currentTime).thenReturn(now)
-        whenever(workTimeBalance.getStandardEndTime(workDay)).thenReturn(later)
-        whenever(workTimeBalance.getBalancedEndTime(workDay)).thenReturn(later)
+        whenever(workTimeBalance.standardEndTime).thenReturn(later)
+        whenever(workTimeBalance.balancedEndTime).thenReturn(later)
 
         // Act
-        workTimeNotificationService.scheduleEndOfWorkNotification(workDay, workTimeBalance)
+        workTimeNotificationService.scheduleEndOfWorkNotification(workTimeBalance)
 
         // Assert
         verify(timerManager, never()).setExactTimer(any(), any())
