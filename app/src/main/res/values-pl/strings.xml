@@ -256,6 +256,7 @@
     <string name="settings_header_work_title">Czas pracy</string>
     <string name="settings_header_daysOff_title">Dni wolne</string>
     <string name="settings_header_sync_title">Synchronizacja</string>
+    <string name="settings_header_backup_title">Kopia zapasowa</string>
 
     <!-- Profile Preferences -->
     <string name="settings_profile_username_title">Imię i nazwisko</string>
@@ -310,6 +311,29 @@
     <string name="settings_sync_timeSync_server_title">Adres serwera NTP</string>
     <string name="settings_sync_timeSync_server_summary">Adres serwera NTP, używany do synchronizacji czasu w aplikacji.</string>
 
+    <!-- Backup Prefences -->
+    <string name="settings_backup_export_import">Eksport i import</string>
+    <string name="settings_backup_export_title">Eksportuj kopię zapasową</string>
+    <string name="settings_backup_export_summary">Zapisz bazę danych do pliku, który można udostępnić</string>
+    <string name="settings_backup_export_success">Kopia zapasowa została pomyślnie wyeksportowana</string>
+    <string name="settings_backup_export_error">Nie udało się wyeksportować kopii zapasowej</string>
+
+    <string name="settings_backup_import_title">Importuj kopię zapasową</string>
+    <string name="settings_backup_import_summary">Przywróć bazę danych z pliku kopii zapasowej</string>
+    <string name="settings_backup_import_success">Kopia zapasowa została pomyślnie zaimportowana</string>
+    <string name="settings_backup_import_error">Nie udało się zaimportować kopii zapasowej</string>
+    <string name="settings_backup_import_strategy_title">Baza danych nie jest pusta.\nCo zrobić z istniejącymi danymi?</string>
+    <string name="settings_backup_import_action_import">Importuj</string>
+    <string name="settings_backup_import_strategy_merge">Scal (nadpisz istniejące, dodaj brakujące)</string>
+    <string name="settings_backup_import_strategy_replace">Zastąp (najpierw usuń wszystkie istniejące dane)</string>
+    <string name="settings_backup_import_strategy_skip">Pomiń (dodaj tylko rekordy, których jeszcze nie ma)</string>
+
+    <string name="settings_backup_sharing">Udostępnianie</string>
+    <string name="settings_backup_share_title">Udostępnij kopię zapasową</string>
+    <string name="settings_backup_share_summary">Udostępnij plik kopii zapasowej innym użytkownikom</string>
+    <string name="settings_backup_share">Udostępnij kopię zapasową</string>
+    <string name="settings_backup_share_error">Nie udało się udostępnić kopii zapasowej</string>
+
     <!-- Settings keys -->
     <!--<string name="settings_key_profile" translatable="false">settings_profile</string>-->
     <!--<string name="settings_key_profile_image" translatable="false">settings_profile_image</string>-->
@@ -332,6 +356,11 @@
     <!--<string name="settings_key_sync" translatable="false">settings_sync</string>-->
     <!--<string name="settings_key_sync_timeSync_enable" translatable="false">settings_sync_timeSync_enable</string>-->
     <!--<string name="settings_key_sync_timeSync_server" translatable="false">settings_sync_timeSync_server</string>-->
+
+    <!--<string name="settings_key_backup" translatable="false">settings_backup</string>-->
+    <!--<string name="settings_key_backup_export" translatable="false">settings_backup_export</string>-->
+    <!--<string name="settings_key_backup_import" translatable="false">settings_backup_import</string>-->
+    <!--<string name="settings_key_backup_share" translatable="false">settings_backup_share</string>-->
 
     <!--<string name="settings_key_internal_firstRun" translatable="false">settings_internal_firstRun</string>-->
     <!--<string name="settings_key_internal_configurationVersion" translatable="false">settings_internal_configurationVersion</string>-->

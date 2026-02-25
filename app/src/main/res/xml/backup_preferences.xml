@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="net.wojteksz128.worktimemeasureapp.window.settings.BackupFragment">
+
+    <PreferenceCategory app:title="@string/settings_backup_export_import">
+
+        <Preference
+            app:key="@string/settings_key_backup_export"
+            app:title="@string/settings_backup_export_title"
+            app:summary="@string/settings_backup_export_summary"
+            app:icon="@drawable/ic_save_24dp" />
+
+        <Preference
+            app:key="@string/settings_key_backup_import"
+            app:title="@string/settings_backup_import_title"
+            app:summary="@string/settings_backup_import_summary"
+            app:icon="@drawable/ic_download_24dp" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/settings_backup_sharing">
+
+        <Preference
+            app:key="@string/settings_key_backup_share"
+            app:title="@string/settings_backup_share_title"
+            app:summary="@string/settings_backup_share_summary"
+            app:icon="@drawable/ic_share_24dp" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
+

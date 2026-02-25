@@ -6,4 +6,6 @@ open class IntFromStringSettingsItem(name: Int, context: Context) : SettingsItem
     name,
     context,
     { key -> getString(key, null)?.toInt() },
-    { key, value -> putString(key, value.toString()) })
+    { key, value -> putString(key, value.toString()) },
+    fromString = { it.toIntOrNull() },
+)
