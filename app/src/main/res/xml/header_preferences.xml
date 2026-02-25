@@ -26,4 +26,10 @@
         app:key="@string/settings_key_sync"
         app:title="@string/settings_header_sync_title" />
 
+    <Preference
+        app:fragment="net.wojteksz128.worktimemeasureapp.window.settings.BackupFragment"
+        app:icon="@drawable/ic_backup_24dp"
+        app:key="@string/settings_key_backup"
+        app:title="@string/settings_header_backup_title" />
+
 </PreferenceScreen>

@@ -8,4 +8,6 @@ class EnumSettingsItem<T : Enum<T>>(@StringRes name: Int, context: Context, enum
         name,
         context,
         { key -> enumValues.firstOrNull { it.name == getString(key, null) } },
-        { key, value -> putString(key, value.name) })
+        { key, value -> putString(key, value.name) },
+        fromString = { raw -> enumValues.firstOrNull { it.name == raw } },
+    )

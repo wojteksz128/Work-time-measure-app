@@ -6,5 +6,6 @@ open class StringSettingsItem(name: Int, context: Context) : SettingsItem<String
     name,
     context,
     { key -> getString(key, null) },
-    { key, value -> putString(key, value) }
+    { key, value -> putString(key, value) },
+    fromString = { it },
 )

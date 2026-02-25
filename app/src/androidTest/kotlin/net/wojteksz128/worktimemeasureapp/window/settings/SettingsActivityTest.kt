@@ -72,4 +72,13 @@ class SettingsActivityTest {
             }
         }
     }
+
+    @Test
+    fun whenClickOnBackupPreference_thenDisplaysBackupFragment() {
+        settings {
+            openBackupSettings {
+                verifyIsDisplayed()
+            }
+        }
+    }
 }

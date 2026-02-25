@@ -10,4 +10,6 @@ open class BooleanSettingsItem(
     keyResourceId,
     context,
     { key -> getBoolean(key, defaultValue) },
-    { key, value -> putBoolean(key, value) })
+    { key, value -> putBoolean(key, value) },
+    fromString = { it.toBooleanStrictOrNull() ?: defaultValue },
+)

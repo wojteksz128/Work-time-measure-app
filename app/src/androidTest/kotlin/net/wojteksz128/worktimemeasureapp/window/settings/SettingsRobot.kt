@@ -19,22 +19,32 @@ class SettingsRobot : BaseScreenRobot() {
 
     fun openProfileSettings(func: ProfileSettingsRobot.() -> Unit) {
         onView(profilePreference).perform(click())
+        Thread.sleep(500)
         ProfileSettingsRobot().apply { func() }
     }
 
     fun openWorkTimeSettings(func: WorkTimeSettingsRobot.() -> Unit) {
         onView(workTimePreference).perform(click())
+        Thread.sleep(500)
         WorkTimeSettingsRobot().apply { func() }
     }
 
     fun openDaysOffSettings(func: DaysOffSettingsRobot.() -> Unit) {
         onView(daysOffPreference).perform(click())
+        Thread.sleep(500)
         DaysOffSettingsRobot().apply { func() }
     }
 
     fun openSyncSettings(func: SyncSettingsRobot.() -> Unit) {
         onView(syncPreference).perform(click())
+        Thread.sleep(500)
         SyncSettingsRobot().apply { func() }
+    }
+
+    fun openBackupSettings(func: BackupSettingsRobot.() -> Unit) {
+        onView(withText(R.string.settings_header_backup_title)).perform(click())
+        Thread.sleep(500)
+        BackupSettingsRobot().apply { func() }
     }
 
     override fun verifyIsDisplayed() {

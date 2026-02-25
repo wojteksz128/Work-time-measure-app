@@ -66,8 +66,19 @@ open class AsyncSettingsItem<R, S>(
     private val _valueLiveData by lazy { MutableLiveData<R?>() }
     override val valueLiveData = _valueLiveData
 
+    /** Returns the raw stored value. Since the transformed value (R) requires async, this returns the raw S cast to R. */
+    @Suppress("UNCHECKED_CAST")
+    override val valueNullable: R? get() = preferences.rawValueGetter(key) as? R
+
     override fun invalidate() {
         // In an async item, invalidation simply means the next call to `getValueAsync`
         // will perform a full fetch. We don't trigger it automatically.
+    }
+
+    override fun restoreValue(rawValue: String?) {
+        preferences.edit {
+            if (rawValue == null) remove(key) else putString(key, rawValue)
+        }
+        invalidate()
     }
 }

@@ -22,8 +22,15 @@ abstract class BaseSettingsItem<R>(
      */
     abstract val valueLiveData: LiveData<R?>
 
-    /**
-     * Method for invalidating the cached value, forcing it to be reloaded.
-     */
+    /** The current value, or null if not set. Used e.g. during backup export. */
+    abstract val valueNullable: R?
+
+    /** Method for invalidating the cached value, forcing it to be reloaded. */
     abstract fun invalidate()
+
+    /**
+     * Restores the value from a raw string read from a backup file.
+     * Null removes the key from storage.
+     */
+    abstract fun restoreValue(rawValue: String?)
 }

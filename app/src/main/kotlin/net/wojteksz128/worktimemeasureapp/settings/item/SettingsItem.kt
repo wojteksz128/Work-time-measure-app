@@ -11,6 +11,7 @@ open class SettingsItem<R>(
     appContext: Context,
     private val valueGetter: SharedPreferences.(String) -> R?,
     private val valueSetter: SharedPreferences.Editor.(String, R) -> Unit,
+    private val fromString: (String) -> R? = { null },
 ) : BaseSettingsItem<R>(keyResourceId, appContext) {
 
     protected val preferences: SharedPreferences by lazy {
@@ -29,7 +30,7 @@ open class SettingsItem<R>(
             valueNullable = value
         }
 
-    open var valueNullable: R?
+    override var valueNullable: R?
         get() {
             if (!isCached) {
                 cachedValue = preferences.valueGetter(key)
@@ -53,5 +54,9 @@ open class SettingsItem<R>(
     override fun invalidate() {
         isCached = false
         _valueLiveData.postValue(valueNullable)
+    }
+
+    override fun restoreValue(rawValue: String?) {
+        valueNullable = rawValue?.let { fromString(it) }
     }
 }
