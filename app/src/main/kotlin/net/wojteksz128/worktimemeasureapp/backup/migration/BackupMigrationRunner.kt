@@ -12,7 +12,7 @@ import javax.inject.Inject
  * Migrations are applied in ascending order of [BackupMigration.fromVersion].
  * If no migration exists for a given step, an [IllegalStateException] is thrown.
  */
-class BackupMigrationRunner @Inject constructor(
+open class BackupMigrationRunner @Inject constructor(
     private val migrations: Set<@JvmSuppressWildcards BackupMigration>,
 ) : ClassTagAware {
 
@@ -22,7 +22,7 @@ class BackupMigrationRunner @Inject constructor(
      *
      * @throws IllegalStateException if no migration exists for a required step.
      */
-    fun migrate(json: JsonObject, fromVersion: Int, toVersion: Int) {
+    open fun migrate(json: JsonObject, fromVersion: Int, toVersion: Int) {
         if (fromVersion == toVersion) return
 
         Log.d(classTag, "Migrating backup from version $fromVersion to $toVersion")

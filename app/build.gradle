@@ -62,6 +62,9 @@ android {
         jvmTarget = JavaVersion.VERSION_11.toString()
     }
     namespace 'net.wojteksz128.worktimemeasureapp'
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
 }
 
 dependencies {

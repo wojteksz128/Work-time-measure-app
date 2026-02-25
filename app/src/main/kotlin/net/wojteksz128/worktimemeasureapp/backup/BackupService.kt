@@ -23,7 +23,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class BackupService @Inject constructor(
+open class BackupService @Inject constructor(
     @param:ApplicationContext private val context: Context,
     private val database: AppDatabase,
     private val baseGson: Gson,
@@ -40,7 +40,7 @@ class BackupService @Inject constructor(
         baseGson.newBuilder().setPrettyPrinting().create()
     }
 
-    suspend fun exportBackup(fileName: String? = null) = withContext(Dispatchers.IO) {
+    open suspend fun exportBackup(fileName: String? = null) = withContext(Dispatchers.IO) {
         try {
             val backupDir = File(context.filesDir, BACKUP_DIR).apply { mkdirs() }
             val timestamp = System.currentTimeMillis()
@@ -85,14 +85,14 @@ class BackupService @Inject constructor(
         )
     }
 
-    suspend fun isDatabaseEmpty(): Boolean = withContext(Dispatchers.IO) {
+    open suspend fun isDatabaseEmpty(): Boolean = withContext(Dispatchers.IO) {
         database.workDayDao().findAll().isEmpty() &&
                 database.comeEventDao().findAll().isEmpty() &&
                 database.dayOffDao().findAll().isEmpty() &&
                 database.entityHistoryDao().findAll().isEmpty()
     }
 
-    suspend fun importBackup(
+    open suspend fun importBackup(
         backupFile: File,
         strategy: ImportStrategy = ImportStrategy.MERGE,
     ) = withContext(Dispatchers.IO) {
