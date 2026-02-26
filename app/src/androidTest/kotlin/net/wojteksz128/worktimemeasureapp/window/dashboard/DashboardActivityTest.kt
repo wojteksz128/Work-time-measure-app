@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.runBlocking
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.di.TestRepositoryModule.DUMMY_ID
-import net.wojteksz128.worktimemeasureapp.model.ComeEvent
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import net.wojteksz128.worktimemeasureapp.model.WorkState
 import net.wojteksz128.worktimemeasureapp.model.fieldType.DayType
@@ -27,9 +26,9 @@ import net.wojteksz128.worktimemeasureapp.util.FakeDateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.awaitState
 import net.wojteksz128.worktimemeasureapp.util.comeevent.ComeEventUtils
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
-import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils.Companion.getEndDayTime
-import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils.Companion.getStartDayTime
 import net.wojteksz128.worktimemeasureapp.util.datetime.WorkTimeBalance
+import net.wojteksz128.worktimemeasureapp.util.fixtures.aComeEvent
+import net.wojteksz128.worktimemeasureapp.util.fixtures.aWorkDay
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -226,23 +225,18 @@ class DashboardActivityTest {
     }
 
     private fun fillWithEvents(@Suppress("SameParameterValue") numberOfEvents: Long) {
-        workDayFlow.value = WorkDay(
-            DUMMY_ID,
-            dateTimeProvider.currentDate,
-            getStartDayTime(dateTimeProvider.currentDate),
-            getEndDayTime(dateTimeProvider.currentDate),
-            (1L..numberOfEvents)
-                .reversed()
-                .map {
-                    ComeEvent(
-                        it,
-                        dateTimeProvider.currentTime.minusSeconds(2 * it),
-                        dateTimeProvider.currentTime.minusSeconds(2 * it + 1),
-                        DUMMY_ID
-                    )
+        workDayFlow.value = aWorkDay(id = DUMMY_ID) {
+            date = dateTimeProvider.currentDate
+            events(
+                (1L..numberOfEvents).reversed().map { i ->
+                    aComeEvent(id = i) {
+                        workDayId = DUMMY_ID
+                        startDate = dateTimeProvider.currentTime.minusSeconds(2 * i)
+                        endDate = dateTimeProvider.currentTime.minusSeconds(2 * i + 1)
+                    }
                 }
-                .toMutableList()
-        )
+            )
+        }
 
         // Wait for the RecyclerView to update
         Thread.sleep(1000)

@@ -13,7 +13,9 @@ import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import net.wojteksz128.worktimemeasureapp.repository.ComeEventRepository
 import net.wojteksz128.worktimemeasureapp.repository.EntityHistoryRepository
 import net.wojteksz128.worktimemeasureapp.repository.WorkDayRepository
-import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
+import net.wojteksz128.worktimemeasureapp.util.fixtures.TestFixtures
+import net.wojteksz128.worktimemeasureapp.util.fixtures.aComeEvent
+import net.wojteksz128.worktimemeasureapp.util.fixtures.aWorkDay
 import net.wojteksz128.worktimemeasureapp.util.launchFragmentInHiltContainer
 import org.junit.Before
 import org.junit.Rule
@@ -25,9 +27,6 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.stub
 import org.mockito.kotlin.timeout
 import org.mockito.kotlin.verifyBlocking
-import org.threeten.bp.LocalDate
-import org.threeten.bp.LocalTime
-import org.threeten.bp.ZoneId
 import org.threeten.bp.ZonedDateTime
 import javax.inject.Inject
 
@@ -50,7 +49,7 @@ class WorkDayDetailsFragmentTest {
     @Inject
     lateinit var entityHistoryRepository: EntityHistoryRepository
 
-    private val testDate = LocalDate.of(2024, 1, 22)
+    private val testDate = TestFixtures.DEFAULT_DATE
     private val workDayId = 1L
 
     private lateinit var workDay: WorkDay
@@ -75,7 +74,7 @@ class WorkDayDetailsFragmentTest {
         selectExampleWorkDay()
 
         workDayDetails {
-            verifyDetailsAreDisplayed("January 2024", "22", "Monday")
+            verifyDetailsAreDisplayed("January 2024", "15", "Monday")
         }
     }
 
@@ -203,21 +202,14 @@ class WorkDayDetailsFragmentTest {
     }
 
     private fun prepareMockWorkDayLiveData(): MutableLiveData<WorkDay?> {
-        comeEvent = ComeEvent(
-            id = 1L,
-            startDate = ZonedDateTime.of(testDate, LocalTime.of(8, 0), ZoneId.systemDefault()),
-            endDate = ZonedDateTime.of(testDate, LocalTime.of(16, 0), ZoneId.systemDefault()),
-            workDayId = workDayId
-        )
-
-        workDay = WorkDay(
-            id = workDayId,
-            date = testDate,
-            beginSlot = DateTimeUtils.getStartDayTime(testDate),
-            endSlot = DateTimeUtils.getEndDayTime(testDate),
-            events = mutableListOf(comeEvent)
-        )
-
+        val currentWorkDayId = workDayId
+        comeEvent = aComeEvent(id = 1L) {
+            workDayId = currentWorkDayId
+        }
+        workDay = aWorkDay(id = currentWorkDayId) {
+            date = testDate
+            events(comeEvent)
+        }
         return MutableLiveData(workDay)
     }
 

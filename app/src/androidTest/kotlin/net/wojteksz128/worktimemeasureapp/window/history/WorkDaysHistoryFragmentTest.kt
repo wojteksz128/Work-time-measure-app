@@ -6,12 +6,13 @@ import androidx.navigation.Navigation
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import net.wojteksz128.worktimemeasureapp.model.ComeEvent
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import net.wojteksz128.worktimemeasureapp.repository.ComeEventRepository
 import net.wojteksz128.worktimemeasureapp.repository.WorkDayRepository
 import net.wojteksz128.worktimemeasureapp.util.TestPagingSource
-import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
+import net.wojteksz128.worktimemeasureapp.util.fixtures.TestFixtures
+import net.wojteksz128.worktimemeasureapp.util.fixtures.aComeEvent
+import net.wojteksz128.worktimemeasureapp.util.fixtures.aWorkDay
 import net.wojteksz128.worktimemeasureapp.util.launchFragmentInHiltContainer
 import org.junit.Before
 import org.junit.Rule
@@ -23,10 +24,6 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.stub
 import org.mockito.kotlin.verifyBlocking
-import org.threeten.bp.LocalDate
-import org.threeten.bp.LocalTime
-import org.threeten.bp.ZoneId
-import org.threeten.bp.ZonedDateTime
 import javax.inject.Inject
 
 @RunWith(AndroidJUnit4::class)
@@ -42,21 +39,8 @@ class WorkDaysHistoryFragmentTest {
     @Inject
     lateinit var comeEventRepository: ComeEventRepository
 
-    private val testDate = LocalDate.of(2024, 1, 1)
-    private val workDayId = 1L
-    private val comeEvent = ComeEvent(
-        id = 1L,
-        startDate = ZonedDateTime.of(testDate, LocalTime.of(8, 0), ZoneId.systemDefault()),
-        endDate = null,
-        workDayId = workDayId
-    )
-    private val workDay = WorkDay(
-        id = workDayId,
-        date = testDate,
-        beginSlot = DateTimeUtils.getStartDayTime(testDate),
-        endSlot = DateTimeUtils.getEndDayTime(testDate),
-        events = mutableListOf(comeEvent)
-    )
+    private val comeEvent = aComeEvent { workDayId = 1L; inProgress() }
+    private val workDay = aWorkDay { events(comeEvent) }
 
     @Before
     fun setUp() {
@@ -198,23 +182,14 @@ class WorkDaysHistoryFragmentTest {
         @Suppress("SameParameterValue") numberOfComeEvents: Long,
         @Suppress("SameParameterValue") numberOfWorkDays: Long,
     ): List<WorkDay> {
-        val comeEvents = (1L..numberOfComeEvents).map {
-            ComeEvent(
-                id = it,
-                startDate = ZonedDateTime.of(testDate, LocalTime.of(8, 0), ZoneId.systemDefault()),
-                endDate = null,
-                workDayId = 1L
-            )
+        val comeEvents = (1L..numberOfComeEvents).map { i ->
+            aComeEvent(id = i) { workDayId = 1L; inProgress() }
         }
-
-        return (1L..numberOfWorkDays).map {
-            WorkDay(
-                id = it,
-                date = testDate.plusDays(it - 1),
-                beginSlot = DateTimeUtils.getStartDayTime(testDate.plusDays(it - 1)),
-                endSlot = DateTimeUtils.getEndDayTime(testDate.plusDays(it - 1)),
-                events = if (it == 1L) comeEvents.toMutableList() else mutableListOf()
-            )
+        return (1L..numberOfWorkDays).map { i ->
+            aWorkDay(id = i) {
+                date = TestFixtures.DEFAULT_DATE.plusDays(i - 1)
+                if (i == 1L) events(comeEvents)
+            }
         }
     }
 
