@@ -2,6 +2,7 @@ package net.wojteksz128.worktimemeasureapp.util.fixtures
 
 import net.wojteksz128.worktimemeasureapp.util.datetime.WorkTimeBalance
 import org.threeten.bp.Duration
+import org.threeten.bp.ZonedDateTime
 
 /**
  * Builder for [WorkTimeBalance] test objects.
@@ -27,16 +28,19 @@ import org.threeten.bp.Duration
  * }
  * ```
  */
-fun aWorkTimeBalance(block: WorkTimeBalanceBuilder.() -> Unit = {}): WorkTimeBalance =
-    WorkTimeBalanceBuilder().apply(block).build()
+fun aWorkTimeBalance(
+    currentTime: ZonedDateTime,
+    block: WorkTimeBalanceBuilder.() -> Unit = {},
+): WorkTimeBalance = WorkTimeBalanceBuilder(currentTime).apply(block).build()
 
-class WorkTimeBalanceBuilder {
+class WorkTimeBalanceBuilder(private val currentTime: ZonedDateTime) {
 
     var todayWorkTime: Duration = Duration.ZERO
     var standardRequiredToday: Duration = Duration.ofHours(8)
     var monthlyBalance: Duration = Duration.ZERO
 
     fun build(): WorkTimeBalance = WorkTimeBalance(
+        currentTime = currentTime,
         todayWorkTime = todayWorkTime,
         standardRequiredToday = standardRequiredToday,
         monthlyBalance = monthlyBalance,
