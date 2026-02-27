@@ -7,6 +7,8 @@ import androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.DeleteComeEventDialogRobot
 import net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.EditComeEventDialogRobot
+import net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.deleteComeEventDialog
+import net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.editComeEventDialog
 import net.wojteksz128.worktimemeasureapp.window.history.ComeEventsAdapter.ComeEventViewHolder
 
 class ComeEventsListRobot(recyclerViewId: Int) {
@@ -19,8 +21,7 @@ class ComeEventsListRobot(recyclerViewId: Int) {
                 position, swipeLeft()
             )
         )
-        Thread.sleep(500)
-        EditComeEventDialogRobot().apply { func() }
+        editComeEventDialog(func)
     }
 
     fun swipeRightOnEvent(position: Int, func: DeleteComeEventDialogRobot.() -> Unit) {
@@ -29,7 +30,6 @@ class ComeEventsListRobot(recyclerViewId: Int) {
                 position, swipeRight()
             )
         )
-        Thread.sleep(500)
-        DeleteComeEventDialogRobot().apply { func() }
+        deleteComeEventDialog(func)
     }
 }

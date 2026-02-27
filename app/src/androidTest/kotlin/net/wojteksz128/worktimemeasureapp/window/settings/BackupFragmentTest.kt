@@ -137,7 +137,9 @@ class BackupFragmentTest {
 
         backupSettings {
             clickImport()
-            verifyImportStrategyDialogIsDisplayed()
+            onImportStrategyDialog {
+                verifyIsDisplayed()
+            }
         }
     }
 

@@ -3,10 +3,12 @@ package net.wojteksz128.worktimemeasureapp.window.settings
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.matcher.ViewMatchers.isRoot
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.robot.base.BaseScreenRobot
+import net.wojteksz128.worktimemeasureapp.util.idleMainThread
 
 fun settings(func: SettingsRobot.() -> Unit) = SettingsRobot().apply { func() }
 
@@ -19,31 +21,31 @@ class SettingsRobot : BaseScreenRobot() {
 
     fun openProfileSettings(func: ProfileSettingsRobot.() -> Unit) {
         onView(profilePreference).perform(click())
-        Thread.sleep(500)
+        onView(isRoot()).perform(idleMainThread())
         ProfileSettingsRobot().apply { func() }
     }
 
     fun openWorkTimeSettings(func: WorkTimeSettingsRobot.() -> Unit) {
         onView(workTimePreference).perform(click())
-        Thread.sleep(500)
+        onView(isRoot()).perform(idleMainThread())
         WorkTimeSettingsRobot().apply { func() }
     }
 
     fun openDaysOffSettings(func: DaysOffSettingsRobot.() -> Unit) {
         onView(daysOffPreference).perform(click())
-        Thread.sleep(500)
+        onView(isRoot()).perform(idleMainThread())
         DaysOffSettingsRobot().apply { func() }
     }
 
     fun openSyncSettings(func: SyncSettingsRobot.() -> Unit) {
         onView(syncPreference).perform(click())
-        Thread.sleep(500)
+        onView(isRoot()).perform(idleMainThread())
         SyncSettingsRobot().apply { func() }
     }
 
     fun openBackupSettings(func: BackupSettingsRobot.() -> Unit) {
         onView(withText(R.string.settings_header_backup_title)).perform(click())
-        Thread.sleep(500)
+        onView(isRoot()).perform(idleMainThread())
         BackupSettingsRobot().apply { func() }
     }
 
@@ -57,6 +59,6 @@ class SettingsRobot : BaseScreenRobot() {
 
     fun goBack() {
         pressBack()
-        Thread.sleep(500)
+        onView(isRoot()).perform(idleMainThread())
     }
 }

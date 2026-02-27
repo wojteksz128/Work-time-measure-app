@@ -4,8 +4,10 @@ import android.view.View
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.matcher.RootMatchers.isDialog
+import androidx.test.espresso.matcher.ViewMatchers.isRoot
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import net.wojteksz128.worktimemeasureapp.R
+import net.wojteksz128.worktimemeasureapp.util.idleMainThread
 import net.wojteksz128.worktimemeasureapp.util.setNumberOnNumberPicker
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
@@ -21,36 +23,34 @@ class TimeEditorRobot(editor: Matcher<View?>) {
 
     fun setHour(hour: Int) {
         onView(hourDateTimePicker).inRoot(isDialog()).perform(setNumberOnNumberPicker(hour))
-        Thread.sleep(500)
+        onView(isRoot()).perform(idleMainThread())
     }
 
     fun setMinute(minute: Int) {
         onView(minuteDateTimePicker).inRoot(isDialog()).perform(setNumberOnNumberPicker(minute))
-        Thread.sleep(500)
+        onView(isRoot()).perform(idleMainThread())
     }
 
     fun setSecond(second: Int) {
         onView(secondDateTimePicker).inRoot(isDialog()).perform(setNumberOnNumberPicker(second))
-        Thread.sleep(500)
+        onView(isRoot()).perform(idleMainThread())
     }
 
     fun clickAccept() {
         onView(acceptButton).inRoot(isDialog()).perform(click())
-        Thread.sleep(500)
     }
 
     fun clickAm() {
         onView(amButton).inRoot(isDialog()).perform(click())
-        Thread.sleep(500)
+        onView(isRoot()).perform(idleMainThread())
     }
 
     fun clickDismiss() {
         onView(dismissButton).inRoot(isDialog()).perform(click())
-        Thread.sleep(500)
     }
 
     fun clickPm() {
         onView(pmButton).inRoot(isDialog()).perform(click())
-        Thread.sleep(500)
+        onView(isRoot()).perform(idleMainThread())
     }
 }

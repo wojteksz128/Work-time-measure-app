@@ -13,11 +13,15 @@ import net.wojteksz128.worktimemeasureapp.robot.base.BaseDialogRobot
 import net.wojteksz128.worktimemeasureapp.util.datetime.AmPm
 import net.wojteksz128.worktimemeasureapp.util.datetime.convert24To12HourFormat
 import net.wojteksz128.worktimemeasureapp.util.view.TimeEditorRobot
+import net.wojteksz128.worktimemeasureapp.util.waitForDialogView
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.not
 
 fun editComeEventDialog(func: EditComeEventDialogRobot.() -> Unit) =
-    EditComeEventDialogRobot().apply { func() }
+    EditComeEventDialogRobot().apply {
+        waitForDialog()
+        func()
+    }
 
 class EditComeEventDialogRobot : BaseDialogRobot() {
 
@@ -39,6 +43,10 @@ class EditComeEventDialogRobot : BaseDialogRobot() {
     private val isDisabled = matches(not(isEnabled()))
     private val isEnabled = matches(isEnabled())
 
+    override fun waitForDialog() {
+        waitForDialogView(dialogTitle)
+    }
+
     fun setStartTime(hour: Int, minute: Int, second: Int = 0) {
         openStartTimeEditor {
             setTime(hour, minute, second)
@@ -53,17 +61,15 @@ class EditComeEventDialogRobot : BaseDialogRobot() {
 
     fun clearFinishTime() {
         onViewInDialog(clearButton).perform(click())
-        Thread.sleep(500)
+        waitForDialogView(allOf(finishTimeValue, withText(R.string.time_editor_value_not_set)))
     }
 
     fun clickOk() {
         onViewInDialog(okButton).perform(click())
-        Thread.sleep(500)
     }
 
     fun clickCancel() {
         onViewInDialog(cancelButton).perform(click())
-        Thread.sleep(500)
     }
 
     override fun verifyIsDisplayed() {
@@ -88,13 +94,13 @@ class EditComeEventDialogRobot : BaseDialogRobot() {
 
     fun openStartTimeEditor(func: TimeEditorRobot.() -> Unit) {
         onViewInDialog(setStartTimeEditor).perform(click())
-        Thread.sleep(500)
+        waitForDialogView(allOf(withId(R.id.time_editor_accept), startTimeEditor))
         TimeEditorRobot(startTimeEditor).apply { func() }
     }
 
     fun openFinishTimeEditor(func: TimeEditorRobot.() -> Unit) {
         onViewInDialog(setFinishTimeEditor).perform(click())
-        Thread.sleep(500)
+        waitForDialogView(allOf(withId(R.id.time_editor_accept), finishTimeEditor))
         TimeEditorRobot(finishTimeEditor).apply { func() }
     }
 

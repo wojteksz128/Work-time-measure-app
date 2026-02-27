@@ -4,13 +4,16 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
 import androidx.test.espresso.matcher.ViewMatchers.isClickable
+import androidx.test.espresso.matcher.ViewMatchers.isRoot
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.api.HolidayProvider
 import net.wojteksz128.worktimemeasureapp.robot.base.BaseScreenRobot
+import net.wojteksz128.worktimemeasureapp.util.idleMainThread
 import net.wojteksz128.worktimemeasureapp.util.setSwitchTo
 import org.hamcrest.CoreMatchers.allOf
+import com.google.android.material.R as MaterialR
 
 fun daysOffSettings(func: DaysOffSettingsRobot.() -> Unit) = DaysOffSettingsRobot().apply { func() }
 
@@ -21,35 +24,35 @@ class DaysOffSettingsRobot : BaseScreenRobot() {
     private val providerTitle = withText(R.string.settings_daysOff_public_provider_title)
     private val countryTitle = withText(R.string.settings_daysOff_public_country_title)
     private val syncNowTitle = withText(R.string.settings_daysOff_public_syncNow_title)
-    private val snackbar = withId(com.google.android.material.R.id.snackbar_text)
+    private val snackbar = withId(MaterialR.id.snackbar_text)
 
     fun setSyncWithApi(enabled: Boolean) {
         onView(syncWithApiClickable).perform(setSwitchTo(enabled))
-        Thread.sleep(500)
+        onView(isRoot()).perform(idleMainThread())
     }
 
     fun toggleSyncWithApi() {
         onView(syncWithApiTitle).perform(click())
-        Thread.sleep(500)
+        onView(isRoot()).perform(idleMainThread())
     }
 
     fun changeProvider(provider: HolidayProvider) {
         onView(providerTitle).perform(click())
-        Thread.sleep(500)
+        onView(isRoot()).perform(idleMainThread())
         onView(withText(provider.displayName)).perform(click())
-        Thread.sleep(500)
+        onView(isRoot()).perform(idleMainThread())
     }
 
     fun changeCountry(countryName: String) {
         onView(countryTitle).perform(click())
-        Thread.sleep(500)
+        onView(isRoot()).perform(idleMainThread())
         onView(withText(countryName)).perform(click())
-        Thread.sleep(500)
+        onView(isRoot()).perform(idleMainThread())
     }
 
     fun syncNow() {
         onView(syncNowTitle).perform(click())
-        Thread.sleep(500)
+        onView(isRoot()).perform(idleMainThread())
     }
 
     override fun verifyIsDisplayed() {

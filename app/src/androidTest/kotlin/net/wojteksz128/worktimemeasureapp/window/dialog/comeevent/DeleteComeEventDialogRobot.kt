@@ -6,9 +6,13 @@ import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.robot.base.BaseDialogRobot
+import net.wojteksz128.worktimemeasureapp.util.waitForDialogView
 
 fun deleteComeEventDialog(func: DeleteComeEventDialogRobot.() -> Unit) =
-    DeleteComeEventDialogRobot().apply { func() }
+    DeleteComeEventDialogRobot().apply {
+        waitForDialog()
+        func()
+    }
 
 class DeleteComeEventDialogRobot : BaseDialogRobot() {
 
@@ -17,6 +21,10 @@ class DeleteComeEventDialogRobot : BaseDialogRobot() {
     private val deleteButton = withText(R.string.delete_come_event_dialog_action_delete)
 
     private val doesNotExist = doesNotExist()
+
+    override fun waitForDialog() {
+        waitForDialogView(dialogTitle)
+    }
 
     override fun verifyIsDisplayed() {
         onViewInDialog(dialogTitle).check(isDisplayed)
@@ -28,12 +36,10 @@ class DeleteComeEventDialogRobot : BaseDialogRobot() {
 
     fun clickDelete() {
         onViewInDialog(deleteButton).perform(click())
-        Thread.sleep(500)
     }
 
     fun clickCancel() {
         onViewInDialog(cancelButton).perform(click())
-        Thread.sleep(500)
     }
 
     fun verifyDeleteDialogIsDismissed() {
