@@ -15,6 +15,7 @@ import javax.inject.Inject
 class WorkTimeBalanceCalculator @Inject constructor(
     private val workDayRepository: WorkDayRepository,
     private val dateTimeUtils: DateTimeUtils,
+    private val dateTimeProvider: DateTimeProvider,
     private val dayOffService: DayOffService,
     @Suppress("PrivatePropertyName") private val Settings: Settings,
 ) {
@@ -25,6 +26,7 @@ class WorkTimeBalanceCalculator @Inject constructor(
         val balanceBeforeToday = getBalanceOfMonthBeforeDate(workDay.date)
 
         return WorkTimeBalance(
+            dateTimeProvider.currentTime,
             todayWorkTime,
             requiredToday,
             balanceBeforeToday
@@ -35,8 +37,9 @@ class WorkTimeBalanceCalculator @Inject constructor(
         val todayWorkTime = calculateWorkTimeForWorkDay(workDay)
 
         return WorkTimeBalance(
+            dateTimeProvider.currentTime,
             todayWorkTime,
-            previousBalance.requiredToday,
+            previousBalance.standardRequiredToday,
             previousBalance.monthlyBalance
         )
     }
@@ -72,24 +75,21 @@ class WorkTimeBalanceCalculator @Inject constructor(
 
 @Parcelize
 data class WorkTimeBalance(
+    val currentTime: ZonedDateTime,
     val todayWorkTime: Duration,
-    val requiredToday: Duration,
+    val standardRequiredToday: Duration,
     val monthlyBalance: Duration,
 ) : Parcelable {
 
-    val remainingToday: Duration
-        get() = requiredToday - todayWorkTime
+    val balancedRequiredToday: Duration
+        get() = standardRequiredToday - monthlyBalance
 
-    fun getStandardEndTime(workDay: WorkDay): ZonedDateTime {
-        val startTime = workDay.events.lastOrNull()?.startDate
-            ?: throw IllegalStateException("Cannot calculate end time for work day without start time")
-        return startTime.plus(remainingToday)
-    }
+    val standardRemainingToday: Duration
+        get() = standardRequiredToday - todayWorkTime
 
-    fun getBalancedEndTime(workDay: WorkDay): ZonedDateTime {
-        val startTime = workDay.events.lastOrNull()?.startDate
-            ?: throw IllegalStateException("Cannot calculate end time for work day without start time")
-        return startTime.plus(remainingToday).minus(monthlyBalance)
+    val standardEndTime: ZonedDateTime
+        get() = currentTime + standardRemainingToday
 
-    }
+    val balancedEndTime: ZonedDateTime
+        get() = currentTime + standardRemainingToday - monthlyBalance
 }

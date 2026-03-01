@@ -8,6 +8,8 @@ import org.hamcrest.Matcher
 
 abstract class BaseDialogRobot : BaseScreenRobot() {
 
+    abstract fun waitForDialog()
+
     protected fun onViewInDialog(viewMatcher: Matcher<View>): ViewInteraction {
         return onView(viewMatcher).inRoot(isDialog())
     }

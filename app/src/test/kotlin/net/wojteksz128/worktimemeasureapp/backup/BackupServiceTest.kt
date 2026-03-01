@@ -17,6 +17,7 @@ import net.wojteksz128.worktimemeasureapp.database.workDay.WorkDayWithEventsDto
 import net.wojteksz128.worktimemeasureapp.model.fieldType.DayOffSource
 import net.wojteksz128.worktimemeasureapp.model.fieldType.DayOffType
 import net.wojteksz128.worktimemeasureapp.settings.Settings
+import net.wojteksz128.worktimemeasureapp.util.fixtures.TestFixtures
 import net.wojteksz128.worktimemeasureapp.util.json.LocalDateJsonAdapter
 import net.wojteksz128.worktimemeasureapp.util.json.ZonedDateTimeDeserializer
 import org.junit.Assert.assertEquals
@@ -35,8 +36,6 @@ import org.mockito.kotlin.times
 import org.mockito.kotlin.verifyBlocking
 import org.mockito.kotlin.whenever
 import org.threeten.bp.LocalDate
-import org.threeten.bp.LocalDateTime
-import org.threeten.bp.ZoneOffset
 import org.threeten.bp.ZonedDateTime
 
 class BackupServiceTest {
@@ -58,11 +57,8 @@ class BackupServiceTest {
         .registerTypeAdapter(LocalDate::class.java, LocalDateJsonAdapter())
         .create()
 
-    private val testTime = ZonedDateTime.of(
-        LocalDateTime.of(2024, 1, 10, 12, 0, 0),
-        ZoneOffset.UTC
-    )
-    private val testDate = LocalDate.of(2024, 1, 10)
+    private val testTime: ZonedDateTime = TestFixtures.DEFAULT_START_TIME
+    private val testDate: LocalDate = TestFixtures.DEFAULT_DATE
 
     private lateinit var backupService: BackupService
 

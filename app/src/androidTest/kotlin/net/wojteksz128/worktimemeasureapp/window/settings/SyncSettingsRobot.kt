@@ -4,9 +4,11 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
 import androidx.test.espresso.matcher.ViewMatchers.isClickable
+import androidx.test.espresso.matcher.ViewMatchers.isRoot
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.robot.base.BaseScreenRobot
+import net.wojteksz128.worktimemeasureapp.util.idleMainThread
 import net.wojteksz128.worktimemeasureapp.util.setSwitchTo
 import net.wojteksz128.worktimemeasureapp.window.dialog.EditTextDialogRobot
 import org.hamcrest.CoreMatchers.allOf
@@ -21,15 +23,20 @@ class SyncSettingsRobot : BaseScreenRobot() {
 
     fun setTimeSync(enabled: Boolean) {
         onView(enableClickable).perform(setSwitchTo(enabled))
+        onView(isRoot()).perform(idleMainThread())
     }
 
     fun toggleTimeSync() {
         onView(enableTitle).perform(click())
+        onView(isRoot()).perform(idleMainThread())
     }
 
     fun editServer(func: EditTextDialogRobot.() -> Unit) {
         onView(serverTitle).perform(click())
-        EditTextDialogRobot().apply { func() }
+        EditTextDialogRobot(R.string.settings_sync_timeSync_server_title).apply {
+            waitForDialog()
+            func()
+        }
     }
 
     override fun verifyIsDisplayed() {

@@ -18,7 +18,7 @@ import javax.inject.Singleton
 
 @Singleton
 open class WorkTimeNotificationService @Inject constructor(
-    @ApplicationContext private val context: Context,
+    @param:ApplicationContext private val context: Context,
     private val dateTimeProvider: DateTimeProvider,
     private val timerManager: TimerManager,
     private val notificationFactory: WorkTimeNotificationFactory,
@@ -30,6 +30,7 @@ open class WorkTimeNotificationService @Inject constructor(
         const val SNOOZE_TO_NEXT_ACTION = "net.wojteksz128.worktimemeasureapp.SNOOZE_TO_NEXT_ACTION"
     }
 
+    // TODO: 25.02.2026 Used only in tests
     open fun showWorkInProgressNotification(workDay: WorkDay, workTimeBalance: WorkTimeBalance) {
         val isEnabled = settings.WorkTime.NotifyingEnabled.value
         if (!isEnabled) return
@@ -37,10 +38,6 @@ open class WorkTimeNotificationService @Inject constructor(
         val notification =
             notificationFactory.createWorkInProgressNotification(workDay, workTimeBalance)
         notification.show()
-    }
-
-    open fun cancelWorkInProgressNotification() {
-        WorkTimeInProgressNotification.cancel(context)
     }
 
     open fun showEndOfWorkNotification() {
@@ -73,9 +70,9 @@ open class WorkTimeNotificationService @Inject constructor(
         timerManager.setExactTimer(endTime, pendingIntent)
     }
 
-    open fun scheduleEndOfWorkNotification(workDay: WorkDay, workTimeBalance: WorkTimeBalance) {
-        val standardEndTime = workTimeBalance.getStandardEndTime(workDay)
-        val balancedEndTime = workTimeBalance.getBalancedEndTime(workDay)
+    open fun scheduleEndOfWorkNotification(workTimeBalance: WorkTimeBalance) {
+        val standardEndTime = workTimeBalance.standardEndTime
+        val balancedEndTime = workTimeBalance.balancedEndTime
         val notificationTime = listOf(standardEndTime, balancedEndTime)
             .filter { it.isAfter(dateTimeProvider.currentTime) }
             .minOrNull() ?: dateTimeProvider.currentTime

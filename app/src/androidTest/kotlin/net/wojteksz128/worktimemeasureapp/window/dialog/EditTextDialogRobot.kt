@@ -1,5 +1,6 @@
 package net.wojteksz128.worktimemeasureapp.window.dialog
 
+import androidx.annotation.StringRes
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.replaceText
@@ -7,26 +8,29 @@ import androidx.test.espresso.matcher.ViewMatchers.hasErrorText
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import net.wojteksz128.worktimemeasureapp.robot.base.BaseDialogRobot
+import net.wojteksz128.worktimemeasureapp.util.waitForDialogView
 
-class EditTextDialogRobot : BaseDialogRobot() {
+class EditTextDialogRobot(@param:StringRes private val dialogTitleText: Int) : BaseDialogRobot() {
 
     private val editText = withId(android.R.id.edit)
     private val okButton = withText("OK")
     private val cancelButton = withText("Cancel")
+    private val dialogTitle = withText(dialogTitleText)
+
+    override fun waitForDialog() {
+        waitForDialogView(dialogTitle)
+    }
 
     fun enterText(text: String) {
         onViewInDialog(editText).perform(replaceText(text))
-        Thread.sleep(500)
     }
 
     fun clickOk() {
         onViewInDialog(okButton).perform(click())
-        Thread.sleep(500)
     }
 
     fun clickCancel() {
         onViewInDialog(cancelButton).perform(click())
-        Thread.sleep(500)
     }
 
     override fun verifyIsDisplayed() {

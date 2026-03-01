@@ -2,10 +2,12 @@ package net.wojteksz128.worktimemeasureapp.window.settings
 
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.matcher.ViewMatchers.isRoot
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.robot.base.BaseScreenRobot
+import net.wojteksz128.worktimemeasureapp.util.waitForView
 
 fun backupSettings(func: BackupSettingsRobot.() -> Unit) = BackupSettingsRobot().apply { func() }
 
@@ -28,20 +30,18 @@ class BackupSettingsRobot : BaseScreenRobot() {
 
     fun clickExport() {
         onView(exportTitle).perform(click())
-        Thread.sleep(500)
     }
 
     fun clickImport() {
         onView(importTitle).perform(click())
-        Thread.sleep(500)
     }
 
     fun clickShare() {
         onView(shareTitle).perform(click())
-        Thread.sleep(500)
     }
 
     fun verifySnackbarIsDisplayed() {
+        onView(isRoot()).perform(waitForView(snackbar))
         onView(snackbar).check(isDisplayed)
     }
 
@@ -49,12 +49,11 @@ class BackupSettingsRobot : BaseScreenRobot() {
         onView(withText(text)).check(isDisplayed)
     }
 
-    fun verifyImportStrategyDialogIsDisplayed() {
-        onView(withText(R.string.settings_backup_import_strategy_title)).check(isDisplayed)
-    }
-
     fun onImportStrategyDialog(func: ImportStrategyDialogRobot.() -> Unit) {
-        ImportStrategyDialogRobot().apply { func() }
+        ImportStrategyDialogRobot().apply {
+            waitForDialog()
+            func()
+        }
     }
 }
 

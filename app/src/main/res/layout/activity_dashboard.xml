@@ -40,7 +40,7 @@
                         android:id="@+id/dashboard_remaining_day_time"
                         style="@style/dashboard_section_subcard_left"
                         android:layout_width="match_parent"
-                        app:duration="@{viewModel.workTimeBalance.remainingToday}"
+                        app:duration="@{viewModel.workTimeBalance.standardRemainingToday}"
                         app:title="@string/dashboard_today" /><!-- layout_height defined by style -->
 
                     <net.wojteksz128.worktimemeasureapp.util.view.DurationDisplay

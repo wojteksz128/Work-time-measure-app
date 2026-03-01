@@ -8,5 +8,6 @@ class EditImageRobot {
 
     fun selectTestImage() {
         Intents.intended(hasAction(ACTION_GET_CONTENT))
+        Thread.sleep(500)
     }
 }

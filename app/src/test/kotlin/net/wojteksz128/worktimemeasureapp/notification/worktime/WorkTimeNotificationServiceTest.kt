@@ -8,6 +8,7 @@ import net.wojteksz128.worktimemeasureapp.settings.item.BooleanSettingsItem
 import net.wojteksz128.worktimemeasureapp.util.TimerManager
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.datetime.WorkTimeBalance
+import net.wojteksz128.worktimemeasureapp.util.fixtures.TestFixtures
 import org.junit.Before
 import org.junit.Test
 import org.mockito.kotlin.any
@@ -18,7 +19,6 @@ import org.mockito.kotlin.never
 import org.mockito.kotlin.spy
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import org.threeten.bp.ZoneOffset
 import org.threeten.bp.ZonedDateTime
 
 class WorkTimeNotificationServiceTest {
@@ -35,8 +35,8 @@ class WorkTimeNotificationServiceTest {
 
     private lateinit var workTimeNotificationService: WorkTimeNotificationService
 
-    // Using a fixed time for tests makes them deterministic and avoids timezone issues on the JVM
-    private val testTime: ZonedDateTime = ZonedDateTime.of(2024, 1, 10, 12, 0, 0, 0, ZoneOffset.UTC)
+    // Using a fixed time from TestFixtures makes tests deterministic and avoids timezone issues
+    private val testTime: ZonedDateTime = TestFixtures.DEFAULT_START_TIME
 
 
     @Before
@@ -121,20 +121,19 @@ class WorkTimeNotificationServiceTest {
     @Test
     fun `givenNotifyingEnabled, whenScheduleEndOfWorkNotification with workday, thenTimerIsScheduled`() {
         // Arrange
-        val workDay = mock<WorkDay>()
         val workTimeBalance = mock<WorkTimeBalance>()
         val now = testTime // Use fixed time
         val later = now.plusHours(1)
         whenever(dateTimeProvider.currentTime).thenReturn(now)
-        whenever(workTimeBalance.getStandardEndTime(workDay)).thenReturn(later)
-        whenever(workTimeBalance.getBalancedEndTime(workDay)).thenReturn(later)
+        whenever(workTimeBalance.standardEndTime).thenReturn(later)
+        whenever(workTimeBalance.balancedEndTime).thenReturn(later)
         whenever(notifyingEnabledItem.value).thenReturn(true)
         val pendingIntentMock = mock<PendingIntent>()
         doReturn(pendingIntentMock).whenever(workTimeNotificationService)
             .createTimerExpiredPendingIntent(anyOrNull(), anyOrNull())
 
         // Act
-        workTimeNotificationService.scheduleEndOfWorkNotification(workDay, workTimeBalance)
+        workTimeNotificationService.scheduleEndOfWorkNotification(workTimeBalance)
 
         // Assert
         verify(timerManager).setExactTimer(any(), any())
@@ -143,7 +142,6 @@ class WorkTimeNotificationServiceTest {
     @Test
     fun `givenNotifyingDisabled, whenScheduleEndOfWorkNotification with workday, thenTimerIsNotScheduled`() {
         // Arrange
-        val workDay = mock<WorkDay>()
         val workTimeBalance = mock<WorkTimeBalance>()
         whenever(notifyingEnabledItem.value).thenReturn(false)
 
@@ -151,11 +149,11 @@ class WorkTimeNotificationServiceTest {
         val now = testTime
         val later = now.plusHours(1)
         whenever(dateTimeProvider.currentTime).thenReturn(now)
-        whenever(workTimeBalance.getStandardEndTime(workDay)).thenReturn(later)
-        whenever(workTimeBalance.getBalancedEndTime(workDay)).thenReturn(later)
+        whenever(workTimeBalance.standardEndTime).thenReturn(later)
+        whenever(workTimeBalance.balancedEndTime).thenReturn(later)
 
         // Act
-        workTimeNotificationService.scheduleEndOfWorkNotification(workDay, workTimeBalance)
+        workTimeNotificationService.scheduleEndOfWorkNotification(workTimeBalance)
 
         // Assert
         verify(timerManager, never()).setExactTimer(any(), any())

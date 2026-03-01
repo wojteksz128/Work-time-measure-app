@@ -10,7 +10,7 @@ import org.threeten.bp.ZonedDateTime
 import javax.inject.Inject
 
 open class WorkTimeNotificationFactory @Inject constructor(
-    @ApplicationContext private val context: Context,
+    @param:ApplicationContext private val context: Context,
     private val dateTimeUtils: DateTimeUtils,
     private val dateTimeProvider: DateTimeProvider,
 ) {
@@ -20,10 +20,9 @@ open class WorkTimeNotificationFactory @Inject constructor(
         workTimeBalance: WorkTimeBalance,
     ): WorkTimeInProgressNotification = WorkTimeInProgressNotification(
         context,
-        workDay,
+        workDay.date,
         workTimeBalance,
-        dateTimeUtils,
-        dateTimeProvider,
+        dateTimeUtils
     )
 
     open fun createEndOfWorkNotification(

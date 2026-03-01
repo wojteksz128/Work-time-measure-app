@@ -6,23 +6,21 @@ import android.content.Context
 import androidx.annotation.StringRes
 import androidx.core.app.NotificationManagerCompat
 import net.wojteksz128.worktimemeasureapp.R
-import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import net.wojteksz128.worktimemeasureapp.notification.AppNotification
 import net.wojteksz128.worktimemeasureapp.notification.Channel
 import net.wojteksz128.worktimemeasureapp.notification.worktime.action.WorkTimeNotificationActionReceiver
-import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import net.wojteksz128.worktimemeasureapp.util.datetime.WorkTimeBalance
+import net.wojteksz128.worktimemeasureapp.util.datetime.min
 import net.wojteksz128.worktimemeasureapp.window.dashboard.DashboardActivity
-import org.threeten.bp.Duration
+import org.threeten.bp.LocalDate
 import org.threeten.bp.ZonedDateTime
 
 open class WorkTimeInProgressNotification(
     context: Context,
-    private val workDay: WorkDay,
+    private val currentDate: LocalDate,
     private val workTimeBalance: WorkTimeBalance,
     private val dateTimeUtils: DateTimeUtils,
-    private val dateTimeProvider: DateTimeProvider,
 ) : AppNotification(Channel.WORK_TIME_IN_PROGRESS_CHANNEL, NOTIFICATION_ID, context) {
 
     override val actionReceiver: Class<out BroadcastReceiver>
@@ -38,8 +36,8 @@ open class WorkTimeInProgressNotification(
     }
 
     override fun build(): Notification {
-        val formattedStandardEnd = getFormattedTimeFor(WorkTimeBalance::getStandardEndTime)
-        val formattedBalancedEnd = getFormattedTimeFor(WorkTimeBalance::getBalancedEndTime)
+        val formattedStandardEnd = getFormattedTimeFor(workTimeBalance.standardEndTime)
+        val formattedBalancedEnd = getFormattedTimeFor(workTimeBalance.balancedEndTime)
 
         val (currentProgress, maxProgress) = calculateCurrentProgress()
 
@@ -65,43 +63,22 @@ open class WorkTimeInProgressNotification(
     }
 
     private fun calculateCurrentProgress(): Pair<Int, Int> {
-        val now = dateTimeProvider.currentTime
-
-        val startTime = workDay.events.lastOrNull { !it.isEnded }?.startDate
-
-        val standardEndTime = workTimeBalance.getStandardEndTime(workDay)
-        val balancedEndTime = workTimeBalance.getBalancedEndTime(workDay)
-
-        val targetEndTime = listOf(standardEndTime, balancedEndTime)
-            .filter { it.isAfter(now) }
-            .minOrNull()
-
-        var maxProgress = workTimeBalance.requiredToday.seconds.toInt()
-        var currentProgress = workTimeBalance.todayWorkTime.seconds.toInt()
-
-        if (startTime != null && targetEndTime != null) {
-            val totalDurationNeeded = Duration.between(startTime, targetEndTime).seconds.toInt()
-            val timeElapsedSinceStart = Duration.between(startTime, now).seconds.toInt()
-
-            if (totalDurationNeeded > 0) {
-                maxProgress = totalDurationNeeded
-                currentProgress = timeElapsedSinceStart
-            }
-        }
+        val maxProgress = min(
+            workTimeBalance.standardRequiredToday,
+            workTimeBalance.balancedRequiredToday
+        ).seconds.toInt()
+        val currentProgress = workTimeBalance.todayWorkTime.seconds.toInt()
 
         return currentProgress to maxProgress
     }
 
-    private fun getFormattedTimeFor(getter: WorkTimeBalance.(WorkDay) -> ZonedDateTime): String {
-        val endTime = workTimeBalance.getter(workDay)
-        return dateTimeUtils.formatDate(
-            context.getString(getTimeFormatFor(endTime)),
-            endTime
-        )
+    private fun getFormattedTimeFor(dateTime: ZonedDateTime): String {
+        val timeFormat = context.getString(getTimeFormatFor(dateTime))
+        return dateTimeUtils.formatDate(timeFormat, dateTime)
     }
 
     @StringRes
     private fun getTimeFormatFor(dateTime: ZonedDateTime): Int =
-        if (dateTime.toLocalDate() == workDay.date) R.string.notification_time_short_format
+        if (dateTime.toLocalDate() == currentDate) R.string.notification_time_short_format
         else R.string.notification_time_long_format
 }

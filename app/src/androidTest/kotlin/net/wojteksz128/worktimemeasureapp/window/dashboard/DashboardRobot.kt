@@ -52,6 +52,7 @@ class DashboardRobot : BaseScreenRobot() {
 
     fun clickFab() {
         onView(enterFab).perform(click())
+        Thread.sleep(500)
     }
 
     fun verifyFabIsDisplayed() {
@@ -95,14 +96,17 @@ class DashboardRobot : BaseScreenRobot() {
     fun scrollToEvent(position: Int) {
         onView(eventsList)
             .perform(scrollToPosition<ComeEventViewHolder>(position))
+        Thread.sleep(500)
     }
 
     fun openNavigationDrawer() {
         onView(drawer).perform(open())
+        Thread.sleep(500)
     }
 
     private fun navigateTo(navId: Int) {
         onView(drawerNavigation).perform(NavigationViewActions.navigateTo(navId))
+        Thread.sleep(500)
     }
 
     fun navigateToSettings(func: SettingsRobot.() -> Unit) {
