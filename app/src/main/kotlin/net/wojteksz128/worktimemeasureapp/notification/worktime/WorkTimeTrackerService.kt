@@ -20,7 +20,7 @@ class WorkTimeTrackerService : Service() {
     lateinit var notificationFactory: WorkTimeNotificationFactory
 
     @Inject
-    lateinit var workStateFlow: StateFlow<WorkState?>
+    lateinit var workStateFlow: StateFlow<@JvmSuppressWildcards WorkState>
 
     private var serviceJob: Job? = null
     private var isServiceRunning = false
@@ -30,9 +30,10 @@ class WorkTimeTrackerService : Service() {
             ACTION_START -> if (serviceJob?.isActive != true)
                 serviceJob = CoroutineScope(Dispatchers.Main).launch {
                     workStateFlow.collect { workState ->
-                        workState?.let {
-                            if (!it.workDay.isWorkFinished()) updateNotification(it)
-                            else stopSelf()
+                        when (workState) {
+                            is WorkState.InProgress -> updateNotification(workState)
+                            is WorkState.Finished, is WorkState.NotStarted -> stopSelf()
+                            is WorkState.Loading -> Unit
                         }
                     }
                 }
@@ -42,7 +43,7 @@ class WorkTimeTrackerService : Service() {
         return START_NOT_STICKY
     }
 
-    private fun updateNotification(workState: WorkState) {
+    private fun updateNotification(workState: WorkState.InProgress) {
         val notification = notificationFactory.createWorkInProgressNotification(
             workState.workDay,
             workState.workTimeBalance

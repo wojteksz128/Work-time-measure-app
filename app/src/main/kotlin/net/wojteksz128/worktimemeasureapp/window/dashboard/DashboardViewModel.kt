@@ -32,15 +32,16 @@ import javax.inject.Inject
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
     application: Application,
-    workStateFlow: StateFlow<WorkState?>,
+    workStateFlow: StateFlow<@JvmSuppressWildcards WorkState>,
     private val comeEventRepository: ComeEventRepository,
     tickerFactory: TickerFactory,
     private val notificationService: WorkTimeNotificationService,
     private val comeEventUtils: ComeEventUtils,
 ) : AndroidViewModel(application), NewEventRegisterListener, ClassTagAware {
-    val workState: LiveData<WorkState?> = workStateFlow.asLiveData()
-    val workDay: LiveData<WorkDay?> = workState.map { it?.workDay }
-    val workTimeBalance: LiveData<WorkTimeBalance?> = workState.map { it?.workTimeBalance }
+    val workState: LiveData<WorkState> = workStateFlow.asLiveData()
+    val workDay: LiveData<WorkDay?> = workState.map { (it as? WorkState.Loaded)?.workDay }
+    val workTimeBalance: LiveData<WorkTimeBalance?> =
+        workState.map { (it as? WorkState.Loaded)?.workTimeBalance }
 
     private val mSnackbarMessage = MutableLiveData<String?>()
     val snackbarMessage: LiveData<String?> = mSnackbarMessage
@@ -57,8 +58,8 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    private fun handleServiceAndNotifications(workState: WorkState?) {
-        val isWorkFinished = workState?.workDay?.isWorkFinished() ?: true
+    private fun handleServiceAndNotifications(workState: WorkState) {
+        val isWorkFinished = workState !is WorkState.InProgress
 
         if (isWorkFinished == wasWorkFinished) return
 
@@ -67,7 +68,7 @@ class DashboardViewModel @Inject constructor(
             notificationService.cancelEndOfWorkNotification()
         } else {
             startTrackingService()
-            workState?.let { workState ->
+            if (workState is WorkState.Loaded) {
                 notificationService.scheduleEndOfWorkNotification(
                     workState.workTimeBalance
                 )

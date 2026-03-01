@@ -70,7 +70,7 @@ class DashboardActivityTest {
     lateinit var dateTimeProvider: DateTimeProvider
 
     @Inject
-    lateinit var workStateFlow: StateFlow<WorkState?>
+    lateinit var workStateFlow: StateFlow<@JvmSuppressWildcards WorkState>
 
     @Inject
     lateinit var workDayFlow: MutableStateFlow<WorkDay?>
@@ -251,6 +251,6 @@ class DashboardActivityTest {
         }
 
         // Wait for the work to be started
-        awaitState(workStateFlow) { it?.workDay?.isWorkFinished() == false }
+        awaitState(workStateFlow) { it is WorkState.InProgress }
     }
 }
