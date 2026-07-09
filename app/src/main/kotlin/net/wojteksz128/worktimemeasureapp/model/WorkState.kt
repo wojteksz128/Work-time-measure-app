@@ -2,6 +2,8 @@ package net.wojteksz128.worktimemeasureapp.model
 
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.datetime.WorkTimeBalance
+import net.wojteksz128.worktimemeasureapp.util.datetime.ceilToSeconds
+import net.wojteksz128.worktimemeasureapp.util.datetime.floorToSeconds
 import org.threeten.bp.Duration
 import org.threeten.bp.ZonedDateTime
 
@@ -18,13 +20,13 @@ sealed interface WorkState {
         val currentTime: ZonedDateTime = dateTimeProvider.currentTime
 
         open val todayWorkTime: Duration
-            get() = workTimeBalance.todayWorkTime
+            get() = (workTimeBalance.todayWorkTime).floorToSeconds()
 
         val standardRemainingWorkTime: Duration
-            get() = workTimeBalance.standardRequiredToday - todayWorkTime
+            get() = (workTimeBalance.standardRequiredToday - todayWorkTime).ceilToSeconds()
 
         val balancedRemainingWorkTime: Duration
-            get() = workTimeBalance.standardRequiredToday - todayWorkTime - workTimeBalance.monthlyBalance
+            get() = (workTimeBalance.standardRequiredToday - todayWorkTime - workTimeBalance.monthlyBalance).ceilToSeconds()
 
         val standardEndTime: ZonedDateTime
             get() = currentTime + standardRemainingWorkTime
@@ -51,7 +53,7 @@ sealed interface WorkState {
             get() = Duration.between(nonFinishedEvent.startDate, currentTime)
 
         override val todayWorkTime: Duration
-            get() = super.todayWorkTime + nonFinishedEventWorkTime
+            get() = (super.todayWorkTime + nonFinishedEventWorkTime).floorToSeconds()
     }
 
     data class Finished(

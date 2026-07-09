@@ -33,19 +33,9 @@ class WorkTimeBalanceCalculator @Inject constructor(
         )
     }
 
-    fun updateTodayBalance(workDay: WorkDay, previousBalance: WorkTimeBalance): WorkTimeBalance {
-        val todayWorkTime = calculateWorkTimeForWorkDay(workDay)
-
-        return WorkTimeBalance(
-            dateTimeProvider.currentTime,
-            todayWorkTime,
-            previousBalance.standardRequiredToday,
-            previousBalance.monthlyBalance
-        )
-    }
 
     private fun calculateWorkTimeForWorkDay(workDay: WorkDay): Duration =
-        dateTimeUtils.mergeComeEventsDuration(workDay)
+        dateTimeUtils.mergeFinishedComeEventsDuration(workDay)
 
     private suspend fun calculateRequiredWorkTimeForWorkDay(workDay: WorkDay): Duration =
         dayOffService.getDayType(workDay.date).takeIf { it == DayType.WorkDay }?.let {

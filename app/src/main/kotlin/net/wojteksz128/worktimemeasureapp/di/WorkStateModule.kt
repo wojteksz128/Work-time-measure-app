@@ -62,11 +62,8 @@ object WorkStateModule {
                             emit(lastState)
 
                             ticker.collect {
-                                val updatedBalance =
-                                    workTimeBalanceCalculator.updateTodayBalance(
-                                        workDay,
-                                        (lastState as WorkState.Loaded).workTimeBalance
-                                    )
+                                val updatedBalance = (lastState as WorkState.Loaded).workTimeBalance
+                                    .copy(currentTime = dateTimeProvider.currentTime)
                                 lastState =
                                     WorkState.InProgress(workDay, updatedBalance, dateTimeProvider)
                                 emit(lastState)

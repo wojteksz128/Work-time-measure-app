@@ -20,6 +20,9 @@ open class DateTimeUtils(
     private val dateTimeProvider: DateTimeProvider,
 ) {
 
+    fun formatDate(@StringRes formatRes: Int, date: DefaultInterfaceTemporal?) =
+        formatDate(context.getString(formatRes), date)
+
     fun formatDate(format: String, date: DefaultInterfaceTemporal?) =
         date?.let { formatDate(format, date, ZoneId.systemDefault()) }
 
@@ -39,6 +42,10 @@ open class DateTimeUtils(
 
     fun mergeComeEventsDuration(workDay: WorkDay?): Duration = workDay?.events?.map { it.duration }
         ?.fold(Duration.ZERO) { sum, element -> sum + element } ?: Duration.ZERO
+
+    fun mergeFinishedComeEventsDuration(workDay: WorkDay?): Duration =
+        workDay?.events?.filter { it.isEnded }?.map { it.duration }
+            ?.fold(Duration.ZERO) { sum, element -> sum + element } ?: Duration.ZERO
 
     fun formatCounterTime(duration: Duration?): String =
         formatCounterTime(duration, R.string.empty_time_string)
@@ -81,6 +88,14 @@ open class DateTimeUtils(
 }
 
 fun min(a: Duration, b: Duration) = if (a < b) a else b
+
+fun Duration.floorToSeconds(): Duration {
+    return Duration.ofSeconds(seconds)
+}
+
+fun Duration.ceilToSeconds(): Duration {
+    return if (nano == 0) Duration.ofSeconds(seconds) else Duration.ofSeconds(seconds + 1)
+}
 
 fun LocalDateTime.isTheSameDay(other: LocalDateTime?): Boolean =
     other?.let { this.toLocalDate() == it.toLocalDate() }

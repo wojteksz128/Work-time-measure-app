@@ -26,7 +26,9 @@ import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.comeevent.ComeEventUtils
 import net.wojteksz128.worktimemeasureapp.util.comeevent.NewEventRegisterListener
 import net.wojteksz128.worktimemeasureapp.util.coroutines.TickerFactory
-import net.wojteksz128.worktimemeasureapp.util.datetime.WorkTimeBalance
+import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
+import org.threeten.bp.Duration
+import org.threeten.bp.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
@@ -37,11 +39,26 @@ class DashboardViewModel @Inject constructor(
     tickerFactory: TickerFactory,
     private val notificationService: WorkTimeNotificationService,
     private val comeEventUtils: ComeEventUtils,
+    dateTimeUtils: DateTimeUtils,
 ) : AndroidViewModel(application), NewEventRegisterListener, ClassTagAware {
     val workState: LiveData<WorkState> = workStateFlow.asLiveData()
     val workDay: LiveData<WorkDay?> = workState.map { (it as? WorkState.Loaded)?.workDay }
-    val workTimeBalance: LiveData<WorkTimeBalance?> =
-        workState.map { (it as? WorkState.Loaded)?.workTimeBalance }
+
+    val standardRemainingToday = workState.map {
+        (it as? WorkState.Loaded)?.standardRemainingWorkTime ?: Duration.ZERO
+    }
+    val todayWorkTime = workState.map {
+        (it as? WorkState.Loaded)?.todayWorkTime ?: Duration.ZERO
+    }
+    val monthlyBalance = workState.map {
+        (it as? WorkState.Loaded)?.workTimeBalance?.monthlyBalance ?: Duration.ZERO
+    }
+    val currentDayLabel = workState.map {
+        dateTimeUtils.formatDate(
+            R.string.history_work_day_label_format,
+            (it as? WorkState.Loaded)?.workDay?.date ?: LocalDate.now()
+        )
+    }
 
     private val mSnackbarMessage = MutableLiveData<String?>()
     val snackbarMessage: LiveData<String?> = mSnackbarMessage
