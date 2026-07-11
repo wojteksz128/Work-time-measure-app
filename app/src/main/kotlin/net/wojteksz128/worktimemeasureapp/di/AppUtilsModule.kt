@@ -9,11 +9,11 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.database.history.HistoryService
-import net.wojteksz128.worktimemeasureapp.module.dayOff.DayOffService
 import net.wojteksz128.worktimemeasureapp.repository.ComeEventRepository
 import net.wojteksz128.worktimemeasureapp.repository.DayOffRepository
 import net.wojteksz128.worktimemeasureapp.repository.WorkDayRepository
 import net.wojteksz128.worktimemeasureapp.repository.api.ExternalHolidayRepositoriesFacade
+import net.wojteksz128.worktimemeasureapp.service.DayOffService
 import net.wojteksz128.worktimemeasureapp.settings.InitialSettingsPreparer
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.settings.converter.ConfigurationConverterFactory
@@ -34,9 +34,8 @@ object AppUtilsModule {
     @Provides
     fun provideDateTimeUtils(
         @ApplicationContext context: Context,
-        dateTimeProvider: DateTimeProvider,
     ): DateTimeUtils {
-        return DateTimeUtils(context, dateTimeProvider)
+        return DateTimeUtils(context)
     }
 
     @Singleton

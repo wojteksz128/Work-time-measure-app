@@ -9,6 +9,7 @@ import net.wojteksz128.worktimemeasureapp.repository.ComeEventRepository
 import net.wojteksz128.worktimemeasureapp.repository.WorkDayRepository
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
+import net.wojteksz128.worktimemeasureapp.util.model.extension.ComeEventExtensions.isEnded
 import org.threeten.bp.ZonedDateTime
 
 open class ComeEventUtils(
@@ -17,7 +18,7 @@ open class ComeEventUtils(
     private val dateTimeProvider: DateTimeProvider,
 ): ClassTagAware {
 
-    // TODO: 07.07.2019 Move to separate action object.
+    // TODO: 07.07.2019 Move to separate action object or state action.
     open suspend fun registerNewEvent(): ComeEventType = withContext(Dispatchers.IO) {
         val registerTime = dateTimeProvider.currentTime
         val workDay =

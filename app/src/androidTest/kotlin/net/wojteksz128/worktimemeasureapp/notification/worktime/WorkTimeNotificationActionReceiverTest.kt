@@ -6,6 +6,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
@@ -19,6 +20,7 @@ import net.wojteksz128.worktimemeasureapp.notification.worktime.action.WorkTimeN
 import net.wojteksz128.worktimemeasureapp.util.FakeDateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.comeevent.ComeEventUtils
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
+import net.wojteksz128.worktimemeasureapp.util.model.extension.ComeEventExtensions.isEnded
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
@@ -31,6 +33,7 @@ import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.threeten.bp.ZonedDateTime
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 @HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
@@ -76,6 +79,7 @@ class WorkTimeNotificationActionReceiverTest {
         (dateTimeProvider as FakeDateTimeProvider).setCurrentTime(NOW)
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     private fun sendActionIntent(action: String, intentConfig: (Intent.() -> Unit)? = null) {
         val intent = Intent(context, WorkTimeNotificationActionReceiver::class.java).apply {
             this.action = action
@@ -98,7 +102,7 @@ class WorkTimeNotificationActionReceiverTest {
         sendActionIntent(WorkTimeNotificationService.STOP_WORK_ACTION)
 
         // Assert: wait for the flow to emit the updated state
-        val updatedWorkDay = withTimeoutOrNull(5000) {
+        val updatedWorkDay = withTimeoutOrNull(5000.milliseconds) {
             workDayFlow.filterNotNull()
                 .first { it.events.isNotEmpty() && it.events.first().isEnded }
         }

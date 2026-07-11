@@ -1,41 +1,32 @@
-package net.wojteksz128.worktimemeasureapp.util.datetime
+package net.wojteksz128.worktimemeasureapp.service
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
+import net.wojteksz128.worktimemeasureapp.model.WorkTimeRequirements
 import net.wojteksz128.worktimemeasureapp.model.fieldType.DayType
-import net.wojteksz128.worktimemeasureapp.module.dayOff.DayOffService
 import net.wojteksz128.worktimemeasureapp.repository.WorkDayRepository
 import net.wojteksz128.worktimemeasureapp.settings.Settings
+import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
+import net.wojteksz128.worktimemeasureapp.util.datetime.LocalDateRange
 import org.threeten.bp.Duration
 import org.threeten.bp.LocalDate
-import org.threeten.bp.ZonedDateTime
 import javax.inject.Inject
 
-class WorkTimeBalanceCalculator @Inject constructor(
+class WorkTimeRequirementsCalculator @Inject constructor(
     private val workDayRepository: WorkDayRepository,
     private val dateTimeUtils: DateTimeUtils,
-    private val dateTimeProvider: DateTimeProvider,
     private val dayOffService: DayOffService,
     @Suppress("PrivatePropertyName") private val Settings: Settings,
 ) {
 
-    suspend fun calculateBalanceForWorkDay(workDay: WorkDay): WorkTimeBalance {
-        val todayWorkTime = calculateWorkTimeForWorkDay(workDay)
+    suspend fun calculate(workDay: WorkDay): WorkTimeRequirements {
         val requiredToday = calculateRequiredWorkTimeForWorkDay(workDay)
         val balanceBeforeToday = getBalanceOfMonthBeforeDate(workDay.date)
 
-        return WorkTimeBalance(
-            dateTimeProvider.currentTime,
-            todayWorkTime,
+        return WorkTimeRequirements(
             requiredToday,
             balanceBeforeToday
         )
     }
-
-
-    private fun calculateWorkTimeForWorkDay(workDay: WorkDay): Duration =
-        dateTimeUtils.mergeFinishedComeEventsDuration(workDay)
 
     private suspend fun calculateRequiredWorkTimeForWorkDay(workDay: WorkDay): Duration =
         dayOffService.getDayType(workDay.date).takeIf { it == DayType.WorkDay }?.let {
@@ -63,23 +54,3 @@ class WorkTimeBalanceCalculator @Inject constructor(
             }
 }
 
-@Parcelize
-data class WorkTimeBalance(
-    val currentTime: ZonedDateTime,
-    val todayWorkTime: Duration,
-    val standardRequiredToday: Duration,
-    val monthlyBalance: Duration,
-) : Parcelable {
-
-    val balancedRequiredToday: Duration
-        get() = standardRequiredToday - monthlyBalance
-
-    val standardRemainingToday: Duration
-        get() = standardRequiredToday - todayWorkTime
-
-    val standardEndTime: ZonedDateTime
-        get() = currentTime + standardRemainingToday
-
-    val balancedEndTime: ZonedDateTime
-        get() = currentTime + standardRemainingToday - monthlyBalance
-}

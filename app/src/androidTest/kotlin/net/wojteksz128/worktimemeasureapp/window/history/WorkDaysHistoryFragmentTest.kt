@@ -12,6 +12,7 @@ import net.wojteksz128.worktimemeasureapp.repository.WorkDayRepository
 import net.wojteksz128.worktimemeasureapp.util.TestPagingSource
 import net.wojteksz128.worktimemeasureapp.util.fixtures.TestFixtures
 import net.wojteksz128.worktimemeasureapp.util.fixtures.aComeEvent
+import net.wojteksz128.worktimemeasureapp.util.fixtures.aNotEndedComeEvent
 import net.wojteksz128.worktimemeasureapp.util.fixtures.aWorkDay
 import net.wojteksz128.worktimemeasureapp.util.launchFragmentInHiltContainer
 import org.junit.Before
@@ -39,7 +40,7 @@ class WorkDaysHistoryFragmentTest {
     @Inject
     lateinit var comeEventRepository: ComeEventRepository
 
-    private val comeEvent = aComeEvent { workDayId = 1L; inProgress() }
+    private val comeEvent = aNotEndedComeEvent()
     private val workDay = aWorkDay { events(comeEvent) }
 
     @Before
@@ -183,7 +184,7 @@ class WorkDaysHistoryFragmentTest {
         @Suppress("SameParameterValue") numberOfWorkDays: Long,
     ): List<WorkDay> {
         val comeEvents = (1L..numberOfComeEvents).map { i ->
-            aComeEvent(id = i) { workDayId = 1L; inProgress() }
+            if (i == numberOfComeEvents) aNotEndedComeEvent() else aComeEvent(id = i)
         }
         return (1L..numberOfWorkDays).map { i ->
             aWorkDay(id = i) {

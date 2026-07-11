@@ -3,8 +3,8 @@ package net.wojteksz128.worktimemeasureapp.util.datetime
 import android.content.Context
 import androidx.annotation.StringRes
 import net.wojteksz128.worktimemeasureapp.R
-import net.wojteksz128.worktimemeasureapp.model.ComeEvent
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
+import net.wojteksz128.worktimemeasureapp.util.model.extension.ComeEventExtensions.duration
 import org.threeten.bp.Duration
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalDateTime
@@ -15,9 +15,9 @@ import org.threeten.bp.jdk8.DefaultInterfaceTemporal
 import org.threeten.bp.temporal.ChronoUnit
 import kotlin.math.abs
 
+// TODO: Musi zostać poddana refaktoryzacji (najlepiej usunięta)
 open class DateTimeUtils(
     private val context: Context,
-    private val dateTimeProvider: DateTimeProvider,
 ) {
 
     fun formatDate(@StringRes formatRes: Int, date: DefaultInterfaceTemporal?) =
@@ -43,10 +43,6 @@ open class DateTimeUtils(
     fun mergeComeEventsDuration(workDay: WorkDay?): Duration = workDay?.events?.map { it.duration }
         ?.fold(Duration.ZERO) { sum, element -> sum + element } ?: Duration.ZERO
 
-    fun mergeFinishedComeEventsDuration(workDay: WorkDay?): Duration =
-        workDay?.events?.filter { it.isEnded }?.map { it.duration }
-            ?.fold(Duration.ZERO) { sum, element -> sum + element } ?: Duration.ZERO
-
     fun formatCounterTime(duration: Duration?): String =
         formatCounterTime(duration, R.string.empty_time_string)
 
@@ -69,14 +65,6 @@ open class DateTimeUtils(
 
     fun getDaysInMonthRangeToDate(date: LocalDate): LocalDateRange =
         (date.withDayOfMonth(1)..date)
-
-    val ComeEvent?.duration: Duration
-        get() = this?.let {
-            Duration.between(
-                it.startDate,
-                it.endDate ?: dateTimeProvider.currentTime
-            )
-        } ?: Duration.ZERO
 
     companion object {
         fun getStartDayTime(date: LocalDate): ZonedDateTime =

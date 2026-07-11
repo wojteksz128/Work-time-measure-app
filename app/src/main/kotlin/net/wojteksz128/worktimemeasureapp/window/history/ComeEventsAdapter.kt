@@ -12,15 +12,18 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.databinding.ListItemHistoryDayEventBinding
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
-import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
-import net.wojteksz128.worktimemeasureapp.util.datetime.isTheSameDay
+import net.wojteksz128.worktimemeasureapp.util.model.extension.ComeEventExtensions.duration
+import net.wojteksz128.worktimemeasureapp.util.model.extension.ComeEventExtensions.isEnded
+import net.wojteksz128.worktimemeasureapp.util.model.extension.ComeEventExtensions.isEndingOnTheSameDay
 import net.wojteksz128.worktimemeasureapp.util.recyclerView.RecyclerViewItemClick
+import org.threeten.bp.Duration
+import org.threeten.bp.ZonedDateTime
 
 class ComeEventsAdapter(
-    private val dateTimeProvider: DateTimeProvider,
     private val dateTimeUtils: DateTimeUtils,
     private val lifecycleOwner: LifecycleOwner,
     private val ticker: Flow<Unit>,
@@ -32,10 +35,9 @@ class ComeEventsAdapter(
         val inflater = LayoutInflater.from(parent.context)
         val binding = ListItemHistoryDayEventBinding.inflate(inflater, parent, false)
             .apply {
-                dateTimeUtils = this@ComeEventsAdapter.dateTimeUtils
                 lifecycleOwner = this@ComeEventsAdapter.lifecycleOwner
             }
-        return ComeEventViewHolder(binding, dateTimeProvider, ticker)
+        return ComeEventViewHolder(binding, dateTimeUtils, ticker)
     }
 
     override fun onBindViewHolder(holder: ComeEventViewHolder, position: Int) {
@@ -54,18 +56,22 @@ class ComeEventsAdapter(
 
     class ComeEventViewHolder(
         val binding: ListItemHistoryDayEventBinding,
-        private val dateTimeProvider: DateTimeProvider,
+        private val dateTimeUtils: DateTimeUtils,
         private val ticker: Flow<Unit>,
     ) : RecyclerView.ViewHolder(binding.root) {
 
         private var updateJob: Job? = null
 
         fun bind(comeEvent: ComeEvent) {
-            binding.comeEvent = comeEvent
-            binding.endsAtTheSameDay =
-                (comeEvent.endDate ?: dateTimeProvider.currentTime).let { endDate ->
-                    comeEvent.startDate.isTheSameDay(endDate)
-                }
+            val dateFormatId =
+                if (comeEvent.isEndingOnTheSameDay) R.string.history_day_event_time_short_format
+                else R.string.history_day_event_time_long_format
+
+            binding.comeEvent = ComeEventObject(
+                comeEvent,
+                { dateTime -> dateTimeUtils.formatDate(dateFormatId, dateTime) },
+                { duration -> dateTimeUtils.formatCounterTime(duration) }
+            )
 
             updateJob?.cancel()
 
@@ -97,4 +103,19 @@ class ComeEventsAdapter(
         }
 
     }
+}
+
+data class ComeEventObject(
+    val entity: ComeEvent,
+    val dateConverter: (ZonedDateTime?) -> String?,
+    val durationConverter: (Duration) -> String,
+) {
+    val startDate: String
+        get() = dateConverter(entity.startDate)!!
+
+    val finishDate: String?
+        get() = dateConverter(entity.endDate)
+
+    val duration: String
+        get() = durationConverter(entity.duration)
 }

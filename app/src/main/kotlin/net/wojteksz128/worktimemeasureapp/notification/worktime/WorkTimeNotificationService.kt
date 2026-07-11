@@ -4,14 +4,12 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import dagger.hilt.android.qualifiers.ApplicationContext
-import net.wojteksz128.worktimemeasureapp.model.WorkDay
+import net.wojteksz128.worktimemeasureapp.model.WorkState
 import net.wojteksz128.worktimemeasureapp.notification.TimerExpiredReceiver
 import net.wojteksz128.worktimemeasureapp.notification.TimerExpiredReceiver.Companion.EXTRA_BALANCED_END_TIME
 import net.wojteksz128.worktimemeasureapp.notification.TimerExpiredReceiver.Companion.EXTRA_STANDARD_END_TIME
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.TimerManager
-import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
-import net.wojteksz128.worktimemeasureapp.util.datetime.WorkTimeBalance
 import org.threeten.bp.ZonedDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -19,7 +17,6 @@ import javax.inject.Singleton
 @Singleton
 open class WorkTimeNotificationService @Inject constructor(
     @param:ApplicationContext private val context: Context,
-    private val dateTimeProvider: DateTimeProvider,
     private val timerManager: TimerManager,
     private val notificationFactory: WorkTimeNotificationFactory,
     private val settings: Settings,
@@ -31,12 +28,12 @@ open class WorkTimeNotificationService @Inject constructor(
     }
 
     // TODO: 25.02.2026 Used only in tests
-    open fun showWorkInProgressNotification(workDay: WorkDay, workTimeBalance: WorkTimeBalance) {
+    open fun showWorkInProgressNotification(inProgressState: WorkState.InProgress) {
         val isEnabled = settings.WorkTime.NotifyingEnabled.value
         if (!isEnabled) return
 
         val notification =
-            notificationFactory.createWorkInProgressNotification(workDay, workTimeBalance)
+            notificationFactory.createWorkInProgressNotification(inProgressState)
         notification.show()
     }
 
@@ -70,12 +67,12 @@ open class WorkTimeNotificationService @Inject constructor(
         timerManager.setExactTimer(endTime, pendingIntent)
     }
 
-    open fun scheduleEndOfWorkNotification(workTimeBalance: WorkTimeBalance) {
-        val standardEndTime = workTimeBalance.standardEndTime
-        val balancedEndTime = workTimeBalance.balancedEndTime
+    open fun scheduleEndOfWorkNotification(inProgressState: WorkState.InProgress) {
+        val standardEndTime = inProgressState.balancedWorkTime.endTime
+        val balancedEndTime = inProgressState.balancedWorkTime.endTime
         val notificationTime = listOf(standardEndTime, balancedEndTime)
-            .filter { it.isAfter(dateTimeProvider.currentTime) }
-            .minOrNull() ?: dateTimeProvider.currentTime
+            .filter { it.isAfter(inProgressState.currentTime) }
+            .minOrNull() ?: inProgressState.currentTime
         scheduleEndOfWorkNotification(notificationTime, standardEndTime, balancedEndTime)
     }
 

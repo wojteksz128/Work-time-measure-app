@@ -45,13 +45,13 @@ class DashboardViewModel @Inject constructor(
     val workDay: LiveData<WorkDay?> = workState.map { (it as? WorkState.Loaded)?.workDay }
 
     val standardRemainingToday = workState.map {
-        (it as? WorkState.Loaded)?.standardRemainingWorkTime ?: Duration.ZERO
+        (it as? WorkState.Loaded)?.standardWorkTime?.remainingWorkTime ?: Duration.ZERO
     }
     val todayWorkTime = workState.map {
         (it as? WorkState.Loaded)?.todayWorkTime ?: Duration.ZERO
     }
     val monthlyBalance = workState.map {
-        (it as? WorkState.Loaded)?.workTimeBalance?.monthlyBalance ?: Duration.ZERO
+        (it as? WorkState.Loaded)?.workTimeRequirements?.monthlyBalance ?: Duration.ZERO
     }
     val currentDayLabel = workState.map {
         dateTimeUtils.formatDate(
@@ -85,10 +85,8 @@ class DashboardViewModel @Inject constructor(
             notificationService.cancelEndOfWorkNotification()
         } else {
             startTrackingService()
-            if (workState is WorkState.Loaded) {
-                notificationService.scheduleEndOfWorkNotification(
-                    workState.workTimeBalance
-                )
+            if (workState is WorkState.InProgress) {
+                notificationService.scheduleEndOfWorkNotification(workState)
             }
         }
 

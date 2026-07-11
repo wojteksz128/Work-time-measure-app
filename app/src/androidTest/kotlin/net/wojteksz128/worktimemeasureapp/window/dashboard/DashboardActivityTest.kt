@@ -17,16 +17,15 @@ import net.wojteksz128.worktimemeasureapp.di.TestRepositoryModule.DUMMY_ID
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import net.wojteksz128.worktimemeasureapp.model.WorkState
 import net.wojteksz128.worktimemeasureapp.model.fieldType.DayType
-import net.wojteksz128.worktimemeasureapp.module.dayOff.DayOffService
 import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeInProgressNotification
 import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeNotificationFactory
 import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeNotificationService
+import net.wojteksz128.worktimemeasureapp.service.DayOffService
 import net.wojteksz128.worktimemeasureapp.settings.InitialSettingsPreparer
 import net.wojteksz128.worktimemeasureapp.util.FakeDateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.awaitState
 import net.wojteksz128.worktimemeasureapp.util.comeevent.ComeEventUtils
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
-import net.wojteksz128.worktimemeasureapp.util.datetime.WorkTimeBalance
 import net.wojteksz128.worktimemeasureapp.util.fixtures.aComeEvent
 import net.wojteksz128.worktimemeasureapp.util.fixtures.aWorkDay
 import org.junit.After
@@ -119,7 +118,7 @@ class DashboardActivityTest {
             on { build() } doReturn realNotification
         }
         notificationFactory.stub {
-            on { createWorkInProgressNotification(any(), any()) } doReturn notification
+            on { createWorkInProgressNotification(any()) } doReturn notification
         }
     }
 
@@ -163,14 +162,11 @@ class DashboardActivityTest {
             verifySnackbarIsShown(expectedMessage)
         }
 
-        verify(notificationFactory, timeout(1000).atLeastOnce()).createWorkInProgressNotification(
-            any<WorkDay>(),
-            any<WorkTimeBalance>()
-        )
+        verify(notificationFactory, timeout(1000).atLeastOnce())
+            .createWorkInProgressNotification(any<WorkState.InProgress>())
 
-        verify(notificationService, timeout(1000)).scheduleEndOfWorkNotification(
-            any<WorkTimeBalance>()
-        )
+        verify(notificationService, timeout(1000))
+            .scheduleEndOfWorkNotification(any<WorkState.InProgress>())
 
         (dateTimeProvider as FakeDateTimeProvider).advanceTimeBy(Duration.ofSeconds(5))
         Thread.sleep(1000)

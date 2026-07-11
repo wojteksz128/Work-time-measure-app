@@ -1,4 +1,4 @@
-package net.wojteksz128.worktimemeasureapp.module.dayOff
+package net.wojteksz128.worktimemeasureapp.service
 
 import android.util.Log
 import net.wojteksz128.worktimemeasureapp.api.HolidayProvider

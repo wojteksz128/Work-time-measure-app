@@ -43,10 +43,9 @@ class WorkTimeTrackerService : Service() {
         return START_NOT_STICKY
     }
 
-    private fun updateNotification(workState: WorkState.InProgress) {
+    private fun updateNotification(inProgressState: WorkState.InProgress) {
         val notification = notificationFactory.createWorkInProgressNotification(
-            workState.workDay,
-            workState.workTimeBalance
+            inProgressState
         ).build()
 
         if (!isServiceRunning) {

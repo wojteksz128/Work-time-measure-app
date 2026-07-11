@@ -11,8 +11,6 @@ data class ComeEvent(
     var endDate: ZonedDateTime?,
     val workDayId: Long,
 ) : DomainModel, Parcelable {
-    val isEnded: Boolean
-        get() = endDate != null
 
     constructor(startDate: ZonedDateTime, endDate: ZonedDateTime?, workDayId: Long)
             : this(

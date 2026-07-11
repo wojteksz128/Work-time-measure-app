@@ -26,16 +26,16 @@ fun aComeEvent(
     block: ComeEventBuilder.() -> Unit = {},
 ): ComeEvent = ComeEventBuilder(id).apply(block).build()
 
+fun aNotEndedComeEvent(
+    id: Long = 1L,
+    block: ComeEventBuilder.() -> Unit = {},
+): ComeEvent = aComeEvent(id) { endDate = null; block() }
+
 class ComeEventBuilder(private val id: Long = 1L) {
 
     var startDate: ZonedDateTime = TestFixtures.DEFAULT_START_TIME
     var endDate: ZonedDateTime? = TestFixtures.DEFAULT_END_TIME
     var workDayId: Long = 1L
-
-    /** Convenience: marks the event as still in progress (no end time). */
-    fun inProgress() {
-        endDate = null
-    }
 
     fun build(): ComeEvent = ComeEvent(
         id = id,

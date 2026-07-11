@@ -13,8 +13,8 @@ import kotlinx.coroutines.launch
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.databinding.ActivityDashboardBinding
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
-import net.wojteksz128.worktimemeasureapp.module.dayOff.DayOffService
 import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeNotificationService
+import net.wojteksz128.worktimemeasureapp.service.DayOffService
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.TimerManager
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
@@ -67,13 +67,12 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
         super.onCreate(savedInstanceState)
 
         comeEventsAdapter =
-            ComeEventsAdapter(dateTimeProvider, dateTimeUtils, this, viewModel.ticker)
+            ComeEventsAdapter(dateTimeUtils, this, viewModel.ticker)
 
         val localViewModel = viewModel
 
         binding.apply {
             lifecycleOwner = this@DashboardActivity
-            dateTimeUtils = this@DashboardActivity.dateTimeUtils
             viewModel = localViewModel
             dashboardCurrentDayEventsList.apply {
                 adapter = comeEventsAdapter
@@ -111,7 +110,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
         direction: RecyclerViewSwipeCallback.Direction,
     ) {
         viewHolder.binding.comeEvent?.let { comeEvent ->
-            selectedComeEventViewModel.select(comeEvent)
+            selectedComeEventViewModel.select(comeEvent.entity)
         }
         when (direction) {
             RecyclerViewSwipeCallback.Direction.LEFT -> showDialogWithListener(
@@ -128,7 +127,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
 
     override fun onResume() {
         super.onResume()
-        // TODO: 21.09.2021 Przenieś do innego miesca (niezależnego od DashboardActivity)
+        // TODO: 21.09.2021 Przenieś do innego miejsca (niezależnego od DashboardActivity)
         dateTimeProvider.updateOffset()
 
         lifecycleScope.launch {

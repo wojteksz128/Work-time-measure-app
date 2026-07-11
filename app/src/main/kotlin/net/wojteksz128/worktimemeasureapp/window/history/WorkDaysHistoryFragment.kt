@@ -61,7 +61,6 @@ class WorkDaysHistoryFragment : Fragment(), ClassTagAware, WorkDayItemListener,
             val workDayAdapter =
                 WorkDayAdapter(
                     requireContext(),
-                    dateTimeProvider,
                     dateTimeUtils,
                     viewLifecycleOwner,
                     viewModel.ticker,
@@ -89,7 +88,7 @@ class WorkDaysHistoryFragment : Fragment(), ClassTagAware, WorkDayItemListener,
     ) {
         selectedEventAdapter = viewHolder.bindingAdapter as ComeEventsAdapter
         viewHolder.binding.comeEvent?.let { comeEvent ->
-            selectedComeEventViewModel.select(comeEvent)
+            selectedComeEventViewModel.select(comeEvent.entity)
         }
         when (direction) {
             RecyclerViewSwipeCallback.Direction.LEFT -> showDialogWithListener(
@@ -110,8 +109,7 @@ class WorkDaysHistoryFragment : Fragment(), ClassTagAware, WorkDayItemListener,
     }
 
     override fun onAcceptDeletionComeEventClick(dialog: DialogFragment) {
-        val selectedEvent = selectedComeEventViewModel.selected.value
-        if (selectedEvent == null) return
+        val selectedEvent = selectedComeEventViewModel.selected.value ?: return
 
         viewModel.onComeEventDelete(selectedEvent)
 

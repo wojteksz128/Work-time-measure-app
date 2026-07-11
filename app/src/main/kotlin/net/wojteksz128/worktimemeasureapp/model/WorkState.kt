@@ -1,9 +1,8 @@
 package net.wojteksz128.worktimemeasureapp.model
 
-import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
-import net.wojteksz128.worktimemeasureapp.util.datetime.WorkTimeBalance
-import net.wojteksz128.worktimemeasureapp.util.datetime.ceilToSeconds
 import net.wojteksz128.worktimemeasureapp.util.datetime.floorToSeconds
+import net.wojteksz128.worktimemeasureapp.util.model.extension.finishedEventsDuration
+import net.wojteksz128.worktimemeasureapp.util.model.extension.notEndedEvent
 import org.threeten.bp.Duration
 import org.threeten.bp.ZonedDateTime
 
@@ -13,41 +12,44 @@ sealed interface WorkState {
 
     sealed class Loaded(
         open val workDay: WorkDay,
-        open val workTimeBalance: WorkTimeBalance,
-        dateTimeProvider: DateTimeProvider,
+        open val workTimeRequirements: WorkTimeRequirements,
+        private val currentTime: ZonedDateTime,
     ) : WorkState {
 
-        val currentTime: ZonedDateTime = dateTimeProvider.currentTime
-
         open val todayWorkTime: Duration
-            get() = (workTimeBalance.todayWorkTime).floorToSeconds()
+            get() = workDay.finishedEventsDuration.floorToSeconds()
 
-        val standardRemainingWorkTime: Duration
-            get() = (workTimeBalance.standardRequiredToday - todayWorkTime).ceilToSeconds()
+        val standardWorkTime by lazy {
+            WorkTimeInformation(
+                this.workTimeRequirements.standardRequiredToday,
+                this::todayWorkTime,
+                this::currentTime
+            )
+        }
 
-        val balancedRemainingWorkTime: Duration
-            get() = (workTimeBalance.standardRequiredToday - todayWorkTime - workTimeBalance.monthlyBalance).ceilToSeconds()
-
-        val standardEndTime: ZonedDateTime
-            get() = currentTime + standardRemainingWorkTime
-
-        val balancedEndTime: ZonedDateTime
-            get() = currentTime + balancedRemainingWorkTime
+        val balancedWorkTime by lazy {
+            WorkTimeInformation(
+                this.workTimeRequirements.balancedRequiredToday,
+                this::todayWorkTime,
+                this::currentTime
+            )
+        }
     }
 
     data class NotStarted(
         override val workDay: WorkDay,
-        override val workTimeBalance: WorkTimeBalance,
-        private val dateTimeProvider: DateTimeProvider,
-    ) : Loaded(workDay, workTimeBalance, dateTimeProvider)
+        override val workTimeRequirements: WorkTimeRequirements,
+        val currentTime: ZonedDateTime,
+    ) : Loaded(workDay, workTimeRequirements, currentTime)
 
     data class InProgress(
         override val workDay: WorkDay,
-        override val workTimeBalance: WorkTimeBalance,
-        private val dateTimeProvider: DateTimeProvider,
-    ) : Loaded(workDay, workTimeBalance, dateTimeProvider) {
+        override val workTimeRequirements: WorkTimeRequirements,
+        val currentTime: ZonedDateTime,
+    ) : Loaded(workDay, workTimeRequirements, currentTime) {
 
-        val nonFinishedEvent: ComeEvent = workDay.events.last { !it.isEnded }
+        // TODO: Jak mogę zabezpieczyć, że będzie istnieć tylko jeden obiekt, który nie został ukończony?
+        val nonFinishedEvent = workDay.notEndedEvent!!
 
         private val nonFinishedEventWorkTime: Duration
             get() = Duration.between(nonFinishedEvent.startDate, currentTime)
@@ -58,7 +60,7 @@ sealed interface WorkState {
 
     data class Finished(
         override val workDay: WorkDay,
-        override val workTimeBalance: WorkTimeBalance,
-        private val dateTimeProvider: DateTimeProvider,
-    ) : Loaded(workDay, workTimeBalance, dateTimeProvider)
+        override val workTimeRequirements: WorkTimeRequirements,
+        val currentTime: ZonedDateTime,
+    ) : Loaded(workDay, workTimeRequirements, currentTime)
 }

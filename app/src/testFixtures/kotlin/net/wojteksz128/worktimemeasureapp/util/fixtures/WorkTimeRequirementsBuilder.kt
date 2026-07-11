@@ -1,21 +1,15 @@
 package net.wojteksz128.worktimemeasureapp.util.fixtures
 
-import net.wojteksz128.worktimemeasureapp.util.datetime.WorkTimeBalance
+import net.wojteksz128.worktimemeasureapp.model.WorkTimeRequirements
 import org.threeten.bp.Duration
-import org.threeten.bp.ZonedDateTime
 
 /**
- * Builder for [WorkTimeBalance] test objects.
+ * Builder for [WorkTimeRequirements] test objects.
  *
  * Usage:
  * ```kotlin
  * // balanced 8-hour day, zero monthly balance
  * val balance = aWorkTimeBalance()
- *
- * // partially worked day
- * val balance = aWorkTimeBalance {
- *     todayWorkTime = Duration.ofHours(4)
- * }
  *
  * // day with positive monthly balance (overtime from previous days)
  * val balance = aWorkTimeBalance {
@@ -28,20 +22,16 @@ import org.threeten.bp.ZonedDateTime
  * }
  * ```
  */
-fun aWorkTimeBalance(
-    currentTime: ZonedDateTime,
-    block: WorkTimeBalanceBuilder.() -> Unit = {},
-): WorkTimeBalance = WorkTimeBalanceBuilder(currentTime).apply(block).build()
+fun aWorkTimeRequirements(
+    block: WorkTimeRequirementsBuilder.() -> Unit = {},
+): WorkTimeRequirements = WorkTimeRequirementsBuilder().apply(block).build()
 
-class WorkTimeBalanceBuilder(private val currentTime: ZonedDateTime) {
+class WorkTimeRequirementsBuilder {
 
-    var todayWorkTime: Duration = Duration.ZERO
     var standardRequiredToday: Duration = Duration.ofHours(8)
     var monthlyBalance: Duration = Duration.ZERO
 
-    fun build(): WorkTimeBalance = WorkTimeBalance(
-        currentTime = currentTime,
-        todayWorkTime = todayWorkTime,
+    fun build(): WorkTimeRequirements = WorkTimeRequirements(
         standardRequiredToday = standardRequiredToday,
         monthlyBalance = monthlyBalance,
     )

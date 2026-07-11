@@ -14,7 +14,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import net.wojteksz128.worktimemeasureapp.model.fieldType.DayType
-import net.wojteksz128.worktimemeasureapp.module.dayOff.DayOffService
+import net.wojteksz128.worktimemeasureapp.service.DayOffService
 import net.wojteksz128.worktimemeasureapp.settings.InitialSettingsPreparer
 import net.wojteksz128.worktimemeasureapp.util.createTestImageUri
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider

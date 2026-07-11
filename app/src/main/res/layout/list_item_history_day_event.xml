@@ -14,7 +14,7 @@
             style="@style/history_rv_work_day_events_item_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{dateTimeUtils.formatDate(endsAtTheSameDay ? @string/history_day_event_time_short_format : @string/history_day_event_time_long_format, comeEvent.startDate)}"
+            android:text="@{comeEvent.startDate}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -35,7 +35,7 @@
             style="@style/history_rv_work_day_events_item_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{comeEvent.endDate != null ? dateTimeUtils.formatDate(endsAtTheSameDay ? @string/history_day_event_time_short_format : @string/history_day_event_time_long_format, comeEvent.endDate) : @string/history_day_event_end_date_now}"
+            android:text="@{comeEvent.finishDate}"
             app:layout_constraintBaseline_toBaselineOf="@+id/history_day_event_realization_dates_divider"
             app:layout_constraintStart_toEndOf="@+id/history_day_event_realization_dates_divider"
             tools:text="@string/history_day_event_start_date_example" />
@@ -45,7 +45,7 @@
             style="@style/history_rv_work_day_events_item_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{dateTimeUtils.formatCounterTime(dateTimeUtils.getDuration(comeEvent))}"
+            android:text="@{comeEvent.duration}"
             app:layout_constraintBaseline_toBaselineOf="@+id/history_day_event_end_date"
             app:layout_constraintEnd_toEndOf="parent"
             tools:text="@string/history_day_event_duration_example" />
@@ -54,15 +54,7 @@
     <data>
 
         <variable
-            name="dateTimeUtils"
-            type="net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils" />
-
-        <variable
             name="comeEvent"
-            type="net.wojteksz128.worktimemeasureapp.model.ComeEvent" />
-
-        <variable
-            name="endsAtTheSameDay"
-            type="boolean" />
+            type="net.wojteksz128.worktimemeasureapp.window.history.ComeEventObject" />
     </data>
 </layout>

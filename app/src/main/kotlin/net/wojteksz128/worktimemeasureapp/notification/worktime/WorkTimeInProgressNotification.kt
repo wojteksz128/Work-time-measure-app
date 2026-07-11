@@ -6,20 +6,18 @@ import android.content.Context
 import androidx.annotation.StringRes
 import androidx.core.app.NotificationManagerCompat
 import net.wojteksz128.worktimemeasureapp.R
+import net.wojteksz128.worktimemeasureapp.model.WorkState
 import net.wojteksz128.worktimemeasureapp.notification.AppNotification
 import net.wojteksz128.worktimemeasureapp.notification.Channel
 import net.wojteksz128.worktimemeasureapp.notification.worktime.action.WorkTimeNotificationActionReceiver
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
-import net.wojteksz128.worktimemeasureapp.util.datetime.WorkTimeBalance
 import net.wojteksz128.worktimemeasureapp.util.datetime.min
 import net.wojteksz128.worktimemeasureapp.window.dashboard.DashboardActivity
-import org.threeten.bp.LocalDate
 import org.threeten.bp.ZonedDateTime
 
 open class WorkTimeInProgressNotification(
     context: Context,
-    private val currentDate: LocalDate,
-    private val workTimeBalance: WorkTimeBalance,
+    private val inProgressState: WorkState.InProgress,
     private val dateTimeUtils: DateTimeUtils,
 ) : AppNotification(Channel.WORK_TIME_IN_PROGRESS_CHANNEL, NOTIFICATION_ID, context) {
 
@@ -36,8 +34,8 @@ open class WorkTimeInProgressNotification(
     }
 
     override fun build(): Notification {
-        val formattedStandardEnd = getFormattedTimeFor(workTimeBalance.standardEndTime)
-        val formattedBalancedEnd = getFormattedTimeFor(workTimeBalance.balancedEndTime)
+        val formattedStandardEnd = getFormattedTimeFor(inProgressState.standardWorkTime.endTime)
+        val formattedBalancedEnd = getFormattedTimeFor(inProgressState.balancedWorkTime.endTime)
 
         val (currentProgress, maxProgress) = calculateCurrentProgress()
 
@@ -64,10 +62,10 @@ open class WorkTimeInProgressNotification(
 
     private fun calculateCurrentProgress(): Pair<Int, Int> {
         val maxProgress = min(
-            workTimeBalance.standardRequiredToday,
-            workTimeBalance.balancedRequiredToday
+            inProgressState.standardWorkTime.requiredTime,
+            inProgressState.balancedWorkTime.requiredTime
         ).seconds.toInt()
-        val currentProgress = workTimeBalance.todayWorkTime.seconds.toInt()
+        val currentProgress = inProgressState.todayWorkTime.seconds.toInt()
 
         return currentProgress to maxProgress
     }
@@ -79,6 +77,6 @@ open class WorkTimeInProgressNotification(
 
     @StringRes
     private fun getTimeFormatFor(dateTime: ZonedDateTime): Int =
-        if (dateTime.toLocalDate() == currentDate) R.string.notification_time_short_format
+        if (dateTime.toLocalDate() == inProgressState.workDay.date) R.string.notification_time_short_format
         else R.string.notification_time_long_format
 }

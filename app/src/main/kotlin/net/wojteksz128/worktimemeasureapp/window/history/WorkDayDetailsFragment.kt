@@ -22,6 +22,7 @@ import net.wojteksz128.worktimemeasureapp.model.ComeEvent
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
+import net.wojteksz128.worktimemeasureapp.util.model.extension.isWorkFinished
 import net.wojteksz128.worktimemeasureapp.util.recyclerView.RecyclerViewSwipeCallback
 import net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.DeleteComeEventDialogFragment
 import net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.DeleteComeEventDialogFragment.DeleteComeEventDialogListener
@@ -66,7 +67,7 @@ class WorkDayDetailsFragment : Fragment(), DeleteComeEventDialogListener,
         savedInstanceState: Bundle?
     ): View {
         comeEventsAdapter =
-            ComeEventsAdapter(dateTimeProvider, dateTimeUtils, viewLifecycleOwner, viewModel.ticker)
+            ComeEventsAdapter(dateTimeUtils, viewLifecycleOwner, viewModel.ticker)
         binding = FragmentWorkDayDetailsBinding.inflate(layoutInflater, container, false)
         initializeLayoutData()
         viewModel.apply {
@@ -88,7 +89,7 @@ class WorkDayDetailsFragment : Fragment(), DeleteComeEventDialogListener,
         }
         lifecycleScope.launch {
             viewModel.ticker.collectLatest {
-                if (viewModel.workDay.value?.isWorkFinished() == false)
+                if (viewModel.workDay.value?.isWorkFinished == false)
                     binding.invalidateAll()
             }
         }
@@ -134,7 +135,7 @@ class WorkDayDetailsFragment : Fragment(), DeleteComeEventDialogListener,
         direction: RecyclerViewSwipeCallback.Direction,
     ) {
         viewHolder.binding.comeEvent?.let { comeEvent ->
-            selectedComeEventViewModel.select(comeEvent)
+            selectedComeEventViewModel.select(comeEvent.entity)
         }
         when (direction) {
             RecyclerViewSwipeCallback.Direction.LEFT -> showDialogWithListener(
