@@ -19,130 +19,143 @@ import kotlinx.coroutines.launch
 import net.wojteksz128.worktimemeasureapp.databinding.ListItemHistoryWorkDayBinding
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
-import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
-import net.wojteksz128.worktimemeasureapp.util.model.extension.isWorkFinished
-import net.wojteksz128.worktimemeasureapp.util.recyclerView.RecyclerViewItemClick
+import net.wojteksz128.worktimemeasureapp.util.datetime.toCounterString
+import net.wojteksz128.worktimemeasureapp.util.model.extension.workTime
 import net.wojteksz128.worktimemeasureapp.util.recyclerView.RecyclerViewSwipeCallback
 import net.wojteksz128.worktimemeasureapp.window.history.ComeEventsAdapter.ComeEventViewHolder
-import net.wojteksz128.worktimemeasureapp.window.util.button.ExpandViewModel
 import net.wojteksz128.worktimemeasureapp.window.util.recyclerView.ComeEventRecyclerLeftSwipeActionParams
 import net.wojteksz128.worktimemeasureapp.window.util.recyclerView.ComeEventRecyclerRightSwipeActionParams
 
 class WorkDayAdapter(
     private val context: Context,
-    private val dateTimeUtils: DateTimeUtils,
     private val lifecycleOwner: LifecycleOwner,
     private val ticker: Flow<Unit>,
     private val workDayItemListener: WorkDayItemListener,
-) : PagingDataAdapter<WorkDay, WorkDayAdapter.WorkDayViewHolder>(WorkDayEventsDiffCallback),
-    RecyclerViewItemClick<WorkDay> {
+) : PagingDataAdapter<WorkDayItemUiModel, WorkDayAdapter.WorkDayViewHolder>(
+    WorkDayEventsDiffCallback
+) {
 
-    @Suppress("UNUSED_PARAMETER")
-    override var onItemClickListenerProvider: (WorkDay) -> (View) -> Unit
-        get() = workDayItemListener::onWorkDayClicked
-        set(value) {}
+    private val expandedItemIds = mutableSetOf<Long>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WorkDayViewHolder {
         val inflater = LayoutInflater.from(context)
         val binding = ListItemHistoryWorkDayBinding.inflate(inflater, parent, false)
         return WorkDayViewHolder(
             binding,
-            context,
             lifecycleOwner,
-            dateTimeUtils,
             ticker,
-            workDayItemListener::onWorkDayEventSelected
+            workDayItemListener,
+            context
         )
     }
 
     override fun onBindViewHolder(holder: WorkDayViewHolder, position: Int) {
-        getItem(position)?.let { workDay ->
-            holder.bind(workDay, workDayItemListener.onWorkDayItemViewModelRequires(workDay))
-            holder.setOnClickListener(onItemClickListenerProvider(workDay))
+        val item = getItem(position) ?: return
+        val isExpanded = expandedItemIds.contains(item.id)
+
+        holder.bind(item, isExpanded) { clickedId ->
+            if (expandedItemIds.contains(clickedId)) {
+                expandedItemIds.remove(clickedId)
+            } else {
+                expandedItemIds.add(clickedId)
+            }
+            notifyItemChanged(position)
         }
     }
 
 
     class WorkDayViewHolder(
         val binding: ListItemHistoryWorkDayBinding,
-        context: Context,
         private val lifecycleOwner: LifecycleOwner,
-        private val dateTimeUtils: DateTimeUtils,
         private val ticker: Flow<Unit>,
-        private val onEventSwiped: (ComeEventViewHolder, RecyclerViewSwipeCallback.Direction) -> Unit,
+        private val listener: WorkDayItemListener,
+        context: Context,
     ) : RecyclerView.ViewHolder(binding.root), ClassTagAware {
-        private val comeEventsAdapter =
-            ComeEventsAdapter(dateTimeUtils, lifecycleOwner, ticker)
+
+        private val comeEventsAdapter = ComeEventsAdapter(lifecycleOwner, ticker)
         private var updateJob: Job? = null
 
         init {
-            binding.apply {
-                lifecycleOwner = this@WorkDayViewHolder.lifecycleOwner
-                dateTimeUtils = this@WorkDayViewHolder.dateTimeUtils
-                dayEventsList.apply {
-                    adapter = comeEventsAdapter
-                    layoutManager = object : LinearLayoutManager(context) {
-                        override fun canScrollVertically() = false
-                    }
-                    addItemDecoration(
-                        DividerItemDecoration(
-                            context,
-                            DividerItemDecoration.VERTICAL
-                        )
-                    )
+            binding.dayEventsList.apply {
+                adapter = comeEventsAdapter
+                layoutManager = object : LinearLayoutManager(context) {
+                    override fun canScrollVertically() = false
                 }
-                val rvTouchCallback = RecyclerViewSwipeCallback(
-                    ComeEventRecyclerLeftSwipeActionParams(context),
-                    ComeEventRecyclerRightSwipeActionParams(context),
-                    onEventSwiped
+                addItemDecoration(
+                    DividerItemDecoration(
+                        context,
+                        DividerItemDecoration.VERTICAL
+                    )
                 )
-                ItemTouchHelper(rvTouchCallback).attachToRecyclerView(dayEventsList)
             }
+            val rvTouchCallback = RecyclerViewSwipeCallback(
+                ComeEventRecyclerLeftSwipeActionParams(context),
+                ComeEventRecyclerRightSwipeActionParams(context),
+                listener::onWorkDayEventSelected
+            )
+            ItemTouchHelper(rvTouchCallback).attachToRecyclerView(binding.dayEventsList)
         }
 
-        fun bind(workDay: WorkDay, itemViewModel: WorkDayItemViewModel) {
-            binding.workDay = workDay
-            binding.expandViewModel = itemViewModel
+        fun bind(workDayItem: WorkDayItemUiModel, isExpanded: Boolean, onToggle: (Long) -> Unit) {
+            binding.dayLabel.text = workDayItem.dateLabel
 
-            comeEventsAdapter.submitList(workDay.events)
+            if (isExpanded) {
+                binding.dayEventsListContainer.visibility = View.VISIBLE
+                binding.dayEventsList.visibility =
+                    if (workDayItem.hasEvents) View.VISIBLE else View.INVISIBLE
+                binding.dayNoEventsLabel.visibility =
+                    if (workDayItem.hasEvents) View.INVISIBLE else View.VISIBLE
+            } else {
+                binding.dayEventsListContainer.visibility = View.INVISIBLE
+            }
+            binding.dayExpand.setOnClickListener { onToggle(workDayItem.id) }
+
+            binding.root.setOnClickListener {
+                listener.onWorkDayClicked(workDayItem.originalEntity)
+            }
+
+            comeEventsAdapter.submitList(workDayItem.events)
 
             updateJob?.cancel()
-            if (!workDay.isWorkFinished) {
-                updateJob = lifecycleOwner.lifecycleScope.launch {
-                    ticker.collectLatest {
-                        binding.invalidateAll()
+
+            when (workDayItem) {
+                is WorkDayItemUiModel.Finished -> {
+                    binding.dayWorkDuration.text = workDayItem.formattedDuration
+                }
+
+                is WorkDayItemUiModel.Active -> {
+                    updateJob = lifecycleOwner.lifecycleScope.launch {
+                        ticker.collectLatest {
+                            binding.dayWorkDuration.text =
+                                workDayItem.originalEntity.workTime.toCounterString()
+                        }
                     }
                 }
             }
-        }
-
-        fun setOnClickListener(onItemClickListener: (View) -> Unit) {
-            binding.dayLabelContainer.setOnClickListener(onItemClickListener)
         }
     }
 
 
-    object WorkDayEventsDiffCallback : DiffUtil.ItemCallback<WorkDay>() {
+    object WorkDayEventsDiffCallback : DiffUtil.ItemCallback<WorkDayItemUiModel>() {
 
-        override fun areItemsTheSame(oldItem: WorkDay, newItem: WorkDay): Boolean {
-            return oldItem.id!! == newItem.id!!
+        override fun areItemsTheSame(
+            oldItem: WorkDayItemUiModel,
+            newItem: WorkDayItemUiModel,
+        ): Boolean {
+            return oldItem.id == newItem.id
         }
 
-        override fun areContentsTheSame(oldItem: WorkDay, newItem: WorkDay) =
+        override fun areContentsTheSame(oldItem: WorkDayItemUiModel, newItem: WorkDayItemUiModel) =
             oldItem == newItem
     }
 
     interface WorkDayItemListener {
-        fun onWorkDayItemViewModelRequires(workDay: WorkDay): WorkDayItemViewModel
-
         fun onWorkDayEventSelected(
             viewHolder: ComeEventViewHolder,
             direction: RecyclerViewSwipeCallback.Direction,
         )
 
-        fun onWorkDayClicked(workDay: WorkDay): (View) -> Unit = {}
+        fun onWorkDayClicked(workDay: WorkDay)
     }
-
-    class WorkDayItemViewModel : ExpandViewModel()
 }
 

@@ -10,18 +10,22 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.paging.liveData
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.databinding.FragmentWorkDaysHistoryBinding
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
-import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import net.wojteksz128.worktimemeasureapp.util.recyclerView.RecyclerViewSwipeCallback
 import net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.DeleteComeEventDialogFragment
 import net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.DeleteComeEventDialogFragment.DeleteComeEventDialogListener
@@ -43,12 +47,10 @@ class WorkDaysHistoryFragment : Fragment(), ClassTagAware, WorkDayItemListener,
     @Inject
     lateinit var dateTimeProvider: DateTimeProvider
 
-    @Inject
-    lateinit var dateTimeUtils: DateTimeUtils
-
     private lateinit var binding: FragmentWorkDaysHistoryBinding
     private lateinit var workDayAdapter: WorkDayAdapter
-    var selectedEventAdapter: ComeEventsAdapter? = null
+
+    private var swipedComeEventsAdapter: ComeEventsAdapter? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -61,7 +63,6 @@ class WorkDaysHistoryFragment : Fragment(), ClassTagAware, WorkDayItemListener,
             val workDayAdapter =
                 WorkDayAdapter(
                     requireContext(),
-                    dateTimeUtils,
                     viewLifecycleOwner,
                     viewModel.ticker,
                     this@WorkDaysHistoryFragment
@@ -70,25 +71,33 @@ class WorkDaysHistoryFragment : Fragment(), ClassTagAware, WorkDayItemListener,
             (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         }
 
-        Log.v(classTag, "onCreateView: Fill days list")
-        viewModel.workDaysPager.liveData.observe(viewLifecycleOwner) {
-            workDayAdapter.submitData(this.lifecycle, it)
-        }
-
         return binding.root
     }
 
-    override fun onWorkDayItemViewModelRequires(workDay: WorkDay): WorkDayAdapter.WorkDayItemViewModel {
-        return viewModel.getWorkDayItemViewModel(workDay)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        Log.v(classTag, "onCreateView: Fill days list")
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.workDaysPager.collectLatest { pagingData ->
+                    workDayAdapter.submitData(pagingData)
+                }
+            }
+        }
     }
 
     override fun onWorkDayEventSelected(
         viewHolder: ComeEventViewHolder,
         direction: RecyclerViewSwipeCallback.Direction,
     ) {
-        selectedEventAdapter = viewHolder.bindingAdapter as ComeEventsAdapter
-        viewHolder.binding.comeEvent?.let { comeEvent ->
-            selectedComeEventViewModel.select(comeEvent.entity)
+        val childAdapter = viewHolder.bindingAdapter as? ComeEventsAdapter ?: return
+        swipedComeEventsAdapter = childAdapter
+
+        val position = viewHolder.bindingAdapterPosition
+        if (position != RecyclerView.NO_POSITION) {
+            val itemUiModel = childAdapter.currentList[position]
+            selectedComeEventViewModel.select(itemUiModel.originalEntity)
         }
         when (direction) {
             RecyclerViewSwipeCallback.Direction.LEFT -> showDialogWithListener(
@@ -103,7 +112,7 @@ class WorkDaysHistoryFragment : Fragment(), ClassTagAware, WorkDayItemListener,
         }
     }
 
-    override fun onWorkDayClicked(workDay: WorkDay): (View) -> Unit = {
+    override fun onWorkDayClicked(workDay: WorkDay) {
         selectedWorkDayViewModel.select(workDay)
         findNavController().navigate(R.id.viewWorkDayDetails, bundleOf())
     }
@@ -130,17 +139,8 @@ class WorkDaysHistoryFragment : Fragment(), ClassTagAware, WorkDayItemListener,
         modifiedComeEvent: ComeEvent
     ) {
         viewModel.onComeEventModified(modifiedComeEvent)
-        selectedEventAdapter?.let { comeEventAdapter ->
-            val position =
-                comeEventAdapter.currentList.indexOfFirst { it.id == modifiedComeEvent.id }
-            comeEventAdapter.modifyCurrentList {
-                if (position >= 0 && position < this.size) {
-                    selectedComeEventViewModel.changed =
-                        this[position] != modifiedComeEvent || this[position].endDate != modifiedComeEvent.endDate
-                    this[position] = modifiedComeEvent
-                }
-            }
-        }
+        selectedComeEventViewModel.changed = true
+
         Snackbar.make(
             binding.root,
             R.string.history_come_events_edited_message,
@@ -157,12 +157,14 @@ class WorkDaysHistoryFragment : Fragment(), ClassTagAware, WorkDayItemListener,
 
     private fun resetSwipedItemView() {
         selectedComeEventViewModel.selected.value?.let { selectedEvent ->
-            selectedEventAdapter?.let { comeEventsAdapter ->
-                val position =
-                    comeEventsAdapter.currentList.indexOfFirst { it.id == selectedEvent.id }
-                if (position >= 0)
-                    comeEventsAdapter.notifyItemChanged(position)
+            swipedComeEventsAdapter?.let { childAdapter ->
+                val position = childAdapter.currentList.indexOfFirst { it.id == selectedEvent.id }
+                if (position >= 0) {
+                    childAdapter.notifyItemChanged(position)
+                }
             }
         }
+
+        swipedComeEventsAdapter = null
     }
 }

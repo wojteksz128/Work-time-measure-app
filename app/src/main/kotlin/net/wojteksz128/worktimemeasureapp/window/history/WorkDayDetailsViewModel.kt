@@ -11,6 +11,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
@@ -18,9 +19,13 @@ import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import net.wojteksz128.worktimemeasureapp.repository.ComeEventRepository
 import net.wojteksz128.worktimemeasureapp.repository.EntityHistoryRepository
 import net.wojteksz128.worktimemeasureapp.repository.WorkDayRepository
+import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.coroutines.TickerFactory
-import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
+import net.wojteksz128.worktimemeasureapp.util.datetime.formatToString
+import net.wojteksz128.worktimemeasureapp.util.datetime.toCounterString
+import net.wojteksz128.worktimemeasureapp.util.model.extension.isWorkFinished
+import net.wojteksz128.worktimemeasureapp.util.model.extension.workTime
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -31,22 +36,18 @@ class WorkDayDetailsViewModel @Inject constructor(
     private val workDayRepository: WorkDayRepository,
     private val entityHistoryRepository: EntityHistoryRepository,
     private val historyDisplayMapper: HistoryDisplayMapper,
-    private val dayTimeUtils: DateTimeUtils,
+    settings: Settings,
     tickerFactory: TickerFactory,
-    @Named("entryHistoryDateTimeFormat") private val dateTimeFormat: String,
+    @param:Named("entryHistoryDateTimeFormat") private val dateTimeFormat: String,
 ) : AndroidViewModel(application), ClassTagAware {
-    val workDay = MediatorLiveData<WorkDay>()
 
-    val history: LiveData<List<HistoryDisplayItem>> =
-        workDay.switchMap { workDay ->
+    private val workDay = MediatorLiveData<WorkDay>()
+    private val history = workDay.switchMap { workDay ->
             workDay.id?.let {
                 entityHistoryRepository.getGroupedHistoryForWorkDay(it).map { historyItems ->
                     historyItems.map { historyItem ->
                         HistoryDisplayItem(
-                            timestamp = dayTimeUtils.formatDate(
-                                dateTimeFormat,
-                                historyItem.timestamp
-                            ),
+                            timestamp = historyItem.timestamp.formatToString(dateTimeFormat),
                             actionText = historyDisplayMapper.mapActionType(historyItem.actionType),
                             actionColorRes = historyDisplayMapper.mapActionToColor(historyItem.actionType),
                             entityText = historyDisplayMapper.mapEntityType(historyItem.entityType),
@@ -60,10 +61,50 @@ class WorkDayDetailsViewModel @Inject constructor(
                         )
                     }
                 }
-            }
+            } ?: MediatorLiveData<List<HistoryDisplayItem>>().apply { value = emptyList() }
         }
 
+    private val _uiModel = MediatorLiveData(WorkDayDetailsUiModel())
+    val uiModel: LiveData<WorkDayDetailsUiModel> = _uiModel
+
     val ticker: SharedFlow<Unit> = tickerFactory.create(viewModelScope)
+    private val expectedDuration = settings.WorkTime.Week.Duration.value.toCounterString()
+
+    init {
+        _uiModel.addSource(workDay) { day -> updateUiState(day, history.value) }
+        _uiModel.addSource(history) { hist -> updateUiState(workDay.value, hist) }
+
+        viewModelScope.launch {
+            ticker.collectLatest {
+                val currentDay = workDay.value
+                if (currentDay != null && !currentDay.isWorkFinished) {
+                    updateUiState(currentDay, history.value)
+                }
+            }
+        }
+    }
+
+    private fun updateUiState(day: WorkDay?, hist: List<HistoryDisplayItem>?) {
+        if (day == null) return
+
+        val events = day.events
+        val uiEvents = events.map { it.toUiModel(getApplication()) }
+        val historyList = hist ?: emptyList()
+
+        _uiModel.value = WorkDayDetailsUiModel(
+            yearAndMonth = day.date.formatToString("LLLL yyyy"),
+            day = day.date.formatToString("d"),
+            dayOfWeek = day.date.formatToString("EEEE"),
+            durationText = day.workTime.toCounterString(),
+            expectedDurationText = expectedDuration,
+            comeEvents = uiEvents,
+            historyItems = historyList,
+            isEventsListVisible = events.isNotEmpty(),
+            isNoEventsLabelVisible = events.isEmpty(),
+            isHistoryListVisible = historyList.isNotEmpty(),
+            isNoHistoryLabelVisible = historyList.isEmpty()
+        )
+    }
 
     fun fillWorkDayUsingLocal(workDaySource: LiveData<WorkDay>) {
         workDay.addSource(workDaySource) {

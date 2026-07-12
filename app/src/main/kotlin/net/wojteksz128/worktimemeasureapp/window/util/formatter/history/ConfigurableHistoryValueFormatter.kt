@@ -1,4 +1,4 @@
-package net.wojteksz128.worktimemeasureapp.window.history.formatters
+package net.wojteksz128.worktimemeasureapp.window.util.formatter.history
 
 class ConfigurableHistoryValueFormatter(
     private val fieldFormatters: Map<String, FieldNameFormatter>,

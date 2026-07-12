@@ -5,15 +5,15 @@ import net.wojteksz128.worktimemeasureapp.model.WorkTimeRequirements
 import net.wojteksz128.worktimemeasureapp.model.fieldType.DayType
 import net.wojteksz128.worktimemeasureapp.repository.WorkDayRepository
 import net.wojteksz128.worktimemeasureapp.settings.Settings
-import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import net.wojteksz128.worktimemeasureapp.util.datetime.LocalDateRange
+import net.wojteksz128.worktimemeasureapp.util.datetime.monthRangeTillToday
+import net.wojteksz128.worktimemeasureapp.util.model.extension.workTime
 import org.threeten.bp.Duration
 import org.threeten.bp.LocalDate
 import javax.inject.Inject
 
 class WorkTimeRequirementsCalculator @Inject constructor(
     private val workDayRepository: WorkDayRepository,
-    private val dateTimeUtils: DateTimeUtils,
     private val dayOffService: DayOffService,
     @Suppress("PrivatePropertyName") private val Settings: Settings,
 ) {
@@ -34,15 +34,13 @@ class WorkTimeRequirementsCalculator @Inject constructor(
         } ?: Duration.ZERO
 
     private suspend fun getBalanceOfMonthBeforeDate(date: LocalDate): Duration {
-        val daysInMonthRange = dateTimeUtils.getDaysInMonthRangeToDate(date.minusDays(1))
+        val daysInMonthRange = date.minusDays(1).monthRangeTillToday
         return calculateBalanceForDays(daysInMonthRange)
     }
 
     private suspend fun calculateBalanceForDays(dateRange: LocalDateRange): Duration {
-        val totalWorked =
-            workDayRepository.getWorkDaysForRange(dateRange).fold(Duration.ZERO) { acc, workDay ->
-                acc + dateTimeUtils.mergeComeEventsDuration(workDay)
-            }
+        val totalWorked = workDayRepository.getWorkDaysForRange(dateRange)
+            .fold(Duration.ZERO) { acc, workDay -> acc + workDay.workTime }
         val totalRequired = calculateExpectedWorkTime(dateRange)
         return totalWorked - totalRequired
     }

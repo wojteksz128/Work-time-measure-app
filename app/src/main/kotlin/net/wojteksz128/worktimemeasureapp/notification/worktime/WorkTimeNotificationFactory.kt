@@ -4,18 +4,16 @@ import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
 import net.wojteksz128.worktimemeasureapp.model.WorkState
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
-import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import org.threeten.bp.ZonedDateTime
 import javax.inject.Inject
 
 open class WorkTimeNotificationFactory @Inject constructor(
     @param:ApplicationContext private val context: Context,
-    private val dateTimeUtils: DateTimeUtils,
     private val dateTimeProvider: DateTimeProvider,
 ) {
 
     open fun createWorkInProgressNotification(inProgressState: WorkState.InProgress) =
-        WorkTimeInProgressNotification(context, inProgressState, dateTimeUtils)
+        WorkTimeInProgressNotification(context, inProgressState)
 
     open fun createEndOfWorkNotification(
         standardEndTime: ZonedDateTime,

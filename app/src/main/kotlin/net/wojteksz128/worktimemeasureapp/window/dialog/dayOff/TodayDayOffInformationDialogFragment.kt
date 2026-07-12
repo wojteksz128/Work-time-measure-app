@@ -12,14 +12,11 @@ import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.model.fieldType.DayType
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
-import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
+import net.wojteksz128.worktimemeasureapp.util.datetime.formatToString
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class TodayDayOffInformationDialogFragment(private val dayType: DayType) : DialogFragment() {
-
-    @Inject
-    lateinit var dateTimeUtils: DateTimeUtils
 
     @Inject
     lateinit var dateTimeProvider: DateTimeProvider
@@ -38,18 +35,19 @@ class TodayDayOffInformationDialogFragment(private val dayType: DayType) : Dialo
         }.create()
     }
 
-    private fun getMessage(dayType: DayType) = if (dayType.dayOffInfo == null) getString(
-        R.string.today_day_off_information_dialog_weekend_message, dateTimeUtils.formatDate(
-            getString(R.string.today_day_off_information_dialog_message_date_format),
-            dateTimeProvider.currentTime
+    private fun getMessage(dayType: DayType): String {
+        val dateFormat = getString(R.string.today_day_off_information_dialog_message_date_format)
+
+        return if (dayType.dayOffInfo == null) getString(
+            R.string.today_day_off_information_dialog_weekend_message,
+            dateTimeProvider.currentTime.formatToString(dateFormat)
         )
-    )
-    else getString(
-        R.string.today_day_off_information_dialog_dayOff_message, dateTimeUtils.formatDate(
-            getString(R.string.today_day_off_information_dialog_message_date_format),
-            dateTimeProvider.currentTime
-        ), dayType.dayOffInfo.name
-    )
+        else getString(
+            R.string.today_day_off_information_dialog_dayOff_message,
+            dateTimeProvider.currentTime.formatToString(dateFormat),
+            dayType.dayOffInfo.name
+        )
+    }
 
     override fun show(manager: FragmentManager, tag: String?) {
         openOnce { super.show(manager, tag) }

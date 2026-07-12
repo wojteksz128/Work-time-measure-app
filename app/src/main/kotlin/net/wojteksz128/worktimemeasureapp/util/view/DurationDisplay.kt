@@ -6,18 +6,12 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import android.widget.TextView
-import dagger.hilt.android.AndroidEntryPoint
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.databinding.ComponentDurationDisplayBinding
-import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
+import net.wojteksz128.worktimemeasureapp.util.datetime.toCounterString
 import org.threeten.bp.Duration
-import javax.inject.Inject
 
-@AndroidEntryPoint
-class DurationDisplay(context: Context, attrs: AttributeSet?) :
-    FrameLayout(context, attrs) {
-    @Inject
-    lateinit var dateTimeUtils: DateTimeUtils
+class DurationDisplay(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs) {
 
     lateinit var binding: ComponentDurationDisplayBinding
 
@@ -35,7 +29,6 @@ class DurationDisplay(context: Context, attrs: AttributeSet?) :
             this.addView(binding.root)
 
             binding.title = readTitle(typedArray, context)
-            binding.dateTimeUtils = dateTimeUtils
         }
     }
 
@@ -48,11 +41,12 @@ class DurationDisplay(context: Context, attrs: AttributeSet?) :
     }
 
     fun setDuration(duration: Duration?) {
+        val durationText = duration.toCounterString()
+
         if (!isInEditMode)
-            binding.duration = duration
+            binding.durationText = durationText
         else {
-            findViewById<TextView>(R.id.duration_display_value).text =
-                dateTimeUtils.formatCounterTime(duration, R.string.duration_display_value_template)
+            findViewById<TextView>(R.id.duration_display_value).text = durationText
         }
     }
 

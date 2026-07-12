@@ -13,25 +13,19 @@ import kotlinx.coroutines.launch
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.databinding.DialogComeEventEditBinding
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
-import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import net.wojteksz128.worktimemeasureapp.window.dialog.DialogFragmentWithListener
 import net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.EditComeEventDialogFragment.EditComeEventDialogListener
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class EditComeEventDialogFragment : DialogFragmentWithListener<EditComeEventDialogListener>() {
     private val editDialogViewModel: EditComeEventDialogViewModel by viewModels()
     private val selectedComeEventViewModel: SelectedComeEventViewModel by activityViewModels()
 
-    @Inject
-    lateinit var dateTimeUtils: DateTimeUtils
-
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return AlertDialog.Builder(requireContext()).apply {
             val dialogBinding = DialogComeEventEditBinding.inflate(layoutInflater, null, false)
                 .apply {
                     this.lifecycleOwner = this@EditComeEventDialogFragment
-                    this.dateTimeUtils = this@EditComeEventDialogFragment.dateTimeUtils
                     this.viewModel = this@EditComeEventDialogFragment.editDialogViewModel
                 }
             setView(dialogBinding.root)

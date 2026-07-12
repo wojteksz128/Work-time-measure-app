@@ -9,7 +9,7 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.model.WorkState
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
-import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
+import net.wojteksz128.worktimemeasureapp.util.datetime.formatToString
 import net.wojteksz128.worktimemeasureapp.util.fixtures.TestFixtures
 import net.wojteksz128.worktimemeasureapp.util.fixtures.aInProgressState
 import net.wojteksz128.worktimemeasureapp.util.fixtures.aNotEndedComeEvent
@@ -35,9 +35,6 @@ class WorkTimeInProgressNotificationTest {
 
     @Inject
     lateinit var dateTimeProvider: DateTimeProvider
-
-    @Inject
-    lateinit var dateTimeUtils: DateTimeUtils
 
     private lateinit var context: Context
 
@@ -128,10 +125,9 @@ class WorkTimeInProgressNotificationTest {
         val notification = buildNotification(inProgressState)
 
         val contentText = notification.extras.getCharSequence("android.text").toString()
-        val expectedStandardEndTimeStr = dateTimeUtils.formatDate(
-            context.getString(R.string.notification_time_long_format),
+        val expectedStandardEndTimeStr =
             inProgressState.workDay.events.last().startDate.plusHours(8)
-        )
+                .formatToString(context.getString(R.string.notification_time_long_format))
         assertTrue(contentText.contains(expectedStandardEndTimeStr))
     }
 
@@ -150,7 +146,7 @@ class WorkTimeInProgressNotificationTest {
     }
 
     private fun buildNotification(inProgressState: WorkState.InProgress): Notification {
-        return WorkTimeInProgressNotification(context, inProgressState, dateTimeUtils).build()
+        return WorkTimeInProgressNotification(context, inProgressState).build()
     }
 
     private fun extractEndTimesFromNotificationMessage(contentText: String): Pair<LocalTime, LocalTime> {

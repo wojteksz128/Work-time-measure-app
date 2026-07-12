@@ -38,11 +38,6 @@
     </ScrollView>
 
     <data>
-
-        <variable
-            name="dateTimeUtils"
-            type="net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils" />
-
         <variable
             name="viewModel"
             type="net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.EditComeEventDialogViewModel" />

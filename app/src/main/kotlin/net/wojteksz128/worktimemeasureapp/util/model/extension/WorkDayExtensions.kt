@@ -18,3 +18,6 @@ val WorkDay.isWorkFinished: Boolean
 
 val WorkDay.notEndedEvent: ComeEvent?
     get() = this.events.lastOrNull { !it.isEnded }
+
+val WorkDay.workTime: Duration
+    get() = this.events.duration

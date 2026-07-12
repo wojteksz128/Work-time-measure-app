@@ -8,18 +8,14 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import dagger.hilt.android.AndroidEntryPoint
 import net.wojteksz128.worktimemeasureapp.R
-import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
+import net.wojteksz128.worktimemeasureapp.util.datetime.formatToString
 import net.wojteksz128.worktimemeasureapp.util.datetime.isTheSameDay
 import net.wojteksz128.worktimemeasureapp.window.dialog.DialogFragmentWithListener
 import net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.DeleteComeEventDialogFragment.DeleteComeEventDialogListener
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class DeleteComeEventDialogFragment : DialogFragmentWithListener<DeleteComeEventDialogListener>() {
     internal val selectedComeEventViewModel: SelectedComeEventViewModel by activityViewModels()
-
-    @Inject
-    lateinit var dateTimeUtils: DateTimeUtils
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return AlertDialog.Builder(requireContext()).apply {
@@ -40,19 +36,14 @@ class DeleteComeEventDialogFragment : DialogFragmentWithListener<DeleteComeEvent
         return selectedComeEventViewModel.selected.value?.let {
             val dateFormat =
                 if (it.startDate.isTheSameDay(it.endDate))
-                    R.string.history_day_event_time_short_format
+                    getString(R.string.history_day_event_time_short_format)
                 else
-                    R.string.history_day_event_time_long_format
+                    getString(R.string.history_day_event_time_long_format)
+
             getString(
                 R.string.delete_come_event_dialog_delete_message,
-                dateTimeUtils.formatDate(
-                    getString(dateFormat),
-                    it.startDate
-                ),
-                dateTimeUtils.formatDate(
-                    getString(dateFormat),
-                    it.endDate
-                )
+                it.startDate.formatToString(dateFormat),
+                it.endDate.formatToString(dateFormat)
             )
         } ?: throw IllegalStateException("Come event is not selected")
     }

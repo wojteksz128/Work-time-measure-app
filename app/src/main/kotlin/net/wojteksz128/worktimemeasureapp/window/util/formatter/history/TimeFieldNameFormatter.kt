@@ -1,14 +1,13 @@
-package net.wojteksz128.worktimemeasureapp.window.history.formatters
+package net.wojteksz128.worktimemeasureapp.window.util.formatter.history
 
 import android.util.Log
 import com.google.gson.Gson
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
-import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
+import net.wojteksz128.worktimemeasureapp.util.datetime.formatToString
 import org.threeten.bp.ZonedDateTime
 import javax.inject.Inject
 
 class TimeFieldNameFormatter @Inject constructor(
-    private val dateTimeUtils: DateTimeUtils,
     private val gson: Gson,
     private val dateTimeFormat: String,
 ) : FieldNameFormatter, ClassTagAware {
@@ -17,7 +16,7 @@ class TimeFieldNameFormatter @Inject constructor(
         if (value == null || value == "null") return null
 
         try {
-            return dateTimeUtils.formatDate(dateTimeFormat, parseDateTime(value))
+            return parseDateTime(value).formatToString(dateTimeFormat)
         } catch (e: Exception) {
             Log.w(classTag, "format: error parsing date field: $value", e)
             return value

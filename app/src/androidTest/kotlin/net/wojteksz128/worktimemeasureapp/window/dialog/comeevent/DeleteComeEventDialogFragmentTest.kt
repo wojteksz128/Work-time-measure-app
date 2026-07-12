@@ -7,7 +7,7 @@ import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
-import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
+import net.wojteksz128.worktimemeasureapp.util.datetime.formatToString
 import net.wojteksz128.worktimemeasureapp.util.launchFragmentInHiltContainer
 import net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.DeleteComeEventDialogFragment.DeleteComeEventDialogListener
 import org.junit.Before
@@ -20,7 +20,6 @@ import org.mockito.kotlin.any
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.ZoneId
 import org.threeten.bp.ZonedDateTime
-import javax.inject.Inject
 
 @RunWith(AndroidJUnit4::class)
 @HiltAndroidTest
@@ -28,9 +27,6 @@ class DeleteComeEventDialogFragmentTest {
 
     @get:Rule
     var hiltRule = HiltAndroidRule(this)
-
-    @Inject
-    lateinit var dateTimeUtils: DateTimeUtils
 
     private val testComeEvent = ComeEvent(
         id = 1,
@@ -56,8 +52,8 @@ class DeleteComeEventDialogFragmentTest {
 
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val dateFormat = context.getString(R.string.history_day_event_time_short_format)
-        val formattedStartDate = dateTimeUtils.formatDate(dateFormat, testComeEvent.startDate)
-        val formattedEndDate = dateTimeUtils.formatDate(dateFormat, testComeEvent.endDate)
+        val formattedStartDate = testComeEvent.startDate.formatToString(dateFormat)
+        val formattedEndDate = testComeEvent.endDate.formatToString(dateFormat)
         val expectedMessage = context.getString(
             R.string.delete_come_event_dialog_delete_message,
             formattedStartDate,

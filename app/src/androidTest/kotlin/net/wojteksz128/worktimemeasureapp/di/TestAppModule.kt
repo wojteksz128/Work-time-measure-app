@@ -21,10 +21,9 @@ import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.settings.converter.ConfigurationConverterFactory
 import net.wojteksz128.worktimemeasureapp.util.comeevent.ComeEventUtils
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
-import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
-import net.wojteksz128.worktimemeasureapp.window.history.formatters.HiddenFieldNameFormatter
-import net.wojteksz128.worktimemeasureapp.window.history.formatters.HistoryFormatterProvider
-import net.wojteksz128.worktimemeasureapp.window.history.formatters.TimeFieldNameFormatter
+import net.wojteksz128.worktimemeasureapp.window.util.formatter.history.HiddenFieldNameFormatter
+import net.wojteksz128.worktimemeasureapp.window.util.formatter.history.HistoryFormatterProvider
+import net.wojteksz128.worktimemeasureapp.window.util.formatter.history.TimeFieldNameFormatter
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.spy
 import javax.inject.Named
@@ -36,12 +35,6 @@ import javax.inject.Singleton
     replaces = [AppUtilsModule::class]
 )
 object TestAppModule {
-
-    @Singleton
-    @Provides
-    fun provideDateTimeUtils(
-        @ApplicationContext context: Context,
-    ) = DateTimeUtils(context)
 
     @Singleton
     @Provides
@@ -90,10 +83,9 @@ object TestAppModule {
     @Singleton
     @Provides
     fun provideTimeFieldNameFormatter(
-        dateTimeUtils: DateTimeUtils,
         gson: Gson,
         @Named("entryHistoryDateTimeFormat") dateTimeFormat: String,
-    ) = TimeFieldNameFormatter(dateTimeUtils, gson, dateTimeFormat)
+    ) = TimeFieldNameFormatter(gson, dateTimeFormat)
 
     @Singleton
     @Provides

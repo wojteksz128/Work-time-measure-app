@@ -1,4 +1,4 @@
-package net.wojteksz128.worktimemeasureapp.window.history.formatters
+package net.wojteksz128.worktimemeasureapp.window.util.formatter.history
 
 import javax.inject.Inject
 

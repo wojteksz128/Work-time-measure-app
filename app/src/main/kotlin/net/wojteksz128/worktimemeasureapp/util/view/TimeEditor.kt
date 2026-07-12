@@ -13,18 +13,15 @@ import androidx.databinding.BindingMethods
 import androidx.databinding.InverseBindingListener
 import androidx.databinding.InverseBindingMethod
 import androidx.databinding.InverseBindingMethods
-import dagger.hilt.android.AndroidEntryPoint
 import net.wojteksz128.worktimemeasureapp.BR
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.databinding.ComponentTimeEditorBinding
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
-import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
+import net.wojteksz128.worktimemeasureapp.util.datetime.formatToString
 import net.wojteksz128.worktimemeasureapp.util.view.util.ObservableDelegate
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalDateTime
-import javax.inject.Inject
 
-@AndroidEntryPoint
 @BindingMethods(
     BindingMethod(type = TimeEditor::class, attribute = "time", method = "setTime"),
     BindingMethod(type = TimeEditor::class, attribute = "workDayDate", method = "setWorkDayDate"),
@@ -63,12 +60,14 @@ import javax.inject.Inject
     ),
 )
 class TimeEditor(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs) {
+
     private lateinit var binding: ComponentTimeEditorBinding
     private val model =
-        ObservableModel(this::timeChangeListener, this::inTimeEditModeChangeListener)
-
-    @Inject
-    lateinit var dateTimeUtils: DateTimeUtils
+        ObservableModel(
+            context,
+            this::timeChangeListener,
+            this::inTimeEditModeChangeListener
+        )
 
     init {
         val typedArray =
@@ -82,7 +81,6 @@ class TimeEditor(context: Context, attrs: AttributeSet?) : FrameLayout(context, 
             binding = ComponentTimeEditorBinding.inflate(LayoutInflater.from(context), this, true)
                 .apply {
                     this.model = this@TimeEditor.model
-                    this.dateTimeUtils = this@TimeEditor.dateTimeUtils
                 }
             typedArray.apply {
                 model.title = getString(R.styleable.ContainsTitle_title) ?: ""
@@ -119,16 +117,17 @@ class TimeEditor(context: Context, attrs: AttributeSet?) : FrameLayout(context, 
         }
 
     class ObservableModel(
+        private val context: Context,
         timeChangeListenerProvider: () -> InverseBindingListener?,
-        inEditModeChangeListenerProvider: () -> InverseBindingListener?
-    ) :
-        BaseObservable(), ClassTagAware {
+        inEditModeChangeListenerProvider: () -> InverseBindingListener?,
+    ) : BaseObservable(), ClassTagAware {
         @get:Bindable
         var title by ObservableDelegate(BR.title, "")
 
         @get:Bindable
         var time by ObservableDelegate<LocalDateTime?>(BR.time, null) { oldValue, newValue ->
             if (oldValue != newValue)
+                notifyPropertyChanged(BR.formattedTime)
                 timeChangeListenerProvider()?.onChange()
         }
 
@@ -151,6 +150,18 @@ class TimeEditor(context: Context, attrs: AttributeSet?) : FrameLayout(context, 
 
         @get:Bindable
         var useFullFormat by ObservableDelegate(BR.useFullFormat, false)
+
+        @get:Bindable
+        val formattedTime: String
+            get() {
+                val currentTime =
+                    time ?: return context.getString(R.string.time_editor_value_not_set)
+                val formatPattern = context.getString(
+                    if (useFullFormat) R.string.time_editor_value_long_format
+                    else R.string.time_editor_value_short_format
+                )
+                return currentTime.formatToString(formatPattern)
+            }
 
         fun onSetTimeClick() {
             editedTime = time?.let { LocalDateTime.from(it) }

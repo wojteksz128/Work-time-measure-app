@@ -2,7 +2,8 @@ package net.wojteksz128.worktimemeasureapp.util.fixtures
 
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
-import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
+import net.wojteksz128.worktimemeasureapp.util.datetime.atEndOfDay
+import net.wojteksz128.worktimemeasureapp.util.datetime.atStartOfDay
 import org.threeten.bp.LocalDate
 import org.threeten.bp.ZonedDateTime
 
@@ -56,8 +57,8 @@ class WorkDayBuilder(private val id: Long = 1L) {
     fun build(): WorkDay = WorkDay(
         id = id,
         date = date,
-        beginSlot = beginSlot ?: DateTimeUtils.getStartDayTime(date),
-        endSlot = endSlot ?: DateTimeUtils.getEndDayTime(date),
+        beginSlot = beginSlot ?: date.atStartOfDay,
+        endSlot = endSlot ?: date.atEndOfDay,
         events = _events,
     )
 }

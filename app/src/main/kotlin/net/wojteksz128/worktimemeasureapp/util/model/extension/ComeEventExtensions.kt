@@ -21,4 +21,8 @@ object ComeEventExtensions {
 
     val ComeEvent.isEndingOnTheSameDay: Boolean
         get() = this.startDate.isTheSameDay(this.endDate ?: dateTimeProvider.currentTime)
+
+    val List<ComeEvent>.duration: Duration
+        get() = this.map { it.duration }.fold(Duration.ZERO) { sum, element -> sum + element }
+            ?: Duration.ZERO
 }

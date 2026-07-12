@@ -1,7 +1,6 @@
 package net.wojteksz128.worktimemeasureapp.window.history
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
@@ -15,107 +14,79 @@ import kotlinx.coroutines.launch
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.databinding.ListItemHistoryDayEventBinding
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
-import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
+import net.wojteksz128.worktimemeasureapp.util.datetime.toCounterString
 import net.wojteksz128.worktimemeasureapp.util.model.extension.ComeEventExtensions.duration
-import net.wojteksz128.worktimemeasureapp.util.model.extension.ComeEventExtensions.isEnded
-import net.wojteksz128.worktimemeasureapp.util.model.extension.ComeEventExtensions.isEndingOnTheSameDay
-import net.wojteksz128.worktimemeasureapp.util.recyclerView.RecyclerViewItemClick
-import org.threeten.bp.Duration
-import org.threeten.bp.ZonedDateTime
 
 class ComeEventsAdapter(
-    private val dateTimeUtils: DateTimeUtils,
     private val lifecycleOwner: LifecycleOwner,
     private val ticker: Flow<Unit>,
-    override var onItemClickListenerProvider: (ComeEvent) -> (View) -> Unit = { {} },
-) : ListAdapter<ComeEvent, ComeEventsAdapter.ComeEventViewHolder>(ComeEventDiffCallback),
-    RecyclerViewItemClick<ComeEvent> {
+    private var onItemClick: (ComeEvent) -> Unit = {},
+) : ListAdapter<ComeEventItemUiModel, ComeEventsAdapter.ComeEventViewHolder>(ComeEventDiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ComeEventViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = ListItemHistoryDayEventBinding.inflate(inflater, parent, false)
-            .apply {
-                lifecycleOwner = this@ComeEventsAdapter.lifecycleOwner
-            }
-        return ComeEventViewHolder(binding, dateTimeUtils, ticker)
+        return ComeEventViewHolder(binding, ticker, lifecycleOwner)
     }
 
     override fun onBindViewHolder(holder: ComeEventViewHolder, position: Int) {
-        getItem(position)?.let {
-            holder.bind(it)
-            holder.setOnClickListener(onItemClickListenerProvider(it))
-        }
-    }
-
-    fun modifyCurrentList(operation: MutableList<ComeEvent>.() -> Unit) {
-        val currentList = currentList.toMutableList()
-        currentList.operation()
-        submitList(currentList)
+        val item = getItem(position) ?: return
+        holder.bind(item, onItemClick)
     }
 
 
     class ComeEventViewHolder(
         val binding: ListItemHistoryDayEventBinding,
-        private val dateTimeUtils: DateTimeUtils,
         private val ticker: Flow<Unit>,
+        private val lifecycleOwner: LifecycleOwner,
     ) : RecyclerView.ViewHolder(binding.root) {
 
         private var updateJob: Job? = null
 
-        fun bind(comeEvent: ComeEvent) {
-            val dateFormatId =
-                if (comeEvent.isEndingOnTheSameDay) R.string.history_day_event_time_short_format
-                else R.string.history_day_event_time_long_format
+        fun bind(comeEventItem: ComeEventItemUiModel, onClick: (ComeEvent) -> Unit) {
+            binding.root.setOnClickListener { onClick(comeEventItem.originalEntity) }
 
-            binding.comeEvent = ComeEventObject(
-                comeEvent,
-                { dateTime -> dateTimeUtils.formatDate(dateFormatId, dateTime) },
-                { duration -> dateTimeUtils.formatCounterTime(duration) }
-            )
+            binding.historyDayEventStartDate.text = comeEventItem.startDateLabel
 
             updateJob?.cancel()
 
-            if (!comeEvent.isEnded) {
-                updateJob = binding.lifecycleOwner?.lifecycleScope?.launch {
-                    ticker.collectLatest {
-                        binding.invalidateAll()
+            when (comeEventItem) {
+                is ComeEventItemUiModel.Finished -> {
+                    binding.historyDayEventEndDate.text = comeEventItem.finishDateLabel
+                    binding.historyDayEventDuration.text = comeEventItem.formattedDuration
+                }
+
+                is ComeEventItemUiModel.Active -> {
+                    binding.historyDayEventEndDate.text =
+                        binding.root.context.getString(R.string.history_day_event_end_date_now)
+                    binding.historyDayEventDuration.text =
+                        comeEventItem.originalEntity.duration.toCounterString()
+
+                    updateJob = lifecycleOwner.lifecycleScope.launch {
+                        ticker.collectLatest {
+                            binding.historyDayEventDuration.text =
+                                comeEventItem.originalEntity.duration.toCounterString()
+                        }
                     }
                 }
             }
         }
-
-        fun setOnClickListener(onItemClickListener: (View) -> Unit) {
-            itemView.setOnClickListener(onItemClickListener)
-        }
     }
 
 
-    object ComeEventDiffCallback : DiffUtil.ItemCallback<ComeEvent>() {
-        override fun areItemsTheSame(oldItem: ComeEvent, newItem: ComeEvent): Boolean {
+    object ComeEventDiffCallback : DiffUtil.ItemCallback<ComeEventItemUiModel>() {
+        override fun areItemsTheSame(
+            oldItem: ComeEventItemUiModel,
+            newItem: ComeEventItemUiModel,
+        ): Boolean {
             return oldItem.id == newItem.id
         }
 
-        override fun areContentsTheSame(oldItem: ComeEvent, newItem: ComeEvent): Boolean {
-            return oldItem.startDate == newItem.startDate &&
-                    oldItem.endDate == newItem.endDate &&
-                    oldItem.workDayId == newItem.workDayId &&
-                    oldItem.endDate != null
+        override fun areContentsTheSame(
+            oldItem: ComeEventItemUiModel,
+            newItem: ComeEventItemUiModel,
+        ): Boolean {
+            return oldItem == newItem
         }
-
     }
-}
-
-data class ComeEventObject(
-    val entity: ComeEvent,
-    val dateConverter: (ZonedDateTime?) -> String?,
-    val durationConverter: (Duration) -> String,
-) {
-    val startDate: String
-        get() = dateConverter(entity.startDate)!!
-
-    val finishDate: String?
-        get() = dateConverter(entity.endDate)
-
-    val duration: String
-        get() = durationConverter(entity.duration)
 }

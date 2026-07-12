@@ -4,7 +4,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.databinding.ActivityHistoryBinding
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
-import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import net.wojteksz128.worktimemeasureapp.window.BaseActivity
 import javax.inject.Inject
 
@@ -23,8 +22,6 @@ import javax.inject.Inject
 class HistoryActivity : BaseActivity<ActivityHistoryBinding>(R.layout.activity_history) {
     @Inject
     lateinit var dateTimeProvider: DateTimeProvider
-    @Inject
-    lateinit var dateTimeUtils: DateTimeUtils
 
     override fun onResume() {
         super.onResume()

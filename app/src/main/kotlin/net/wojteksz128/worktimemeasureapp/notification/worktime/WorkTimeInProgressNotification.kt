@@ -10,7 +10,7 @@ import net.wojteksz128.worktimemeasureapp.model.WorkState
 import net.wojteksz128.worktimemeasureapp.notification.AppNotification
 import net.wojteksz128.worktimemeasureapp.notification.Channel
 import net.wojteksz128.worktimemeasureapp.notification.worktime.action.WorkTimeNotificationActionReceiver
-import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
+import net.wojteksz128.worktimemeasureapp.util.datetime.formatToString
 import net.wojteksz128.worktimemeasureapp.util.datetime.min
 import net.wojteksz128.worktimemeasureapp.window.dashboard.DashboardActivity
 import org.threeten.bp.ZonedDateTime
@@ -18,7 +18,6 @@ import org.threeten.bp.ZonedDateTime
 open class WorkTimeInProgressNotification(
     context: Context,
     private val inProgressState: WorkState.InProgress,
-    private val dateTimeUtils: DateTimeUtils,
 ) : AppNotification(Channel.WORK_TIME_IN_PROGRESS_CHANNEL, NOTIFICATION_ID, context) {
 
     override val actionReceiver: Class<out BroadcastReceiver>
@@ -72,7 +71,7 @@ open class WorkTimeInProgressNotification(
 
     private fun getFormattedTimeFor(dateTime: ZonedDateTime): String {
         val timeFormat = context.getString(getTimeFormatFor(dateTime))
-        return dateTimeUtils.formatDate(timeFormat, dateTime)
+        return dateTime.formatToString(timeFormat)
     }
 
     @StringRes

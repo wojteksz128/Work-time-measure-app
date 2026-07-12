@@ -27,7 +27,7 @@ import net.wojteksz128.worktimemeasureapp.repository.api.HolidayApiRepository
 import net.wojteksz128.worktimemeasureapp.repository.api.NagerDateApiV3Repository
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
-import net.wojteksz128.worktimemeasureapp.window.history.formatters.HistoryFormatterProvider
+import net.wojteksz128.worktimemeasureapp.window.util.formatter.history.HistoryFormatterProvider
 import javax.inject.Singleton
 
 @Module

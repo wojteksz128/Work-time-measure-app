@@ -28,24 +28,21 @@
                 style="@style/duration_display_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{dateTimeUtils.formatCounterTime(duration)}"
+                android:text="@{durationText}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="@string/duration_display_value_template" />
+                tools:text="@string/duration_display_value_example" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
 
     <data>
         <variable
-            name="dateTimeUtils"
-            type="net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils" />
-        <variable
             name="title"
             type="String" />
         <variable
-            name="duration"
-            type="org.threeten.bp.Duration" />
+            name="durationText"
+            type="String" />
     </data>
 </layout>

@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".util.view.TimeEditor">
 
     <data>
-
         <import type="android.view.View" />
-
-        <variable
-            name="dateTimeUtils"
-            type="net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils" />
 
         <variable
             name="model"
@@ -105,7 +101,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/small_margin"
-                    android:text="@{(model.time == null) ? @string/time_editor_value_not_set : dateTimeUtils.formatDate(model.useFullFormat ? @string/time_editor_value_long_format : @string/time_editor_value_short_format, model.time)}"
+                    android:text="@{model.formattedTime}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/time_editor_set_time"
                     app:layout_constraintRight_toLeftOf="@id/time_editor_set_time"

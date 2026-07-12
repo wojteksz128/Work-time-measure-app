@@ -9,8 +9,8 @@ import net.wojteksz128.worktimemeasureapp.database.history.EntityHistoryDao
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.window.history.FieldChange
 import net.wojteksz128.worktimemeasureapp.window.history.GroupedHistoryItem
-import net.wojteksz128.worktimemeasureapp.window.history.formatters.HistoryFormatterProvider
-import net.wojteksz128.worktimemeasureapp.window.history.formatters.HistoryValueFormatter
+import net.wojteksz128.worktimemeasureapp.window.util.formatter.history.HistoryFormatterProvider
+import net.wojteksz128.worktimemeasureapp.window.util.formatter.history.HistoryValueFormatter
 import javax.inject.Inject
 
 private val Any?.isPrimitive: Boolean

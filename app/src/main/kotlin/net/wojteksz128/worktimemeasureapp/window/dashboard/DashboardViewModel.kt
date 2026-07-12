@@ -26,7 +26,9 @@ import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.comeevent.ComeEventUtils
 import net.wojteksz128.worktimemeasureapp.util.comeevent.NewEventRegisterListener
 import net.wojteksz128.worktimemeasureapp.util.coroutines.TickerFactory
-import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
+import net.wojteksz128.worktimemeasureapp.util.datetime.formatToString
+import net.wojteksz128.worktimemeasureapp.window.history.ComeEventItemUiModel
+import net.wojteksz128.worktimemeasureapp.window.history.toUiModel
 import org.threeten.bp.Duration
 import org.threeten.bp.LocalDate
 import javax.inject.Inject
@@ -39,10 +41,13 @@ class DashboardViewModel @Inject constructor(
     tickerFactory: TickerFactory,
     private val notificationService: WorkTimeNotificationService,
     private val comeEventUtils: ComeEventUtils,
-    dateTimeUtils: DateTimeUtils,
 ) : AndroidViewModel(application), NewEventRegisterListener, ClassTagAware {
     val workState: LiveData<WorkState> = workStateFlow.asLiveData()
     val workDay: LiveData<WorkDay?> = workState.map { (it as? WorkState.Loaded)?.workDay }
+
+    val comeEventUiModels: LiveData<List<ComeEventItemUiModel>> = workDay.map { workDay ->
+        workDay?.events?.map { event -> event.toUiModel(getApplication()) } ?: emptyList()
+    }
 
     val standardRemainingToday = workState.map {
         (it as? WorkState.Loaded)?.standardWorkTime?.remainingWorkTime ?: Duration.ZERO
@@ -54,10 +59,11 @@ class DashboardViewModel @Inject constructor(
         (it as? WorkState.Loaded)?.workTimeRequirements?.monthlyBalance ?: Duration.ZERO
     }
     val currentDayLabel = workState.map {
-        dateTimeUtils.formatDate(
-            R.string.history_work_day_label_format,
-            (it as? WorkState.Loaded)?.workDay?.date ?: LocalDate.now()
-        )
+        val date = (it as? WorkState.Loaded)?.workDay?.date ?: LocalDate.now()
+        val formatPattern =
+            getApplication<Application>().getString(R.string.history_work_day_label_format)
+
+        date.formatToString(formatPattern)
     }
 
     private val mSnackbarMessage = MutableLiveData<String?>()

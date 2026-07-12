@@ -7,6 +7,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -18,7 +19,6 @@ import net.wojteksz128.worktimemeasureapp.service.DayOffService
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.TimerManager
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
-import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeUtils
 import net.wojteksz128.worktimemeasureapp.util.recyclerView.RecyclerViewSwipeCallback
 import net.wojteksz128.worktimemeasureapp.window.BaseActivity
 import net.wojteksz128.worktimemeasureapp.window.dialog.comeevent.DeleteComeEventDialogFragment
@@ -44,9 +44,6 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
     lateinit var dateTimeProvider: DateTimeProvider
 
     @Inject
-    lateinit var dateTimeUtils: DateTimeUtils
-
-    @Inject
     lateinit var dayOffService: DayOffService
 
     @Inject
@@ -67,7 +64,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
         super.onCreate(savedInstanceState)
 
         comeEventsAdapter =
-            ComeEventsAdapter(dateTimeUtils, this, viewModel.ticker)
+            ComeEventsAdapter(this, viewModel.ticker)
 
         val localViewModel = viewModel
 
@@ -91,10 +88,8 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
             }
         }
 
-        viewModel.workDay.observe(this@DashboardActivity) { workDay ->
-            workDay?.let {
-                comeEventsAdapter.submitList(it.events)
-            }
+        viewModel.comeEventUiModels.observe(this@DashboardActivity) { uiModels ->
+            comeEventsAdapter.submitList(uiModels)
         }
 
         viewModel.snackbarMessage.observe(this) { message ->
@@ -109,9 +104,12 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
         viewHolder: ComeEventViewHolder,
         direction: RecyclerViewSwipeCallback.Direction,
     ) {
-        viewHolder.binding.comeEvent?.let { comeEvent ->
-            selectedComeEventViewModel.select(comeEvent.entity)
+        val position = viewHolder.bindingAdapterPosition
+        if (position != RecyclerView.NO_POSITION) {
+            val itemUiModel = comeEventsAdapter.currentList[position]
+            selectedComeEventViewModel.select(itemUiModel.originalEntity)
         }
+
         when (direction) {
             RecyclerViewSwipeCallback.Direction.LEFT -> showDialogWithListener(
                 EditComeEventDialogFragment::class.java, supportFragmentManager, this
@@ -155,14 +153,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
         modifiedComeEvent: ComeEvent
     ) {
         viewModel.onComeEventModified(modifiedComeEvent)
-        val position = comeEventsAdapter.currentList.indexOfFirst { it.id == modifiedComeEvent.id }
-        comeEventsAdapter.modifyCurrentList {
-            if (position >= 0 && position < this.size) {
-                selectedComeEventViewModel.changed =
-                    this[position] != modifiedComeEvent || this[position].endDate != modifiedComeEvent.endDate
-                this[position] = modifiedComeEvent
-            }
-        }
+        selectedComeEventViewModel.changed = true
     }
 
     override fun onEditComeEventDialogDismiss(dialog: DialogFragment) {
