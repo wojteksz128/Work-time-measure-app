@@ -40,14 +40,12 @@
                         android:id="@+id/dashboard_remaining_day_time"
                         style="@style/dashboard_section_subcard_left"
                         android:layout_width="match_parent"
-                        app:duration="@{viewModel.standardRemainingToday}"
                         app:title="@string/dashboard_today" /><!-- layout_height defined by style -->
 
                     <net.wojteksz128.worktimemeasureapp.util.view.DurationDisplay
-                        android:id="@+id/dashboard_remaining_week_time"
+                        android:id="@+id/dashboard_monthly_balance"
                         style="@style/dashboard_section_subcard_right"
                         android:layout_width="match_parent"
-                        app:duration="@{viewModel.monthlyBalance}"
                         app:title="@string/dashboard_month_balance" /><!-- layout_height defined by style -->
 
                 </LinearLayout>
@@ -73,7 +71,6 @@
                     android:id="@+id/dashboard_today_work_time"
                     style="@style/dashboard_today_work_time"
                     android:layout_width="match_parent"
-                    app:duration="@{viewModel.todayWorkTime}"
                     app:title="@string/dashboard_today_work_time_label" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -87,7 +84,6 @@
                         style="@style/dashboard_current_day_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@{viewModel.currentDayLabel}"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -106,7 +102,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="top|center_horizontal"
-                        android:visibility="@{(viewModel.workDay == null || viewModel.workDay.events == null || viewModel.workDay.events.empty) ? View.INVISIBLE : View.VISIBLE}"
                         tools:listitem="@layout/list_item_history_day_event"
                         tools:visibility="visible" />
 
@@ -116,8 +111,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:text="@string/dashboard_current_day_empty_events_message"
-                        android:visibility="@{(viewModel.workDay == null || viewModel.workDay.events == null || viewModel.workDay.events.empty) ? View.VISIBLE : View.INVISIBLE}" />
+                        android:text="@string/dashboard_current_day_empty_events_message" />
                 </FrameLayout>
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
@@ -127,7 +121,6 @@
             style="@style/dashboard_enter_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="@{ () -> viewModel.onRegisterNewEvent() }"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:contentDescription="@string/dashboard_enter_fab_description"

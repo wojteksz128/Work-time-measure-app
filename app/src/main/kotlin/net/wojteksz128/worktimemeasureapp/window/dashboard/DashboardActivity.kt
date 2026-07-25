@@ -1,9 +1,12 @@
 package net.wojteksz128.worktimemeasureapp.window.dashboard
 
 import android.os.Bundle
+import android.view.View
 import androidx.activity.viewModels
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -88,8 +91,30 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
             }
         }
 
-        viewModel.comeEventUiModels.observe(this@DashboardActivity) { uiModels ->
-            comeEventsAdapter.submitList(uiModels)
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state ->
+                    if (state.isLoading) return@collect
+
+                    binding.apply {
+                        dashboardRemainingDayTime.binding.durationText =
+                            state.standardRemainingTodayText
+                        dashboardMonthlyBalance.binding.durationText = state.monthlyBalanceText
+                        dashboardTodayWorkTime.binding.durationText = state.todayWorkTimeText
+                        dashboardCurrentDayDate.text = state.currentDayLabel
+                        dashboardCurrentDayEventsList.visibility =
+                            if (state.isEventsListVisible) View.VISIBLE else View.INVISIBLE
+                        dashboardCurrentDayEmptyEventsMessage.visibility =
+                            if (state.isNoEventsLabelVisible) View.VISIBLE else View.INVISIBLE
+                        dashboardLoadingIndicator.visibility =
+                            if (state.isLoading) View.VISIBLE else View.INVISIBLE
+
+                        dashboardEnterFab.setOnClickListener { viewModel!!.onRegisterNewEvent() }
+                    }
+
+                    comeEventsAdapter.submitList(state.comeEvents)
+                }
+            }
         }
 
         viewModel.snackbarMessage.observe(this) { message ->

@@ -5,19 +5,21 @@ import android.content.Intent
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.asLiveData
-import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
 import net.wojteksz128.worktimemeasureapp.model.ComeEventType
-import net.wojteksz128.worktimemeasureapp.model.WorkDay
 import net.wojteksz128.worktimemeasureapp.model.WorkState
 import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeNotificationService
 import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeTrackerService
@@ -25,12 +27,9 @@ import net.wojteksz128.worktimemeasureapp.repository.ComeEventRepository
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.comeevent.ComeEventUtils
 import net.wojteksz128.worktimemeasureapp.util.comeevent.NewEventRegisterListener
-import net.wojteksz128.worktimemeasureapp.util.coroutines.TickerFactory
 import net.wojteksz128.worktimemeasureapp.util.datetime.formatToString
-import net.wojteksz128.worktimemeasureapp.window.history.ComeEventItemUiModel
+import net.wojteksz128.worktimemeasureapp.util.datetime.toCounterString
 import net.wojteksz128.worktimemeasureapp.window.history.toUiModel
-import org.threeten.bp.Duration
-import org.threeten.bp.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
@@ -38,46 +37,51 @@ class DashboardViewModel @Inject constructor(
     application: Application,
     workStateFlow: StateFlow<@JvmSuppressWildcards WorkState>,
     private val comeEventRepository: ComeEventRepository,
-    tickerFactory: TickerFactory,
     private val notificationService: WorkTimeNotificationService,
     private val comeEventUtils: ComeEventUtils,
 ) : AndroidViewModel(application), NewEventRegisterListener, ClassTagAware {
-    val workState: LiveData<WorkState> = workStateFlow.asLiveData()
-    val workDay: LiveData<WorkDay?> = workState.map { (it as? WorkState.Loaded)?.workDay }
 
-    val comeEventUiModels: LiveData<List<ComeEventItemUiModel>> = workDay.map { workDay ->
-        workDay?.events?.map { event -> event.toUiModel(getApplication()) } ?: emptyList()
-    }
+    val uiState: StateFlow<DashboardUiState> = workStateFlow.map { state ->
+        when (state) {
+            is WorkState.Loaded -> {
+                DashboardUiState(
+                    standardRemainingTodayText = state.standardWorkTime.remainingWorkTime.toCounterString(),
+                    monthlyBalanceText = state.workTimeRequirements.monthlyBalance.toCounterString(),
+                    todayWorkTimeText = state.todayWorkTime.toCounterString(),
+                    currentDayLabel = state.workDay.date.formatToString(application.getString(R.string.history_work_day_label_format)),
+                    isEventsListVisible = state.workDay.events.isNotEmpty(),
+                    isNoEventsLabelVisible = state.workDay.events.isEmpty(),
+                    isLoading = false,
+                    comeEvents = state.workDay.events.map { it.toUiModel(application) }
+                )
+            }
 
-    val standardRemainingToday = workState.map {
-        (it as? WorkState.Loaded)?.standardWorkTime?.remainingWorkTime ?: Duration.ZERO
-    }
-    val todayWorkTime = workState.map {
-        (it as? WorkState.Loaded)?.todayWorkTime ?: Duration.ZERO
-    }
-    val monthlyBalance = workState.map {
-        (it as? WorkState.Loaded)?.workTimeRequirements?.monthlyBalance ?: Duration.ZERO
-    }
-    val currentDayLabel = workState.map {
-        val date = (it as? WorkState.Loaded)?.workDay?.date ?: LocalDate.now()
-        val formatPattern =
-            getApplication<Application>().getString(R.string.history_work_day_label_format)
-
-        date.formatToString(formatPattern)
-    }
+            else -> DashboardUiState(isLoading = true)
+        }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = DashboardUiState(isLoading = true)
+    )
 
     private val mSnackbarMessage = MutableLiveData<String?>()
     val snackbarMessage: LiveData<String?> = mSnackbarMessage
 
-    val ticker: SharedFlow<Unit> = tickerFactory.create(viewModelScope)
+    val ticker: SharedFlow<Unit> = uiState.drop(1).map { }.shareIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(),
+        replay = 0
+    )
 
     val waitingFor = MutableLiveData(false)
 
     private var wasWorkFinished: Boolean? = null
 
     init {
-        workState.observeForever { workState ->
-            handleServiceAndNotifications(workState)
+        viewModelScope.launch {
+            workStateFlow.collect { workState ->
+                handleServiceAndNotifications(workState)
+            }
         }
     }
 
