@@ -69,11 +69,8 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
         comeEventsAdapter =
             ComeEventsAdapter(this, viewModel.ticker)
 
-        val localViewModel = viewModel
-
         binding.apply {
             lifecycleOwner = this@DashboardActivity
-            viewModel = localViewModel
             dashboardCurrentDayEventsList.apply {
                 adapter = comeEventsAdapter
                 layoutManager = object : LinearLayoutManager(this@DashboardActivity) {
@@ -93,9 +90,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collect { state ->
-                    if (state.isLoading) return@collect
-
+                viewModel.uiState.observeForever { state ->
                     binding.apply {
                         dashboardRemainingDayTime.binding.durationText =
                             state.standardRemainingTodayText
@@ -109,7 +104,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
                         dashboardLoadingIndicator.visibility =
                             if (state.isLoading) View.VISIBLE else View.INVISIBLE
 
-                        dashboardEnterFab.setOnClickListener { viewModel!!.onRegisterNewEvent() }
+                        dashboardEnterFab.setOnClickListener { viewModel.onRegisterNewEvent() }
                     }
 
                     comeEventsAdapter.submitList(state.comeEvents)

@@ -4,7 +4,9 @@ import android.app.Application
 import android.content.Intent
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -14,7 +16,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.wojteksz128.worktimemeasureapp.R
@@ -41,33 +42,13 @@ class DashboardViewModel @Inject constructor(
     private val comeEventUtils: ComeEventUtils,
 ) : AndroidViewModel(application), NewEventRegisterListener, ClassTagAware {
 
-    val uiState: StateFlow<DashboardUiState> = workStateFlow.map { state ->
-        when (state) {
-            is WorkState.Loaded -> {
-                DashboardUiState(
-                    standardRemainingTodayText = state.standardWorkTime.remainingWorkTime.toCounterString(),
-                    monthlyBalanceText = state.workTimeRequirements.monthlyBalance.toCounterString(),
-                    todayWorkTimeText = state.todayWorkTime.toCounterString(),
-                    currentDayLabel = state.workDay.date.formatToString(application.getString(R.string.history_work_day_label_format)),
-                    isEventsListVisible = state.workDay.events.isNotEmpty(),
-                    isNoEventsLabelVisible = state.workDay.events.isEmpty(),
-                    isLoading = false,
-                    comeEvents = state.workDay.events.map { it.toUiModel(application) }
-                )
-            }
-
-            else -> DashboardUiState(isLoading = true)
-        }
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = DashboardUiState(isLoading = true)
-    )
+    private val _uiModel = MediatorLiveData(DashboardUiState(isLoading = true))
+    val uiState: LiveData<DashboardUiState> = _uiModel
 
     private val mSnackbarMessage = MutableLiveData<String?>()
     val snackbarMessage: LiveData<String?> = mSnackbarMessage
 
-    val ticker: SharedFlow<Unit> = uiState.drop(1).map { }.shareIn(
+    val ticker: SharedFlow<Unit> = workStateFlow.drop(1).map { }.shareIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),
         replay = 0
@@ -78,9 +59,36 @@ class DashboardViewModel @Inject constructor(
     private var wasWorkFinished: Boolean? = null
 
     init {
+        _uiModel.addSource(workStateFlow.asLiveData(viewModelScope.coroutineContext)) { workState ->
+            updateUiState(workState, waitingFor.value == true)
+        }
+        _uiModel.addSource(waitingFor) { isWaiting ->
+            updateUiState(workStateFlow.value, isWaiting)
+        }
+
         viewModelScope.launch {
             workStateFlow.collect { workState ->
                 handleServiceAndNotifications(workState)
+            }
+        }
+    }
+
+    private fun updateUiState(state: WorkState, isWaiting: Boolean) {
+        _uiModel.value = when (state) {
+            is WorkState.Loading -> DashboardUiState(isLoading = true)
+            is WorkState.Loaded -> {
+                val currentDateFormat =
+                    getApplication<Application>().getString(R.string.history_work_day_label_format)
+                DashboardUiState(
+                    standardRemainingTodayText = state.standardWorkTime.remainingWorkTime.toCounterString(),
+                    monthlyBalanceText = state.workTimeRequirements.monthlyBalance.toCounterString(),
+                    todayWorkTimeText = state.todayWorkTime.toCounterString(),
+                    currentDayLabel = state.workDay.date.formatToString(currentDateFormat),
+                    isEventsListVisible = state.workDay.events.isNotEmpty(),
+                    isNoEventsLabelVisible = state.workDay.events.isEmpty(),
+                    isLoading = isWaiting,
+                    comeEvents = state.workDay.events.map { it.toUiModel(getApplication()) }
+                )
             }
         }
     }
