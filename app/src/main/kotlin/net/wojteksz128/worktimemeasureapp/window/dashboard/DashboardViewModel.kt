@@ -22,7 +22,6 @@ import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
 import net.wojteksz128.worktimemeasureapp.model.ComeEventType
 import net.wojteksz128.worktimemeasureapp.model.WorkState
-import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeNotificationService
 import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeTrackerService
 import net.wojteksz128.worktimemeasureapp.repository.ComeEventRepository
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
@@ -38,7 +37,6 @@ class DashboardViewModel @Inject constructor(
     application: Application,
     workStateFlow: StateFlow<@JvmSuppressWildcards WorkState>,
     private val comeEventRepository: ComeEventRepository,
-    private val notificationService: WorkTimeNotificationService,
     private val comeEventUtils: ComeEventUtils,
 ) : AndroidViewModel(application), NewEventRegisterListener, ClassTagAware {
 
@@ -68,7 +66,7 @@ class DashboardViewModel @Inject constructor(
 
         viewModelScope.launch {
             workStateFlow.collect { workState ->
-                handleServiceAndNotifications(workState)
+                handleTrackingService(workState)
             }
         }
     }
@@ -93,19 +91,15 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    private fun handleServiceAndNotifications(workState: WorkState) {
+    private fun handleTrackingService(workState: WorkState) {
         val isWorkFinished = workState !is WorkState.InProgress
 
         if (isWorkFinished == wasWorkFinished) return
 
         if (isWorkFinished) {
             stopTrackingService()
-            notificationService.cancelEndOfWorkNotification()
         } else {
             startTrackingService()
-            if (workState is WorkState.InProgress) {
-                notificationService.scheduleEndOfWorkNotification(workState)
-            }
         }
 
         wasWorkFinished = isWorkFinished

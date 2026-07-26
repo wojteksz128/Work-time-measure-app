@@ -1,9 +1,9 @@
 package net.wojteksz128.worktimemeasureapp.notification.worktime
 
 import android.app.NotificationManager
-import android.app.Service
 import android.content.Intent
-import android.os.IBinder
+import androidx.lifecycle.LifecycleService
+import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -14,7 +14,7 @@ import net.wojteksz128.worktimemeasureapp.model.WorkState
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class WorkTimeTrackerService : Service() {
+class WorkTimeTrackerService : LifecycleService() {
 
     @Inject
     lateinit var notificationFactory: WorkTimeNotificationFactory
@@ -22,28 +22,59 @@ class WorkTimeTrackerService : Service() {
     @Inject
     lateinit var workStateFlow: StateFlow<@JvmSuppressWildcards WorkState>
 
+    @Inject
+    lateinit var notificationService: WorkTimeNotificationService
+
     private var serviceJob: Job? = null
     private var isServiceRunning = false
 
+    override fun onCreate() {
+        super.onCreate()
+
+        lifecycleScope.launch {
+            workStateFlow.collect { workState ->
+                handleNotificationsForState(workState)
+            }
+        }
+    }
+
+    private fun handleNotificationsForState(workState: WorkState) {
+        when (workState) {
+            is WorkState.InProgress -> {
+                updateInProgressNotification(workState)
+
+                notificationService.scheduleEndOfWorkNotification(workState)
+            }
+
+            is WorkState.Finished, is WorkState.NotStarted -> {
+                notificationService.cancelEndOfWorkNotification()
+                stopSelf()
+            }
+
+            is WorkState.Loading -> Unit
+        }
+    }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        super.onStartCommand(intent, flags, startId)
+
         when (intent?.action) {
             ACTION_START -> if (serviceJob?.isActive != true)
                 serviceJob = CoroutineScope(Dispatchers.Main).launch {
                     workStateFlow.collect { workState ->
-                        when (workState) {
-                            is WorkState.InProgress -> updateNotification(workState)
-                            is WorkState.Finished, is WorkState.NotStarted -> stopSelf()
-                            is WorkState.Loading -> Unit
-                        }
+                        handleNotificationsForState(workState)
                     }
                 }
 
-            ACTION_STOP -> stopSelf()
+            ACTION_STOP -> {
+                notificationService.cancelEndOfWorkNotification()
+                stopSelf()
+            }
         }
         return START_NOT_STICKY
     }
 
-    private fun updateNotification(inProgressState: WorkState.InProgress) {
+    private fun updateInProgressNotification(inProgressState: WorkState.InProgress) {
         val notification = notificationFactory.createWorkInProgressNotification(
             inProgressState
         ).build()
@@ -58,11 +89,10 @@ class WorkTimeTrackerService : Service() {
     }
 
     override fun onDestroy() {
+        notificationService.cancelEndOfWorkNotification()
         serviceJob?.cancel()
         super.onDestroy()
     }
-
-    override fun onBind(p0: Intent?): IBinder? = null
 
     companion object {
         const val ACTION_START = "ACTION_START"

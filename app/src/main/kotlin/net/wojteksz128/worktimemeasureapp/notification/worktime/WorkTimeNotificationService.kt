@@ -27,6 +27,8 @@ open class WorkTimeNotificationService @Inject constructor(
         const val SNOOZE_TO_NEXT_ACTION = "net.wojteksz128.worktimemeasureapp.SNOOZE_TO_NEXT_ACTION"
     }
 
+    private var isEndOfWorkNotificationScheduled: Boolean = false
+
     // TODO: 25.02.2026 Used only in tests
     open fun showWorkInProgressNotification(inProgressState: WorkState.InProgress) {
         val isEnabled = settings.WorkTime.NotifyingEnabled.value
@@ -63,12 +65,15 @@ open class WorkTimeNotificationService @Inject constructor(
         val isEnabled = settings.WorkTime.NotifyingEnabled.value
         if (!isEnabled) return
 
+        if (isEndOfWorkNotificationScheduled) return
+
         val pendingIntent = createTimerExpiredPendingIntent(standardEndTime, balancedEndTime)
         timerManager.setExactTimer(endTime, pendingIntent)
+        isEndOfWorkNotificationScheduled = true
     }
 
     open fun scheduleEndOfWorkNotification(inProgressState: WorkState.InProgress) {
-        val standardEndTime = inProgressState.balancedWorkTime.endTime
+        val standardEndTime = inProgressState.standardWorkTime.endTime
         val balancedEndTime = inProgressState.balancedWorkTime.endTime
         val notificationTime = listOf(standardEndTime, balancedEndTime)
             .filter { it.isAfter(inProgressState.currentTime) }
@@ -80,6 +85,8 @@ open class WorkTimeNotificationService @Inject constructor(
         val pendingIntent = createTimerExpiredPendingIntent()
         timerManager.removeAlarm(pendingIntent)
         EndOfWorkTimeNotification.cancel(context)
+
+        isEndOfWorkNotificationScheduled = false
     }
 
     open fun hideEndOfWorkNotification() {
