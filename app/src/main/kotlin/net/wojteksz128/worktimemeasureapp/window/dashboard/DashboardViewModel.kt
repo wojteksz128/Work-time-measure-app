@@ -1,7 +1,6 @@
 package net.wojteksz128.worktimemeasureapp.window.dashboard
 
 import android.app.Application
-import android.content.Intent
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
@@ -22,7 +21,6 @@ import net.wojteksz128.worktimemeasureapp.R
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
 import net.wojteksz128.worktimemeasureapp.model.ComeEventType
 import net.wojteksz128.worktimemeasureapp.model.WorkState
-import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeTrackerService
 import net.wojteksz128.worktimemeasureapp.repository.ComeEventRepository
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.comeevent.ComeEventUtils
@@ -54,20 +52,12 @@ class DashboardViewModel @Inject constructor(
 
     val waitingFor = MutableLiveData(false)
 
-    private var wasWorkFinished: Boolean? = null
-
     init {
         _uiModel.addSource(workStateFlow.asLiveData(viewModelScope.coroutineContext)) { workState ->
             updateUiState(workState, waitingFor.value == true)
         }
         _uiModel.addSource(waitingFor) { isWaiting ->
             updateUiState(workStateFlow.value, isWaiting)
-        }
-
-        viewModelScope.launch {
-            workStateFlow.collect { workState ->
-                handleTrackingService(workState)
-            }
         }
     }
 
@@ -89,35 +79,6 @@ class DashboardViewModel @Inject constructor(
                 )
             }
         }
-    }
-
-    private fun handleTrackingService(workState: WorkState) {
-        val isWorkFinished = workState !is WorkState.InProgress
-
-        if (isWorkFinished == wasWorkFinished) return
-
-        if (isWorkFinished) {
-            stopTrackingService()
-        } else {
-            startTrackingService()
-        }
-
-        wasWorkFinished = isWorkFinished
-    }
-
-    private fun startTrackingService() {
-        doOnTrackingService(WorkTimeTrackerService.ACTION_START)
-    }
-
-    private fun stopTrackingService() {
-        doOnTrackingService(WorkTimeTrackerService.ACTION_STOP)
-    }
-
-    private fun doOnTrackingService(action: String) {
-        val intent = Intent(getApplication(), WorkTimeTrackerService::class.java).apply {
-            this.action = action
-        }
-        getApplication<Application>().startService(intent)
     }
 
     fun onComeEventDelete(comeEvent: ComeEvent?) = viewModelScope.launch {

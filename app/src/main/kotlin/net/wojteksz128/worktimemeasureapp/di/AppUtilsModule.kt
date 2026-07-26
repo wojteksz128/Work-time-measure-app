@@ -46,11 +46,13 @@ object AppUtilsModule {
     @Singleton
     @Provides
     fun provideComeEventUtils(
+        @ApplicationContext context: Context,
         comeEventRepository: ComeEventRepository,
         workDayRepository: WorkDayRepository,
         dateTimeProvider: DateTimeProvider,
     ): ComeEventUtils {
         return ComeEventUtils(
+            context,
             comeEventRepository,
             workDayRepository,
             dateTimeProvider

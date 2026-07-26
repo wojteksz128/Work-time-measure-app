@@ -59,11 +59,12 @@ object TestAppModule {
     @Singleton
     @Provides
     fun provideComeEventUtils(
+        @ApplicationContext context: Context,
         comeEventRepository: ComeEventRepository,
         workDayRepository: WorkDayRepository,
         dateTimeProvider: DateTimeProvider,
     ): ComeEventUtils =
-        spy(ComeEventUtils(comeEventRepository, workDayRepository, dateTimeProvider))
+        spy(ComeEventUtils(context, comeEventRepository, workDayRepository, dateTimeProvider))
 
     @Singleton
     @Provides

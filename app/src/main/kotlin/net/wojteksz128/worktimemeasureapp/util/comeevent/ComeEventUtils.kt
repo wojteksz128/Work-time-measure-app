@@ -1,10 +1,14 @@
 package net.wojteksz128.worktimemeasureapp.util.comeevent
 
+import android.content.Context
+import android.content.Intent
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import net.wojteksz128.worktimemeasureapp.model.ComeEvent
 import net.wojteksz128.worktimemeasureapp.model.ComeEventType
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
+import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeTrackerService
 import net.wojteksz128.worktimemeasureapp.repository.ComeEventRepository
 import net.wojteksz128.worktimemeasureapp.repository.WorkDayRepository
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
@@ -13,6 +17,7 @@ import net.wojteksz128.worktimemeasureapp.util.model.extension.ComeEventExtensio
 import org.threeten.bp.ZonedDateTime
 
 open class ComeEventUtils(
+    @param:ApplicationContext private val context: Context,
     private val comeEventRepository: ComeEventRepository,
     private val workDayRepository: WorkDayRepository,
     private val dateTimeProvider: DateTimeProvider,
@@ -29,11 +34,18 @@ open class ComeEventUtils(
             }
         val comeEvent = workDay.events.lastOrNull { !it.isEnded }
 
-        if (comeEvent != null) {
+        val eventType = if (comeEvent != null) {
             assignEndDateIntoCurrentEvent(comeEvent, registerTime)
         } else {
             createNewEvent(workDay, registerTime)
         }
+
+        when (eventType) {
+            ComeEventType.COME_IN -> startTrackingService()
+            ComeEventType.COME_OUT -> stopTrackingService()
+        }
+
+        return@withContext eventType
     }
 
     private suspend fun assignEndDateIntoCurrentEvent(
@@ -52,5 +64,20 @@ open class ComeEventUtils(
         val comeEvent = ComeEvent(registerDate, workDay)
         comeEventRepository.save(comeEvent)
         return ComeEventType.COME_IN
+    }
+
+    private fun startTrackingService() {
+        doOnTrackingService(WorkTimeTrackerService.ACTION_START)
+    }
+
+    private fun stopTrackingService() {
+        doOnTrackingService(WorkTimeTrackerService.ACTION_STOP)
+    }
+
+    private fun doOnTrackingService(action: String) {
+        val intent = Intent(context, WorkTimeTrackerService::class.java).apply {
+            this.action = action
+        }
+        context.startService(intent)
     }
 }
