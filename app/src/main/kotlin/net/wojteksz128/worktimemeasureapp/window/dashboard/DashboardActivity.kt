@@ -1,8 +1,13 @@
 package net.wojteksz128.worktimemeasureapp.window.dashboard
 
+import android.app.AlarmManager
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.core.net.toUri
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -21,6 +26,7 @@ import net.wojteksz128.worktimemeasureapp.notification.worktime.WorkTimeNotifica
 import net.wojteksz128.worktimemeasureapp.service.DayOffService
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.util.TimerManager
+import net.wojteksz128.worktimemeasureapp.util.android.onVersion
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.recyclerView.RecyclerViewSwipeCallback
 import net.wojteksz128.worktimemeasureapp.window.BaseActivity
@@ -42,6 +48,11 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
     DeleteComeEventDialogListener, EditComeEventDialogListener {
     val viewModel: DashboardViewModel by viewModels()
     private val selectedComeEventViewModel: SelectedComeEventViewModel by viewModels()
+    private val exactAlarmPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        checkExactAlarmPermission()
+    }
 
     @Inject
     lateinit var dateTimeProvider: DateTimeProvider
@@ -120,6 +131,19 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
         }
     }
 
+    private fun checkExactAlarmPermission() {
+        onVersion(Build.VERSION_CODES.S) {
+            val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
+            if (!alarmManager.canScheduleExactAlarms()) {
+                val intent =
+                    Intent(android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
+                        data = "package:$packageName".toUri()
+                    }
+                exactAlarmPermissionLauncher.launch(intent)
+            }
+        }
+    }
+
     private fun onEventSwiped(
         viewHolder: ComeEventViewHolder,
         direction: RecyclerViewSwipeCallback.Direction,
@@ -157,6 +181,8 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
                 )
             }
         }
+
+        checkExactAlarmPermission()
     }
 
     override fun onAcceptDeletionComeEventClick(dialog: DialogFragment) {
@@ -170,7 +196,7 @@ class DashboardActivity : BaseActivity<ActivityDashboardBinding>(R.layout.activi
 
     override fun onAcceptModificationComeEventClick(
         dialog: DialogFragment,
-        modifiedComeEvent: ComeEvent
+        modifiedComeEvent: ComeEvent,
     ) {
         viewModel.onComeEventModified(modifiedComeEvent)
         selectedComeEventViewModel.changed = true
