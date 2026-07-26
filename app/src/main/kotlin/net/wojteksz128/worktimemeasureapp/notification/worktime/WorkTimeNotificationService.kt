@@ -3,12 +3,14 @@ package net.wojteksz128.worktimemeasureapp.notification.worktime
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
 import net.wojteksz128.worktimemeasureapp.model.WorkState
 import net.wojteksz128.worktimemeasureapp.notification.TimerExpiredReceiver
 import net.wojteksz128.worktimemeasureapp.notification.TimerExpiredReceiver.Companion.EXTRA_BALANCED_END_TIME
 import net.wojteksz128.worktimemeasureapp.notification.TimerExpiredReceiver.Companion.EXTRA_STANDARD_END_TIME
 import net.wojteksz128.worktimemeasureapp.settings.Settings
+import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
 import net.wojteksz128.worktimemeasureapp.util.TimerManager
 import org.threeten.bp.ZonedDateTime
 import javax.inject.Inject
@@ -20,7 +22,7 @@ open class WorkTimeNotificationService @Inject constructor(
     private val timerManager: TimerManager,
     private val notificationFactory: WorkTimeNotificationFactory,
     private val settings: Settings,
-) {
+) : ClassTagAware {
     companion object {
         const val SNOOZE_ACTION = "net.wojteksz128.worktimemeasureapp.SNOOZE_ACTION"
         const val STOP_WORK_ACTION = "net.wojteksz128.worktimemeasureapp.STOP_WORK_ACTION"
@@ -37,11 +39,19 @@ open class WorkTimeNotificationService @Inject constructor(
         val notification =
             notificationFactory.createWorkInProgressNotification(inProgressState)
         notification.show()
+        Log.i(
+            classTag,
+            "showWorkInProgressNotification: Work in progress notification displayed"
+        )
     }
 
     open fun showEndOfWorkNotification() {
         val notification = notificationFactory.createEndOfWorkNotification()
         notification.show()
+        Log.i(
+            classTag,
+            "showWorkInProgressNotification: End of work notification displayed"
+        )
     }
 
     open fun showEndOfWorkNotification(
@@ -51,6 +61,10 @@ open class WorkTimeNotificationService @Inject constructor(
         val notification =
             notificationFactory.createEndOfWorkNotification(standardEndTime, balancedEndTime)
         notification.show()
+        Log.i(
+            classTag,
+            "showWorkInProgressNotification: End of work notification displayed"
+        )
     }
 
     open fun scheduleEndOfWorkNotification(endTime: ZonedDateTime) {
@@ -69,6 +83,10 @@ open class WorkTimeNotificationService @Inject constructor(
 
         val pendingIntent = createTimerExpiredPendingIntent(standardEndTime, balancedEndTime)
         timerManager.setExactTimer(endTime, pendingIntent)
+        Log.i(
+            classTag,
+            "scheduleEndOfWorkNotification: End of work notification scheduled to $endTime"
+        )
         isEndOfWorkNotificationScheduled = true
     }
 
@@ -87,6 +105,11 @@ open class WorkTimeNotificationService @Inject constructor(
         EndOfWorkTimeNotification.cancel(context)
 
         isEndOfWorkNotificationScheduled = false
+
+        Log.i(
+            classTag,
+            "showWorkInProgressNotification: End of work notification schedule canceled"
+        )
     }
 
     open fun hideEndOfWorkNotification() {
