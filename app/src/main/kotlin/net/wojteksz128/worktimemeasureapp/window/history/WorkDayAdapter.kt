@@ -102,11 +102,11 @@ class WorkDayAdapter(
             if (isExpanded) {
                 binding.dayEventsListContainer.visibility = View.VISIBLE
                 binding.dayEventsList.visibility =
-                    if (workDayItem.hasEvents) View.VISIBLE else View.INVISIBLE
+                    if (workDayItem.hasEvents) View.VISIBLE else View.GONE
                 binding.dayNoEventsLabel.visibility =
-                    if (workDayItem.hasEvents) View.INVISIBLE else View.VISIBLE
+                    if (workDayItem.hasEvents) View.GONE else View.VISIBLE
             } else {
-                binding.dayEventsListContainer.visibility = View.INVISIBLE
+                binding.dayEventsListContainer.visibility = View.GONE
             }
             binding.dayExpand.setOnClickListener { onToggle(workDayItem.id) }
 

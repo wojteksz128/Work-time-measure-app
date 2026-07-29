@@ -23,7 +23,7 @@ open class ToggleWorkStateUseCase(
 
     open suspend operator fun invoke(currentState: WorkState.Loaded): ComeEventType =
         withContext(Dispatchers.IO) {
-        val registerTime = dateTimeProvider.currentTime
+            val registerTime = dateTimeProvider.currentTime
 
             return@withContext when (currentState) {
                 is WorkState.InProgress -> {
