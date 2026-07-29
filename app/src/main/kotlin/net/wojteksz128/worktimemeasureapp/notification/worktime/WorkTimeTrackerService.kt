@@ -5,9 +5,6 @@ import android.content.Intent
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import net.wojteksz128.worktimemeasureapp.model.WorkState
@@ -25,7 +22,6 @@ class WorkTimeTrackerService : LifecycleService() {
     @Inject
     lateinit var notificationService: WorkTimeNotificationService
 
-    private var serviceJob: Job? = null
     private var isServiceRunning = false
 
     override fun onCreate() {
@@ -42,13 +38,11 @@ class WorkTimeTrackerService : LifecycleService() {
         when (workState) {
             is WorkState.InProgress -> {
                 updateInProgressNotification(workState)
-
                 notificationService.scheduleEndOfWorkNotification(workState)
             }
 
             is WorkState.Finished, is WorkState.NotStarted -> {
                 notificationService.cancelEndOfWorkNotification()
-                stopSelf()
             }
 
             is WorkState.Loading -> Unit
@@ -59,12 +53,7 @@ class WorkTimeTrackerService : LifecycleService() {
         super.onStartCommand(intent, flags, startId)
 
         when (intent?.action) {
-            ACTION_START -> if (serviceJob?.isActive != true)
-                serviceJob = CoroutineScope(Dispatchers.Main).launch {
-                    workStateFlow.collect { workState ->
-                        handleNotificationsForState(workState)
-                    }
-                }
+            ACTION_START -> {}
 
             ACTION_STOP -> {
                 notificationService.cancelEndOfWorkNotification()
@@ -90,7 +79,6 @@ class WorkTimeTrackerService : LifecycleService() {
 
     override fun onDestroy() {
         notificationService.cancelEndOfWorkNotification()
-        serviceJob?.cancel()
         super.onDestroy()
     }
 
