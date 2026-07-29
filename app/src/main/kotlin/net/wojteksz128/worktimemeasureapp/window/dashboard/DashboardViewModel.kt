@@ -1,6 +1,7 @@
 package net.wojteksz128.worktimemeasureapp.window.dashboard
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
@@ -23,8 +24,8 @@ import net.wojteksz128.worktimemeasureapp.model.ComeEventType
 import net.wojteksz128.worktimemeasureapp.model.WorkState
 import net.wojteksz128.worktimemeasureapp.repository.ComeEventRepository
 import net.wojteksz128.worktimemeasureapp.util.ClassTagAware
-import net.wojteksz128.worktimemeasureapp.util.comeevent.ComeEventUtils
 import net.wojteksz128.worktimemeasureapp.util.comeevent.NewEventRegisterListener
+import net.wojteksz128.worktimemeasureapp.util.comeevent.ToggleWorkStateUseCase
 import net.wojteksz128.worktimemeasureapp.util.datetime.formatToString
 import net.wojteksz128.worktimemeasureapp.util.datetime.toCounterString
 import net.wojteksz128.worktimemeasureapp.window.history.toUiModel
@@ -33,9 +34,9 @@ import javax.inject.Inject
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
     application: Application,
-    workStateFlow: StateFlow<@JvmSuppressWildcards WorkState>,
+    private val workStateFlow: StateFlow<@JvmSuppressWildcards WorkState>,
     private val comeEventRepository: ComeEventRepository,
-    private val comeEventUtils: ComeEventUtils,
+    private val toggleWorkStateUseCase: ToggleWorkStateUseCase,
 ) : AndroidViewModel(application), NewEventRegisterListener, ClassTagAware {
 
     private val _uiModel = MediatorLiveData(DashboardUiState(isLoading = true))
@@ -107,7 +108,13 @@ class DashboardViewModel @Inject constructor(
         viewModelScope.launch {
             waitingFor.value = true
 
-            val messageKey = when (comeEventUtils.registerNewEvent()) {
+            val currentState = workStateFlow.value
+            if (currentState !is WorkState.Loaded) {
+                Log.w(classTag, "onRegisterNewEvent: current state is not WorkState.Loaded")
+                return@launch
+            }
+
+            val messageKey = when (toggleWorkStateUseCase(currentState)) {
                 ComeEventType.COME_IN -> R.string.dashboard_snackbar_info_income_registered
                 ComeEventType.COME_OUT -> R.string.dashboard_snackbar_info_outcome_registered
             }

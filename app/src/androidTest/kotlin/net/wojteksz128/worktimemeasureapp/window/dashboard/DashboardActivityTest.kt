@@ -24,7 +24,7 @@ import net.wojteksz128.worktimemeasureapp.service.DayOffService
 import net.wojteksz128.worktimemeasureapp.settings.InitialSettingsPreparer
 import net.wojteksz128.worktimemeasureapp.util.FakeDateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.awaitState
-import net.wojteksz128.worktimemeasureapp.util.comeevent.ComeEventUtils
+import net.wojteksz128.worktimemeasureapp.util.comeevent.ToggleWorkStateUseCase
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.fixtures.aComeEvent
 import net.wojteksz128.worktimemeasureapp.util.fixtures.aWorkDay
@@ -60,7 +60,7 @@ class DashboardActivityTest {
     lateinit var notificationFactory: WorkTimeNotificationFactory
 
     @Inject
-    lateinit var comeEventUtils: ComeEventUtils
+    lateinit var toggleWorkStateUseCase: ToggleWorkStateUseCase
 
     @Inject
     lateinit var initialSettingsPreparer: InitialSettingsPreparer
@@ -141,7 +141,7 @@ class DashboardActivityTest {
             clickFab()
         }
 
-        verifyBlocking(comeEventUtils) { registerNewEvent() }
+        verifyBlocking(toggleWorkStateUseCase) { invoke(any()) }
     }
 
     @Test

@@ -17,7 +17,7 @@ abstract class Repository<DM, E>(
 
     abstract suspend fun getById(id: Long): E?
 
-    open suspend fun save(domainModel: DM) {
+    open suspend fun save(domainModel: DM): DM {
         val newEntity = mapper.mapFromDomainModel(domainModel)
         val oldEntity = if (newEntity.id == null) null else getById(newEntity.id!!)
 
@@ -31,7 +31,12 @@ abstract class Repository<DM, E>(
             newEntity
         }
 
+        if (storiedEntity == null)
+            throw IllegalStateException("Failed to store new entity ${newEntity::class.simpleName} - storied entity is null")
+
         addToHistory(oldEntity, storiedEntity, action)
+
+        return mapper.mapToDomainModel(storiedEntity)
     }
 
     open suspend fun delete(domainModel: DM) {

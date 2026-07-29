@@ -19,7 +19,7 @@ import net.wojteksz128.worktimemeasureapp.service.DayOffService
 import net.wojteksz128.worktimemeasureapp.settings.InitialSettingsPreparer
 import net.wojteksz128.worktimemeasureapp.settings.Settings
 import net.wojteksz128.worktimemeasureapp.settings.converter.ConfigurationConverterFactory
-import net.wojteksz128.worktimemeasureapp.util.comeevent.ComeEventUtils
+import net.wojteksz128.worktimemeasureapp.util.comeevent.ToggleWorkStateUseCase
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.window.util.formatter.history.HiddenFieldNameFormatter
 import net.wojteksz128.worktimemeasureapp.window.util.formatter.history.HistoryFormatterProvider
@@ -63,8 +63,15 @@ object TestAppModule {
         comeEventRepository: ComeEventRepository,
         workDayRepository: WorkDayRepository,
         dateTimeProvider: DateTimeProvider,
-    ): ComeEventUtils =
-        spy(ComeEventUtils(context, comeEventRepository, workDayRepository, dateTimeProvider))
+    ): ToggleWorkStateUseCase =
+        spy(
+            ToggleWorkStateUseCase(
+                context,
+                comeEventRepository,
+                workDayRepository,
+                dateTimeProvider
+            )
+        )
 
     @Singleton
     @Provides

@@ -8,17 +8,19 @@ import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeoutOrNull
 import net.wojteksz128.worktimemeasureapp.model.WorkDay
+import net.wojteksz128.worktimemeasureapp.model.WorkState
 import net.wojteksz128.worktimemeasureapp.notification.worktime.action.WorkTimeNotificationActionReceiver
 import net.wojteksz128.worktimemeasureapp.notification.worktime.action.WorkTimeNotificationActionReceiver.Companion.BALANCED_END_TIME
 import net.wojteksz128.worktimemeasureapp.notification.worktime.action.WorkTimeNotificationActionReceiver.Companion.NEXT_NOTIFICATION_TIME
 import net.wojteksz128.worktimemeasureapp.notification.worktime.action.WorkTimeNotificationActionReceiver.Companion.STANDARD_END_TIME
 import net.wojteksz128.worktimemeasureapp.util.FakeDateTimeProvider
-import net.wojteksz128.worktimemeasureapp.util.comeevent.ComeEventUtils
+import net.wojteksz128.worktimemeasureapp.util.comeevent.ToggleWorkStateUseCase
 import net.wojteksz128.worktimemeasureapp.util.datetime.DateTimeProvider
 import net.wojteksz128.worktimemeasureapp.util.model.extension.ComeEventExtensions.isEnded
 import org.junit.Assert.assertEquals
@@ -43,10 +45,13 @@ class WorkTimeNotificationActionReceiverTest {
     var hiltRule = HiltAndroidRule(this)
 
     @Inject
-    lateinit var comeEventUtils: ComeEventUtils
+    lateinit var toggleWorkStateUseCase: ToggleWorkStateUseCase
 
     @Inject
     lateinit var workDayFlow: MutableStateFlow<WorkDay?>
+
+    @Inject
+    lateinit var workStateFlow: StateFlow<@JvmSuppressWildcards WorkState>
 
     @Inject
     lateinit var dateTimeProvider: DateTimeProvider
@@ -70,7 +75,8 @@ class WorkTimeNotificationActionReceiverTest {
 
         // Manually create receiver and inject dependencies
         receiver = WorkTimeNotificationActionReceiver().apply {
-            this.comeEventUtils = this@WorkTimeNotificationActionReceiverTest.comeEventUtils
+            this.toggleWorkStateUseCase =
+                this@WorkTimeNotificationActionReceiverTest.toggleWorkStateUseCase
             this.dateTimeProvider = this@WorkTimeNotificationActionReceiverTest.dateTimeProvider
             this.notificationService =
                 this@WorkTimeNotificationActionReceiverTest.notificationService
@@ -92,7 +98,9 @@ class WorkTimeNotificationActionReceiverTest {
     fun stop_work_action_updates_end_time_for_last_event(): Unit = runBlocking {
         // Arrange: Start work first
         (dateTimeProvider as FakeDateTimeProvider).setCurrentTime(START_TIME)
-        comeEventUtils.registerNewEvent() // This starts the work
+        val workState = workStateFlow.value
+        assert(workState is WorkState.Loaded)
+        toggleWorkStateUseCase(workState as WorkState.Loaded) // This starts the work
         assertNotNull("WorkDay should be created", workDayFlow.value)
 
         // Arrange: Prepare for stop action

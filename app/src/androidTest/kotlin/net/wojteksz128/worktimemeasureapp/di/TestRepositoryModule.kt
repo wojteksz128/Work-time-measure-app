@@ -64,7 +64,7 @@ object TestRepositoryModule {
         onBlocking { save(any()) } doAnswer { invocation ->
             val workDayToSave = invocation.getArgument<WorkDay>(0)
             workDayFlow.value = workDayToSave.copy(id = DUMMY_ID)
-            return@doAnswer
+            return@doAnswer workDayFlow.value
         }
     }
 
@@ -101,12 +101,16 @@ object TestRepositoryModule {
                     val existingIx =
                         if (eventToSave.id != null) events.indexOfFirst { it.id == eventToSave.id } else -1
 
-                    if (existingIx != -1) { // It's an update
+                    val modifiedComeEvent = if (existingIx != -1) { // It's an update
                         events[existingIx] = eventToSave
+                        eventToSave
                     } else { // It's a new event
-                        events.add(eventToSave.copy(id = DUMMY_ID))
+                        val storedEvent = eventToSave.copy(id = DUMMY_ID)
+                        events.add(storedEvent)
+                        storedEvent
                     }
                     workDayFlow.value = workDay.copy(events = events)
+                    modifiedComeEvent
                 }
             }
             onBlocking { delete(any()) }.doAnswer { invocation ->
